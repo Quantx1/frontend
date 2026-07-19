@@ -1,0 +1,90 @@
+"use client"
+
+/**
+ * NumberTicker — vendored from Magic UI (magicui.design/r/number-ticker).
+ *
+ * Restyled to the Refined Expressive palette: the original ships a
+ * `text-black dark:text-white` default + Intl `en-US` formatting. We:
+ *   • import from `framer-motion` (the project's installed alias) instead
+ *     of the `motion` package (never added — see brief guardrails),
+ *   • default to token-driven `text-d-text-primary` (theme-aware),
+ *   • format in `en-IN` so lakh/crore grouping reads correctly for the
+ *     Indian-market audience.
+ *
+ * Spring count-up honors prefers-reduced-motion globally via the app's
+ * <MotionConfig reducedMotion="user"> wrapper (settles instantly).
+ */
+
+import { useEffect, useRef, type ComponentPropsWithoutRef } from "react"
+import { useInView, useMotionValue, useSpring } from "framer-motion"
+
+import { cn } from "@/lib/utils"
+
+interface NumberTickerProps extends ComponentPropsWithoutRef<"span"> {
+  value: number
+  startValue?: number
+  direction?: "up" | "down"
+  delay?: number
+  decimalPlaces?: number
+}
+
+export function NumberTicker({
+  value,
+  startValue = 0,
+  direction = "up",
+  delay = 0,
+  className,
+  decimalPlaces = 0,
+  ...props
+}: NumberTickerProps) {
+  const ref = useRef<HTMLSpanElement>(null)
+  const motionValue = useMotionValue(direction === "down" ? value : startValue)
+  const springValue = useSpring(motionValue, {
+    damping: 60,
+    stiffness: 100,
+  })
+  const isInView = useInView(ref, { once: true, margin: "0px" })
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | null = null
+
+    if (isInView) {
+      timer = setTimeout(() => {
+        motionValue.set(direction === "down" ? startValue : value)
+      }, delay * 1000)
+    }
+
+    return () => {
+      if (timer !== null) clearTimeout(timer)
+    }
+  }, [motionValue, isInView, delay, value, direction, startValue])
+
+  useEffect(
+    () =>
+      springValue.on("change", (latest) => {
+        if (ref.current) {
+          ref.current.textContent = Intl.NumberFormat("en-IN", {
+            minimumFractionDigits: decimalPlaces,
+            maximumFractionDigits: decimalPlaces,
+          }).format(Number(latest.toFixed(decimalPlaces)))
+        }
+      }),
+    [springValue, decimalPlaces]
+  )
+
+  return (
+    <span
+      ref={ref}
+      className={cn(
+        "inline-block tabular-nums text-d-text-primary",
+        className
+      )}
+      {...props}
+    >
+      {Intl.NumberFormat("en-IN", {
+        minimumFractionDigits: decimalPlaces,
+        maximumFractionDigits: decimalPlaces,
+      }).format(startValue)}
+    </span>
+  )
+}
