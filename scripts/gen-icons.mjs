@@ -234,13 +234,11 @@ const file = `'use client'
  * as primary, with Lucide as the guaranteed fallback and fa6-brands for social
  * logos. Offline: icon bodies are bundled here, so there is no runtime API/flash.
  * ${out.length} icons (${riCount} Solar/brand · ${luCount} Lucide-fallback). */
-import { Icon as IconifyIcon, addIcon, type IconifyIcon as IconifyIconData } from '@iconify/react'
 import type { ComponentType } from 'react'
 
 const DATA: Record<string, { body: string; width: number; height: number }> = {
 ${reg}
 }
-for (const id in DATA) addIcon(id, DATA[id] as IconifyIconData)
 
 export interface IconProps {
   size?: number | string
@@ -258,8 +256,23 @@ export type LucideProps = IconProps
 
 function make(id: string): LucideIcon {
   // strokeWidth is a lucide concept; Remix glyphs are fixed-weight, so it is ignored.
-  function I({ size = 24, className, color, strokeWidth: _sw, ...rest }: IconProps) {
-    return <IconifyIcon icon={id} width={size} height={size} className={className} color={color} {...rest} />
+  // Rendered as a plain inline <svg> (not @iconify/react's <Icon>) so server and
+  // client markup are identical — the iconify component mounts client-side only,
+  // which caused hydration mismatches under Next SSR.
+  const d = DATA[id]
+  function I({ size = 24, className, color, strokeWidth: _sw, style, ...rest }: IconProps) {
+    return (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={size}
+        height={size}
+        viewBox={\`0 0 \${d.width} \${d.height}\`}
+        className={className}
+        style={color ? { color, ...style } : style}
+        {...rest}
+        dangerouslySetInnerHTML={{ __html: d.body }}
+      />
+    )
   }
   I.displayName = id
   return I

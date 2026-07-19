@@ -89,12 +89,12 @@ artifacts/models/*.safetensors
 *.csv
 *.parquet
 *.feather
-# PR 207 — exclude data/* contents but keep nse_tiers/ universe files
+# PR 207 ??? exclude data/* contents but keep nse_tiers/ universe files
 /data/*
 !ml/data/
 !/data/nse_tiers/
 !/data/nse_tiers/**
-# paper window — frozen pre-registered baselines MUST be tracked (the API
+# paper window ??? frozen pre-registered baselines MUST be tracked (the API
 # reads them at runtime; freezing means version control)
 !/data/paper/
 !/data/paper/**
@@ -136,7 +136,7 @@ _archive/
 output/
 
 # Build artifacts
-frontend/tsconfig.tsbuildinfo
+tsconfig.tsbuildinfo
 
 # Reference/inspiration site scrapes
 intellectia.ai/
@@ -182,7 +182,7 @@ artifacts/cache/
 /*.jpeg
 
 # Local-only reference material (screenshots + design renders, not code).
-# competitor-research/ also holds CREDENTIALS.md — keep it out of git entirely.
+# competitor-research/ also holds CREDENTIALS.md ??? keep it out of git entirely.
 competitor-research/
 docs/superpowers/specs/v3-renders/
 
