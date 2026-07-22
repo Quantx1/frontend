@@ -39,7 +39,7 @@ export default function WhyMovingCard({ symbol }: { symbol: string }) {
   }
 
   return (
-    <div className="rounded-lg border border-line bg-wrap overflow-hidden">
+    <div className="rounded-[20px] border border-line bg-wrap overflow-hidden">
       <button
         onClick={ask}
         disabled={state === 'loading'}

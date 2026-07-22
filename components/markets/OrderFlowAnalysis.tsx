@@ -71,7 +71,7 @@ function InfoDot({ text }: { text: string }) {
         onClick={() => setOpen((v) => !v)}
         onBlur={() => setOpen(false)}
         aria-label="What does this mean?"
-        className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-line text-d-text-muted transition-colors hover:text-d-text-primary"
+        className="glass-control inline-flex h-4 w-4 items-center justify-center rounded-full text-d-text-muted transition-colors hover:text-d-text-primary"
       >
         <HelpCircle className="h-2.5 w-2.5" />
       </button>
@@ -98,7 +98,7 @@ function CardShell({
   children: React.ReactNode
 }) {
   return (
-    <div className={`lg-surface rounded-xl p-4 ${className}`}>
+    <div className={`lg-surface rounded-[20px] p-4 ${className}`}>
       <div className="mb-3 flex items-center justify-between gap-2">
         <h3 className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-d-text-muted">
           <Icon className="h-3.5 w-3.5" /> {title}
@@ -174,7 +174,11 @@ function flowVerdict(
   }
 }
 
-export default function OrderFlowAnalysis() {
+// SEBI Path-A: FII/DII rupee flows, bulk/block deals and short-selling are raw
+// NSE exchange data. Render (and fetch) only when the viewer is entitled — i.e.
+// the data comes from their own connected broker feed or a genuine NSE display
+// licence. When false, render nothing (the page shows the broker-connect gate).
+export default function OrderFlowAnalysis({ entitled = true }: { entitled?: boolean }) {
   const [beginner, setBeginner] = useState(true)
 
   const [flow, setFlow] = useState<FiiDiiData | null>(null)
@@ -185,10 +189,13 @@ export default function OrderFlowAnalysis() {
   const [shortsErr, setShortsErr] = useState(false)
 
   useEffect(() => {
+    if (!entitled) return
     api.screener.orderflowFiiDii().then(setFlow).catch(() => setFlowErr(true))
     api.screener.orderflowDeals(15).then(setDeals).catch(() => setDealsErr(true))
     api.screener.orderflowShorts(15).then(setShorts).catch(() => setShortsErr(true))
-  }, [])
+  }, [entitled])
+
+  if (!entitled) return null
 
   // ── FII/DII derived ──
   const fiiNet = flow?.fii.net ?? 0
@@ -207,7 +214,7 @@ export default function OrderFlowAnalysis() {
   return (
     <div className="space-y-4">
       {/* ── HEADER ROW ─────────────────────────────────────────── */}
-      <div className="lg-surface rounded-xl p-4 md:p-5">
+      <div className="lg-surface rounded-[20px] p-4 md:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="min-w-0">
             <h2 className="flex items-center gap-2 text-[18px] font-bold tracking-tight text-d-text-primary">
@@ -220,12 +227,12 @@ export default function OrderFlowAnalysis() {
           </div>
 
           {/* Beginner ⟷ Pro toggle */}
-          <div className="flex items-center rounded-lg border border-line bg-surface-2 p-0.5 text-[10.5px] font-medium">
+          <div className="flex items-center rounded-full border border-line bg-surface-2 p-0.5 text-[10.5px] font-medium">
             <button
               type="button"
               onClick={() => setBeginner(true)}
-              className={`rounded-md px-2.5 py-1 transition-colors ${
-                beginner ? 'bg-primary/15 text-primary' : 'text-d-text-muted hover:text-d-text-primary'
+              className={`rounded-full px-2.5 py-1 transition-colors ${
+                beginner ? 'glass-control-accent' : 'text-d-text-muted hover:text-d-text-primary'
               }`}
             >
               Beginner
@@ -233,8 +240,8 @@ export default function OrderFlowAnalysis() {
             <button
               type="button"
               onClick={() => setBeginner(false)}
-              className={`rounded-md px-2.5 py-1 transition-colors ${
-                !beginner ? 'bg-primary/15 text-primary' : 'text-d-text-muted hover:text-d-text-primary'
+              className={`rounded-full px-2.5 py-1 transition-colors ${
+                !beginner ? 'glass-control-accent' : 'text-d-text-muted hover:text-d-text-primary'
               }`}
             >
               Pro
@@ -310,7 +317,7 @@ export default function OrderFlowAnalysis() {
               </div>
               <div className="mt-1.5 flex justify-between text-[9.5px] font-medium uppercase tracking-wider">
                 <span style={{ color: 'var(--color-warning)' }}>FII |{fmtCr(fiiNet)}|</span>
-                <span style={{ color: 'var(--color-primary)' }}>DII |{fmtCr(diiNet)}|</span>
+                <span style={{ color: 'var(--color-primary-text)' }}>DII |{fmtCr(diiNet)}|</span>
               </div>
             </div>
 
@@ -354,7 +361,7 @@ export default function OrderFlowAnalysis() {
                       <span className="flex min-w-0 items-center gap-1.5">
                         <span
                           className={`inline-flex shrink-0 rounded px-1 py-0.5 text-[8.5px] font-semibold ${
-                            isBuy ? 'bg-up/15 text-up' : 'bg-down/15 text-down'
+                            isBuy ? 'bg-up/10 text-up' : 'bg-down/10 text-down'
                           }`}
                         >
                           {isBuy ? 'BUY' : 'SELL'}

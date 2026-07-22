@@ -71,14 +71,14 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div
-      className={`${appSans.variable} ${appMono.variable} relative min-h-screen min-h-[100dvh] bg-main`}
+      className={`${appSans.variable} ${appMono.variable} app-canvas relative min-h-screen min-h-[100dvh]`}
       style={{ fontFamily: 'var(--font-app-sans)' }}
     >
       {/* Skip-to-content — first focusable element. Becomes visible on focus
           (WCAG 2.4.1). */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded-md focus:bg-primary focus:px-3 focus:py-2 focus:text-sm focus:font-semibold focus:text-main focus:outline-none"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded-md focus:bg-primary focus:px-3 focus:py-2 focus:text-sm focus:font-semibold focus:text-primary-foreground focus:outline-none"
       >
         Skip to main content
       </a>

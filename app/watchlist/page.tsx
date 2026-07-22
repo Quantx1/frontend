@@ -3,7 +3,7 @@
 /**
  * /watchlist — active monitoring surface for tracked symbols.
  *
- * v2 redesign (Wave 5 — Intellectia "D" list/table archetype, re-skinned to
+ * v2 redesign (Wave 5 — the reference "D" list/table archetype, re-skinned to
  * the xAI tokens): foundation PageHeader → KPI strip → add-symbol toolbar →
  * filter chips + a Table/Cards view toggle. The DEFAULT view is now a dense,
  * sortable foundation DataTable (mono-caps headers, hairline rows, duotone
@@ -190,7 +190,7 @@ export default function WatchlistPage() {
         <div className="flex items-center gap-2">
           <span className="text-[13px] font-medium text-d-text-primary">{i.symbol}</span>
           {i.engines?.regime_warning && (
-            <span className="rounded-sm bg-warning/10 px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-warning">
+            <span className="rounded-full bg-warning/10 px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-warning">
               Warn
             </span>
           )}
@@ -269,7 +269,7 @@ export default function WatchlistPage() {
             type="button"
             onClick={(e) => { e.stopPropagation(); onRemove(i.symbol) }}
             aria-label={`Remove ${i.symbol}`}
-            className="rounded-sm border border-line p-1 text-d-text-muted transition-colors hover:border-down/40 hover:text-down"
+            className="rounded-full glass-control p-1 text-d-text-muted transition-colors hover:text-down"
           >
             <Trash2 className="h-3 w-3" />
           </button>
@@ -317,9 +317,9 @@ export default function WatchlistPage() {
         <div className="space-y-5 px-4 py-5 md:px-6">
           {/* KPI strip */}
           <Reveal>
-            <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-2 rounded-[20px] border border-line bg-wrap p-2 lg:grid-cols-4">
               {KPIS.map((k) => (
-                <div key={k.label} className="rounded-lg border border-line bg-wrap p-4">
+                <div key={k.label} className="tile-tint p-4">
                   <div className="text-[11px] text-d-text-secondary">{k.label}</div>
                   <div className={`mt-1 text-[22px] font-semibold leading-none text-d-text-primary ${MONO}`}>
                     {k.v}
@@ -336,7 +336,7 @@ export default function WatchlistPage() {
                 e.preventDefault()
                 onAdd()
               }}
-              className="flex items-center gap-2 rounded-lg border border-line bg-wrap px-3 py-2"
+              className="flex items-center gap-2 rounded-full border border-line bg-wrap px-3 py-2"
             >
               <Search className="ml-1 h-4 w-4 shrink-0 text-d-text-muted" aria-hidden="true" />
               <input
@@ -367,7 +367,7 @@ export default function WatchlistPage() {
           {data?.capped && data.cap !== null && (
             <section
               role="status"
-              className="flex items-center justify-between gap-3 rounded-lg border border-highlight/40 bg-highlight/10 px-4 py-3"
+              className="flex items-center justify-between gap-3 rounded-[20px] border border-highlight/40 bg-highlight/10 px-4 py-3"
             >
               <p className="text-xs text-highlight">
                 The engines are watching the first {data.cap} of your {data.count} symbols. Upgrade to Pro to
@@ -398,10 +398,10 @@ export default function WatchlistPage() {
                     key={f}
                     type="button"
                     onClick={() => setFilter(f)}
-                    className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12px] capitalize transition-colors ${
+                    className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] capitalize transition-colors ${
                       active
-                        ? 'border-white/20 bg-white/[0.06] text-d-text-primary'
-                        : 'border-line bg-wrap text-d-text-secondary hover:text-d-text-primary'
+                        ? 'glass-control-accent'
+                        : 'glass-control text-d-text-secondary hover:text-d-text-primary'
                     }`}
                   >
                     {f}
@@ -410,14 +410,14 @@ export default function WatchlistPage() {
                 )
               })}
             </div>
-            <div className="inline-flex items-center gap-1 rounded-sm border border-line bg-wrap p-0.5">
+            <div className="inline-flex items-center gap-1 rounded-full border border-line bg-wrap p-0.5">
               <button
                 type="button"
                 onClick={() => setView('table')}
                 aria-label="Table view"
                 aria-pressed={view === 'table'}
-                className={`inline-flex items-center gap-1 rounded-sm px-2.5 py-1 text-[11px] transition-colors ${
-                  view === 'table' ? 'bg-wrap-hover text-d-text-primary' : 'text-d-text-muted hover:text-d-text-secondary'
+                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] transition-colors ${
+                  view === 'table' ? 'glass-control-accent' : 'text-d-text-muted hover:text-d-text-secondary'
                 }`}
               >
                 <TableProperties className="h-3.5 w-3.5" /> Table
@@ -427,8 +427,8 @@ export default function WatchlistPage() {
                 onClick={() => setView('cards')}
                 aria-label="Cards view"
                 aria-pressed={view === 'cards'}
-                className={`inline-flex items-center gap-1 rounded-sm px-2.5 py-1 text-[11px] transition-colors ${
-                  view === 'cards' ? 'bg-wrap-hover text-d-text-primary' : 'text-d-text-muted hover:text-d-text-secondary'
+                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] transition-colors ${
+                  view === 'cards' ? 'glass-control-accent' : 'text-d-text-muted hover:text-d-text-secondary'
                 }`}
               >
                 <LayoutGrid className="h-3.5 w-3.5" /> Cards
@@ -507,7 +507,7 @@ function Grid({ children }: { children: React.ReactNode }) {
 
 function SkelCard() {
   return (
-    <div className="space-y-3 rounded-xl border border-line bg-wrap p-4">
+    <div className="space-y-3 rounded-[20px] border border-line bg-wrap p-4">
       <div className="flex items-center justify-between">
         <div className="h-4 w-20 animate-pulse rounded bg-wrap-hover" />
         <div className="h-3 w-12 animate-pulse rounded bg-wrap-hover/70" />

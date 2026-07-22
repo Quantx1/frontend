@@ -64,7 +64,7 @@ export default function TierPanel({
       name: 'Free',
       price: '₹0',
       bullets: [
-        '1 swing signal / day',
+        '1 Alpha Pick / day',
         'Copilot 5 messages / day',
         'Paper trading + League',
         'Watchlist (5 symbols) + Telegram digest',
@@ -258,14 +258,14 @@ export default function TierPanel({
                   void reportUpgradeIntent(target, 'settings_tier_panel')
                 }).catch(() => {})
               }}
-              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 text-[12px] font-medium bg-primary text-main rounded-sm hover:opacity-90 transition-opacity"
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 text-[12px] font-medium glass-control-accent rounded-full active:scale-[0.98] transition-opacity"
             >
               {current.cta}
             </a>
           )}
           <a
             href="/pricing"
-            className="inline-flex items-center justify-center gap-1.5 px-4 py-2 text-[12px] border border-line text-d-text-primary rounded-sm hover:bg-hover transition-colors"
+            className="inline-flex items-center justify-center gap-1.5 px-4 py-2 text-[12px] glass-control text-d-text-primary rounded-full transition-colors"
           >
             Compare plans
           </a>

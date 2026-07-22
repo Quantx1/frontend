@@ -76,7 +76,7 @@ export const ChangeBadge = ({
         'inline-flex items-center font-mono font-normal tabular-nums',
         SIZE_CLASSES[size],
         toneText,
-        filled && cn('rounded-sm', toneFill),
+        filled && cn('rounded-full', toneFill),
         className,
       )}
       // Make screen-readers say the value as a number, not "plus-sign 1 dot 2 percent"

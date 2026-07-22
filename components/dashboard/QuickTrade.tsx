@@ -51,6 +51,9 @@ interface QuickTradeProps {
   initialEntryPrice?: number
   initialStopLoss?: number
   initialTarget?: number
+  /** Paper mode: virtual ₹10L book — no broker needed, so the BrokerLock
+   *  gate is skipped and the copy says paper. onSubmit decides the path. */
+  paperMode?: boolean
 }
 
 import { api } from '@/lib/api'
@@ -68,6 +71,7 @@ export default function QuickTrade({
   initialEntryPrice,
   initialStopLoss,
   initialTarget,
+  paperMode = false,
 }: QuickTradeProps) {
   const { isConnected, isLoading: brokerLoading } = useBrokerStatus()
   // Convert LONG/SHORT to BUY/SELL
@@ -235,8 +239,12 @@ export default function QuickTrade({
                     <Zap className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-d-text-primary">Quick Trade</h2>
-                    <p className="text-sm text-d-text-secondary">Place order in seconds</p>
+                    <h2 className="text-xl font-bold text-d-text-primary">
+                      {paperMode ? 'Paper Trade' : 'Quick Trade'}
+                    </h2>
+                    <p className="text-sm text-d-text-secondary">
+                      {paperMode ? 'Virtual ₹10L book · live market price · no broker needed' : 'Place order in seconds'}
+                    </p>
                   </div>
                 </div>
                 <button
@@ -249,7 +257,7 @@ export default function QuickTrade({
 
               {/* Content */}
               <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
-                {!brokerLoading && !isConnected ? (
+                {!paperMode && !brokerLoading && !isConnected ? (
                   <BrokerLock
                     feature="Live trading"
                     description="Placing real orders needs a connected broker. You can still paper-trade without one."
@@ -470,10 +478,10 @@ export default function QuickTrade({
                           key={product}
                           type="button"
                           onClick={() => setValue('product', product as any)}
-                          className={`p-3 rounded-xl border font-medium transition-all ${
+                          className={`p-3 rounded-xl font-medium transition-all ${
                             watch('product') === product
-                              ? 'bg-primary/20 border-primary text-primary'
-                              : 'bg-background-elevated border-d-border text-d-text-secondary hover:border-white/20'
+                              ? 'glass-control-accent'
+                              : 'glass-control text-d-text-secondary'
                           }`}
                         >
                           {product}
@@ -487,7 +495,7 @@ export default function QuickTrade({
                     <button
                       type="button"
                       onClick={onClose}
-                      className="flex-1 px-6 py-3 bg-background-elevated border border-d-border rounded-xl text-d-text-primary font-medium hover:border-white/20 transition-all"
+                      className="glass-control flex-1 px-6 py-3 rounded-full text-d-text-primary font-medium transition-all active:scale-[0.98]"
                     >
                       Cancel
                     </button>
@@ -496,7 +504,7 @@ export default function QuickTrade({
                       whileTap={{ scale: 0.98 }}
                       type="submit"
                       disabled={isSubmitting || !selectedStock}
-                      className="flex-1 px-6 py-3 bg-gradient-primary text-white rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      className="glass-control-accent flex-1 px-6 py-3 rounded-full font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                       {isSubmitting ? (
                         <>

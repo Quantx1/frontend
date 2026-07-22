@@ -1,6 +1,6 @@
-import { SignalsHub } from '@/components/signals/SignalsHub'
+import { redirect } from 'next/navigation'
 
-/** 200-render deep-link into the /signals hub, pre-filtered to the Momentum tab (no redirect). */
-export default function MomentumSignalsPage() {
-  return <SignalsHub initialHorizon="momentum" />
+// Legacy slug — the momentum book is now Momentum Picks.
+export default function LegacyMomentumRedirect() {
+  redirect('/signals/momentum-picks')
 }

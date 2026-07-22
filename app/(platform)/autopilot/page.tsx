@@ -19,6 +19,7 @@
  */
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
@@ -65,18 +66,18 @@ type Weekly = Awaited<ReturnType<typeof api.autoTrader.weekly>>
 type RebalanceRun = Awaited<ReturnType<typeof api.autoTrader.runs>>[number]
 
 const VIX_BAND_COPY: Record<string, { label: string; color: string }> = {
-  calm:      { label: 'Calm · VIX <15',       color: '#05B878' },
-  normal:    { label: 'Normal · VIX 15-18',   color: '#4FECCD' },
-  elevated:  { label: 'Elevated · VIX 18-22', color: '#FEB113' },
-  high:      { label: 'High · VIX 22-27',     color: '#FF9900' },
-  stressed:  { label: 'Stressed · VIX 27-35', color: '#FF5947' },
-  panic:     { label: 'Panic · VIX >35',      color: '#D63434' },
+  calm:      { label: 'Calm · VIX <15',       color: 'var(--color-up)' },
+  normal:    { label: 'Normal · VIX 15-18',   color: 'var(--color-primary-text)' },
+  elevated:  { label: 'Elevated · VIX 18-22', color: 'var(--color-warning)' },
+  high:      { label: 'High · VIX 22-27',     color: 'var(--color-warning)' },
+  stressed:  { label: 'Stressed · VIX 27-35', color: 'var(--color-down)' },
+  panic:     { label: 'Panic · VIX >35',      color: 'color-mix(in srgb, var(--color-down) 78%, black)' },
 }
 
 const REGIME_COLORS: Record<string, string> = {
-  bull:     '#05B878',
-  sideways: '#FEB113',
-  bear:     '#FF5947',
+  bull:     'var(--color-up)',
+  sideways: 'var(--color-warning)',
+  bear:     'var(--color-down)',
 }
 
 // Theme-aware TEXT tokens (re-derive per theme, WCAG-tuned for light). The
@@ -295,7 +296,7 @@ export default function AutoTraderPage() {
           <div className="flex items-center gap-2">
             <Link
               href="/autopilot/track-record"
-              className="inline-flex items-center gap-1 rounded-md border border-primary/40 bg-primary/10 px-2.5 py-1 text-[11px] font-medium text-primary hover:bg-primary/20"
+              className="glass-control inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium text-primary"
             >
               <Activity className="h-3.5 w-3.5" />
               Track record
@@ -312,9 +313,19 @@ export default function AutoTraderPage() {
           paper→live direction always goes through an explicit confirm;
           live→paper is one click (the safe direction). */}
       {status.mode === 'paper' ? (
-        <div className="rounded-xl border border-primary/40 bg-primary/[0.06] p-4">
+        <div className="rounded-[20px] border border-primary/40 bg-primary/[0.06] p-4">
           <div className="flex flex-wrap items-start gap-3">
-            <div className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-md bg-primary/[0.12]">
+            <div aria-hidden className="tile-tint hidden shrink-0 self-center overflow-hidden p-1 sm:block">
+              <Image
+                src="/v4/illus/autopilot.png"
+                alt=""
+                width={72}
+                height={72}
+                sizes="72px"
+                className="h-[72px] w-[72px] rounded-2xl object-cover"
+              />
+            </div>
+            <div className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-primary/[0.12] sm:hidden">
               <Bot className="w-4 h-4 text-primary" />
             </div>
             <div className="min-w-0 flex-1">
@@ -334,7 +345,7 @@ export default function AutoTraderPage() {
               <button
                 onClick={onToggle}
                 disabled={toggling}
-                className="inline-flex items-center gap-2 self-center rounded-md bg-primary px-4 py-2 text-[12px] font-semibold text-primary-foreground transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+                className="glass-control-accent inline-flex items-center gap-2 self-center rounded-full px-5 py-2 text-[12px] font-semibold transition-opacity hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <PlayCircle className="w-4 h-4" />
                 {toggling ? 'Starting…' : 'Start the bot (practice)'}
@@ -344,7 +355,7 @@ export default function AutoTraderPage() {
                 onClick={() => setGoLiveOpen(true)}
                 disabled={!status.broker_connected || toggling}
                 title={!status.broker_connected ? 'Connect a broker first' : undefined}
-                className="inline-flex items-center gap-2 self-center rounded-md border border-primary/40 bg-primary/10 px-4 py-2 text-[12px] font-semibold text-primary transition-colors hover:bg-primary/20 disabled:cursor-not-allowed disabled:opacity-60"
+                className="glass-control inline-flex items-center gap-2 self-center rounded-full px-4 py-2 text-[12px] font-semibold text-primary transition-colors disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <PlayCircle className="w-4 h-4" />
                 {status.broker_connected ? 'Go live (Pro)' : 'Connect broker to go live'}
@@ -353,7 +364,7 @@ export default function AutoTraderPage() {
           </div>
         </div>
       ) : (
-        <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-d-border bg-wrap px-4 py-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-[20px] border border-d-border bg-wrap px-4 py-3">
           <p className="text-[12px] text-d-text-muted">
             <span className="font-medium text-d-text-primary">Live mode.</span> Orders
             fire on your connected broker account, inside your plan limits.
@@ -369,7 +380,7 @@ export default function AutoTraderPage() {
       )}
 
       {/* ── 1. Status strip ── */}
-      <section className="grid grid-cols-2 md:grid-cols-5 divide-x divide-d-border rounded-xl border border-d-border bg-wrap overflow-hidden">
+      <section className="grid grid-cols-2 gap-2 rounded-[20px] border border-d-border bg-wrap p-2 md:grid-cols-5">
         <Cell label="Broker" value={status.broker_connected ? (status.broker_name || '-') : 'Not connected'}
               accentClass={status.broker_connected ? 'text-up' : 'text-down'}
               sub={status.broker_connected ? 'Live' : 'Connect to trade'} />
@@ -395,8 +406,8 @@ export default function AutoTraderPage() {
               <div
                 className="w-10 h-10 rounded-md flex items-center justify-center"
                 style={{
-                  background: `${REGIME_COLORS[status.regime.name] || '#4FECCD'}18`,
-                  border: `1px solid ${REGIME_COLORS[status.regime.name] || '#4FECCD'}35`,
+                  background: `color-mix(in srgb, ${REGIME_COLORS[status.regime.name] || 'var(--color-primary)'} 9%, transparent)`,
+                  border: `1px solid color-mix(in srgb, ${REGIME_COLORS[status.regime.name] || 'var(--color-primary)'} 21%, transparent)`,
                 }}
               >
                 <Gauge className={`w-5 h-5 ${REGIME_TEXT[status.regime.name] || 'text-signature'}`} />
@@ -434,7 +445,7 @@ export default function AutoTraderPage() {
                 className="h-full"
                 style={{
                   width: `${status.equity_scaler_pct}%`,
-                  background: band?.color || '#4FECCD',
+                  background: band?.color || 'var(--color-primary)',
                 }}
               />
             </div>
@@ -444,7 +455,7 @@ export default function AutoTraderPage() {
 
       {/* ── 2. Config card ── */}
       {draftCfg && (
-        <section className="rounded-xl border border-d-border bg-wrap p-5">
+        <section className="rounded-[20px] border border-d-border bg-wrap p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-[14px] font-semibold text-d-text-primary flex items-center gap-2">
               <Settings2 className="w-4 h-4 text-primary" />
@@ -454,7 +465,7 @@ export default function AutoTraderPage() {
               <button
                 onClick={onSaveConfig}
                 disabled={savingCfg}
-                className="px-4 py-1.5 bg-primary text-primary-foreground rounded-md text-[12px] font-semibold hover:bg-primary-hover disabled:opacity-60"
+                className="glass-control-accent px-4 py-1.5 rounded-full text-[12px] font-semibold active:scale-[0.98] disabled:opacity-60"
               >
                 {savingCfg ? 'Saving…' : 'Save changes'}
               </button>
@@ -469,10 +480,10 @@ export default function AutoTraderPage() {
                 <button
                   key={p}
                   onClick={() => setDraftCfg({ ...draftCfg, risk_profile: p })}
-                  className={`px-3 py-2 rounded-md text-[12px] font-medium border transition-colors ${
+                  className={`px-3 py-2 rounded-full text-[12px] font-medium transition-colors ${
                     draftCfg.risk_profile === p
-                      ? 'bg-primary/10 border-primary/50 text-primary'
-                      : 'bg-main border-d-border text-d-text-secondary hover:border-d-border-hover'
+                      ? 'glass-control-accent'
+                      : 'glass-control text-d-text-secondary'
                   }`}
                 >
                   <span className="capitalize">{p}</span>
@@ -530,7 +541,7 @@ export default function AutoTraderPage() {
 
       {/* ── Weekly summary ── */}
       {weekly && weekly.trades_closed > 0 && (
-        <section className="rounded-xl border border-d-border bg-wrap p-5">
+        <section className="rounded-[20px] border border-d-border bg-wrap p-5">
           <h2 className="text-[14px] font-semibold text-d-text-primary mb-3 flex items-center gap-2">
             <Zap className="w-4 h-4 text-primary" />
             Last 7 days
@@ -560,7 +571,7 @@ export default function AutoTraderPage() {
       {/* ── PR 69 — Rebalance log: every tick the engine fires, even
               when no trade results. Empty by default until the F4
               FinRL-X scheduler job lands. ── */}
-      <section className="rounded-xl border border-d-border bg-wrap overflow-hidden">
+      <section className="rounded-[20px] border border-d-border bg-wrap overflow-hidden">
         <div className="px-5 py-3 border-b border-d-border flex items-center justify-between">
           <h2 className="text-[14px] font-semibold text-d-text-primary">Rebalance log · last 10 ticks</h2>
           <span className="text-[10px] uppercase tracking-wider text-d-text-muted">
@@ -584,7 +595,7 @@ export default function AutoTraderPage() {
 
       {/* ── PR 133 — Today's plan + overlay diagnostics ── */}
       {todayPlan && todayPlan.ran_at && (
-        <section className="rounded-xl border border-d-border bg-wrap overflow-hidden">
+        <section className="rounded-[20px] border border-d-border bg-wrap overflow-hidden">
           <div className="px-5 py-3 border-b border-d-border flex items-center justify-between">
             <h2 className="text-[14px] font-semibold text-d-text-primary">
               Today&rsquo;s plan
@@ -643,7 +654,7 @@ export default function AutoTraderPage() {
       )}
 
       {/* ── 3. Recent trades ── */}
-      <section className="rounded-xl border border-d-border bg-wrap overflow-hidden">
+      <section className="rounded-[20px] border border-d-border bg-wrap overflow-hidden">
         <div className="px-5 py-3 border-b border-d-border flex items-center justify-between">
           <h2 className="text-[14px] font-semibold text-d-text-primary">What AutoPilot did · last 7 days</h2>
           <Link href="/trades" className="text-[11px] text-primary hover:underline">Full journal →</Link>
@@ -668,7 +679,7 @@ export default function AutoTraderPage() {
       </section>
 
       {/* ── 4. Emergency controls ── */}
-      <section className="rounded-xl border border-down/35 bg-down/[0.06] p-5">
+      <section className="rounded-[20px] border border-down/35 bg-down/[0.06] p-5">
         <div className="flex items-start gap-4">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-down/35 bg-down/15">
             <AlertTriangle className="w-5 h-5 text-down" />
@@ -688,10 +699,10 @@ export default function AutoTraderPage() {
                     ? 'Live mode needs a connected broker. Or switch to practice mode above.'
                     : undefined
                 }
-                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-md text-[12px] font-semibold transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${
+                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-[12px] font-semibold transition-colors active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed ${
                   active
-                    ? 'bg-orange/[0.12] border border-orange/45 text-orange hover:bg-orange/[0.18]'
-                    : 'bg-primary text-primary-foreground hover:bg-primary-hover'
+                    ? 'glass-control text-orange'
+                    : 'glass-control-accent'
                 }`}
               >
                 {active ? <PauseCircle className="w-4 h-4" /> : <PlayCircle className="w-4 h-4" />}
@@ -708,7 +719,7 @@ export default function AutoTraderPage() {
               <button
                 onClick={() => setKillConfirmOpen(true)}
                 disabled={killing || status.open_positions === 0}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md text-[12px] font-semibold bg-down/10 border border-down/40 text-down hover:bg-down/20 disabled:opacity-60"
+                className="glass-control-danger text-down inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-[12px] font-semibold disabled:opacity-60"
               >
                 <Power className="w-4 h-4" />
                 {killing ? '…' : 'Kill switch: close ALL positions'}
@@ -831,7 +842,7 @@ function Cell({
   accentClass?: string
 }) {
   return (
-    <div className="px-4 py-3">
+    <div className="tile-tint px-4 py-3">
       <p className="text-[10px] uppercase tracking-wider text-d-text-muted mb-1">{label}</p>
       <p
         className={`numeric text-[16px] font-semibold ${accentClass || 'text-d-text-primary'}`}
@@ -854,7 +865,7 @@ function Panel({
   children: React.ReactNode
 }) {
   return (
-    <div className="rounded-xl border border-d-border bg-wrap p-5">
+    <div className="rounded-[20px] border border-d-border bg-wrap p-5">
       <p className="text-[10px] uppercase tracking-wider text-d-text-muted mb-3 flex items-center gap-1.5">
         <Icon className="w-3 h-3" />
         {title}
@@ -935,7 +946,7 @@ function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void 
 
 function Stat({ label, value, accentClass }: { label: string; value: string; accentClass?: string }) {
   return (
-    <div className="rounded-md bg-main border border-d-border px-3 py-2">
+    <div className="tile-tint px-3 py-2">
       <p className="text-[9px] uppercase tracking-wider text-d-text-muted">{label}</p>
       <p className={`numeric text-[15px] font-semibold mt-0.5 ${accentClass || 'text-d-text-primary'}`}>
         {value}
@@ -953,8 +964,8 @@ function RebalanceRow({ r }: { r: RebalanceRun }) {
       return `${d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })} ${d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}`
     } catch { return r.ran_at }
   })()
-  const regimeColor = r.regime ? REGIME_COLORS[r.regime] : '#8e8e8e'
-  const bandColor = r.vix_band && VIX_BAND_COPY[r.vix_band] ? VIX_BAND_COPY[r.vix_band].color : '#8e8e8e'
+  const regimeColor = r.regime ? REGIME_COLORS[r.regime] : 'var(--color-muted)'
+  const bandColor = r.vix_band && VIX_BAND_COPY[r.vix_band] ? VIX_BAND_COPY[r.vix_band].color : 'var(--color-muted)'
   return (
     <div className="px-5 py-3 hover:bg-hover transition-colors">
       <div className="flex items-center gap-4">
@@ -964,7 +975,7 @@ function RebalanceRow({ r }: { r: RebalanceRun }) {
             {r.regime && (
               <span
                 className={`text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded border capitalize ${REGIME_TEXT[r.regime] || 'text-d-text-muted'}`}
-                style={{ borderColor: `${regimeColor}55`, background: `${regimeColor}14` }}
+                style={{ borderColor: `color-mix(in srgb, ${regimeColor} 33%, transparent)`, background: `color-mix(in srgb, ${regimeColor} 8%, transparent)` }}
               >
                 {r.regime}
               </span>
@@ -972,7 +983,7 @@ function RebalanceRow({ r }: { r: RebalanceRun }) {
             {r.vix_band && (
               <span
                 className={`text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded border capitalize ${VIX_BAND_TEXT[r.vix_band] || 'text-d-text-muted'}`}
-                style={{ borderColor: `${bandColor}55`, background: `${bandColor}14` }}
+                style={{ borderColor: `color-mix(in srgb, ${bandColor} 33%, transparent)`, background: `color-mix(in srgb, ${bandColor} 8%, transparent)` }}
               >
                 {r.vix_band} · {r.equity_scaler_pct ?? '-'}%
               </span>

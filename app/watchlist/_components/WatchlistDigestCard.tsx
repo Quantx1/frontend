@@ -59,13 +59,13 @@ export default function WatchlistDigestCard() {
     setLlm('done')
   }
 
-  if (state === 'loading') return <div className="rounded-lg border border-line bg-wrap h-[140px] animate-pulse" />
+  if (state === 'loading') return <div className="rounded-[20px] border border-line bg-wrap h-[140px] animate-pulse" />
   if (state === 'empty') return null
 
   const withBullets = items.filter((it) => it.bullets.length > 0)
 
   return (
-    <div className="rounded-lg border border-line bg-wrap overflow-hidden">
+    <div className="rounded-[20px] border border-line bg-wrap overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-line">
         <span className="flex items-center gap-2 text-[12px] font-semibold text-d-text-primary">
           <Sparkles className="w-3.5 h-3.5 text-primary" /> Daily Digest

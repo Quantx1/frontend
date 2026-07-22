@@ -45,7 +45,7 @@ function StatCard({
     green: 'from-up/20 to-up/5 text-up',
     red: 'from-down/20 to-down/5 text-down',
     orange: 'from-warning/20 to-warning/5 text-warning',
-    purple: 'from-purple-500/20 to-purple-500/5 text-purple-500',
+    purple: 'from-ai/20 to-ai/5 text-ai',
   }
 
   const iconBg = {
@@ -53,7 +53,7 @@ function StatCard({
     green: 'bg-up/10 border-up/20',
     red: 'bg-down/10 border-down/20',
     orange: 'bg-warning/10 border-warning/20',
-    purple: 'bg-purple-500/10 border-purple-500/20',
+    purple: 'bg-ai/10 border-ai/20',
   }
 
   return (
@@ -215,9 +215,9 @@ export default function AdminDashboard() {
                     className="text-[10px] font-mono num-display mt-0.5"
                     style={{
                       color:
-                        health.db_latency_ms > 500 ? '#FF5947'
-                        : health.db_latency_ms > 200 ? '#FEB113'
-                        : '#71717a',
+                        health.db_latency_ms > 500 ? 'var(--color-down)'
+                        : health.db_latency_ms > 200 ? 'var(--color-warning)'
+                        : 'var(--color-muted)',
                     }}
                   >
                     {health.db_latency_ms}ms
@@ -226,8 +226,8 @@ export default function AdminDashboard() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20">
-                <Server className="w-5 h-5 text-purple-500" />
+              <div className="p-2 rounded-lg bg-ai/10 border border-ai/20">
+                <Server className="w-5 h-5 text-ai" />
               </div>
               <div>
                 <p className="text-sm text-d-text-muted">Redis</p>
@@ -237,9 +237,9 @@ export default function AdminDashboard() {
                     className="text-[10px] font-mono num-display mt-0.5"
                     style={{
                       color:
-                        health.redis_latency_ms > 200 ? '#FF5947'
-                        : health.redis_latency_ms > 50 ? '#FEB113'
-                        : '#71717a',
+                        health.redis_latency_ms > 200 ? 'var(--color-down)'
+                        : health.redis_latency_ms > 50 ? 'var(--color-warning)'
+                        : 'var(--color-muted)',
                     }}
                   >
                     {health.redis_latency_ms}ms
@@ -356,7 +356,7 @@ export default function AdminDashboard() {
           {/* Signal Performance Card */}
           <div className="glass-card hover:border-primary transition-colors p-6">
             <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <Target className="w-5 h-5 text-purple-500" />
+              <Target className="w-5 h-5 text-ai" />
               Signal Performance (30 days)
             </h2>
             <div className="space-y-4">
@@ -418,7 +418,7 @@ export default function AdminDashboard() {
             </a>
             <a
               href="/admin/signals"
-              className="px-4 py-2 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 rounded-lg text-purple-500 text-sm font-medium transition-all"
+              className="px-4 py-2 bg-ai/10 hover:bg-ai/20 border border-ai/20 rounded-lg text-ai text-sm font-medium transition-all"
             >
               Signal Analytics
             </a>

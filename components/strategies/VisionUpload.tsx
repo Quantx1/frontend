@@ -124,7 +124,7 @@ export default function VisionUpload({ onPromptReady }: Props) {
         <button
           type="button"
           onClick={() => fileRef.current?.click()}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-line px-3 py-2 text-[13px] text-d-text-secondary transition-colors hover:text-d-text-primary"
+          className="glass-control inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-[13px] text-d-text-secondary transition-colors hover:text-d-text-primary"
         >
           <ScanLine className="h-3.5 w-3.5" aria-hidden="true" />
           Choose chart image
@@ -138,7 +138,7 @@ export default function VisionUpload({ onPromptReady }: Props) {
           type="button"
           onClick={onRead}
           disabled={!canRead}
-          className="bg-gradient-cta ml-auto inline-flex h-9 items-center gap-1.5 rounded-pill px-4 text-[13px] font-semibold text-on-signature transition-transform active:scale-[0.97] disabled:opacity-50"
+          className="glass-control-accent ml-auto inline-flex h-9 items-center gap-1.5 rounded-pill px-4 text-[13px] font-semibold transition-transform active:scale-[0.97] disabled:opacity-50"
         >
           {loading ? (
             <>

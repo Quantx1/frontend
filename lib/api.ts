@@ -656,12 +656,6 @@ export const api = {
       }),
     getById: (signalId: string) => request<Signal>(`/api/signals/${signalId}`),
     // PR 50 — F1 intraday signals (last 60 min by default)
-    getIntraday: (windowMinutes = 60) =>
-      request<{
-        window_minutes: number
-        total: number
-        signals: Signal[]
-      }>('/api/signals/intraday', { query: { window_minutes: windowMinutes } }),
     // 4-engine ML/DL — momentum style engine (cross-section ranked book)
     getMomentum: (topN = 50) =>
       request<StyleSignalsResponse>('/api/signals/momentum', { query: { top_n: topN } }),
@@ -882,7 +876,70 @@ export const api = {
         items: Array<{ key: string; label: string; last: number | null; change_pct: number | null }>
         source: string
       }>('/api/market/global', { auth: false }),
-    // Live market-moving news (Indian + global) from free keyless RSS feeds (public).
+    // FII/DII EOD provisional daily net (cash) + 5-session trend. PUBLIC EOD
+    // market statistics (₹ Cr), labelled provisional — NOT a live intraday feed.
+    fiiDiiEod: () =>
+      request<{
+        date: string | null
+        provisional: boolean
+        fii: { cash_net: number | null; fno_net: number | null }
+        dii: { cash_net: number | null }
+        trend: Array<{ date: string; fii_cash: number; dii_cash: number }>
+        source: string
+      }>('/api/market/fii-dii', { auth: false }),
+    // AI Daily Market Briefing — pre-market read + post-market wrap. Public;
+    // built entirely from SAFE data (global cues + EOD/derived India context +
+    // FII/DII EOD + events) + one cached daily narrative. session=auto resolves
+    // premarket|intraday|postmarket from the IST clock. Sections differ by
+    // session (premarket: global/flows/india/events/plan; postmarket:
+    // tape/sectors/flows/movers/tomorrow/wrap) — honest-empty per section.
+    briefing: (session: 'auto' | 'premarket' | 'postmarket' = 'auto') =>
+      request<{
+        session: 'premarket' | 'intraday' | 'postmarket'
+        generated_at: string
+        trading_date: string
+        headline: string
+        // premarket / intraday sections
+        global?: {
+          items: Array<{ key: string; label: string; last: number | null; change_pct: number | null }>
+          gift_nifty: { key: string; label: string; last: number | null; change_pct: number | null } | null
+          gap_read: string | null
+          source: string
+        }
+        flows?: {
+          date: string | null
+          provisional: boolean
+          fii: { cash_net: number | null; fno_net: number | null }
+          dii: { cash_net: number | null }
+          trend: Array<{ date: string; fii_cash: number; dii_cash: number }>
+          source: string
+        }
+        india?: {
+          regime: string | null
+          vix: number | null
+          eod?: { nifty?: { label: string; prev_close: number }; banknifty?: { label: string; prev_close: number } }
+          breadth: { adv: number | null; dec: number | null; adv_pct: number | null } | null
+          sectors: { leading: string[]; lagging: string[] } | null
+          note: string
+        }
+        events?: { items: Array<{ type: string; label: string; date: string }>; expiry: { weekly: string | null; monthly: string | null } }
+        plan?: { narrative: string | null; drivers: string[]; disclaimer: string }
+        // postmarket sections
+        tape?: {
+          nifty: { ltp: number | null; change_pct: number | null } | null
+          vix: number | null
+          breadth: { adv: number | null; dec: number | null; adv_pct: number | null } | null
+          note: string
+        }
+        sectors?: { leading: string[]; lagging: string[] } | null
+        movers?: { items: Array<{ symbol: string; change_pct: number | null; driver?: string | null }> }
+        tomorrow?: { items: Array<{ type: string; label: string; date: string }>; expiry: { weekly: string | null; monthly: string | null } }
+        gameplan?: { bullets: string[]; note?: string }
+        wrap?: { narrative: string | null; drivers: string[]; disclaimer: string }
+      }>('/api/market/briefing', { query: { session }, auth: false }),
+    // Live market-MOVING news (Indian + global) from free keyless RSS feeds
+    // (public). Every item carries a real image; `impact` scores how much the
+    // headline could move the tape and `is_big` flags a genuine market-mover.
     news: () =>
       request<{
         items: Array<{
@@ -893,9 +950,22 @@ export const api = {
           region: string
           link: string
           published: string | null
+          impact?: number
+          is_big?: boolean
         }>
         source: string
       }>('/api/market/news', { auth: false }),
+    // Big bulk/block deals + upcoming corporate actions — NSE EOD-PUBLISHED
+    // disclosure reports (public, labelled; same SEBI lane as fii-dii).
+    deals: () =>
+      request<{
+        label: string
+        deals: Array<{
+          date: string; symbol: string; client: string; side: 'BUY' | 'SELL' | string
+          qty: number; price: number; value_cr: number; type: 'bulk' | 'block' | string
+        }>
+        corporate_actions: Array<{ symbol: string; subject: string; ex_date: string | null }>
+      }>('/api/market/deals', { auth: false }),
     getOHLC: (symbol: string, interval = '1d', days = 30) =>
       request<Record<string, any>>(`/api/market/ohlc/${symbol}`, {
         query: { interval, days },
@@ -1365,6 +1435,32 @@ export const api = {
   },
 
   // PR 28 — Auto-trader (F4 Elite) dashboard
+  autopilotStreams: {
+    // Per-stream AutoPilot toggles (swing / momentum / portfolio / options
+    // + user strategies) with capital % allocation summing ≤ 100.
+    list: () =>
+      request<{
+        streams: Array<{
+          stream: string
+          user_strategy_id: string | null
+          enabled: boolean
+          allocated_capital_pct: number
+          is_prod: boolean
+          last_enabled_at: string | null
+          last_disabled_at: string | null
+        }>
+        total_allocated_pct: number
+        tier: string
+        tier_allows_autopilot: boolean
+        builtin_streams: string[]
+      }>('/api/autopilot/streams'),
+    update: (stream: string, body: { enabled: boolean; allocated_capital_pct: number; user_strategy_id?: string }) =>
+      request<{ ok: boolean }>(`/api/autopilot/streams/${encodeURIComponent(stream)}`, {
+        method: 'PATCH',
+        body,
+      }),
+  },
+
   autoTrader: {
     status: () =>
       request<{
@@ -2836,6 +2932,68 @@ export const api = {
         ratio: number | null
         ad_line: Array<{ date: string; ad_line: number }>
       }>('/api/screener/breadth', { query: { days }, auth: false }),
+    // Movers with WHY — EOD movers annotated with their probable cause
+    // (freshest multi-source headline, or an honest "no identifiable news").
+    moversWhy: () =>
+      request<{
+        success: boolean
+        note: string
+        items: Array<{
+          symbol: string; change_pct: number | null
+          driver: string; source: string | null; link: string | null; has_news: boolean
+        }>
+      }>('/api/screener/movers-why', { auth: false }),
+    // Market Pulse — EOD-derived internals for the daily desk: %-above-DMA
+    // breadth + 52w highs/lows + composite Breadth Score, NIFTY HV vs VIX,
+    // FII/DII streaks, and the "what changed vs yesterday" diff chips.
+    marketPulse: () =>
+      request<{
+        success: boolean
+        label: string
+        breadth: {
+          as_of: string
+          coverage: { symbols: number; fresh_today: number }
+          pct_above_20dma: number | null
+          pct_above_50dma: number | null
+          pct_above_200dma: number | null
+          adv: number; dec: number; ad_pct: number | null
+          new_highs: number; new_lows: number
+          score: number | null; band: string | null
+        } | null
+        vol: {
+          hv: Record<string, number> | null
+          latest_hv?: number
+          vix: number | null; vix_prev: number | null
+          vix_vs_hv20?: number
+          read: string | null
+        } | null
+        flows: {
+          fii: { side: string; days: number; cum_cr: number } | null
+          dii: { side: string; days: number; cum_cr: number } | null
+          last_date: string | null
+        } | null
+        positioning: {
+          date: string; long: number; short: number; net: number
+          long_share_pct: number; net_prev?: number; net_delta?: number; label: string
+        } | null
+        delivery: {
+          market_avg_delivery_pct: number | null
+          accumulation_count: number
+          spikes: Array<{ symbol: string; delivery_pct: number; avg_30d: number; change_pct: number }>
+          note: string
+        } | null
+        valuation: {
+          as_of: string
+          nifty50_median_pe: number | null
+          nifty500_median_pe: number | null
+          market_median_pe: number | null
+          pct_above_50x: number
+          pct_below_15x: number
+          coverage: number
+          label: string
+        } | null
+        diff: Array<{ metric: string; delta: number; label: string; detail: string }>
+      }>('/api/screener/market-pulse', { auth: false }),
     // Smart Alerts — conditions firing right now (volume 3x / OI 15% / 20d breakout / IV>=80).
     liveAlerts: (limit = 60) =>
       request<{
@@ -3287,6 +3445,16 @@ export const api = {
         query: { symbols: symbols.join(',') },
         auth: false,
       }),
+    // Settled EOD closes from the candle store — SEBI-safe batch fallback so
+    // the stocks board stays populated (labelled) when live quotes are gated.
+    getEodPrices: (symbols: string[]) =>
+      request<{
+        success: boolean; label: string
+        prices: Array<{ symbol: string; price: number; prev_close: number | null; change: number | null; change_percent: number | null; volume: number; as_of: string | null }>
+      }>('/api/screener/prices/eod', {
+        query: { symbols: symbols.join(',') },
+        auth: false,
+      }),
     getStockPrice: (symbol: string) =>
       request<Record<string, any>>(`/api/screener/prices/${symbol}`, { auth: false }),
     // Probability Engine — empirical setup follow-through rates from history.
@@ -3316,21 +3484,63 @@ export const api = {
         indicators: Array<{ indicator: string; value: number | null; signal: string; read: string }>
         narrative: string | null
       }>(`/api/screener/interpret/${encodeURIComponent(symbol)}`, { query: { use_llm: useLlm }, auth: false }),
-    // Volume Intelligence — spike + percentile + delivery trend + signal.
+    // Volume Intelligence — spike + percentile + delivery trend + signal
+    // + the last-20-session volume series for the card's bar sparkline.
     volumeIntel: (symbol: string, useLlm = false) =>
       request<{
         success: boolean; symbol: string; signal: string
         x_avg: number | null; vol_percentile: number | null
         today_volume: number | null; avg_volume_20d: number | null
         delivery_today: number | null; avg_delivery: number | null; delivery_trend: number | null
+        series: number[]
         drivers: string[]; narrative: string | null
       }>(`/api/screener/volume-intel/${encodeURIComponent(symbol)}`, { query: { use_llm: useLlm }, auth: false }),
-    // True relative strength vs NIFTY (multi-window).
+    // True relative strength vs NIFTY (multi-window) + RS ratio line + streak.
     relativeStrength: (symbol: string) =>
       request<{
         success: boolean; symbol: string; benchmark: string; outperforming: boolean
         rs_20d: number | null; rs_50d: number | null; rs_120d: number | null
+        ratio_line: number[]; streak_20d: number | null
       }>(`/api/screener/rs/${encodeURIComponent(symbol)}`, { auth: false }),
+    // Technical Panel — full oscillator/MA suite + votes + pivots + S/R + fib
+    // + 52w + ATR + candle patterns + tallied technical sentiment. EOD, day-cached.
+    technicalPanel: (symbol: string) =>
+      request<{
+        success: boolean; symbol: string; available: boolean; as_of?: string; price?: number
+        summary?: {
+          oscillators: { bullish: number; bearish: number; neutral: number; label: string }
+          moving_averages: { bullish: number; bearish: number; neutral: number; label: string }
+          overall: { bullish: number; bearish: number; neutral: number; label: string }
+        }
+        oscillators?: Array<{ key: string; label: string; value: number; vote: string; read: string }>
+        moving_averages?: Array<{ key: string; label: string; value: number; vote: string; dist_pct: number }>
+        pivots?: { p: number; r1: number; s1: number; r2: number; s2: number; r3: number; s3: number }
+        cpr?: { tc: number | null; p: number | null; bc: number | null; narrow: boolean | null }
+        supports?: Array<{ price: number; touches: number; dist_pct: number }>
+        resistances?: Array<{ price: number; touches: number; dist_pct: number }>
+        fibonacci?: { trend: string; swing_high: number; swing_low: number; levels: Record<string, number> } | null
+        week52?: { high: number | null; low: number | null }
+        atr?: { value: number | null; pct: number | null }
+        candle_patterns?: string[]
+        golden_cross?: boolean | null
+        note?: string
+      }>(`/api/screener/technical-panel/${encodeURIComponent(symbol)}`, { auth: false }),
+    // Forecast read — base rates + structure + event risk, optional AI framing.
+    forecastRead: (symbol: string, useLlm = false) =>
+      request<{
+        success: boolean; symbol: string
+        facts: Record<string, any>
+        narrative: string | null
+      }>(`/api/screener/forecast-read/${encodeURIComponent(symbol)}`, { query: { use_llm: useLlm }, auth: false }),
+    // Sentiment read — technical + news + market layers, optional AI fusion.
+    sentimentRead: (symbol: string, useLlm = false) =>
+      request<{
+        success: boolean; symbol: string
+        technical?: { summary: { bullish: number; bearish: number; neutral: number; label: string } }
+        news?: { mood_score: number; label: string; headline_count: number | null; as_of: string | null }
+        market?: { regime: string | null; confidence: number | null }
+        narrative: string | null
+      }>(`/api/screener/sentiment-read/${encodeURIComponent(symbol)}`, { query: { use_llm: useLlm }, auth: false }),
     // News Intelligence — multi-source, deduped, event-typed, materiality-weighted.
     newsIntelligence: (
       symbol: string,
@@ -3356,6 +3566,20 @@ export const api = {
           ...(opts?.narrative ? { use_narrative: true } : {}),
           ...(opts?.direction ? { direction: opts.direction } : {}),
         },
+      }),
+    // AI Trade Desk — per-symbol deep-reasoning synthesis (stock-page hero).
+    // Facts + drivers free on every call; narrative only when generate=true
+    // (deep-reasoning tier, cached per symbol/day).
+    deepRead: (symbol: string, generate = false) =>
+      request<{
+        success: boolean; symbol: string
+        facts: Record<string, any>
+        drivers: string[]
+        narrative: string | null
+        generated: boolean; from_cache: boolean
+        note: string
+      }>(`/api/screener/deep-read/${encodeURIComponent(symbol)}`, {
+        query: { generate }, auth: false,
       }),
     // Fusion Verdict — one fused, explainable per-symbol setup verdict.
     verdict: (symbol: string, useLlm = false) =>
@@ -3452,6 +3676,13 @@ export const api = {
 
   // PR 19 — paper trading v2 endpoints
   paper: {
+    // Place a paper BUY/SELL at live market price — same executor the
+    // strategy runner uses (services/execution/paper_executor).
+    placeOrder: (body: { symbol: string; action: 'BUY' | 'SELL'; quantity: number }) =>
+      request<{ ok: boolean; symbol: string; action: string; quantity: number; price: number }>(
+        '/api/paper/order',
+        { method: 'POST', body },
+      ),
     getEquityCurve: (days = 90) =>
       request<{
         days: number

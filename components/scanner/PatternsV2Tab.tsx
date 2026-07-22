@@ -366,10 +366,10 @@ export default function PatternsV2Tab() {
               key={u.value}
               type="button"
               onClick={() => setUniverse(u.value)}
-              className={`rounded-md border px-2 py-1 text-[11px] ${
+              className={`rounded-md px-2 py-1 text-[11px] ${
                 universe === u.value
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-line bg-main text-d-text-secondary hover:text-d-text-primary'
+                  ? 'glass-control-accent'
+                  : 'glass-control text-d-text-secondary hover:text-d-text-primary'
               }`}
             >
               {u.label}
@@ -385,10 +385,10 @@ export default function PatternsV2Tab() {
               key={t.value}
               type="button"
               onClick={() => setTimeframe(t.value)}
-              className={`rounded-md border px-2 py-1 text-[11px] ${
+              className={`rounded-md px-2 py-1 text-[11px] ${
                 timeframe === t.value
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-line bg-main text-d-text-secondary hover:text-d-text-primary'
+                  ? 'glass-control-accent'
+                  : 'glass-control text-d-text-secondary hover:text-d-text-primary'
               }`}
             >
               {t.label}
@@ -404,10 +404,10 @@ export default function PatternsV2Tab() {
               key={d.label}
               type="button"
               onClick={() => setDirection(d.value)}
-              className={`rounded-md border px-2 py-1 text-[11px] ${
+              className={`rounded-md px-2 py-1 text-[11px] ${
                 direction === d.value
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-line bg-main text-d-text-secondary hover:text-d-text-primary'
+                  ? 'glass-control-accent'
+                  : 'glass-control text-d-text-secondary hover:text-d-text-primary'
               }`}
             >
               {d.label}
@@ -440,10 +440,10 @@ export default function PatternsV2Tab() {
           <button
             type="button"
             onClick={() => setSelectedSectors([])}
-            className={`rounded-full border px-2.5 py-0.5 text-[11px] ${
+            className={`rounded-full px-2.5 py-0.5 text-[11px] ${
               selectedSectors.length === 0
-                ? 'border-primary bg-primary/10 text-primary'
-                : 'border-line bg-main text-d-text-secondary hover:text-d-text-primary'
+                ? 'glass-control-accent'
+                : 'glass-control text-d-text-secondary hover:text-d-text-primary'
             }`}
           >
             All ({sectorsData.tagged_count})
@@ -461,10 +461,10 @@ export default function PatternsV2Tab() {
                       : [...cur, s.sector],
                   )
                 }}
-                className={`rounded-full border px-2.5 py-0.5 text-[11px] transition-colors ${
+                className={`rounded-full px-2.5 py-0.5 text-[11px] transition-colors ${
                   active
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-line bg-main text-d-text-secondary hover:text-d-text-primary'
+                    ? 'glass-control-accent'
+                    : 'glass-control text-d-text-secondary hover:text-d-text-primary'
                 }`}
               >
                 {s.sector} <span className="font-mono text-[10px] opacity-70">({s.count})</span>

@@ -106,10 +106,10 @@ export default function PayoffCalculator() {
                 key={s}
                 type="button"
                 onClick={() => onSymbolChange(s as keyof typeof SYMBOL_DEFAULTS)}
-                className={`rounded-md border px-2 py-1 text-[11px] ${
+                className={`rounded-md px-2 py-1 text-[11px] ${
                   symbol === s
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-line bg-main text-d-text-secondary hover:text-d-text-primary'
+                    ? 'glass-control-accent'
+                    : 'glass-control text-d-text-secondary hover:text-d-text-primary'
                 }`}
               >
                 {s}
@@ -249,7 +249,7 @@ export default function PayoffCalculator() {
               <button
                 type="button"
                 onClick={() => { setSpotShiftPct(0); setIvMult(1.0) }}
-                className="rounded-md border border-line bg-main px-2 py-1 text-[10px] text-d-text-secondary hover:text-d-text-primary"
+                className="glass-control rounded-md px-2 py-1 text-[10px] text-d-text-secondary hover:text-d-text-primary"
               >
                 Reset scenario
               </button>

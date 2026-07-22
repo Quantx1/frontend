@@ -59,9 +59,9 @@ export default function ManualOperationsPanel() {
         <div
           className="mt-4 px-4 py-3 rounded-lg border text-sm"
           style={{
-            borderColor: lastResult.ok ? 'rgba(5,184,120,0.30)' : 'rgba(255,89,71,0.30)',
-            background: lastResult.ok ? 'rgba(5,184,120,0.06)' : 'rgba(255,89,71,0.06)',
-            color: lastResult.ok ? '#05B878' : '#FF5947',
+            borderColor: lastResult.ok ? 'color-mix(in srgb, var(--color-up) 30%, transparent)' : 'color-mix(in srgb, var(--color-down) 30%, transparent)',
+            background: lastResult.ok ? 'color-mix(in srgb, var(--color-up) 6%, transparent)' : 'color-mix(in srgb, var(--color-down) 6%, transparent)',
+            color: lastResult.ok ? 'var(--color-up)' : 'var(--color-down)',
           }}
         >
           <div className="flex items-center justify-between gap-3">

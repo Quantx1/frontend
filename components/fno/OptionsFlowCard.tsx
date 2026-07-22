@@ -74,10 +74,10 @@ export default function OptionsFlowCard() {
               key={idx}
               type="button"
               onClick={() => setSymbol(idx)}
-              className={`rounded-md border px-3 py-1 text-[11px] font-medium transition-colors ${
+              className={`rounded-md px-3 py-1 text-[11px] font-medium transition-colors ${
                 active
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-line bg-main text-d-text-secondary hover:text-d-text-primary'
+                  ? 'glass-control-accent'
+                  : 'glass-control text-d-text-secondary hover:text-d-text-primary'
               }`}
             >
               {idx}
@@ -88,7 +88,7 @@ export default function OptionsFlowCard() {
           type="button"
           onClick={() => mutate()}
           aria-label="Refresh"
-          className="ml-auto rounded-md border border-line bg-main p-1.5 text-d-text-muted transition-colors hover:text-d-text-primary"
+          className="glass-control ml-auto rounded-md p-1.5 text-d-text-muted transition-colors hover:text-d-text-primary"
         >
           <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`} />
         </button>

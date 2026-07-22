@@ -148,21 +148,21 @@ export function BacktestViewer({ result }: Props) {
               >
                 <defs>
                   <linearGradient id="bt-equity-grad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#05B878" stopOpacity={0.4} />
-                    <stop offset="100%" stopColor="#05B878" stopOpacity={0} />
+                    <stop offset="0%" stopColor="var(--color-up)" stopOpacity={0.4} />
+                    <stop offset="100%" stopColor="var(--color-up)" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1C1E29" />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-line)" />
                 <XAxis
                   dataKey="date"
-                  tick={{ fill: '#8A8F9C', fontSize: 11 }}
+                  tick={{ fill: 'var(--color-muted)', fontSize: 11 }}
                   tickLine={false}
-                  axisLine={{ stroke: '#1C1E29' }}
+                  axisLine={{ stroke: 'var(--color-line)' }}
                 />
                 <YAxis
-                  tick={{ fill: '#8A8F9C', fontSize: 11 }}
+                  tick={{ fill: 'var(--color-muted)', fontSize: 11 }}
                   tickLine={false}
-                  axisLine={{ stroke: '#1C1E29' }}
+                  axisLine={{ stroke: 'var(--color-line)' }}
                   domain={['dataMin', 'dataMax']}
                   tickFormatter={(v: number) =>
                     `₹${(v / 1000).toFixed(0)}k`
@@ -170,12 +170,12 @@ export function BacktestViewer({ result }: Props) {
                 />
                 <Tooltip
                   contentStyle={{
-                    background: 'rgba(17, 21, 32, 0.96)',
-                    border: '1px solid #1C1E29',
+                    background: 'color-mix(in srgb, var(--color-wrap-hover) 96%, transparent)',
+                    border: '1px solid var(--color-line)',
                     borderRadius: 8,
                     fontSize: 12,
                   }}
-                  labelStyle={{ color: '#8A8F9C' }}
+                  labelStyle={{ color: 'var(--color-muted)' }}
                   formatter={(v: number) => [
                     `₹${Math.round(v).toLocaleString('en-IN')}`,
                     'Equity',
@@ -184,7 +184,7 @@ export function BacktestViewer({ result }: Props) {
                 <Area
                   type="monotone"
                   dataKey="equity"
-                  stroke="#05B878"
+                  stroke="var(--color-up)"
                   strokeWidth={2}
                   fill="url(#bt-equity-grad)"
                 />

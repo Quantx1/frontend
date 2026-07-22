@@ -60,7 +60,7 @@ export const ConfirmDialog = ({
   }
 
   return (
-    <Dialog open={open} onClose={onClose} title={title}>
+    <Dialog open={open} onClose={onClose} title={title} className="glass-surface">
       <div className="text-sm leading-relaxed text-d-text-secondary">{body}</div>
       <div className="mt-5 flex justify-end gap-2">
         <Button ref={cancelRef} variant="ghost" size="sm" onClick={onClose} disabled={busy}>

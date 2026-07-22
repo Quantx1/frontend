@@ -27,14 +27,14 @@ interface Props {
 export default function PaperLeagueLeaderboard({ rows, currentUserHandle }: Props) {
   if (!rows.length) {
     return (
-      <div className="rounded-sm border border-line bg-wrap text-[12px] text-d-text-muted text-center py-6">
+      <div className="rounded-[20px] border border-line bg-wrap text-[12px] text-d-text-muted text-center py-6">
         League opens at the end of the first week. Keep paper-trading.
       </div>
     )
   }
 
   return (
-    <div className="rounded-sm border border-line bg-wrap overflow-hidden">
+    <div className="rounded-[20px] border border-line bg-wrap overflow-hidden">
       <div className="px-5 py-3 border-b border-line flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Crown className="w-3.5 h-3.5 text-primary" />
@@ -90,8 +90,8 @@ export default function PaperLeagueLeaderboard({ rows, currentUserHandle }: Prop
 
 // Medal-tier palette — intentional real-world medal colors (gold/silver/bronze).
 function RankCell({ rank }: { rank: number }) {
-  if (rank === 1) return <Medal className="w-4 h-4" style={{ color: '#FFD166' }} />
-  if (rank === 2) return <Medal className="w-4 h-4" style={{ color: '#C0C0C0' }} />
+  if (rank === 1) return <Medal className="w-4 h-4" style={{ color: 'var(--color-warning)' }} />
+  if (rank === 2) return <Medal className="w-4 h-4" style={{ color: 'var(--color-muted)' }} />
   if (rank === 3) return <Medal className="w-4 h-4" style={{ color: '#C68642' }} />
   return <span className={`${MONO} text-[12px] text-d-text-muted`}>#{rank}</span>
 }

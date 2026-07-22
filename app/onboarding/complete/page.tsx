@@ -99,7 +99,7 @@ export default function OnboardingCompletePage() {
       <div>
         <Link
           href="/copilot"
-          className="inline-flex h-11 items-center justify-center rounded-md bg-primary px-6 text-base font-medium text-main transition-colors hover:bg-primary-hover"
+          className="glass-control-accent inline-flex h-11 items-center justify-center rounded-full px-6 text-base font-medium transition-colors active:scale-[0.98]"
         >
           Go to Command Center
         </Link>

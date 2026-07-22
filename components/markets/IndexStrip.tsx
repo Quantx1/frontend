@@ -37,7 +37,7 @@ function QuoteChip({ c }: { c: Chip }) {
     : up ? 'text-up' : down ? 'text-down' : 'text-d-text-muted'
   const Arrow = up ? ArrowUp : down ? ArrowDown : null
   return (
-    <div className="flex min-w-[124px] shrink-0 flex-col gap-0.5 border-r border-line px-4 py-2.5 last:border-r-0">
+    <div className="tile-tint flex min-w-[124px] shrink-0 flex-col gap-0.5 px-4 py-2.5">
       <span className="truncate font-mono text-[9.5px] uppercase tracking-[0.12em] text-d-text-muted">{c.label}</span>
       <div className="flex items-baseline justify-between gap-1.5">
         <span className={`text-[13px] font-semibold leading-none text-d-text-primary ${MONO}`}>{fmt(c.last)}</span>
@@ -59,7 +59,16 @@ const PLACEHOLDER: Chip[] = [
   { key: 'vix', label: 'INDIA VIX', last: null, change_pct: null, invert: true },
 ]
 
-export function IndexStrip({ global = [] }: { global?: { key: string; label: string; last: number | null; change_pct: number | null }[] }) {
+export function IndexStrip({
+  global = [],
+  entitled = true,
+}: {
+  global?: { key: string; label: string; last: number | null; change_pct: number | null }[]
+  // SEBI Path-A: raw NSE index quotes render only from the user's own licensed
+  // broker feed (or a genuine NSE display licence). When false, render nothing —
+  // the page shows the unified broker-connect gate card in this strip's place.
+  entitled?: boolean
+}) {
   const { data } = useSWR('public-indices', () => api.publicTrust.indices(), {
     refreshInterval: 30_000,
     dedupingInterval: 15_000,
@@ -71,9 +80,11 @@ export function IndexStrip({ global = [] }: { global?: { key: string; label: str
   const cues: Chip[] = global.map((g) => ({ key: `g-${g.key}`, label: g.label, last: g.last, change_pct: g.change_pct }))
   const all = [...indices, ...cues]
 
+  if (!entitled) return null
+
   return (
-    <div className="overflow-hidden rounded-xl border border-line bg-wrap" aria-label="Index ticker">
-      <div className="flex overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+    <div className="overflow-hidden rounded-[24px] bg-wrap p-2" aria-label="Index ticker">
+      <div className="flex gap-2 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
         {all.map((c) => <QuoteChip key={c.key} c={c} />)}
       </div>
     </div>

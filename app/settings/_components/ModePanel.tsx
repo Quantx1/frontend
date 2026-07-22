@@ -58,14 +58,14 @@ export default function ModePanel() {
             role="radio"
             aria-checked={active}
             onClick={() => choose(o.value)}
-            className={`relative rounded-sm border p-4 text-left transition-colors ${
+            className={`relative rounded-sm p-4 text-left glass-control transition-colors ${
               active
-                ? 'border-primary/60 bg-primary/5'
-                : 'border-d-border bg-wrap hover:border-primary/40 hover:bg-wrap-hover'
+                ? 'ring-1 ring-primary/50'
+                : 'hover:bg-wrap-hover'
             }`}
           >
             {active && (
-              <span className="absolute right-3 top-3 inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-main">
+              <span className="absolute right-3 top-3 inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground">
                 <Check className="h-3 w-3" />
               </span>
             )}

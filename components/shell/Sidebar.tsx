@@ -9,6 +9,7 @@ import {
   Plus, Send, Sparkles, Trash2, Twitter, Youtube,
 } from '@/lib/icons'
 import { NavList } from './NavList'
+import { QuantXMark } from '@/components/brand/QuantXMark'
 import { cn } from '@/lib/utils'
 import { api } from '@/lib/api'
 
@@ -92,7 +93,7 @@ export const Sidebar = ({ pathname, collapsed, onToggle, animate }: Props) => {
       id="app-sidebar"
       aria-label="Main navigation"
       className={cn(
-        'fixed left-0 top-0 z-30 hidden h-full flex-col overflow-hidden border-r border-line bg-wrap lg:flex',
+        'fixed left-0 top-0 z-30 hidden h-full flex-col overflow-hidden border-r border-line glass-chrome lg:flex',
         animate && 'transition-[width] duration-200',
         collapsed ? 'w-[68px]' : 'w-60',
       )}
@@ -104,12 +105,7 @@ export const Sidebar = ({ pathname, collapsed, onToggle, animate }: Props) => {
           className="flex min-w-0 items-center gap-2.5 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
           aria-label="Quant X — Trading OS, go to home"
         >
-          <span
-            className="grid h-8 w-8 shrink-0 place-items-center rounded-[9px] bg-primary text-main"
-            aria-hidden="true"
-          >
-            <span className="text-[16px] font-black leading-none">Q</span>
-          </span>
+          <QuantXMark className="h-8 w-8 shrink-0 drop-shadow-[0_2px_8px_rgba(58,119,229,0.35)]" />
           {!collapsed && (
             <span className="min-w-0 leading-tight">
               <span className="block truncate text-[15px] font-bold tracking-tight text-d-text-primary">Quant X</span>
@@ -125,7 +121,7 @@ export const Sidebar = ({ pathname, collapsed, onToggle, animate }: Props) => {
           href="/copilot"
           title="New Chat"
           className={cn(
-            'flex items-center justify-center gap-1.5 rounded-xl border border-line bg-surface-2 font-medium text-d-text-secondary transition-colors hover:text-d-text-primary',
+            'flex items-center justify-center gap-1.5 rounded-full border border-line bg-surface-2 font-medium text-d-text-secondary transition-colors hover:text-d-text-primary',
             collapsed ? 'h-10' : 'px-3 py-2.5 text-[13px]',
           )}
         >
@@ -153,11 +149,11 @@ export const Sidebar = ({ pathname, collapsed, onToggle, animate }: Props) => {
                       title={c.title ?? '(untitled)'}
                       aria-current={active ? 'page' : undefined}
                       className={cn(
-                        'flex items-center gap-2 rounded-md py-1.5 pl-2 pr-7 text-[12px] transition-colors',
-                        active ? 'bg-wrap-hover text-d-text-primary' : 'text-d-text-secondary hover:bg-wrap-hover hover:text-d-text-primary',
+                        'flex items-center gap-2 rounded-full py-1.5 pl-2 pr-7 text-[12px] transition-colors',
+                        active ? 'bg-primary/10 text-primary' : 'text-d-text-secondary hover:bg-wrap-hover hover:text-d-text-primary',
                       )}
                     >
-                      <MessageSquare className={cn('h-3.5 w-3.5 shrink-0', active ? 'text-accent' : 'text-d-text-muted')} aria-hidden="true" />
+                      <MessageSquare className={cn('h-3.5 w-3.5 shrink-0', active ? 'text-primary' : 'text-d-text-muted')} aria-hidden="true" />
                       <span className="min-w-0 flex-1 truncate">{c.title ?? '(untitled)'}</span>
                     </Link>
                     <button
@@ -165,7 +161,7 @@ export const Sidebar = ({ pathname, collapsed, onToggle, animate }: Props) => {
                       onClick={() => deleteConv(c.id)}
                       aria-label={`Delete chat: ${c.title ?? 'untitled'}`}
                       title="Delete chat"
-                      className="absolute right-1 top-1/2 grid h-6 w-6 -translate-y-1/2 place-items-center rounded text-d-text-muted opacity-0 transition-opacity hover:text-down focus-visible:opacity-100 group-hover/item:opacity-100"
+                      className="absolute right-1 top-1/2 grid h-6 w-6 -translate-y-1/2 place-items-center rounded-full text-d-text-muted opacity-0 transition-opacity hover:text-down focus-visible:opacity-100 group-hover/item:opacity-100"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
@@ -180,13 +176,13 @@ export const Sidebar = ({ pathname, collapsed, onToggle, animate }: Props) => {
       {/* ── pinned footer: socials · upgrade · collapse ──
            Notifications + Settings live on the right rail only. */}
       <div className="mt-auto shrink-0">
-        {/* Upgrade pill — mono/white pill (xAI single-accent; a quiet link, no hype) */}
+        {/* Upgrade pill — glossy blue FintechX CTA (gradient + gloss bevel) */}
         <div className="border-t border-line p-2">
           <Link
             href="/pricing"
             title="Upgrade"
             className={cn(
-              'flex items-center gap-2 rounded-xl bg-primary font-semibold text-main transition-opacity hover:opacity-90',
+              'cta-gloss flex items-center gap-2 rounded-full bg-gradient-cta font-semibold text-primary-foreground transition-opacity hover:opacity-90',
               collapsed ? 'h-10 justify-center' : 'px-3 py-2.5 text-[13px]',
             )}
           >
@@ -206,7 +202,7 @@ export const Sidebar = ({ pathname, collapsed, onToggle, animate }: Props) => {
                 title={label}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="grid h-7 w-7 place-items-center rounded-md text-d-text-muted transition-colors hover:bg-wrap-hover hover:text-d-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+                className="grid h-7 w-7 place-items-center rounded-full text-d-text-muted transition-colors hover:bg-wrap-hover hover:text-d-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
               >
                 <Icon className="h-[15px] w-[15px]" />
               </a>
@@ -223,7 +219,7 @@ export const Sidebar = ({ pathname, collapsed, onToggle, animate }: Props) => {
             aria-pressed={collapsed}
             aria-controls="app-sidebar"
             className={cn(
-              'flex w-full items-center gap-2.5 rounded-lg text-d-text-secondary transition-colors hover:bg-wrap-hover hover:text-d-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40',
+              'flex w-full items-center gap-2.5 rounded-full text-d-text-secondary transition-colors hover:bg-wrap-hover hover:text-d-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40',
               collapsed ? 'justify-center py-2.5' : 'px-2.5 py-2',
             )}
           >

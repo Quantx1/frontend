@@ -20,10 +20,10 @@ import { stockHref } from '@/lib/stock-href'
 interface Setup { key: string; label: string; count: number; symbols: string[] }
 
 const ICON: Record<string, { icon: any; color: string }> = {
-  breakout: { icon: TrendingUp, color: '#05B878' },
-  pullback: { icon: CornerDownRight, color: '#3B82F6' },
-  trend: { icon: Activity, color: '#8B5CF6' },
-  reversal: { icon: Repeat, color: '#FEB113' },
+  breakout: { icon: TrendingUp, color: 'var(--color-up)' },
+  pullback: { icon: CornerDownRight, color: 'var(--color-primary-text)' },
+  trend: { icon: Activity, color: 'var(--color-ai)' },
+  reversal: { icon: Repeat, color: 'var(--color-warning)' },
 }
 
 export default function SetupFinderCard() {
@@ -47,11 +47,11 @@ export default function SetupFinderCard() {
     return () => { cancelled = true }
   }, [])
 
-  if (state === 'loading') return <div className="rounded-lg border border-line bg-wrap h-[120px] animate-pulse" />
+  if (state === 'loading') return <div className="rounded-[20px] border border-line bg-wrap h-[120px] animate-pulse" />
   if (state === 'empty') return null
 
   return (
-    <div className="rounded-lg border border-line bg-wrap overflow-hidden">
+    <div className="rounded-[20px] border border-line bg-wrap overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-line">
         <span className="flex items-center gap-2 text-[12px] font-semibold text-d-text-primary">
           <Crosshair className="w-3.5 h-3.5 text-primary" /> Setup Finder
@@ -61,7 +61,7 @@ export default function SetupFinderCard() {
 
       <div className="grid grid-cols-2 gap-2 p-3 sm:grid-cols-4">
         {setups.map((s) => {
-          const t = ICON[s.key] || { icon: Crosshair, color: '#8b8f9a' }
+          const t = ICON[s.key] || { icon: Crosshair, color: 'var(--color-muted)' }
           const Icon = t.icon
           const active = open === s.key
           const disabled = s.count === 0
@@ -71,8 +71,8 @@ export default function SetupFinderCard() {
               type="button"
               onClick={() => setOpen(active ? null : s.key)}
               disabled={disabled}
-              className={`flex items-center gap-2 rounded-md border px-3 py-2 text-left transition-colors disabled:opacity-50 ${
-                active ? 'border-primary bg-surface-2' : 'border-line bg-main hover:bg-surface-2'
+              className={`flex items-center gap-2 rounded-full px-3.5 py-2 text-left transition-colors disabled:opacity-50 ${
+                active ? 'glass-control-accent' : 'glass-control hover:bg-surface-2'
               }`}
             >
               <Icon className="w-3.5 h-3.5 shrink-0" style={{ color: t.color }} />
@@ -98,7 +98,7 @@ export default function SetupFinderCard() {
                 <Link
                   key={sym}
                   href={stockHref(sym)}
-                  className="rounded-md border border-line bg-main px-2 py-1 text-[11px] font-medium text-d-text-secondary hover:bg-surface-2 hover:text-d-text-primary transition-colors"
+                  className="glass-control rounded-full px-2.5 py-1 text-[11px] font-medium text-d-text-secondary hover:text-d-text-primary transition-colors"
                 >
                   {sym.replace('.NS', '')}
                 </Link>

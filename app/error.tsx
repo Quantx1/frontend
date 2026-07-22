@@ -38,7 +38,7 @@ export default function Error({
                 cx="48"
                 cy="48"
                 r="44"
-                stroke="#FF5947"
+                stroke="var(--color-down)"
                 strokeWidth="2"
                 strokeDasharray="8 6"
                 opacity="0.6"
@@ -63,7 +63,7 @@ export default function Error({
             {/* Upward line */}
             <path
               d="M4 28 L30 20 L50 22 L70 12 L82 8"
-              stroke="#FF5947"
+              stroke="var(--color-down)"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -71,7 +71,7 @@ export default function Error({
             {/* Break gap - dashed */}
             <path
               d="M82 8 L88 10"
-              stroke="#FF5947"
+              stroke="var(--color-down)"
               strokeWidth="2"
               strokeLinecap="round"
               strokeDasharray="2 3"
@@ -80,7 +80,7 @@ export default function Error({
             {/* Downward crash */}
             <path
               d="M88 10 L100 24 L116 28"
-              stroke="#FF5947"
+              stroke="var(--color-down)"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"

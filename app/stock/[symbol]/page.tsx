@@ -1,16 +1,16 @@
 'use client'
 
 /**
- * /stock/[symbol] — entity-terminal (Intellectia archetype F, re-skinned to v2).
+ * /stock/[symbol] — entity-terminal (the reference archetype F, re-skinned to v2).
  *
  * Bloomberg-style single-stock terminal. Replaces the old hardcoded-dark,
- * 18-panel "firehose" drawer with the Intellectia entity-terminal structure:
+ * 18-panel "firehose" drawer with the the reference entity-terminal structure:
  *
  *   1. Breadcrumb + header band — symbol · name · exchange/sector, live price +
  *      duotone change %, inline quick-stats, Add-to-Watchlist + Ask-AI actions.
  *   2. Primary chart — full-width LightweightChart, THEME-AWARE (tri-theme via
  *      the resolved next-themes value, not a hardcoded "dark").
- *   3. AI tabs — the signature Intellectia move: "Technical Analysis ·
+ *   3. AI tabs — the signature the reference move: "Technical Analysis ·
  *      Why It Moves · Forecast". The ~18 AI panels are regrouped under these
  *      three tabs instead of one ungrouped drawer.
  *   4. Data modules grid — fundamentals / news+mood / microstructure as a clean
@@ -20,17 +20,15 @@
  * Theme-aware, brand-firewalled (no model names), honest (no fabricated metrics).
  */
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
+import useSWR from 'swr'
 import { useTheme } from 'next-themes'
 import {
-  Activity,
   Bookmark,
   BookmarkCheck,
-  Brain,
   ChevronRight,
-  Layers,
   RefreshCw,
   Sparkles,
 } from '@/lib/icons'
@@ -60,10 +58,6 @@ import { DataBadge } from '@/components/common/DataBadge'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import { SymbolLogo } from '@/components/ui/BrandLogo'
 import { dispatchCopilotOpen } from '@/components/copilot/CopilotProvider'
-import { EmbeddedAgent } from '@/components/copilot/EmbeddedAgent'
-import { ChipRow, ArtifactCard, StatPills, ActionRow } from '@/components/copilot/artifacts'
-import { AI } from '@/lib/tokens'
-import type { Tok } from '@/components/copilot/types'
 
 // Lightweight Charts (PR-S16) — TradingView free embed paywall'd NSE data,
 // so we switched to TV's self-hostable Lightweight Charts library fed by our
@@ -73,7 +67,7 @@ const TradingViewWidget = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="flex h-[520px] w-full items-center justify-center rounded-sm border border-line bg-wrap text-d-text-muted">
+      <div className="flex h-[520px] w-full items-center justify-center rounded-[20px] border border-line bg-wrap text-d-text-muted">
         <div className="flex flex-col items-center gap-3">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
           <p className="font-mono text-[11px] uppercase tracking-wider">Loading chart…</p>
@@ -85,8 +79,8 @@ const TradingViewWidget = dynamic(
 
 // AI / data panels — code-split; they hydrate when their tab/module mounts.
 const AIDossierPanel = dynamic(() => import('@/components/stock/AIDossierPanel'), { ssr: false })
+const AITradeDeskCard = dynamic(() => import('@/components/stock/AITradeDeskCard'), { ssr: false })
 const ChartVisionCard = dynamic(() => import('@/components/stock/ChartVisionCard'), { ssr: false })
-const NewsMoodCard = dynamic(() => import('@/components/stock/NewsMoodCard'), { ssr: false })
 const NewsIntelligenceCard = dynamic(() => import('@/components/stock/NewsIntelligenceCard'), { ssr: false })
 const FundamentalsCard = dynamic(() => import('@/components/stock/FundamentalsCard'), { ssr: false })
 const VolumeProfilePanel = dynamic(
@@ -99,9 +93,9 @@ const EarningsPreviewCard = dynamic(() => import('@/components/stock/EarningsPre
 const FusionVerdictCard = dynamic(() => import('@/components/stock/FusionVerdictCard'), { ssr: false })
 const RelativeStrengthCard = dynamic(() => import('@/components/stock/RelativeStrengthCard'), { ssr: false })
 const VolumeIntelCard = dynamic(() => import('@/components/stock/VolumeIntelCard'), { ssr: false })
-const IndicatorInterpreterCard = dynamic(() => import('@/components/stock/IndicatorInterpreterCard'), { ssr: false })
-const FootprintCard = dynamic(() => import('@/components/stock/FootprintCard'), { ssr: false })
-const MarketProfileCard = dynamic(() => import('@/components/stock/MarketProfileCard'), { ssr: false })
+const TechnicalsPanelCard = dynamic(() => import('@/components/stock/TechnicalsPanelCard'), { ssr: false })
+const SentimentCard = dynamic(() => import('@/components/stock/SentimentCard'), { ssr: false })
+const TabAiRead = dynamic(() => import('@/components/stock/TabAiRead'), { ssr: false })
 const ProbabilityCard = dynamic(() => import('@/components/stock/ProbabilityCard'), { ssr: false })
 
 interface StockData {
@@ -166,6 +160,34 @@ export default function StockTerminalPage() {
 
   const { prices: wsPrices, isConnected: wsConnected } = usePriceUpdates(symbol ? [symbol] : [])
   const { isConnected: brokerConnected } = useBrokerStatus()
+
+  // One fundamentals fetch for the whole page — the header stats (Mkt Cap,
+  // P/E) and FundamentalsCard share it via the SWR key, so the number the
+  // header shows is ALWAYS the same one the card shows.
+  const { data: fndData } = useSWR(
+    symbol ? `fundamentals:${symbol}` : null,
+    () => api.screener.fundamentals(symbol).catch(() => null),
+    { revalidateOnFocus: false, dedupingInterval: 300_000 },
+  )
+  const fnd = fndData?.fundamentals ?? null
+
+  // AI Picks link-up — when this symbol sits in today's Alpha Picks or
+  // Momentum Picks book, the header shows a live pick badge that deep-links
+  // to the signal. Shares the 'signals:today' SWR key with the signals hub.
+  const { data: todayBook } = useSWR(
+    symbol ? 'signals:today' : null,
+    () => api.signals.getToday().catch(() => null),
+    { revalidateOnFocus: false, refreshInterval: 60_000, dedupingInterval: 30_000 },
+  )
+  const activePick = useMemo(() => {
+    const row = (todayBook?.all_signals ?? []).find(
+      (r: any) => r?.symbol === symbol && ['active', 'triggered'].includes(r?.status),
+    ) as any
+    if (!row) return null
+    const book = (row.signal_type || '').includes('momentum') ? 'Momentum Picks' : 'Alpha Picks'
+    const rank = String((row.reasons ?? [])[0] ?? '').match(/#(\d+)/)?.[1]
+    return { id: row.id as string, book, rank, direction: row.direction as string }
+  }, [todayBook, symbol])
 
   // Initial fetch + polling fallback (WebSocket is primary).
   useEffect(() => {
@@ -356,10 +378,22 @@ export default function StockTerminalPage() {
                     At close
                   </span>
                 )}
+                {/* AI Picks badge — this symbol is in a live book today */}
+                {activePick && (
+                  <button
+                    type="button"
+                    onClick={() => router.push(`/signals/${activePick.id}`)}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-ai/40 bg-ai/10 px-2.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-ai transition-colors hover:bg-ai/20"
+                  >
+                    <Sparkles className="h-3 w-3" />
+                    {activePick.book}
+                    {activePick.rank ? ` · #${activePick.rank}` : ''} · {activePick.direction}
+                  </button>
+                )}
               </div>
             )}
 
-            {/* Inline quick-stats — the Intellectia "key stats inline" row */}
+            {/* Inline quick-stats — the the reference "key stats inline" row */}
             {stockData && (
               <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-2.5 sm:grid-cols-3 lg:grid-cols-4">
                 <QuickStat label="Open" value={fmtInr(stockData.open, 2)} />
@@ -377,13 +411,60 @@ export default function StockTerminalPage() {
                   value={fmtCompact(stockData.volume)}
                   sub={technicals?.volume_ratio != null ? `${technicals.volume_ratio.toFixed(1)}× avg` : undefined}
                 />
+                {/* Mkt Cap + P/E come from the SAME cached fundamentals
+                    snapshot the FundamentalsCard renders — one source, no
+                    beginner/pro duplication. price-payload P/E is fallback. */}
                 <QuickStat
                   label="Mkt Cap"
-                  value={stockData.market_cap ? `₹${(stockData.market_cap / 1e7).toLocaleString('en-IN', { maximumFractionDigits: 0 })} Cr` : '—'}
+                  value={
+                    fnd?.market_cap_cr
+                      ? fnd.market_cap_cr >= 1e5
+                        ? `₹${(fnd.market_cap_cr / 1e5).toFixed(2)} L Cr`
+                        : `₹${fnd.market_cap_cr.toLocaleString('en-IN', { maximumFractionDigits: 0 })} Cr`
+                      : stockData.market_cap
+                        ? `₹${(stockData.market_cap / 1e7).toLocaleString('en-IN', { maximumFractionDigits: 0 })} Cr`
+                        : '—'
+                  }
                 />
-                <QuickStat label="P/E" value={stockData.pe_ratio != null ? stockData.pe_ratio.toFixed(1) : '—'} />
+                {/* pe_ratio comes back 0 when the source has no P/E — treat as missing */}
+                <QuickStat
+                  label="P/E"
+                  value={fnd?.pe ? fnd.pe.toFixed(1) : stockData.pe_ratio ? stockData.pe_ratio.toFixed(1) : '—'}
+                />
                 <QuickStat label="RSI 14" value={technicals?.rsi != null ? technicals.rsi.toFixed(1) : '—'} tone={rsiTone} />
               </dl>
+            )}
+
+            {/* 52-week position strip — where price sits in its yearly range,
+                the first thing a swing trader anchors on. Pure client calc. */}
+            {stockData?.week_52_low != null && stockData?.week_52_high != null &&
+              stockData.week_52_high > stockData.week_52_low && (
+              (() => {
+                const lo = stockData.week_52_low!
+                const hi = stockData.week_52_high!
+                const posPct = Math.max(0, Math.min(100, ((stockData.price - lo) / (hi - lo)) * 100))
+                const offHigh = ((stockData.price - hi) / hi) * 100
+                return (
+                  <div className="mt-3 max-w-md">
+                    <div className="flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.1em] text-d-text-muted">
+                      <span>52W position</span>
+                      <span>
+                        {posPct.toFixed(0)}% of range · <span className={offHigh >= -3 ? 'text-up' : 'text-d-text-secondary'}>{offHigh.toFixed(1)}% vs high</span>
+                      </span>
+                    </div>
+                    <div className="relative mt-1 h-1.5 rounded-full bg-surface-2">
+                      <div
+                        className="absolute inset-y-0 left-0 rounded-full"
+                        style={{ width: `${posPct}%`, background: 'linear-gradient(90deg, var(--color-down), var(--color-highlight), var(--color-up))', opacity: 0.55 }}
+                      />
+                      <span
+                        className="absolute top-1/2 h-3 w-[3px] -translate-y-1/2 rounded-full bg-d-text-primary"
+                        style={{ left: `calc(${posPct}% - 1px)` }}
+                      />
+                    </div>
+                  </div>
+                )
+              })()
             )}
           </div>
 
@@ -443,15 +524,30 @@ export default function StockTerminalPage() {
         </Reveal>
 
         {/* ────────────────────────────────────────────────────────────
-            AI TABS — the signature Intellectia move.
-            Technical Analysis · Why It Moves · Forecast.
-            The old 18-panel firehose is regrouped under these three tabs.
+            AI TRADE DESK — the hero. One deep-reasoning synthesis over
+            every deterministic read below. No chat box: questions go to
+            the Copilot dock (one brain, one conversation surface).
+           ──────────────────────────────────────────────────────────── */}
+        <Reveal delay={0.12}>
+        <section className="mb-6">
+          <ErrorBoundary label="AI Trade Desk">
+            <AITradeDeskCard symbol={symbol} />
+          </ErrorBoundary>
+        </section>
+        </Reveal>
+
+        {/* ────────────────────────────────────────────────────────────
+            AI TABS — Engine Read · Why It Moves · Forecast.
+            Deterministic evidence only (the Trade Desk synthesizes it);
+            duplicate cards consolidated 2026-07-21: NewsMood folded into
+            News Intelligence, MarketProfile into Volume Profile, CVD
+            footprint into Volume Intelligence.
            ──────────────────────────────────────────────────────────── */}
         <Reveal delay={0.15}>
         <section className="mb-8">
           <div className="mb-3 flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-ai" />
-            <EyebrowMono className="text-ai">AI agents read {symbol}</EyebrowMono>
+            <EyebrowMono className="text-ai">AI engines read {symbol}</EyebrowMono>
           </div>
 
           <Tabs defaultValue="technical">
@@ -461,13 +557,19 @@ export default function StockTerminalPage() {
               <TabsTrigger value="forecast">Forecast</TabsTrigger>
             </TabsList>
 
-            {/* ── TECHNICAL ANALYSIS ──────────────────────────────────
-                Agent verdict, fused setup, dossier, the indicator/volume/
-                strength reads, key levels, and chart vision. */}
+            {/* ── ENGINE READ ─────────────────────────────────────────
+                Fused setup + dossier, the FULL technicals system (all
+                indicators + votes + S/R levels — supersedes the old
+                KeyLevels and IndicatorInterpreter cards), then strength /
+                sentiment / volume, and chart vision. */}
             <TabsContent value="technical" className="pt-5">
               <div className="space-y-4">
-                <ErrorBoundary label="Analysis agent">
-                  <AnalysisAgent symbol={symbol} />
+                <ErrorBoundary label="AI engine read">
+                  <TabAiRead
+                    symbol={symbol}
+                    title="AI engine read"
+                    fetchNarrative={() => api.screener.verdict(symbol, true).then((r) => r?.narrative ?? null)}
+                  />
                 </ErrorBoundary>
 
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -477,16 +579,22 @@ export default function StockTerminalPage() {
                   <ErrorBoundary label="AI Dossier">
                     <AIDossierPanel symbol={symbol} />
                   </ErrorBoundary>
-                  <ErrorBoundary label="Indicator interpreter">
-                    <IndicatorInterpreterCard symbol={symbol} />
-                  </ErrorBoundary>
+                </div>
+
+                <ErrorBoundary label="Technicals and levels">
+                  <TechnicalsPanelCard symbol={symbol} />
+                </ErrorBoundary>
+
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
                   <ErrorBoundary label="Relative strength">
                     <RelativeStrengthCard symbol={symbol} />
+                  </ErrorBoundary>
+                  <ErrorBoundary label="Sentiment">
+                    <SentimentCard symbol={symbol} />
                   </ErrorBoundary>
                   <ErrorBoundary label="Volume intelligence">
                     <VolumeIntelCard symbol={symbol} />
                   </ErrorBoundary>
-                  <KeyLevelsCard technicals={technicals} />
                 </div>
 
                 <ErrorBoundary label="Chart vision">
@@ -496,21 +604,23 @@ export default function StockTerminalPage() {
             </TabsContent>
 
             {/* ── WHY IT MOVES ────────────────────────────────────────
-                Grounded "why moving" agent + multi-source news intelligence
-                + standalone news mood. */}
+                Grounded move attribution + multi-source news intelligence
+                (aggregate mood lives inside News Intelligence now). */}
             <TabsContent value="why" className="pt-5">
-              <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+              <div className="space-y-4">
+                <ErrorBoundary label="AI move read">
+                  <TabAiRead
+                    symbol={symbol}
+                    title="AI move read"
+                    fetchNarrative={() => api.screener.whyMoving(symbol, true).then((r) => r?.narrative ?? null)}
+                  />
+                </ErrorBoundary>
                 <ErrorBoundary label="Why moving">
                   <WhyMovingCard symbol={symbol} />
                 </ErrorBoundary>
-                <ErrorBoundary label="News Mood">
-                  <NewsMoodCard symbol={symbol} />
+                <ErrorBoundary label="News Intelligence">
+                  <NewsIntelligenceCard symbol={symbol} />
                 </ErrorBoundary>
-                <div className="lg:col-span-2">
-                  <ErrorBoundary label="News Intelligence">
-                    <NewsIntelligenceCard symbol={symbol} />
-                  </ErrorBoundary>
-                </div>
               </div>
             </TabsContent>
 
@@ -518,13 +628,22 @@ export default function StockTerminalPage() {
                 Setup probabilities (base rates) + earnings preview. Honest:
                 base rates / scenarios, not a fabricated price target. */}
             <TabsContent value="forecast" className="pt-5">
-              <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                <ErrorBoundary label="Setup probabilities">
-                  <ProbabilityCard symbol={symbol} />
+              <div className="space-y-4">
+                <ErrorBoundary label="AI forecast read">
+                  <TabAiRead
+                    symbol={symbol}
+                    title="AI forecast read"
+                    fetchNarrative={() => api.screener.forecastRead(symbol, true).then((r) => r?.narrative ?? null)}
+                  />
                 </ErrorBoundary>
-                <ErrorBoundary label="Earnings preview">
-                  <EarningsPreviewCard symbol={symbol} />
-                </ErrorBoundary>
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                  <ErrorBoundary label="Setup probabilities">
+                    <ProbabilityCard symbol={symbol} />
+                  </ErrorBoundary>
+                  <ErrorBoundary label="Earnings preview">
+                    <EarningsPreviewCard symbol={symbol} />
+                  </ErrorBoundary>
+                </div>
               </div>
             </TabsContent>
           </Tabs>
@@ -532,8 +651,9 @@ export default function StockTerminalPage() {
         </Reveal>
 
         {/* ────────────────────────────────────────────────────────────
-            DATA MODULES GRID — fundamentals + microstructure as a clean
-            2-col module grid (replaces the rest of the old drawer).
+            DATA MODULES GRID — fundamentals + volume-at-price. The order
+            book renders ONLY with a connected broker feed (SEBI Path-A);
+            without one it would just be an empty card.
            ──────────────────────────────────────────────────────────── */}
         <Reveal delay={0.2}>
         <section className="mb-6">
@@ -544,18 +664,16 @@ export default function StockTerminalPage() {
                 <FundamentalsCard symbol={symbol} />
               </ErrorBoundary>
             </div>
-            <ErrorBoundary label="Volume profile">
-              <VolumeProfilePanel symbol={symbol} lookbackDays={30} bins={20} />
-            </ErrorBoundary>
-            <ErrorBoundary label="Market profile">
-              <MarketProfileCard symbol={symbol} />
-            </ErrorBoundary>
-            <ErrorBoundary label="Footprint">
-              <FootprintCard symbol={symbol} />
-            </ErrorBoundary>
-            <ErrorBoundary label="Order book">
-              <OrderBookCard symbol={symbol} />
-            </ErrorBoundary>
+            <div className={brokerConnected ? '' : 'lg:col-span-2'}>
+              <ErrorBoundary label="Volume profile">
+                <VolumeProfilePanel symbol={symbol} lookbackDays={30} bins={20} />
+              </ErrorBoundary>
+            </div>
+            {brokerConnected && (
+              <ErrorBoundary label="Order book">
+                <OrderBookCard symbol={symbol} />
+              </ErrorBoundary>
+            )}
           </div>
         </section>
         </Reveal>
@@ -592,161 +710,3 @@ function QuickStat({
   )
 }
 
-/** Compact key-levels module (SMA/MACD) — token-driven hairline card. */
-function KeyLevelsCard({ technicals }: { technicals: TechnicalData | null }) {
-  return (
-    <Card>
-      <CardHeader>Key levels</CardHeader>
-      <CardBody className="space-y-2">
-        <KeyRow label="SMA 20" value={fmtInr(technicals?.sma_20, 2)} />
-        <KeyRow label="SMA 50" value={fmtInr(technicals?.sma_50, 2)} />
-        {technicals?.sma_200 != null && <KeyRow label="SMA 200" value={fmtInr(technicals.sma_200, 2)} />}
-        <KeyRow label="MACD" value={technicals?.macd?.toFixed(2) ?? '—'} />
-        <KeyRow label="Signal" value={technicals?.macd_signal?.toFixed(2) ?? '—'} />
-      </CardBody>
-    </Card>
-  )
-}
-
-function KeyRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between text-sm">
-      <span className="text-d-text-muted">{label}</span>
-      <span className="font-mono font-medium text-d-text-primary tabular-nums">{value}</span>
-    </div>
-  )
-}
-
-// ─────────────────────────────────────────────────────────────────────
-// Analysis Agent — embedded GenUI for the stock terminal.
-//
-// LIVE mode: `run` hits /api/dossier/{symbol} (consolidated engine output —
-// pure data, no LLM tokens), then the EmbeddedAgent streams a verdict and
-// reveals artifacts: engine tally, the latest signal's trade levels, and
-// actions. The only LLM call is the explicit "Continue in Copilot" CTA.
-// ─────────────────────────────────────────────────────────────────────
-
-function AnalysisAgent({ symbol }: { symbol: string }) {
-  const [dx, setDx] = useState<Awaited<ReturnType<typeof api.dossier.get>> | null>(null)
-
-  const run = async () => {
-    const d = await api.dossier.get(symbol)
-    setDx(d)
-
-    const avail = d.engines.filter((e) => e.available)
-    const dir = (s?: string) => (s || '')
-    const bull = avail.filter((e) => dir(e.direction).startsWith('bull')).length
-    const bear = avail.filter((e) => dir(e.direction).startsWith('bear')).length
-    const sig = d.latest_signal
-    const cons = d.consensus.charAt(0).toUpperCase() + d.consensus.slice(1)
-
-    const narration: Tok[] = [
-      [`${avail.length} engines read `, 0],
-      [symbol, 1],
-      [`: consensus is `, 0],
-      [d.consensus === 'mixed' ? 'a mixed signal' : cons.toLowerCase(), 1],
-      [` (${bull} bullish · ${bear} bearish). `, 0],
-    ]
-    if (sig && sig.entry_price != null) {
-      const sdir = (sig.direction || 'LONG').toUpperCase()
-      narration.push([`Latest signal: ${sdir} from ₹${sig.entry_price.toFixed(2)}`, 1])
-      if (sig.target != null) narration.push([` → target ₹${sig.target.toFixed(2)}`, 0])
-      narration.push(['.', 0])
-    } else {
-      narration.push(['No active trade signal on the tape right now.', 0])
-    }
-
-    return {
-      narration,
-      trace: (
-        <>
-          Read {avail.length}/{d.engines.length} engines · consensus {d.consensus}
-          {sig?.id ? ' · 1 active signal' : ''}
-        </>
-      ),
-    }
-  }
-
-  return (
-    <div className="space-y-2">
-      <EmbeddedAgent
-        name="Analysis Agent"
-        scope={`Scoped to ${symbol} · polls every ML engine`}
-        query={`Read ${symbol} across the engines: what's the consensus and the trade setup?`}
-        run={run}
-        askPrompt={`Walk me through the ${symbol} setup — verdict, key levels, bull vs bear case`}
-        renderArtifacts={(step) => {
-          if (!dx) return null
-          const avail = dx.engines.filter((e) => e.available)
-          const bull = avail.filter((e) => (e.direction || '').startsWith('bull')).length
-          const bear = avail.filter((e) => (e.direction || '').startsWith('bear')).length
-          const neutral = avail.length - bull - bear
-          const sig = dx.latest_signal
-          const hasSig = !!sig && sig.entry_price != null
-          const rr =
-            hasSig && sig!.stop_loss != null && sig!.target != null && sig!.entry_price !== sig!.stop_loss
-              ? Math.abs((sig!.target! - sig!.entry_price!) / (sig!.entry_price! - sig!.stop_loss!))
-              : null
-          const consLabel = dx.consensus === 'mixed' ? 'Mixed' : dx.consensus.charAt(0).toUpperCase() + dx.consensus.slice(1)
-          return (
-            <>
-              {step >= 3 && (
-                <ChipRow
-                  label="Engine read"
-                  addable={false}
-                  items={[
-                    { icon: Brain, k: 'Consensus', v: consLabel },
-                    { icon: Layers, k: 'Engines', v: `${avail.length}/${dx.engines.length}` },
-                    ...(hasSig ? [{ icon: Activity, k: 'Signal', v: (sig!.direction || 'LONG').toUpperCase() }] : []),
-                  ]}
-                />
-              )}
-              {step >= 4 && (
-                <ArtifactCard title="Engine consensus" meta={`${avail.length} reporting`}>
-                  <div className="p-3">
-                    <StatPills
-                      cols={3}
-                      items={[
-                        { label: 'Bullish', v: String(bull), tone: 'up' },
-                        { label: 'Neutral', v: String(neutral) },
-                        { label: 'Bearish', v: String(bear), tone: 'down' },
-                      ]}
-                    />
-                  </div>
-                </ArtifactCard>
-              )}
-              {step >= 4 && hasSig && (
-                <ArtifactCard title="Latest signal · trade levels" meta={(sig!.direction || 'LONG').toUpperCase()}>
-                  <div className="p-3">
-                    <StatPills
-                      cols={4}
-                      items={[
-                        { label: 'Entry', v: `₹${sig!.entry_price!.toFixed(2)}` },
-                        { label: 'Stop', v: sig!.stop_loss != null ? `₹${sig!.stop_loss.toFixed(2)}` : '—', tone: 'down' },
-                        { label: 'Target', v: sig!.target != null ? `₹${sig!.target.toFixed(2)}` : '—', tone: 'up' },
-                        { label: 'R:R', v: rr != null ? `1:${rr.toFixed(2)}` : '—' },
-                      ]}
-                    />
-                  </div>
-                </ArtifactCard>
-              )}
-              {step >= 5 && (
-                <ActionRow items={[[Layers, 'Open full dossier'], [Sparkles, 'Continue in Copilot']]} />
-              )}
-            </>
-          )
-        }}
-      />
-      {/* The single real LLM entry point — explicit user action only. */}
-      <button
-        onClick={() =>
-          dispatchCopilotOpen(`Give me a full trade plan for ${symbol}: entry, stop, target, and the key risks.`)
-        }
-        className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-line bg-wrap px-3 py-2 text-[12px] font-medium text-d-text-secondary transition-colors hover:text-d-text-primary"
-        style={{ borderColor: `color-mix(in srgb, ${AI} 30%, transparent)` }}
-      >
-        <Sparkles size={13} className="text-ai" /> Continue in Copilot
-      </button>
-    </div>
-  )
-}

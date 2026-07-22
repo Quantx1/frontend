@@ -66,10 +66,10 @@ export default function TrackRecordPage() {
                 key={w}
                 type="button"
                 onClick={() => setWindowDays(w)}
-                className={`rounded-md border px-2 py-1 text-[11px] ${
+                className={`rounded-md px-2 py-1 text-[11px] ${
                   windowDays === w
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-line bg-main text-d-text-secondary hover:text-d-text-primary'
+                    ? 'glass-control-accent'
+                    : 'glass-control text-d-text-secondary'
                 }`}
               >
                 {w}d
@@ -83,10 +83,10 @@ export default function TrackRecordPage() {
                 key={s}
                 type="button"
                 onClick={() => setSource(s)}
-                className={`rounded-md border px-2 py-1 text-[11px] capitalize ${
+                className={`rounded-md px-2 py-1 text-[11px] capitalize ${
                   source === s
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-line bg-main text-d-text-secondary hover:text-d-text-primary'
+                    ? 'glass-control-accent'
+                    : 'glass-control text-d-text-secondary'
                 }`}
               >
                 {s}
@@ -228,8 +228,8 @@ export default function TrackRecordPage() {
 
         {/* HIGH #6 — SEBI disclaimer footer */}
         {compliance && (
-          <div className="rounded-md border border-yellow-500/20 bg-yellow-500/5 px-3 py-2 text-[10px] text-d-text-secondary">
-            <p className="font-semibold text-yellow-300/90">
+          <div className="rounded-md border border-warning/20 bg-warning/5 px-3 py-2 text-[10px] text-d-text-secondary">
+            <p className="font-semibold text-warning/90">
               SEBI Research Analyst Reg #: {compliance.sebi_ra_reg_number}
               {compliance.sebi_ra_valid_until && ` · Valid until ${compliance.sebi_ra_valid_until}`}
             </p>

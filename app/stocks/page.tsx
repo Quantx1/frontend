@@ -3,7 +3,7 @@
 /**
  * /stocks — full NSE universe discovery surface.
  *
- * v2 redesign (Wave 5 — Intellectia "D" list/table archetype, re-skinned to
+ * v2 redesign (Wave 5 — the reference "D" list/table archetype, re-skinned to
  * the xAI tokens): a foundation PageHeader (breadcrumb eyebrow + Bricolage
  * title + actions) → a hairline filter/toolbar row (search + index/sector
  * Selects + sort) → a dense, sortable foundation DataTable (mono-caps
@@ -66,7 +66,15 @@ interface StockRow {
   volume: number
   sector: string | null
   mcap: string | null
-  hasSignal: boolean
+  eod?: boolean
+  pick?: PickInfo
+}
+
+/** Today's book membership — powers the AI Picks chip per row. */
+interface PickInfo {
+  id: string
+  book: 'Alpha Picks' | 'Momentum Picks'
+  rank?: string
 }
 
 interface IndexInfo {
@@ -116,7 +124,7 @@ export default function StocksPage() {
   const [rows, setRows] = useState<StockRow[]>([])
   const [scopeCount, setScopeCount] = useState(0) // full scope size (pre-cap)
   const [regime, setRegime] = useState<CurrentRegime | null>(null)
-  const [signalSymbols, setSignalSymbols] = useState<Set<string>>(new Set())
+  const [pickMap, setPickMap] = useState<Map<string, PickInfo>>(new Map())
   const [loading, setLoading] = useState(true)
 
   const [sector, setSector] = useState<string>('All')
@@ -156,11 +164,18 @@ export default function StocksPage() {
         })
       }
 
-      const sig = new Set<string>()
-      for (const s of ((signalsRes as any)?.signals || [])) {
-        if (s?.symbol) sig.add(String(s.symbol).replace('.NS', '').toUpperCase())
+      // NOTE: getToday() returns `all_signals` — the old read of `.signals`
+      // was always undefined, so the AI column never lit up.
+      const picks = new Map<string, PickInfo>()
+      for (const s of ((signalsRes as any)?.all_signals || [])) {
+        if (!s?.symbol || !['active', 'triggered'].includes(s?.status)) continue
+        const key = String(s.symbol).replace('.NS', '').toUpperCase()
+        const book = String(s.signal_type || '').includes('momentum') ? 'Momentum Picks' as const : 'Alpha Picks' as const
+        const rank = String((s.reasons ?? [])[0] ?? '').match(/#(\d+)/)?.[1]
+        // Alpha Picks wins a tie (flagship book) — first write stays.
+        if (!picks.has(key) || book === 'Alpha Picks') picks.set(key, { id: s.id, book, rank })
       }
-      setSignalSymbols(sig)
+      setPickMap(picks)
     })()
     return () => { cancelled = true }
   }, [])
@@ -185,7 +200,7 @@ export default function StocksPage() {
         if (cancelled) return
         setScopeCount(universe.length)
         const capped = universe.slice(0, SCOPE_CAP)
-        const priced = await withLivePrices(capped, signalSymbols)
+        const priced = await withLivePrices(capped, pickMap)
         if (cancelled) return
         setRows(priced)
       } catch {
@@ -195,20 +210,20 @@ export default function StocksPage() {
       }
     })()
     return () => { cancelled = true }
-    // signalSymbols intentionally excluded — it hydrates once; rows recompute
-    // the chip below via `hasSignal` re-derive when it changes.
+    // pickMap intentionally excluded — it hydrates once; rows recompute
+    // the chip below via the `pick` re-derive when it changes.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedIndex, debouncedSearch])
 
-  // ── re-derive the signal chip when today's signals resolve after the scope
+  // ── re-derive the pick chip when today's books resolve after the scope
   useEffect(() => {
     setRows((prev) =>
       prev.map((r) => ({
         ...r,
-        hasSignal: signalSymbols.has(r.symbol.replace('.NS', '').toUpperCase()),
+        pick: pickMap.get(r.symbol.replace('.NS', '').toUpperCase()),
       })),
     )
-  }, [signalSymbols])
+  }, [pickMap])
 
   // ── grouped index options for the picker
   const indexOptions = useMemo(() => {
@@ -287,7 +302,14 @@ export default function StocksPage() {
       sortValue: (r) => r.price ?? 0,
       cell: (r) =>
         r.price > 0
-          ? <span className={`text-d-text-primary ${MONO}`}>₹{r.price.toFixed(2)}</span>
+          ? (
+            <span className="inline-flex items-center gap-1.5">
+              {r.eod && (
+                <span title="Settled EOD close (published data) — connect a broker for live" className="rounded bg-surface-2 px-1 py-px text-[8px] font-medium uppercase tracking-wide text-d-text-muted">EOD</span>
+              )}
+              <span className={`text-d-text-primary ${MONO}`}>₹{r.price.toFixed(2)}</span>
+            </span>
+          )
           : <span className="text-d-text-muted">-</span>,
     },
     {
@@ -304,11 +326,24 @@ export default function StocksPage() {
       cell: (r) => <span className={`text-d-text-secondary ${MONO}`}>{formatVolume(r.volume)}</span>,
     },
     {
-      key: 'signal', header: 'AI', align: 'right',
+      key: 'signal', header: 'AI Picks', align: 'right',
       cell: (r) =>
-        r.hasSignal
-          ? <ModelBadge modelKey="swing_forecast" size="xs" variant="soft" />
-          : <span className="text-[10px] text-d-text-muted">-</span>,
+        r.pick ? (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              router.push(`/signals/${r.pick!.id}`)
+            }}
+            className="inline-flex items-center gap-1 rounded-full border border-ai/40 bg-ai/10 px-2 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wide text-ai transition-colors hover:bg-ai/20"
+            title={`In today's ${r.pick.book} book — open the signal`}
+          >
+            {r.pick.book === 'Alpha Picks' ? 'Alpha' : 'Momentum'}
+            {r.pick.rank ? ` #${r.pick.rank}` : ''}
+          </button>
+        ) : (
+          <span className="text-[10px] text-d-text-muted">-</span>
+        ),
     },
   ]
 
@@ -325,7 +360,7 @@ export default function StocksPage() {
                 <DataBadge mode="eod" />
                 <Link
                   href="/signals"
-                  className="inline-flex items-center gap-1.5 rounded-sm border border-line bg-wrap-hover px-3 py-1.5 text-[12px] text-d-text-secondary transition-colors hover:text-d-text-primary"
+                  className="glass-control inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] text-d-text-secondary transition-colors hover:text-d-text-primary"
                 >
                   <Sparkles className="h-3.5 w-3.5 text-primary" />
                   Today&apos;s signals
@@ -568,14 +603,14 @@ function Pagination({ page, totalPages, onChange, total, capped }: {
         <button
           onClick={() => onChange(Math.max(1, page - 1))}
           disabled={page === 1}
-          className="inline-flex items-center gap-1 rounded-sm border border-line px-3 py-1.5 text-[11px] text-d-text-secondary transition-colors hover:text-d-text-primary disabled:cursor-not-allowed disabled:opacity-40"
+          className="glass-control inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] text-d-text-secondary transition-colors hover:text-d-text-primary disabled:cursor-not-allowed disabled:opacity-40"
         >
           <ChevronLeft className="h-3 w-3" /> Previous
         </button>
         <button
           onClick={() => onChange(Math.min(totalPages, page + 1))}
           disabled={page === totalPages}
-          className="inline-flex items-center gap-1 rounded-sm border border-line px-3 py-1.5 text-[11px] text-d-text-secondary transition-colors hover:text-d-text-primary disabled:cursor-not-allowed disabled:opacity-40"
+          className="glass-control inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] text-d-text-secondary transition-colors hover:text-d-text-primary disabled:cursor-not-allowed disabled:opacity-40"
         >
           Next <ChevronRight className="h-3 w-3" />
         </button>
@@ -610,8 +645,11 @@ async function loadSearch(q: string): Promise<UnivRow[]> {
   }))
 }
 
-/** Merge live quotes into the universe rows (chunked so big indices stay safe). */
-async function withLivePrices(universe: UnivRow[], signalSymbols: Set<string>): Promise<StockRow[]> {
+/** Merge quotes into the universe rows: live first (broker/licensed), then a
+ *  settled-EOD fallback from the candle store for anything still priceless —
+ *  SEBI-safe (published settled data, labelled per-row) so the board is never
+ *  an all-dash grid for non-broker users. */
+async function withLivePrices(universe: UnivRow[], pickMap: Map<string, PickInfo>): Promise<StockRow[]> {
   const priceMap = new Map<string, any>()
   const syms = universe.map((u) => u.symbol)
   for (let i = 0; i < syms.length; i += 50) {
@@ -621,11 +659,29 @@ async function withLivePrices(universe: UnivRow[], signalSymbols: Set<string>): 
       if (json?.success && Array.isArray(json.prices)) {
         for (const p of json.prices) {
           const key = String(p.symbol || '').replace('.NS', '').toUpperCase()
-          if (key) priceMap.set(key, p)
+          if (key && (p.price || p.last_price)) priceMap.set(key, p)
         }
       }
-    } catch { /* honest-empty: row shows "—" until quotes resolve */ }
+    } catch { /* fall through to the EOD pass */ }
   }
+
+  // EOD fallback for symbols the live pass couldn't price.
+  const missing = syms
+    .map((s) => s.replace('.NS', '').toUpperCase())
+    .filter((s) => !priceMap.has(s))
+  for (let i = 0; i < missing.length; i += 100) {
+    const chunk = missing.slice(i, i + 100)
+    try {
+      const json = await api.screener.getEodPrices(chunk)
+      if (json?.success && Array.isArray(json.prices)) {
+        for (const p of json.prices) {
+          const key = String(p.symbol || '').toUpperCase()
+          if (key && p.price) priceMap.set(key, { ...p, eod: true })
+        }
+      }
+    } catch { /* honest-empty: row shows "—" */ }
+  }
+
   return universe.map((u): StockRow => {
     const clean = u.symbol.replace('.NS', '').toUpperCase()
     const p = priceMap.get(clean) || {}
@@ -638,7 +694,8 @@ async function withLivePrices(universe: UnivRow[], signalSymbols: Set<string>): 
       change: Number(p.change || 0),
       changePercent: Number(p.change_percent || 0),
       volume: Number(p.volume || 0),
-      hasSignal: signalSymbols.has(clean),
+      eod: !!p.eod,
+      pick: pickMap.get(clean),
     }
   })
 }

@@ -138,12 +138,12 @@ export default function PayoffDiagram({ legs, spotPrice, lotSize, label }: Payof
           <AreaChart data={data}>
             <defs>
               <linearGradient id="payoffProfit" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="var(--chart-primary, #4FECCD)" stopOpacity={0.25} />
-                <stop offset="100%" stopColor="var(--chart-primary, #4FECCD)" stopOpacity={0} />
+                <stop offset="0%" stopColor="var(--chart-primary)" stopOpacity={0.25} />
+                <stop offset="100%" stopColor="var(--chart-primary)" stopOpacity={0} />
               </linearGradient>
               <linearGradient id="payoffLoss" x1="0" y1="1" x2="0" y2="0">
-                <stop offset="0%" stopColor="var(--color-down, #FF5947)" stopOpacity={0.25} />
-                <stop offset="100%" stopColor="var(--color-down, #FF5947)" stopOpacity={0} />
+                <stop offset="0%" stopColor="var(--color-down)" stopOpacity={0.25} />
+                <stop offset="100%" stopColor="var(--color-down)" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
@@ -192,7 +192,7 @@ export default function PayoffDiagram({ legs, spotPrice, lotSize, label }: Payof
             <Area
               type="monotone"
               dataKey="pnl"
-              stroke="var(--chart-primary, #4FECCD)"
+              stroke="var(--chart-primary)"
               fill="url(#payoffProfit)"
               strokeWidth={2}
               baseValue={0}

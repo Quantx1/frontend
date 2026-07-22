@@ -40,16 +40,16 @@ import type { VisionAnalysisData } from '@/types/strategies'
 type Analysis = VisionAnalysisData
 
 const TREND_META: Record<string, { label: string; color: string; icon: any }> = {
-  uptrend:   { label: 'Uptrend',   color: '#05B878', icon: TrendingUp },
-  downtrend: { label: 'Downtrend', color: '#FF5947', icon: TrendingDown },
-  range:     { label: 'Range',     color: '#FEB113', icon: Minus },
-  unclear:   { label: 'Unclear',   color: '#8e8e8e', icon: Minus },
+  uptrend:   { label: 'Uptrend',   color: 'var(--color-up)', icon: TrendingUp },
+  downtrend: { label: 'Downtrend', color: 'var(--color-down)', icon: TrendingDown },
+  range:     { label: 'Range',     color: 'var(--color-warning)', icon: Minus },
+  unclear:   { label: 'Unclear',   color: 'var(--color-muted)', icon: Minus },
 }
 
 const VOLUME_COLOR: Record<string, string> = {
-  accumulation: '#05B878',
-  distribution: '#FF5947',
-  neutral:      '#8e8e8e',
+  accumulation: 'var(--color-up)',
+  distribution: 'var(--color-down)',
+  neutral:      'var(--color-muted)',
 }
 
 
@@ -82,13 +82,13 @@ export default function ChartVisionCard({ symbol, anywhere = false }: Props) {
   }
 
   return (
-    <section className="rounded-xl border border-d-border bg-wrap overflow-hidden">
+    <section className="rounded-[20px] border border-d-border bg-wrap overflow-hidden">
       <header className="px-5 py-3 border-b border-d-border flex items-center justify-between gap-3">
         <h3 className="text-[13px] font-semibold text-d-text-primary flex items-center gap-2">
           <Eye className="w-4 h-4 text-primary" />
           Chart vision
           {anywhere && (
-            <span className="text-[9px] font-semibold tracking-wider uppercase rounded-full px-2 py-0.5 bg-[rgba(255,209,102,0.10)] text-highlight border border-[rgba(255,209,102,0.45)]">
+            <span className="text-[9px] font-semibold tracking-wider uppercase rounded-full px-2 py-0.5 bg-highlight/10 text-highlight border border-highlight/40">
               Elite
             </span>
           )}
@@ -96,7 +96,7 @@ export default function ChartVisionCard({ symbol, anywhere = false }: Props) {
         {!analysis && !loading && (
           <button
             onClick={run}
-            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-primary text-primary-foreground text-[11px] font-semibold hover:bg-primary-hover"
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary text-primary-foreground text-[11px] font-semibold hover:bg-primary-hover"
           >
             <Sparkles className="w-3 h-3" />
             Run analysis
@@ -105,7 +105,7 @@ export default function ChartVisionCard({ symbol, anywhere = false }: Props) {
         {analysis && !loading && (
           <button
             onClick={run}
-            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md border border-d-border text-[10px] text-d-text-secondary hover:text-d-text-primary"
+            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border border-d-border text-[10px] text-d-text-secondary hover:text-d-text-primary"
           >
             <Sparkles className="w-3 h-3" />
             Re-run
@@ -122,7 +122,7 @@ export default function ChartVisionCard({ symbol, anywhere = false }: Props) {
         )}
 
         {error && !loading && (
-          <div className="rounded-md border border-down/40 bg-down/10 px-3 py-2 flex items-start gap-2">
+          <div className="rounded-xl border border-down/40 bg-down/10 px-3 py-2 flex items-start gap-2">
             <AlertTriangle className="w-3.5 h-3.5 text-down mt-0.5 shrink-0" />
             <div className="flex-1 min-w-0">
               <p className="text-[12px] text-down">{error}</p>
@@ -162,9 +162,9 @@ export function AnalysisView({ a }: { a: Analysis }) {
   const trendMeta = a.trend ? (TREND_META[a.trend] || TREND_META.unclear) : TREND_META.unclear
   const TrendIcon = trendMeta.icon
   const setupColor =
-    a.setup?.includes('bullish') ? '#05B878'
-    : a.setup?.includes('bearish') ? '#FF5947'
-    : '#FEB113'
+    a.setup?.includes('bullish') ? 'var(--color-up)'
+    : a.setup?.includes('bearish') ? 'var(--color-down)'
+    : 'var(--color-warning)'
 
   return (
     <div className="space-y-3">
@@ -172,7 +172,7 @@ export function AnalysisView({ a }: { a: Analysis }) {
       <div className="flex flex-wrap items-center gap-2">
         <span
           className="inline-flex items-center gap-1 text-[10px] font-semibold tracking-wider uppercase rounded-full px-2 py-0.5 border"
-          style={{ color: trendMeta.color, borderColor: `${trendMeta.color}55`, background: `${trendMeta.color}14` }}
+          style={{ color: trendMeta.color, borderColor: `color-mix(in srgb, ${trendMeta.color} 33%, transparent)`, background: `color-mix(in srgb, ${trendMeta.color} 8%, transparent)` }}
         >
           <TrendIcon className="w-3 h-3" />
           {trendMeta.label}
@@ -187,8 +187,8 @@ export function AnalysisView({ a }: { a: Analysis }) {
             className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider rounded-full px-2 py-0.5 border"
             style={{
               color: VOLUME_COLOR[a.volume_signal],
-              borderColor: `${VOLUME_COLOR[a.volume_signal]}55`,
-              background: `${VOLUME_COLOR[a.volume_signal]}14`,
+              borderColor: `color-mix(in srgb, ${VOLUME_COLOR[a.volume_signal]} 33%, transparent)`,
+              background: `color-mix(in srgb, ${VOLUME_COLOR[a.volume_signal]} 8%, transparent)`,
             }}
           >
             <Activity className="w-3 h-3" />
@@ -205,8 +205,8 @@ export function AnalysisView({ a }: { a: Analysis }) {
       {/* Setup banner */}
       {a.setup && (
         <div
-          className="rounded-md border px-3 py-2"
-          style={{ borderColor: `${setupColor}55`, background: `${setupColor}10` }}
+          className="rounded-xl border px-3 py-2"
+          style={{ borderColor: `color-mix(in srgb, ${setupColor} 33%, transparent)`, background: `color-mix(in srgb, ${setupColor} 6%, transparent)` }}
         >
           <p className="text-[10px] uppercase tracking-wider text-d-text-muted mb-0.5">Setup</p>
           <p className="text-[13px] font-semibold capitalize" style={{ color: setupColor }}>
@@ -217,13 +217,13 @@ export function AnalysisView({ a }: { a: Analysis }) {
 
       {/* Levels */}
       <div className="grid grid-cols-2 gap-2">
-        <LevelBox label="Support" values={a.support_levels} color="#05B878" />
-        <LevelBox label="Resistance" values={a.resistance_levels} color="#FF5947" />
+        <LevelBox label="Support" values={a.support_levels} color="var(--color-up)" />
+        <LevelBox label="Resistance" values={a.resistance_levels} color="var(--color-down)" />
       </div>
 
       {/* Narrative */}
       {a.narrative && (
-        <div className="rounded-md bg-main border border-d-border px-3 py-2.5">
+        <div className="rounded-xl bg-main border border-d-border px-3 py-2.5">
           <p className="text-[10px] uppercase tracking-wider text-d-text-muted mb-1">Read</p>
           <p className="text-[12px] text-d-text-primary leading-relaxed">{a.narrative}</p>
         </div>
@@ -247,7 +247,7 @@ function LevelBox({
   color: string
 }) {
   return (
-    <div className="rounded-md bg-main border border-d-border px-3 py-2">
+    <div className="rounded-xl bg-main border border-d-border px-3 py-2">
       <p className="text-[9px] uppercase tracking-wider text-d-text-muted">{label}</p>
       {values.length === 0 ? (
         <p className="text-[12px] text-d-text-muted mt-0.5">—</p>
@@ -256,8 +256,8 @@ function LevelBox({
           {values.map((v, i) => (
             <span
               key={i}
-              className="numeric text-[11px] font-semibold px-1.5 py-0.5 rounded border"
-              style={{ color, borderColor: `${color}40`, background: `${color}10` }}
+              className="numeric text-[11px] font-semibold px-2 py-0.5 rounded-full border"
+              style={{ color, borderColor: `color-mix(in srgb, ${color} 25%, transparent)`, background: `color-mix(in srgb, ${color} 6%, transparent)` }}
             >
               ₹{v.toFixed(2)}
             </span>

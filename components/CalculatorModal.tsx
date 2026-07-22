@@ -107,7 +107,7 @@ export default function CalculatorModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div
-        className="w-full max-w-2xl rounded-2xl border border-border/60 bg-background-surface shadow-2xl"
+        className="glass-surface w-full max-w-2xl rounded-2xl shadow-2xl"
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border/60 p-6">

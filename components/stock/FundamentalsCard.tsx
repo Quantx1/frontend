@@ -10,13 +10,18 @@
  * yield, promoter holding).
  *
  * Mirrors DerivativesAnalysis.tsx / OrderFlowAnalysis.tsx: glass
- * `lg-surface` cards, text-up / text-down / text-d-text-* tokens, a
- * Beginner⟷Pro toggle that hides every plain-language line in Pro mode,
- * the Plain / InfoDot / CardShell helper pattern, honest-empty + skeleton
+ * `lg-surface` cards, text-up / text-down / text-d-text-* tokens, the
+ * Plain / InfoDot / CardShell helper pattern, honest-empty + skeleton
  * states. No raw hex in className — bars use var(--color-*).
+ *
+ * 2026-07-21: the Beginner⟷Pro toggle is GONE — one view shows all the
+ * data with the plain-language read under each number. Data comes via the
+ * same SWR key the page header uses, so header P/E + Mkt Cap and this
+ * card can never disagree.
  */
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import useSWR from 'swr'
 import {
   Banknote,
   Coins,
@@ -94,7 +99,7 @@ function CardShell({
   children: React.ReactNode
 }) {
   return (
-    <div className={`lg-surface rounded-xl p-4 ${className}`}>
+    <div className={`lg-surface rounded-[20px] p-4 ${className}`}>
       <div className="mb-3 flex items-center justify-between gap-2">
         <h3 className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-d-text-muted">
           <Icon className="h-3.5 w-3.5" /> {title}
@@ -106,9 +111,8 @@ function CardShell({
   )
 }
 
-// Plain-language line — hidden in Pro mode.
-function Plain({ show, children }: { show: boolean; children: React.ReactNode }) {
-  if (!show) return null
+// Plain-language line — always shown (one view, all the data).
+function Plain({ children }: { children: React.ReactNode }) {
   return (
     <p className="mt-2 flex gap-1.5 text-[11.5px] leading-snug text-d-text-secondary">
       <Info className="mt-[2px] h-3 w-3 shrink-0 text-primary" />
@@ -117,14 +121,15 @@ function Plain({ show, children }: { show: boolean; children: React.ReactNode })
   )
 }
 
-// A single metric tile — big value + tone-coloured beginner one-liner.
+// A single metric tile — big value + tone-scaled meter bar + plain-language
+// one-liner. `meterPct` (0-100) positions the metric on its healthy range.
 function MetricTile({
   icon: Icon,
   label,
   value,
   tone,
   info,
-  beginner,
+  meterPct,
   children,
 }: {
   icon: React.ElementType
@@ -132,7 +137,7 @@ function MetricTile({
   value: string
   tone: Tone
   info?: string
-  beginner: boolean
+  meterPct?: number | null
   children?: React.ReactNode
 }) {
   return (
@@ -144,10 +149,25 @@ function MetricTile({
         {info ? <InfoDot text={info} /> : null}
       </div>
       <div className={`numeric mt-1 text-[22px] font-bold leading-none ${tone.cls}`}>{value}</div>
-      <Plain show={beginner}>{children}</Plain>
+      {meterPct != null && (
+        <div className="mt-2 h-[4px] overflow-hidden rounded-full bg-d-border">
+          <div
+            className="h-full rounded-full"
+            style={{ width: `${Math.max(3, Math.min(100, meterPct))}%`, background: tone.bar }}
+          />
+        </div>
+      )}
+      <Plain>{children}</Plain>
     </div>
   )
 }
+
+// Meter positions — where the value sits on a sensible display range.
+const peMeter = (v: number) => (1 - Math.min(v, 60) / 60) * 100          // lower P/E = fuller bar
+const retMeter = (v: number) => (Math.min(Math.max(v, 0), 30) / 30) * 100 // ROE/ROCE 0-30%
+const growthMeter = (v: number) => ((Math.min(Math.max(v, -10), 30) + 10) / 40) * 100
+const dyMeter = (v: number) => (Math.min(Math.max(v, 0), 5) / 5) * 100
+const promMeter = (v: number) => (Math.min(Math.max(v, 0), 75) / 75) * 100
 
 // ── tone resolvers (thresholds per spec) ──
 const peTone = (v: number): Tone => (v < 15 ? UP : v <= 25 ? NEUTRAL : v <= 40 ? WARN : DOWN)
@@ -194,35 +214,15 @@ function qualityVerdict(f: Fundamentals): { text: string; cls: string } {
 }
 
 export default function FundamentalsCard({ symbol }: { symbol: string }) {
-  const [data, setData] = useState<FundamentalsData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
-  const [beginner, setBeginner] = useState(true)
-
-  useEffect(() => {
-    let alive = true
-    const sym = (symbol || '').trim().toUpperCase()
-    if (!sym) return
-    setLoading(true)
-    setError(false)
-    api.screener
-      .fundamentals(sym)
-      .then((d) => {
-        if (alive) setData(d)
-      })
-      .catch(() => {
-        if (alive) {
-          setError(true)
-          setData(null)
-        }
-      })
-      .finally(() => {
-        if (alive) setLoading(false)
-      })
-    return () => {
-      alive = false
-    }
-  }, [symbol])
+  const sym = (symbol || '').trim().toUpperCase()
+  // Same SWR key as the page header's Mkt Cap / P/E stats — one fetch,
+  // one source of truth for the whole page.
+  const { data, isLoading: loading } = useSWR(
+    sym ? `fundamentals:${sym}` : null,
+    () => api.screener.fundamentals(sym).catch(() => null),
+    { revalidateOnFocus: false, dedupingInterval: 300_000 },
+  )
+  const error = !loading && data === null
 
   const f = data?.fundamentals ?? null
   const hasData = !!f
@@ -233,7 +233,7 @@ export default function FundamentalsCard({ symbol }: { symbol: string }) {
   return (
     <div className="space-y-4">
       {/* ── HEADER ROW ─────────────────────────────────────────── */}
-      <div className="lg-surface rounded-xl p-4 md:p-5">
+      <div className="lg-surface rounded-[20px] p-4 md:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="min-w-0">
             <h2 className="flex items-center gap-2 text-[18px] font-bold tracking-tight text-d-text-primary">
@@ -249,31 +249,10 @@ export default function FundamentalsCard({ symbol }: { symbol: string }) {
 
           <div className="flex items-center gap-2">
             {data?.source ? (
-              <span className="rounded-md border border-line bg-surface-2 px-1.5 py-0.5 text-[9.5px] uppercase tracking-wider text-d-text-muted">
+              <span className="rounded-full border border-line bg-surface-2 px-1.5 py-0.5 text-[9.5px] uppercase tracking-wider text-d-text-muted">
                 {data.source}
               </span>
             ) : null}
-            {/* Beginner ⟷ Pro toggle */}
-            <div className="flex items-center rounded-lg border border-line bg-surface-2 p-0.5 text-[10.5px] font-medium">
-              <button
-                type="button"
-                onClick={() => setBeginner(true)}
-                className={`rounded-md px-2.5 py-1 transition-colors ${
-                  beginner ? 'bg-primary/15 text-primary' : 'text-d-text-muted hover:text-d-text-primary'
-                }`}
-              >
-                Beginner
-              </button>
-              <button
-                type="button"
-                onClick={() => setBeginner(false)}
-                className={`rounded-md px-2.5 py-1 transition-colors ${
-                  !beginner ? 'bg-primary/15 text-primary' : 'text-d-text-muted hover:text-d-text-primary'
-                }`}
-              >
-                Pro
-              </button>
-            </div>
           </div>
         </div>
 
@@ -299,7 +278,7 @@ export default function FundamentalsCard({ symbol }: { symbol: string }) {
           ))}
         </div>
       ) : !hasData || !f ? (
-        <div className="lg-surface rounded-xl p-6 text-center text-[12px] text-d-text-muted">
+        <div className="lg-surface rounded-[20px] p-6 text-center text-[12px] text-d-text-muted">
           Fundamentals not available for {symbol} yet.
         </div>
       ) : (
@@ -313,7 +292,8 @@ export default function FundamentalsCard({ symbol }: { symbol: string }) {
                 label="P/E · valuation"
                 value={fmtNum(f.pe, 1)}
                 tone={peTone(f.pe)}
-                beginner={beginner}
+                meterPct={peMeter(f.pe)}
+
                 info="Price-to-Earnings — how many rupees you pay for ₹1 of yearly profit. Lower is cheaper; very high means the market expects fast growth."
               >
                 You pay ₹{fmtNum(f.pe, 1)} per ₹1 of annual profit — <strong>{peWord(f.pe)}</strong>.
@@ -327,7 +307,8 @@ export default function FundamentalsCard({ symbol }: { symbol: string }) {
                 label="ROE · profitability"
                 value={`${fmtNum(f.roe, 1)}%`}
                 tone={roeTone(f.roe)}
-                beginner={beginner}
+                meterPct={retMeter(f.roe)}
+
                 info="Return on Equity — profit generated for every ₹100 of shareholder money. Above 15% is strong, above 20% is exceptional."
               >
                 Generates ₹{fmtNum(f.roe, 1)} profit per ₹100 of shareholder money —{' '}
@@ -342,7 +323,8 @@ export default function FundamentalsCard({ symbol }: { symbol: string }) {
                 label="ROCE · capital quality"
                 value={`${fmtNum(f.roce, 1)}%`}
                 tone={roceTone(f.roce)}
-                beginner={beginner}
+                meterPct={retMeter(f.roce)}
+
                 info="Return on Capital Employed — how efficiently the business uses ALL its capital (equity + debt). Above 20% signals a high-quality compounder."
               >
                 Earns ₹{fmtNum(f.roce, 1)} on every ₹100 of total capital deployed —{' '}
@@ -357,7 +339,8 @@ export default function FundamentalsCard({ symbol }: { symbol: string }) {
                 label="Sales growth"
                 value={`${fmtNum(f.sales_growth, 1)}%`}
                 tone={growthTone(f.sales_growth)}
-                beginner={beginner}
+                meterPct={growthMeter(f.sales_growth)}
+
                 info="How fast revenue is growing (compounded). Above 15% is strong top-line momentum; negative means the business is shrinking."
               >
                 Revenue is growing <strong>{growthWord(f.sales_growth)}</strong> at {fmtNum(f.sales_growth, 1)}% a
@@ -372,7 +355,8 @@ export default function FundamentalsCard({ symbol }: { symbol: string }) {
                 label="Profit growth"
                 value={`${fmtNum(f.profit_growth, 1)}%`}
                 tone={growthTone(f.profit_growth)}
-                beginner={beginner}
+                meterPct={growthMeter(f.profit_growth)}
+
                 info="How fast net profit is growing (compounded). Profit growing faster than sales means margins are expanding — a great sign."
               >
                 Profits are growing <strong>{growthWord(f.profit_growth)}</strong> at {fmtNum(f.profit_growth, 1)}% a
@@ -387,7 +371,8 @@ export default function FundamentalsCard({ symbol }: { symbol: string }) {
                 label="Dividend yield"
                 value={`${fmtNum(f.dividend_yield, 2)}%`}
                 tone={dyTone(f.dividend_yield)}
-                beginner={beginner}
+                meterPct={dyMeter(f.dividend_yield)}
+
                 info="Annual dividend as a % of the share price — the cash return you get just for holding. Above 3% is income-friendly."
               >
                 Pays {fmtNum(f.dividend_yield, 2)}% a year in dividends — <strong>{dyWord(f.dividend_yield)}</strong>.
@@ -400,7 +385,8 @@ export default function FundamentalsCard({ symbol }: { symbol: string }) {
               label="Promoter holding"
               value={showProm ? `${fmtNum(f.promoter_pct, 2)}%` : 'Widely held'}
               tone={showProm ? promTone(f.promoter_pct as number) : NEUTRAL}
-              beginner={beginner}
+              meterPct={showProm ? promMeter(f.promoter_pct as number) : null}
+
               info="The % owned by founders/promoters. High promoter ownership = aligned 'skin in the game'. Banks and widely-held firms have little or no promoter stake by design."
             >
               {showProm ? (
@@ -442,7 +428,7 @@ export default function FundamentalsCard({ symbol }: { symbol: string }) {
                 </div>
               </div>
             </div>
-            <Plain show={beginner}>
+            <Plain>
               Market cap is the company&rsquo;s total size; book value is its net worth per share; price is what one
               share trades at today.
             </Plain>

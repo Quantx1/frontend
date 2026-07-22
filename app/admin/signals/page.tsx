@@ -74,7 +74,7 @@ export default function AdminSignalsPage() {
         )
       default:
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-500/10 text-d-text-muted rounded-full text-xs font-medium">
+          <span className="inline-flex items-center gap-1 px-2 py-1 bg-surface-2 text-d-text-muted rounded-full text-xs font-medium">
             {status}
           </span>
         )
@@ -161,7 +161,7 @@ export default function AdminSignalsPage() {
 
           <div className="glass-card hover:border-primary transition-colors p-6">
             <div className="flex items-center gap-3 mb-2">
-              <BarChart3 className="w-5 h-5 text-purple-500" />
+              <BarChart3 className="w-5 h-5 text-ai" />
               <span className="text-sm text-d-text-muted">Accuracy</span>
             </div>
             <p

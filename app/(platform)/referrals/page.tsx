@@ -162,7 +162,7 @@ export default function ReferralsPage() {
             <button
               onClick={rotate}
               disabled={rotating}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-d-border text-[11px] text-d-text-secondary hover:text-d-text-primary disabled:opacity-60"
+              className="glass-control inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[11px] text-d-text-secondary hover:text-d-text-primary disabled:opacity-60"
             >
               <RefreshCw className={`w-3 h-3 ${rotating ? 'animate-spin' : ''}`} />
               Rotate code
@@ -181,7 +181,7 @@ export default function ReferralsPage() {
           />
           <button
             onClick={() => copy(absoluteLink, 'link')}
-            className="shrink-0 inline-flex items-center gap-1 px-3 py-1 rounded-sm bg-primary text-main text-[11px] font-semibold hover:bg-primary-hover"
+            className="glass-control-accent shrink-0 inline-flex items-center gap-1 px-3 py-1 rounded-sm text-[11px] font-semibold active:scale-[0.98]"
           >
             {copied === 'link' ? <CheckCircle2 className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
             {copied === 'link' ? 'Copied' : 'Copy link'}
@@ -292,7 +292,7 @@ function ShareButton({
         href={href}
         target="_blank"
         rel="noreferrer"
-        className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-sm border border-primary/30 bg-primary/10 text-primary text-[11px] font-medium transition-colors hover:bg-hover"
+        className="glass-control inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-sm text-primary text-[11px] font-medium transition-colors"
       >
         <Icon className="w-3.5 h-3.5" />
         {label}

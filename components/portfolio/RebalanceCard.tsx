@@ -20,7 +20,7 @@ interface Result {
 }
 
 const ACTION_COLOR: Record<string, string> = {
-  trim: '#FF5947', reduce: '#FEB113', diversify: '#3B82F6', 'de-risk': '#8B5CF6',
+  trim: 'var(--color-down)', reduce: 'var(--color-warning)', diversify: 'var(--color-primary-text)', 'de-risk': 'var(--color-ai)',
 }
 
 export default function RebalanceCard({ positions }: { positions: Array<{ symbol: string; weight: number }> }) {
@@ -38,7 +38,7 @@ export default function RebalanceCard({ positions }: { positions: Array<{ symbol
   }
 
   return (
-    <section className="rounded-xl border border-d-border bg-wrap p-5">
+    <section className="rounded-[20px] border border-d-border bg-wrap p-5">
       <div className="flex items-center justify-between">
         <h3 className="flex items-center gap-2 text-[14px] font-semibold text-d-text-primary">
           <Scale className="h-4 w-4 text-primary" /> AI Rebalancing
@@ -46,7 +46,7 @@ export default function RebalanceCard({ positions }: { positions: Array<{ symbol
         <button
           onClick={run}
           disabled={state === 'loading'}
-          className="inline-flex items-center gap-1.5 rounded-md border border-line px-3 py-1.5 text-[12px] text-primary hover:border-primary/60 disabled:opacity-60"
+          className="inline-flex items-center gap-1.5 rounded-full border border-line px-3 py-1.5 text-[12px] text-primary hover:border-primary/60 disabled:opacity-60"
         >
           {state === 'loading' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
           {state === 'idle' ? 'Suggest rebalance' : 'Refresh'}
@@ -64,7 +64,7 @@ export default function RebalanceCard({ positions }: { positions: Array<{ symbol
               {data.suggestions.map((s, i) => (
                 <li key={i} className="flex items-start gap-2.5">
                   <span className="mt-0.5 text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded shrink-0"
-                    style={{ color: ACTION_COLOR[s.action] || '#8b8f9a', background: `${ACTION_COLOR[s.action] || '#8b8f9a'}1A` }}>
+                    style={{ color: ACTION_COLOR[s.action] || 'var(--color-muted)', background: `color-mix(in srgb, ${ACTION_COLOR[s.action] || 'var(--color-muted)'} 10%, transparent)` }}>
                     {s.action}
                   </span>
                   <span className="text-[12px] text-d-text-secondary leading-snug">

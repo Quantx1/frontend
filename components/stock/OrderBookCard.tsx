@@ -24,8 +24,8 @@ interface DepthResp {
   }
 }
 
-const UP = '#05B878'
-const DOWN = '#FF5947'
+const UP = 'var(--color-up)'
+const DOWN = 'var(--color-down)'
 
 export default function OrderBookCard({ symbol }: { symbol: string }) {
   const [data, setData] = useState<DepthResp | null>(null)
@@ -50,7 +50,7 @@ export default function OrderBookCard({ symbol }: { symbol: string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [symbol])
 
-  if (state === 'loading') return <div className="rounded-lg border border-line bg-wrap h-[200px] animate-pulse" />
+  if (state === 'loading') return <div className="rounded-[20px] border border-line bg-wrap h-[200px] animate-pulse" />
   if (state === 'empty' || !data) return null // honest: no order book without a live feed
 
   const a = data.analysis
@@ -60,7 +60,7 @@ export default function OrderBookCard({ symbol }: { symbol: string }) {
   const bidPct = Math.round(((a.imbalance + 1) / 2) * 100) // -1..1 -> 0..100
 
   return (
-    <div className="rounded-lg border border-line bg-wrap overflow-hidden">
+    <div className="rounded-[20px] border border-line bg-wrap overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-line">
         <div className="flex items-center gap-2">
           <ArrowLeftRight className="w-3.5 h-3.5 text-primary" />
@@ -106,7 +106,7 @@ function Side({ levels, color, align, maxQty, wall }: {
               className="absolute inset-y-0"
               style={{
                 width: `${(l.quantity / maxQty) * 100}%`,
-                background: `${color}1A`,
+                background: `color-mix(in srgb, ${color} 10%, transparent)`,
                 [align]: 0,
               }}
             />

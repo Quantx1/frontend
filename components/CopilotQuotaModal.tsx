@@ -82,7 +82,7 @@ export default function CopilotQuotaModal() {
       onClick={close}
     >
       <div
-        className="w-full max-w-md trading-surface space-y-4"
+        className="w-full max-w-md glass-surface rounded-2xl p-5 space-y-4"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start gap-3">

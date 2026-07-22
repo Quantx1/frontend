@@ -66,7 +66,7 @@ function InfoDot({ text }: { text: string }) {
         onClick={() => setOpen((v) => !v)}
         onBlur={() => setOpen(false)}
         aria-label="What does this mean?"
-        className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-line text-d-text-muted transition-colors hover:text-d-text-primary"
+        className="glass-control inline-flex h-4 w-4 items-center justify-center rounded-full text-d-text-muted transition-colors hover:text-d-text-primary"
       >
         <HelpCircle className="h-2.5 w-2.5" />
       </button>
@@ -219,7 +219,7 @@ export default function DerivativesAnalysis() {
                 type="button"
                 onClick={() => setBeginner(true)}
                 className={`rounded-md px-2.5 py-1 transition-colors ${
-                  beginner ? 'bg-primary/15 text-primary' : 'text-d-text-muted hover:text-d-text-primary'
+                  beginner ? 'glass-control-accent' : 'text-d-text-muted hover:text-d-text-primary'
                 }`}
               >
                 Beginner
@@ -228,7 +228,7 @@ export default function DerivativesAnalysis() {
                 type="button"
                 onClick={() => setBeginner(false)}
                 className={`rounded-md px-2.5 py-1 transition-colors ${
-                  !beginner ? 'bg-primary/15 text-primary' : 'text-d-text-muted hover:text-d-text-primary'
+                  !beginner ? 'glass-control-accent' : 'text-d-text-muted hover:text-d-text-primary'
                 }`}
               >
                 Pro
@@ -253,7 +253,7 @@ export default function DerivativesAnalysis() {
               <button
                 type="submit"
                 disabled={loading}
-                className="inline-flex items-center gap-1 rounded-lg border border-primary bg-primary/10 px-2.5 py-1.5 text-[12px] font-medium text-primary transition-colors hover:bg-primary/20 disabled:opacity-50"
+                className="glass-control-accent inline-flex items-center gap-1 rounded-full px-2.5 py-1.5 text-[12px] font-medium transition-colors active:scale-[0.98] disabled:opacity-50"
               >
                 {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Search className="h-3.5 w-3.5" />}
                 Analyse

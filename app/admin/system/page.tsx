@@ -195,7 +195,7 @@ export default function AdminSystemPage() {
           {/* Scheduler */}
           <div className="glass-card hover:border-primary transition-colors p-6">
             <div className="flex items-center justify-between mb-4">
-              <Clock className="w-8 h-8 text-purple-500" />
+              <Clock className="w-8 h-8 text-ai" />
               {getStatusIcon(health?.scheduler_status || 'stopped')}
             </div>
             <h3 className="text-lg font-semibold text-white">Scheduler</h3>
@@ -249,8 +249,8 @@ export default function AdminSystemPage() {
             </div>
 
             <div className="text-center">
-              <div className="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center mx-auto mb-3">
-                <Target className="w-6 h-6 text-purple-500" />
+              <div className="w-12 h-12 bg-ai/10 rounded-xl flex items-center justify-center mx-auto mb-3">
+                <Target className="w-6 h-6 text-ai" />
               </div>
               <p className="text-2xl font-bold text-white">
                 {health?.metrics.today_signals || 0}

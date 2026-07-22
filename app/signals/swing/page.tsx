@@ -1,6 +1,6 @@
-import { SignalsHub } from '@/components/signals/SignalsHub'
+import { redirect } from 'next/navigation'
 
-/** 200-render deep-link into the /signals hub, pre-filtered to the Swing tab (no redirect). */
-export default function SwingSignalsPage() {
-  return <SignalsHub initialHorizon="swing" />
+// Legacy slug — the swing book is now Alpha Picks.
+export default function LegacySwingRedirect() {
+  redirect('/signals/alpha-picks')
 }

@@ -636,10 +636,10 @@ function NewRunModal({
                   key={k}
                   type="button"
                   onClick={() => setKind(k)}
-                  className={`flex items-center justify-between rounded-md border px-3 py-2 text-left text-xs transition-colors ${
+                  className={`flex items-center justify-between rounded-md px-3 py-2 text-left text-xs transition-colors ${
                     k === kind
-                      ? 'border-primary bg-primary/10 text-d-text-primary'
-                      : 'border-line bg-wrap text-d-text-secondary hover:border-line/80 hover:text-d-text-primary'
+                      ? 'glass-control-accent'
+                      : 'glass-control text-d-text-secondary hover:text-d-text-primary'
                   }`}
                 >
                   <span>{KIND_LABELS[k]}</span>
@@ -660,10 +660,10 @@ function NewRunModal({
                   key={u}
                   type="button"
                   onClick={() => setUniverse(u)}
-                  className={`rounded-md border px-2.5 py-1 text-xs ${
+                  className={`rounded-md px-2.5 py-1 text-xs ${
                     u === universe
-                      ? 'border-primary bg-primary/10 text-d-text-primary'
-                      : 'border-line bg-wrap text-d-text-secondary hover:text-d-text-primary'
+                      ? 'glass-control-accent'
+                      : 'glass-control text-d-text-secondary hover:text-d-text-primary'
                   }`}
                 >
                   {u}
@@ -681,10 +681,10 @@ function NewRunModal({
               <button
                 type="button"
                 onClick={() => setMode('random')}
-                className={`rounded-md border px-3 py-2 text-left text-xs ${
+                className={`rounded-md px-3 py-2 text-left text-xs ${
                   mode === 'random'
-                    ? 'border-primary bg-primary/10 text-d-text-primary'
-                    : 'border-line bg-wrap text-d-text-secondary hover:text-d-text-primary'
+                    ? 'glass-control-accent'
+                    : 'glass-control text-d-text-secondary hover:text-d-text-primary'
                 }`}
               >
                 <div className="font-medium">Random</div>
@@ -693,10 +693,10 @@ function NewRunModal({
               <button
                 type="button"
                 onClick={() => setMode('ga')}
-                className={`rounded-md border px-3 py-2 text-left text-xs ${
+                className={`rounded-md px-3 py-2 text-left text-xs ${
                   mode === 'ga'
-                    ? 'border-primary bg-primary/10 text-d-text-primary'
-                    : 'border-line bg-wrap text-d-text-secondary hover:text-d-text-primary'
+                    ? 'glass-control-accent'
+                    : 'glass-control text-d-text-secondary hover:text-d-text-primary'
                 }`}
               >
                 <div className="font-medium">Genetic (GA)</div>
@@ -798,10 +798,10 @@ function NewRunModal({
                     key={n}
                     type="button"
                     onClick={() => setWalkForwardFolds(n)}
-                    className={`flex-1 rounded-md border px-2 py-1.5 text-xs ${
+                    className={`flex-1 rounded-md px-2 py-1.5 text-xs ${
                       walkForwardFolds === n
-                        ? 'border-primary bg-primary/10 text-d-text-primary'
-                        : 'border-line bg-wrap text-d-text-secondary hover:text-d-text-primary'
+                        ? 'glass-control-accent'
+                        : 'glass-control text-d-text-secondary hover:text-d-text-primary'
                     }`}
                   >
                     {n === 0 ? 'Off' : `${n}-fold`}

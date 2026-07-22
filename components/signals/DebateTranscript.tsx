@@ -43,19 +43,19 @@ interface Props {
 }
 
 const AGENT_CARDS = [
-  { key: 'fundamentals', name: 'Fundamentals Analyst', color: '#8D5CFF', icon: FileText },
-  { key: 'technical', name: 'Technical Analyst', color: '#5DCBD8', icon: Activity },
-  { key: 'sentiment', name: 'Sentiment Analyst', color: '#00E5CC', icon: TrendingUp },
-  { key: 'manager_briefing', name: 'Debate Manager', color: '#FEB113', icon: Gavel },
-  { key: 'bull', name: 'Bull Researcher', color: '#05B878', icon: TrendingUp },
-  { key: 'bear', name: 'Bear Researcher', color: '#FF5947', icon: TrendingDown },
-  { key: 'risk', name: 'Risk Manager', color: '#FF9900', icon: Shield },
+  { key: 'fundamentals', name: 'Fundamentals Analyst', color: 'var(--color-ai)', icon: FileText },
+  { key: 'technical', name: 'Technical Analyst', color: 'var(--color-primary-text)', icon: Activity },
+  { key: 'sentiment', name: 'Sentiment Analyst', color: 'var(--color-cyan)', icon: TrendingUp },
+  { key: 'manager_briefing', name: 'Debate Manager', color: 'var(--color-warning)', icon: Gavel },
+  { key: 'bull', name: 'Bull Researcher', color: 'var(--color-up)', icon: TrendingUp },
+  { key: 'bear', name: 'Bear Researcher', color: 'var(--color-down)', icon: TrendingDown },
+  { key: 'risk', name: 'Risk Manager', color: 'var(--color-warning)', icon: Shield },
 ] as const
 
 export default function DebateTranscript({ data, loading, onRun }: Props) {
   if (loading) {
     return (
-      <div className="trading-surface text-[12px] text-d-text-muted">
+      <div className="trading-surface !rounded-[20px] text-[12px] text-d-text-muted">
         Running 8-agent debate… <span className="numeric">~15s</span>
       </div>
     )
@@ -63,7 +63,7 @@ export default function DebateTranscript({ data, loading, onRun }: Props) {
 
   if (!data) {
     return (
-      <div className="trading-surface flex items-center justify-between gap-4">
+      <div className="trading-surface !rounded-[20px] flex items-center justify-between gap-4">
         <div>
           <p className="text-d-text-primary text-[13px] font-medium">Elite debate not run yet</p>
           <p className="text-[11px] text-d-text-muted mt-0.5">
@@ -73,7 +73,7 @@ export default function DebateTranscript({ data, loading, onRun }: Props) {
         {onRun && (
           <button
             onClick={onRun}
-            className="px-4 py-1.5 text-[12px] font-medium bg-primary text-primary-foreground rounded-md hover:bg-primary-hover transition-colors"
+            className="px-4 py-1.5 text-[12px] font-semibold bg-gradient-cta cta-gloss text-on-signature rounded-full transition-transform active:scale-[0.97]"
           >
             Run debate
           </button>
@@ -128,10 +128,10 @@ function TraderCard({
   confidence: number
   summary: string
 }) {
-  const color = DECISION_COLOR[decision] || '#8E8E8E'
+  const color = DECISION_COLOR[decision] || 'var(--color-muted)'
   return (
     <div
-      className="trading-surface flex flex-col gap-2"
+      className="trading-surface !rounded-[20px] flex flex-col gap-2"
       style={{ borderLeft: `3px solid ${color}` }}
     >
       <div className="flex items-center justify-between gap-3">
@@ -144,7 +144,7 @@ function TraderCard({
         <div className="flex items-baseline gap-1.5">
           <span
             className="px-2 py-0.5 text-[11px] font-medium rounded-full"
-            style={{ color, backgroundColor: `${color}1A`, border: `1px solid ${color}40` }}
+            style={{ color, backgroundColor: `color-mix(in srgb, ${color} 10%, transparent)`, border: `1px solid color-mix(in srgb, ${color} 25%, transparent)` }}
           >
             {decision.toUpperCase().replace('_', ' ')}
           </span>
@@ -177,7 +177,7 @@ function AgentCard({
 
   return (
     <div
-      className="trading-surface !p-0 overflow-hidden"
+      className="trading-surface !rounded-[20px] !p-0 overflow-hidden"
       style={{ borderLeft: `3px solid ${color}` }}
     >
       <button
@@ -189,8 +189,8 @@ function AgentCard({
           <span className="text-[12px] font-medium text-d-text-primary truncate">{name}</span>
           {stance && (
             <span
-              className="px-1.5 py-0.5 text-[10px] rounded font-medium"
-              style={{ color, backgroundColor: `${color}12` }}
+              className="px-2 py-0.5 text-[10px] rounded-full font-medium"
+              style={{ color, backgroundColor: `color-mix(in srgb, ${color} 7%, transparent)` }}
             >
               {stance.replace('_', ' ')}
             </span>
@@ -272,8 +272,8 @@ function renderAgentBody(payload: any): ReactNode {
 }
 
 const DECISION_COLOR: Record<string, string> = {
-  enter: '#05B878',
-  half_size: '#FEB113',
-  wait: '#8E8E8E',
-  skip: '#FF5947',
+  enter: 'var(--color-up)',
+  half_size: 'var(--color-warning)',
+  wait: 'var(--color-muted)',
+  skip: 'var(--color-down)',
 }

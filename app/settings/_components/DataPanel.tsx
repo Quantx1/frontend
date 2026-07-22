@@ -61,7 +61,7 @@ export default function DataPanel({
         <button
           onClick={downloadJson}
           disabled={busy}
-          className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 text-[12px] border border-line text-d-text-primary rounded-sm hover:bg-hover transition-colors disabled:opacity-50"
+          className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 text-[12px] glass-control text-d-text-primary rounded-full transition-colors disabled:opacity-50"
         >
           {busy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
           Download JSON
@@ -76,7 +76,7 @@ export default function DataPanel({
         </p>
         <button
           onClick={() => setMessage({ type: 'error', text: 'Delete-account flow is pending admin-signoff wiring.' })}
-          className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 text-[12px] font-medium bg-down/10 border border-down/30 text-down rounded-sm hover:bg-down/20 transition-colors"
+          className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 text-[12px] font-medium glass-control-danger text-down rounded-full transition-colors"
         >
           Delete account…
         </button>

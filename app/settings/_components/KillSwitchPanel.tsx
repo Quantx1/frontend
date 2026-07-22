@@ -79,7 +79,7 @@ export default function KillSwitchPanel({
             <button
               onClick={clear}
               disabled={firing}
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-[12px] font-medium border border-line text-d-text-primary rounded-sm hover:bg-hover transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-4 py-2 text-[12px] font-medium glass-control text-d-text-primary rounded-full transition-colors disabled:opacity-50"
             >
               {firing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
               Clear kill switch
@@ -89,7 +89,7 @@ export default function KillSwitchPanel({
               type="button"
               onClick={() => setConfirmOpen(true)}
               disabled={firing}
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-[12px] font-semibold bg-down text-white rounded-sm hover:bg-down/90 transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-4 py-2 text-[12px] font-semibold glass-control-danger text-down rounded-full active:scale-[0.98] transition-colors disabled:opacity-50"
             >
               {firing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <AlertCircle className="w-3.5 h-3.5" />}
               Fire kill switch
@@ -109,10 +109,10 @@ export default function KillSwitchPanel({
             <button
               key={h}
               onClick={() => setPauseHours(h)}
-              className={`px-3 py-1.5 text-[11px] rounded-sm border transition-colors ${
+              className={`px-3 py-1.5 text-[11px] rounded-sm transition-colors ${
                 pauseHours === h
-                  ? 'border-primary/50 bg-primary/10 text-primary'
-                  : 'border-line text-d-text-muted hover:text-d-text-primary'
+                  ? 'glass-control-accent'
+                  : 'glass-control text-d-text-muted hover:text-d-text-primary'
               }`}
             >
               {h}h

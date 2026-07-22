@@ -19,6 +19,7 @@
  */
 
 import { useCallback, useMemo, useState } from 'react'
+import Image from 'next/image'
 import useSWR from 'swr'
 import {
   AlertTriangle,
@@ -45,7 +46,7 @@ const PCR_TAG_TONE: Record<string, string> = {
 }
 
 const REGIME_TONE: Record<string, string> = {
-  complacent: 'bg-amber-500/10 text-amber-400 border-amber-500/40',
+  complacent: 'bg-warning/10 text-warning border-warning/40',
   normal: 'bg-primary/10 text-primary border-primary/40',
   elevated: 'bg-up/10 text-up border-up/40',
   stressed: 'bg-down/10 text-down border-down/40',
@@ -97,7 +98,7 @@ export default function FnoTab() {
   return (
     <div className="space-y-4">
       {/* Index selector + refresh */}
-      <div className="flex flex-wrap items-center gap-2 rounded-md border border-line bg-wrap/60 px-3 py-2">
+      <div className="flex flex-wrap items-center gap-2 rounded-full border border-line bg-wrap/60 px-4 py-2">
         <span className="text-[10px] font-semibold uppercase tracking-wider text-d-text-muted">Index</span>
         {INDICES.map((idx) => {
           const snap = allSnap?.indices?.[idx]
@@ -109,10 +110,10 @@ export default function FnoTab() {
               type="button"
               onClick={() => setSelectedIndex(idx)}
               disabled={offline ?? false}
-              className={`rounded-md border px-3 py-1 text-[11px] font-medium transition-colors ${
+              className={`rounded-full px-3 py-1 text-[11px] font-medium transition-colors ${
                 active
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-line bg-main text-d-text-secondary hover:text-d-text-primary'
+                  ? 'glass-control-accent'
+                  : 'glass-control text-d-text-secondary hover:text-d-text-primary'
               } ${offline ? 'opacity-40 cursor-not-allowed' : ''}`}
             >
               {idx}
@@ -125,7 +126,7 @@ export default function FnoTab() {
             <Badge tone="muted">VIX · {detail.india_vix.toFixed(2)}</Badge>
           )}
           {detail?.regime && (
-            <span className={`rounded-md border px-2 py-0.5 text-[10px] capitalize ${REGIME_TONE[detail.regime] || REGIME_TONE.normal}`}>
+            <span className={`rounded-full border px-2.5 py-0.5 text-[10px] capitalize ${REGIME_TONE[detail.regime] || REGIME_TONE.normal}`}>
               {detail.regime}
             </span>
           )}
@@ -154,7 +155,7 @@ export default function FnoTab() {
 
       {/* Options Teacher — deterministic plain-English read (0 LLM tokens) */}
       {detail?.teach?.length ? (
-        <section className="rounded-xl border border-line bg-wrap p-4">
+        <section className="rounded-[20px] border border-line bg-wrap p-4">
           <div className="mb-2 flex items-center gap-2">
             <Sparkles className="h-3.5 w-3.5 text-primary" />
             <h3 className="text-[12px] font-semibold text-d-text-primary">
@@ -203,12 +204,23 @@ export default function FnoTab() {
             {detail.strategies.map((s, i) => <StrategyRow key={`${s.name}_${i}`} s={s} />)}
           </ul>
         ) : (
-          <EmptyState
-            icon={<Sparkles className="h-6 w-6" />}
-            title="No strategy hits right now"
-            description="VIX regime + PCR + IV configuration didn't trigger any rule."
-            size="sm"
-          />
+          <div className="tile-tint px-6 py-8">
+            <Image
+              src="/v4/illus/screener.png"
+              alt=""
+              aria-hidden
+              width={220}
+              height={220}
+              sizes="220px"
+              className="mx-auto mb-2 w-full max-w-[220px] rounded-2xl"
+            />
+            <EmptyState
+              icon={<Sparkles className="h-6 w-6" />}
+              title="No strategy hits right now"
+              description="VIX regime + PCR + IV configuration didn't trigger any rule."
+              size="sm"
+            />
+          </div>
         )}
       </section>
     </div>
@@ -227,14 +239,14 @@ function SnapshotCard({
 }) {
   if (loading) {
     return (
-      <div className="rounded-xl border border-line bg-wrap p-4">
+      <div className="rounded-[20px] border border-line bg-wrap p-4">
         <Skeleton w="100%" h="120px" />
       </div>
     )
   }
   if (!snap) {
     return (
-      <div className="rounded-xl border border-line bg-wrap p-4 opacity-60">
+      <div className="rounded-[20px] border border-line bg-wrap p-4 opacity-60">
         <p className="text-xs font-medium text-d-text-primary">{symbol}</p>
         <p className="mt-1 text-[10px] text-d-text-muted">Snapshot unavailable.</p>
       </div>
@@ -245,7 +257,7 @@ function SnapshotCard({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-xl border bg-wrap p-4 text-left transition-colors ${
+      className={`rounded-[20px] border bg-wrap p-4 text-left transition-colors ${
         isSelected ? 'border-primary bg-primary/5' : 'border-line hover:border-wrap-line'
       }`}
     >
@@ -260,7 +272,7 @@ function SnapshotCard({
         <div>
           <p className="text-[9px] uppercase tracking-wider text-d-text-muted">PCR</p>
           <p className="font-mono tabular-nums">{snap.pcr_oi.toFixed(2)}</p>
-          <span className={`mt-0.5 inline-block rounded border px-1.5 py-0.5 text-[9px] capitalize ${pcrTone}`}>
+          <span className={`mt-0.5 inline-block rounded-full border px-2 py-0.5 text-[9px] capitalize ${pcrTone}`}>
             {snap.pcr_tag.replace('_', ' ')}
           </span>
         </div>
@@ -306,7 +318,7 @@ function SnapshotCard({
         </div>
       </div>
       {snap.pull_to_max_pain_signal && (
-        <div className="mt-2 rounded border border-primary/40 bg-primary/5 px-2 py-1 text-[10px] text-primary">
+        <div className="mt-2 rounded-full border border-primary/40 bg-primary/5 px-2.5 py-1 text-[10px] text-primary">
           🎯 Pull-to-MaxPain signal active
         </div>
       )}
@@ -325,12 +337,12 @@ function StrategyRow({ s }: { s: FnoStrategy }) {
       : s.confidence === 'medium' ? 'border-primary/60 bg-primary/5 text-primary'
         : 'border-line bg-main text-d-text-muted'
   return (
-    <li className="rounded-md border border-line bg-wrap p-3">
+    <li className="rounded-[20px] border border-line bg-wrap p-4">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <div className="flex items-center gap-2">
           {biasIcon}
           <span className="text-sm font-medium text-d-text-primary">{s.name}</span>
-          <span className={`rounded border px-1.5 py-0.5 text-[10px] capitalize ${confTone}`}>
+          <span className={`rounded-full border px-2 py-0.5 text-[10px] capitalize ${confTone}`}>
             {s.confidence}
           </span>
         </div>

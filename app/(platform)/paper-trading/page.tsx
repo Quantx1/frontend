@@ -122,7 +122,7 @@ export default function PaperTradingPage() {
             {/* Position sizer — capital + risk% + entry/stop → share count. */}
             <button
               onClick={() => setSizerOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] border border-line rounded-sm text-d-text-secondary hover:text-d-text-primary hover:bg-hover transition-colors"
+              className="glass-control inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] rounded-sm text-d-text-secondary hover:text-d-text-primary transition-colors"
             >
               <Calculator className="w-3 h-3" />
               Position size
@@ -130,21 +130,21 @@ export default function PaperTradingPage() {
             {/* AI Trade Planner — entry/stop/capital/risk% → size, R-ladder, drawdown */}
             <button
               onClick={() => setPlannerOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] border border-line rounded-sm text-d-text-secondary hover:text-d-text-primary hover:bg-hover transition-colors"
+              className="glass-control inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] rounded-sm text-d-text-secondary hover:text-d-text-primary transition-colors"
             >
               <Calculator className="w-3 h-3" />
               Trade planner
             </button>
             <button
               onClick={loadAll}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] border border-line rounded-sm text-d-text-secondary hover:text-d-text-primary hover:bg-hover transition-colors"
+              className="glass-control inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] rounded-sm text-d-text-secondary hover:text-d-text-primary transition-colors"
             >
               <RefreshCw className="w-3 h-3" />
               Refresh
             </button>
             <button
               onClick={() => { setResetError(null); setResetOpen(true) }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] border border-down/30 rounded-sm text-down hover:bg-down/10 transition-colors"
+              className="glass-control-danger text-down inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] rounded-sm transition-colors"
             >
               <RotateCcw className="w-3 h-3" />
               Reset account
@@ -256,14 +256,14 @@ export default function PaperTradingPage() {
             <div className="flex items-center gap-2">
               <Link
                 href="/settings?tab=broker"
-                className="inline-flex items-center gap-1.5 px-4 py-2 text-[12px] font-normal bg-primary text-main border border-primary rounded-pill hover:opacity-90 active:scale-[0.97] transition-[transform,opacity] duration-150 ease-out"
+                className="glass-control-accent inline-flex items-center gap-1.5 px-4 py-2 text-[12px] font-normal rounded-pill hover:opacity-90 active:scale-[0.97] transition-[transform,opacity] duration-150 ease-out"
               >
                 <Zap className="w-3.5 h-3.5" />
                 Connect broker
               </Link>
               <Link
                 href="/pricing"
-                className="inline-flex items-center gap-1.5 px-4 py-2 text-[12px] font-normal border border-line text-d-text-primary rounded-pill hover:bg-hover transition-colors"
+                className="glass-control inline-flex items-center gap-1.5 px-4 py-2 text-[12px] font-normal text-d-text-primary rounded-pill transition-colors"
               >
                 Upgrade to Elite
                 <ArrowUpRight className="w-3 h-3" />
@@ -328,14 +328,14 @@ export default function PaperTradingPage() {
               <button
                 onClick={() => setResetOpen(false)}
                 disabled={resetting}
-                className="px-3 py-1.5 text-[12px] border border-line rounded-pill text-d-text-secondary hover:text-d-text-primary hover:bg-hover transition-colors disabled:opacity-50"
+                className="glass-control px-3 py-1.5 text-[12px] rounded-pill text-d-text-secondary hover:text-d-text-primary transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmReset}
                 disabled={resetting}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-normal rounded-pill bg-down/20 border border-down/40 text-down hover:bg-down/30 transition-colors disabled:opacity-50"
+                className="glass-control-danger text-down inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-normal rounded-pill transition-colors disabled:opacity-50"
               >
                 {resetting ? <Loader2 className="h-3 w-3 animate-spin" /> : <RotateCcw className="h-3 w-3" />}
                 {resetting ? 'Resetting…' : 'Reset account'}

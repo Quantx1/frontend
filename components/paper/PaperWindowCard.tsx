@@ -15,7 +15,7 @@ import { api, type PaperWindowEngine } from '@/lib/api'
 import { MONO } from '@/lib/tokens'
 
 /** Card surface — xAI flat panel (matches the /paper-trading page). */
-const CARD = 'rounded-sm border border-line bg-wrap p-4'
+const CARD = 'rounded-[20px] border border-line bg-wrap p-4'
 
 const STATUS_CHIP: Record<PaperWindowEngine['status'], { label: string; cls: string }> = {
   collecting: { label: 'Collecting', cls: 'border-line text-d-text-secondary' },
@@ -65,8 +65,8 @@ export default function PaperWindowCard() {
       {/* Body — loading / error / honest-empty / engines */}
       {isLoading && !data ? (
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4" aria-hidden="true">
-          <div className="h-16 rounded-sm bg-hover animate-pulse" />
-          <div className="h-16 rounded-sm bg-hover animate-pulse" />
+          <div className="h-16 rounded-xl bg-hover animate-pulse" />
+          <div className="h-16 rounded-xl bg-hover animate-pulse" />
         </div>
       ) : error && !data ? (
         <p className="mt-4 text-[11px] text-d-text-muted">
@@ -100,7 +100,7 @@ function EngineSection({ name, engine }: { name: string; engine: PaperWindowEngi
         <div className="flex items-center gap-2">
           <span className="text-[12px] font-medium text-d-text-primary">{name}</span>
           <span
-            className={`font-mono text-[9px] uppercase tracking-[0.12em] px-1.5 py-0.5 rounded-sm border ${chip.cls}`}
+            className={`font-mono text-[9px] uppercase tracking-[0.12em] px-1.5 py-0.5 rounded-full border ${chip.cls}`}
           >
             {chip.label}
           </span>

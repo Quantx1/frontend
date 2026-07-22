@@ -76,10 +76,10 @@ interface RegimeData {
 
 const typeBadgeColor: Record<string, string> = {
   classifier: 'bg-primary/10 text-primary border-primary/20',
-  regime: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+  regime: 'bg-ai/10 text-ai border-ai/20',
   ensemble: 'bg-warning/10 text-warning border-warning/20',
-  ranker: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
-  forecaster: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
+  ranker: 'bg-cyan/10 text-cyan border-cyan/20',
+  forecaster: 'bg-down/10 text-down border-down/20',
 }
 
 const regimeConfig: Record<string, { label: string; color: string; bgColor: string; borderColor: string; icon: typeof TrendingUp }> = {
@@ -189,7 +189,7 @@ export default function AdminMLPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-            <Brain className="w-8 h-8 text-purple-400" />
+            <Brain className="w-8 h-8 text-ai" />
             ML Dashboard
           </h1>
           <p className="text-d-text-muted mt-1">
@@ -388,7 +388,7 @@ export default function AdminMLPage() {
       <div>
         <div className="glass-card hover:border-primary transition-colors p-6">
           <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-purple-500" />
+            <BarChart3 className="w-5 h-5 text-ai" />
             Strategy Performance (30 days)
           </h2>
           <div className="overflow-x-auto">

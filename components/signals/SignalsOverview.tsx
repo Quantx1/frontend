@@ -12,9 +12,9 @@
  *   · a filterable + sortable master blotter of every open signal, each row
  *     drilling into its detail (/signals/[id]; momentum -> its weekly book).
  *
- * Data: getToday() (intraday/swing/positional, fully linkable) folded with
- * getMomentum() (the weekly long-only book). Brand firewall: only the public
- * engine names ever surface. Honest: open signals only, no fabricated stats.
+ * Data: getToday() — both books (Alpha Picks + Momentum Picks) with real row
+ * ids. Brand firewall: only the public engine names ever surface. Honest:
+ * open signals only, no fabricated stats.
  */
 
 import { useMemo, useState } from 'react'
@@ -47,31 +47,15 @@ import {
   normalize,
   type CategoryId,
 } from '@/components/signals/categories'
+import { AutomationPanel } from '@/components/signals/AutomationPanel'
 import { expectedMovePct, type DisplaySignal } from '@/components/signals/SignalCard'
-import { api, type MomentumSignalRaw } from '@/lib/api'
+import { api } from '@/lib/api'
 import { DataBadge } from '@/components/common/DataBadge'
 import { MONO } from '@/lib/tokens'
 
 // ── helpers ─────────────────────────────────────────────────────────────────
 
-const horizonOf = (s: DisplaySignal): CategoryId =>
-  s.signal_type === 'momentum' ? 'momentum' : categoryOf(s)
-
-/** Fold a momentum-book row into the shared DisplaySignal shape. Momentum has
- *  no per-signal id, so rows deep-link to the weekly book page instead. */
-const normMomentum = (m: MomentumSignalRaw): DisplaySignal => ({
-  id: `mom-${m.symbol}`,
-  symbol: m.symbol,
-  direction: (m.direction || '').toUpperCase() === 'SHORT' ? 'SHORT' : 'LONG',
-  entry_price: m.entry_price,
-  target_price: m.target,
-  stop_loss: m.stop_loss,
-  confidence: m.confidence <= 1 ? Math.round(m.confidence * 100) : Math.round(m.confidence),
-  risk_reward: m.risk_reward,
-  generated_at: new Date().toISOString(),
-  status: 'open',
-  signal_type: 'momentum',
-})
+const horizonOf = (s: DisplaySignal): CategoryId => categoryOf(s)
 
 const inr = (n: number | undefined): string =>
   n ? `₹${n.toLocaleString('en-IN', { maximumFractionDigits: n < 100 ? 2 : 0 })}` : '—'
@@ -105,34 +89,31 @@ export function SignalsOverview() {
   const [dir, setDir] = useState<'all' | 'LONG' | 'SHORT'>('all')
   const [q, setQ] = useState('')
 
+  // One source of truth: /today carries EVERY horizon now (the style-engine
+  // momentum + swing books bridge into the signals table daily with real row
+  // ids + generated_at) — no more separate momentum fetch double-counting
+  // the book with fabricated "just now" timestamps.
   const today = useSWR('signals:today', () => api.signals.getToday(), {
     revalidateOnFocus: false,
     refreshInterval: 30_000,
     dedupingInterval: 10_000,
     keepPreviousData: true,
   })
-  const mom = useSWR('signals:momentum', () => api.signals.getMomentum(50), {
-    revalidateOnFocus: false,
-    refreshInterval: 60_000,
-    keepPreviousData: true,
-  })
 
-  const loading = (today.isLoading && !today.data) || (mom.isLoading && !mom.data)
+  const loading = today.isLoading && !today.data
 
   // The full open book across every horizon.
   const open = useMemo<DisplaySignal[]>(() => {
     const t = today.data
     const rows = t?.all_signals ?? [...(t?.long_signals ?? []), ...(t?.short_signals ?? [])]
-    const horizons = rows.map(normalize)
-    const momentum = (mom.data?.signals ?? []).map(normMomentum)
-    return [...horizons, ...momentum].filter(isOpen)
-  }, [today.data, mom.data])
+    return rows.map(normalize).filter(isOpen)
+  }, [today.data])
 
   const stats = useMemo(() => {
     const total = open.length
     const longCount = open.filter((s) => s.direction === 'LONG').length
     const rrs = open.map((s) => s.risk_reward).filter((n) => Number.isFinite(n) && n > 0)
-    const byHorizon: Record<CategoryId, number> = { intraday: 0, swing: 0, positional: 0, momentum: 0 }
+    const byHorizon: Record<CategoryId, number> = { swing: 0, momentum: 0 }
     for (const s of open) byHorizon[horizonOf(s)] += 1
     const byConf = CONF_BANDS.map((b) => ({ label: b.label, n: open.filter((s) => b.test(s.confidence)).length }))
     return {
@@ -263,7 +244,7 @@ export function SignalsOverview() {
           </h1>
           <div className="mt-1 text-[11px] text-d-text-muted">Delayed end-of-day research — not investment advice.</div>
           <div className="mt-0.5 max-w-2xl text-[12px] text-d-text-muted">
-            Every open signal across intraday, swing, positional and momentum — filtered, sorted and analysable in one view. Tap any row for the full engine breakdown.
+            Every open Alpha Pick and Momentum Pick — filtered, sorted and analysable in one view. Tap any row for the full engine breakdown.
           </div>
         </div>
         <div className="flex gap-2">
@@ -282,6 +263,11 @@ export function SignalsOverview() {
         <Reveal delay={0.09}><StatCard label="Avg R:R" value={loading ? null : stats.avgRR != null ? `1:${stats.avgRR.toFixed(1)}` : '—'} loading={loading} tooltip="Mean reward-to-risk across the open book" /></Reveal>
         <Reveal delay={0.12}><StatCard label="Best R:R" value={loading ? null : stats.bestRR != null ? `1:${stats.bestRR.toFixed(1)}` : '—'} loading={loading} /></Reveal>
       </div>
+
+      {/* automation — trade the books manually (per-signal) or via the bot */}
+      <Reveal>
+        <AutomationPanel />
+      </Reveal>
 
       {/* distributions */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -336,7 +322,7 @@ export function SignalsOverview() {
           columns={columns}
           loading={loading}
           ariaLabel="Open signals across all horizons"
-          onRowClick={(r) => router.push(r.signal_type === 'momentum' ? '/signals/momentum' : `/signals/${r.id}`)}
+          onRowClick={(r) => router.push(`/signals/${r.id}`)}
           empty={
             <EmptyState
               icon={<Activity className="h-8 w-8" />}
@@ -352,7 +338,7 @@ export function SignalsOverview() {
       </Reveal>
 
       <div className="flex flex-wrap items-center justify-between gap-2 text-[11.5px] text-d-text-muted">
-        <span>Open signals only · live entry, stop and target on every row · momentum rows open the weekly book.</span>
+        <span>Open signals only · entry, stop and target on every row · tap a row for the full breakdown.</span>
         <Link href="/proof?tab=track-record" className="inline-flex items-center gap-1 font-semibold text-d-text-primary hover:underline underline-offset-4">
           Public track record <ArrowRight className="h-3.5 w-3.5" />
         </Link>

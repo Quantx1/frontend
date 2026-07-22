@@ -14,8 +14,8 @@ import { useEffect, useState } from 'react'
 import useSWR from 'swr'
 import { useAuth } from '@/contexts/AuthContext'
 
-import { DisclaimerFooter, EyebrowMono, Reveal } from '@/components/foundation'
-import { IndexStrip } from '@/components/markets/IndexStrip'
+import { EyebrowMono, Reveal } from '@/components/foundation'
+import { MarketTicker } from '@/components/markets/MarketTicker'
 import { MarketNewsFeed, HomeCtaBand } from '@/components/home/HomeNewsCta'
 import { api } from '@/lib/api'
 
@@ -55,7 +55,7 @@ export function HomeCockpit() {
       <Reveal className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <EyebrowMono>{greetingFor(new Date().getHours())}{firstName ? `, ${firstName}` : ''}</EyebrowMono>
-          <h1 className="heading-display mt-1 text-[clamp(1.6rem,3vw,2.2rem)] font-semibold tracking-tight text-d-text-primary">Your AI trading desk</h1>
+          <h1 className="heading-display mt-1 text-[clamp(1.6rem,3vw,2.2rem)] font-semibold tracking-tight text-d-text-primary">Your <span className="text-silver">AI trading desk</span></h1>
         </div>
         <span className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-wrap px-2.5 py-1.5 text-[11.5px]">
           <span className="relative flex h-2 w-2">
@@ -67,16 +67,15 @@ export function HomeCockpit() {
         </span>
       </Reveal>
 
-      {/* ── Index data ── */}
-      <Reveal delay={0.02}><IndexStrip global={globalItems} /></Reveal>
+      {/* ── Live market tape ── ONE continuous, full-bleed marquee (indices →
+          global cues → NIFTY 50 names). Runs edge-to-edge, never boxed. ── */}
+      <MarketTicker global={globalItems} />
 
       {/* ── Market news — full-width even grid (the star) ── */}
       <Reveal delay={0.04}><MarketNewsFeed /></Reveal>
 
       {/* ── Product upsell + feature jumps — balanced full-width band ── */}
       <Reveal delay={0.06}><HomeCtaBand /></Reveal>
-
-      <DisclaimerFooter />
     </div>
   )
 }

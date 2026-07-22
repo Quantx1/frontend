@@ -156,10 +156,10 @@ export default function PowerScreenersTab() {
                 key={n}
                 type="button"
                 onClick={() => setMinHits(n)}
-                className={`rounded-md border px-2 py-1 ${
+                className={`rounded-md px-2 py-1 ${
                   minHits === n
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-line bg-main text-d-text-secondary hover:text-d-text-primary'
+                    ? 'glass-control-accent'
+                    : 'glass-control text-d-text-secondary hover:text-d-text-primary'
                 }`}
               >
                 {n}+
@@ -215,10 +215,10 @@ export default function PowerScreenersTab() {
           <button
             type="button"
             onClick={() => setSelectedSectors([])}
-            className={`rounded-full border px-2.5 py-0.5 text-[11px] ${
+            className={`rounded-full px-2.5 py-0.5 text-[11px] ${
               selectedSectors.length === 0
-                ? 'border-primary bg-primary/10 text-primary'
-                : 'border-line bg-main text-d-text-secondary hover:text-d-text-primary'
+                ? 'glass-control-accent'
+                : 'glass-control text-d-text-secondary hover:text-d-text-primary'
             }`}
           >
             All
@@ -228,10 +228,10 @@ export default function PowerScreenersTab() {
               key={s.sector}
               type="button"
               onClick={() => toggleSector(s.sector)}
-              className={`rounded-full border px-2.5 py-0.5 text-[11px] ${
+              className={`rounded-full px-2.5 py-0.5 text-[11px] ${
                 selectedSectors.includes(s.sector)
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-line bg-main text-d-text-secondary hover:text-d-text-primary'
+                  ? 'glass-control-accent'
+                  : 'glass-control text-d-text-secondary hover:text-d-text-primary'
               }`}
             >
               {s.sector}

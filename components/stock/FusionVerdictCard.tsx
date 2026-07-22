@@ -112,7 +112,7 @@ export default function FusionVerdictCard({ symbol }: { symbol: string }) {
             </ul>
 
             {data.gated && (
-              <p className="rounded-md bg-warning/10 px-3 py-2 text-xs text-warning">
+              <p className="rounded-xl bg-warning/10 px-3 py-2 text-xs text-warning">
                 Earnings inside the blackout window — new entries are suppressed even though the signals may look constructive.
               </p>
             )}

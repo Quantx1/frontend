@@ -7,6 +7,7 @@ import { Toaster } from 'sonner'
 import { SWRConfig } from 'swr'
 import { AuthProvider } from '../contexts/AuthContext'
 import { UiModeProvider } from '../contexts/UiModeContext'
+import { ThemeModeProvider } from '../contexts/ThemeModeContext'
 import { ClientAuthGate } from '@/components/auth/ClientAuthGate'
 import { GlobalCopilot } from '@/components/copilot/GlobalCopilot'
 
@@ -91,6 +92,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
       storageKey="quantx.theme"
       disableTransitionOnChange
     >
+      {/* Auto = device + time-of-day, layered on next-themes (see
+          ThemeModeContext). Inside ThemeProvider so it can drive setTheme. */}
+      <ThemeModeProvider>
       <MotionConfig reducedMotion="user">
         <SWRConfig
           value={{
@@ -113,6 +117,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         </SWRConfig>
         <ThemedToaster />
       </MotionConfig>
+      </ThemeModeProvider>
     </ThemeProvider>
   )
 }

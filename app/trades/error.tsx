@@ -21,7 +21,7 @@ export default function Error({
         {/* Animated error icon */}
         <div className="mx-auto mb-6 relative w-20 h-20">
           <svg className="absolute inset-0 w-full h-full animate-[spin_8s_linear_infinite]" viewBox="0 0 80 80" fill="none">
-            <circle cx="40" cy="40" r="36" stroke="#FF5947" strokeWidth="1.5" strokeDasharray="6 5" opacity="0.5" />
+            <circle cx="40" cy="40" r="36" stroke="var(--color-down)" strokeWidth="1.5" strokeDasharray="6 5" opacity="0.5" />
           </svg>
           <div className="absolute inset-2 rounded-full bg-down/10 blur-sm" />
           <div className="absolute inset-0 flex items-center justify-center">
@@ -32,7 +32,7 @@ export default function Error({
         <p className="mb-6 text-sm text-d-text-muted">An unexpected error occurred.</p>
         <button
           onClick={reset}
-          className="rounded-xl bg-primary px-5 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary-hover"
+          className="glass-control-accent rounded-full px-5 py-2 text-sm font-medium active:scale-[0.98] transition"
         >
           Try again
         </button>

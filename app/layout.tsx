@@ -1,6 +1,6 @@
 import './globals.css'
 import type { Metadata, Viewport } from 'next'
-import { Plus_Jakarta_Sans } from 'next/font/google'
+import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import { Providers } from './providers'
 
@@ -13,24 +13,16 @@ export const viewport: Viewport = {
   maximumScale: 5,
   userScalable: true,
   viewportFit: 'cover',
-  themeColor: '#0a0a0a',
+  themeColor: '#0D0D0E',
 }
 
-// v2 type system (2026-06-20):
-//   • Plus Jakarta Sans — the PRIMARY family for titles + body + UI. One
-//     family carries the whole hierarchy: headings run 600-700, body 400,
-//     eyebrows uppercase+tracked. Loaded as the
-//     --font-sans variable; --font-display is aliased to it in globals.css
-//     so existing `font-display` / `.heading-display` callers render Jakarta
-//     without hunting every call site.
+// Type system (2026-07-20 — clean modern-SaaS, Cursor / Vercel register):
+//   • Geist Sans — ONE family for everything: titles/headings (bold, tight
+//     tracking via `.heading-display`) AND body/UI/content. A precise neutral
+//     grotesque. Its `--font-geist-sans` var is aliased onto BOTH --font-sans
+//     and --font-display in globals.css.
 //   • Geist Mono — numerics ONLY (price/% columns, tabular-nums) via
 //     --font-geist-mono → --font-mono. Functional alignment, not decoration.
-const jakarta = Plus_Jakarta_Sans({
-  subsets: ['latin'],
-  variable: '--font-sans',
-  display: 'swap',
-  weight: ['400', '500', '600', '700', '800'],
-})
 
 
 // PR 107 — base URL for resolving relative OG image paths. The site
@@ -92,12 +84,13 @@ export default function RootLayout({
   // enableSystem) owns the html.light / html.dark class and injects a
   // boot script before paint — we no longer hardcode `dark` here.
   // suppressHydrationWarning silences the expected class mismatch from
-  // that boot script. Both font variables live on <html> so :root-scope
-  // can alias --font-mono and --font-display onto --font-sans.
+  // that boot script. All three font variables live on <html> so
+  // :root-scope can alias --font-mono onto --font-geist-mono and
+  // font-display/font-sans resolve everywhere.
   return (
     <html
       lang="en"
-      className={`${jakarta.variable} ${GeistMono.variable}`}
+      className={`${GeistSans.variable} ${GeistMono.variable}`}
       suppressHydrationWarning
     >
       <body

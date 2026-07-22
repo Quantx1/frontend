@@ -30,6 +30,8 @@ export interface DisplaySignal {
   generated_at: string
   status: string
   signal_type?: string
+  /** Expiry of the signal's validity window — drives the decay meter. */
+  valid_until?: string
   /** Realized return % once closed (target/SL hit). Undefined while open. */
   pnl_pct?: number
 }
@@ -126,14 +128,44 @@ export function SignalCard({ s, series }: { s: DisplaySignal; series?: number[] 
         />
       </div>
 
+      {/* decay meter — a signal is a decaying claim, not a static row: it
+          fills, closes, or expires at valid_until. */}
+      <DecayMeter s={s} />
+
       {/* footer — R:R + expected move */}
       <div className="mt-3 flex items-center justify-between border-t border-line pt-2.5 text-[11px]">
         <span className="text-d-text-muted">
-          R:R <span className={`font-semibold text-d-text-primary ${MONO}`}>1:{s.risk_reward.toFixed(2)}</span>
+          R:R <span className={`font-semibold text-d-text-primary ${MONO}`}>{s.risk_reward != null ? `1:${s.risk_reward.toFixed(2)}` : '—'}</span>
         </span>
         <ChangeBadge value={move} kind="percent" size="sm" />
       </div>
     </button>
+  )
+}
+
+/** Signal-freshness meter: elapsed share of the validity window + days left.
+ *  Only renders for open signals with a real valid_until. */
+function DecayMeter({ s }: { s: DisplaySignal }) {
+  if (!s.valid_until || !s.generated_at) return null
+  if (!['active', 'triggered', 'executed'].includes(s.status)) return null
+  const gen = new Date(s.generated_at).getTime()
+  const until = new Date(s.valid_until).getTime()
+  const now = Date.now()
+  if (!Number.isFinite(gen) || !Number.isFinite(until) || until <= gen) return null
+  const elapsed = Math.max(0, Math.min(1, (now - gen) / (until - gen)))
+  const daysLeft = Math.max(0, Math.ceil((until - now) / 86_400_000))
+  const tone =
+    elapsed < 0.5 ? 'var(--color-primary)' : elapsed < 0.8 ? 'var(--color-warning)' : 'var(--color-down)'
+  return (
+    <div className="mt-2.5">
+      <div className="flex items-center justify-between text-[9px] uppercase tracking-wide text-d-text-muted">
+        <span>Signal decay</span>
+        <span className={MONO}>{daysLeft}d left</span>
+      </div>
+      <div className="mt-1 h-1 overflow-hidden rounded-full bg-surface-2">
+        <div className="h-full rounded-full" style={{ width: `${Math.max(3, elapsed * 100)}%`, background: tone }} />
+      </div>
+    </div>
   )
 }
 

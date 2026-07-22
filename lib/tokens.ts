@@ -1,46 +1,56 @@
 /**
- * Quant X v2 design tokens — single source of truth for programmatic access.
+ * Quant X "FintechX" design tokens (v4, 2026-07-14) — single source of
+ * truth for programmatic access.
  *
  * Foundation components consume these values via Tailwind classes (which
  * resolve to CSS variables defined in app/globals.css). This file is the
  * canonical TS reference; new components MUST NOT inline hex literals.
  *
  * Both themes are first-class — every semantic colour has a `dark` and
- * `light` variant. The variants here are the v2 design targets; the runtime
+ * `light` variant, WCAG-validated (matrix in DESIGN.md at the repo root;
+ * re-check with frontend/scripts/validate-theme.mjs). The runtime
  * CSS variables in globals.css are intentionally kept in sync with these
  * values.
  *
- * Reference: docs/superpowers/specs/2026-05-19-quantx-v2-design.md §9.4
+ * System rules:
+ *   · ONE accent (glossy fintech blue). It is a FILL — white ink sits on it.
+ *     As TEXT use `primary-text` (Tailwind text-primary resolves there).
+ *   · up/down are P&L semantics ONLY, never chrome.
+ *   · No second gradient family, no neon, no glass tint.
  */
 
 export const tokens = {
   color: {
-    // Background layers (L0 → L4 depth system) — AI Trading OS (2026-06-02)
-    main: { dark: '#0B0E15', light: '#F6F8FB' }, // L0 page (navy-black / cool off-white)
-    wrap: { dark: '#131722', light: '#FFFFFF' }, // L1 cards (TradingView panel)
-    'wrap-hover': { dark: '#1C2131', light: '#EEF2F8' }, // L2 hover / elevated
-    hover: { dark: '#161B27', light: '#F0F4F9' }, // L2 row hover
-    line: { dark: '#252C3F', light: '#E2E8F1' }, // L3 borders
-    'wrap-line': { dark: '#394259', light: '#CBD5E3' }, // L4 accent borders
+    // Background layers (L0 → L4 depth system)
+    main: { dark: '#0D0D0E', light: '#EDF1F4' }, // L0 page (near-black / cool blue-grey)
+    wrap: { dark: '#151517', light: '#FFFFFF' }, // L1 cards
+    'wrap-hover': { dark: '#1E1E21', light: '#F4F7F9' }, // L2 hover / elevated
+    hover: { dark: '#1E1E21', light: '#F4F7F9' }, // L2 row hover
+    line: { dark: '#29292D', light: '#DDE5ED' }, // L3 borders
+    'wrap-line': { dark: '#3B3B40', light: '#C8D4DE' }, // L4 accent borders
 
     // Text
-    'd-text-primary': { dark: '#EDEFF5', light: '#0E1422' },
-    'd-text-secondary': { dark: '#80899F', light: '#475067' },
-    'd-text-muted': { dark: '#7E879B', light: '#5C667D' }, // bumped to clear WCAG AA (~4.6:1)
+    'd-text-primary': { dark: '#F7F7F8', light: '#1D1D1D' },
+    'd-text-secondary': { dark: '#D3D3D7', light: '#4D585F' },
+    'd-text-muted': { dark: '#96969E', light: '#5F6B75' },
 
-    // Brand + semantic — palette B: LuxAlgo/TradingView teal-green hero, TV blue/red
-    primary: { dark: '#2BD9BC', light: '#08A085' }, // signature teal-green
-    'primary-hover': { dark: '#20BFA4', light: '#07876F' },
-    up: { dark: '#16C995', light: '#07A368' }, // P&L only
-    down: { dark: '#F23645', light: '#DE2A40' }, // P&L only (TradingView red)
-    warning: { dark: '#F5A623', light: '#B45309' }, // true-caution only (rare)
-    // AI / Copilot surfaces ONLY (purple — darker on light for AA)
-    ai: { dark: '#8B5CF6', light: '#7C3AED' },
-    // live/highlight energy accent (neon cyan, LuxAlgo)
-    cyan: { dark: '#00E5FF', light: '#0AA8C7' },
-    // highlight (tier badges) + accent (autopilot/regime) → TradingView blue
-    highlight: { dark: '#2962FF', light: '#1D55E0' },
-    accent: { dark: '#2962FF', light: '#1D55E0' },
+    // Brand accent — glossy fintech blue. `primary` is the FILL (wears white);
+    // `primary-text` is the ink variant (lightened on dark, deepened on light).
+    primary: { dark: '#406AE4', light: '#406AE4' },
+    'primary-hover': { dark: '#3055C2', light: '#3055C2' },
+    'primary-text': { dark: '#8FB0FF', light: '#3459C9' },
+
+    // Financial semantics — P&L only
+    up: { dark: '#10B981', light: '#0A6B50' },
+    down: { dark: '#F5808C', light: '#B81C22' },
+    warning: { dark: '#F0A94F', light: '#9A4D00' }, // true-caution only (rare)
+
+    // AI / Copilot ink == brand ink (one accent, no separate blue family)
+    ai: { dark: '#8FB0FF', light: '#3459C9' },
+    // live/energy secondary accent
+    cyan: { dark: '#5290F4', light: '#2563EB' },
+    highlight: { dark: '#F0A94F', light: '#9A4D00' },
+    accent: { dark: '#406AE4', light: '#406AE4' },
   },
   spacing: {
     px: '1px',
@@ -115,13 +125,14 @@ export const tokens = {
   },
 } as const
 
-/** Monospace numerics — Geist Mono (the xAI mono face) via --font-mono, set on
- *  <html> in layout.tsx. Unifies app-wide numerics on one mono face (the old
- *  JetBrains --font-app-mono is superseded by the xAI design language). */
+/** Monospace numerics — Geist Mono via --font-mono, set on <html> in
+ *  layout.tsx. Unifies app-wide numerics on one mono face. */
 export const MONO = '[font-family:var(--font-mono),ui-monospace,monospace] tabular-nums'
 
-/** AI / Copilot accent (purple). Equals the --color-ai token. */
-export const AI = '#8B5CF6'
+/** AI / Copilot accent as a raw hex — the accent FILL. Only for inline
+ *  `${AI}22`-style alpha tints and solid fills that wear white ink; for
+ *  text use the `text-ai` class (theme-aware ink). */
+export const AI = '#406AE4'
 
 export type ColorToken = keyof typeof tokens.color
 export type SpacingToken = keyof typeof tokens.spacing

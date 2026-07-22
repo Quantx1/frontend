@@ -52,14 +52,14 @@ function AiOrb({ size = 22 }: { size?: number }) {
         transition={{ duration: 2.2, repeat: Infinity, ease: 'linear' }}
         style={{
           background:
-            'conic-gradient(from 0deg, transparent 0deg, color-mix(in srgb, var(--color-up) 92%, transparent) 300deg, transparent 350deg)',
+            'conic-gradient(from 0deg, transparent 0deg, color-mix(in srgb, var(--color-primary) 92%, transparent) 300deg, transparent 350deg)',
           WebkitMask: 'radial-gradient(closest-side, transparent 62%, #000 64%)',
           mask: 'radial-gradient(closest-side, transparent 62%, #000 64%)',
         }}
       />
       <motion.span
         aria-hidden
-        className="relative text-up"
+        className="relative text-ai"
         animate={{ scale: [1, 1.12, 1], opacity: [0.85, 1, 0.85] }}
         transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
       >

@@ -103,13 +103,21 @@ export function Gauge({ value, label, tone = 'rgb(255 255 255 / 0.85)' }: { valu
   )
 }
 
-/** Generated artifact actions row. Reveal with `step >= 5`. */
-export function ActionRow({ items }: { items: [ComponentType<any>, string][] }) {
+/** Generated artifact actions row. Reveal with `step >= 5`.
+ *  Each item may carry an optional third element: a string href (rendered as a
+ *  link — supports same-page `#anchor` targets) or a click handler. Bare
+ *  [Icon, label] pairs stay valid for back-compat. */
+export function ActionRow({ items }: { items: Array<[ComponentType<any>, string] | [ComponentType<any>, string, string | (() => void)]> }) {
+  const cls = 'inline-flex items-center gap-1.5 rounded-pill glass-control px-2.5 py-1.5 text-[11.5px] text-d-text-secondary transition-colors hover:text-d-text-primary active:scale-[0.98]'
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }} className="flex flex-wrap gap-2 pt-0.5">
-      {items.map(([Icon, label]) => (
-        <button key={label} className="inline-flex items-center gap-1.5 rounded-pill border border-white/20 bg-transparent px-2.5 py-1.5 text-[11.5px] text-d-text-secondary transition-colors hover:bg-white/[0.06] hover:text-d-text-primary"><Icon size={12} /> {label}</button>
-      ))}
+      {items.map(([Icon, label, action]) =>
+        typeof action === 'string' ? (
+          <a key={label} href={action} className={cls}><Icon size={12} /> {label}</a>
+        ) : (
+          <button key={label} onClick={action} className={cls}><Icon size={12} /> {label}</button>
+        )
+      )}
     </motion.div>
   )
 }

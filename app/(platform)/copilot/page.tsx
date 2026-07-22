@@ -27,18 +27,19 @@ import {
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useRef, useState } from 'react'
 import useSWR, { useSWRConfig } from 'swr'
 
 import { Badge, Button, DisclaimerFooter, EyebrowMono, Reveal, Skeleton, Sparkline } from '@/components/foundation'
 import { dispatchCopilotQuotaExhausted } from '@/components/CopilotQuotaModal'
 import { HomeCockpit } from '@/components/home/HomeCockpit'
+import { HomeFooter } from '@/components/home/HomeFooter'
+import { MarketTicker } from '@/components/markets/MarketTicker'
 import { useAuth } from '@/contexts/AuthContext'
 import { MarkdownMessage } from '@/components/copilot/MarkdownMessage'
 import { ProgressRail } from '@/components/copilot/ProgressRail'
 import { ReferencesRail } from '@/components/copilot/ReferencesRail'
-import { DotPattern } from '@/components/ui/dot-pattern'
 import { BlurFade } from '@/components/ui/blur-fade'
 import { api, handleApiError, ApiError, type CopilotArtifact, type CopilotStep, type CopilotReference } from '@/lib/api'
 import { ChatArtifacts } from '@/components/copilot/ChatArtifacts'
@@ -50,7 +51,7 @@ import { MODES, MODE_PROMPTS, pickGrid, type CopilotMode } from '@/lib/copilot-m
 // lightweight, on-brand SVG/CSS render (no photos) — see FeatureMotif.
 type MotifKey = 'candles' | 'sparkline' | 'scan' | 'gauge' | 'flow' | 'pilot'
 
-// Image-topped feature cards — Intellectia's "AI Trading Strategies" 3-up wall,
+// Image-topped feature cards — the reference's "AI Trading Strategies" 3-up wall,
 // mapped to OUR features. Each is a real link with a category eyebrow, title,
 // one-line description and a decorative render.
 const FEATURE_CARDS: {
@@ -65,8 +66,8 @@ const FEATURE_CARDS: {
   image?: string
   tier?: string
 }[] = [
-  { category: 'SIGNALS', name: 'Swing Signals', blurb: 'Multi-day setups, gated by Regime. Entry, stop, target and the thesis behind every call.', href: '/signals/swing', motif: 'candles', image: '/images/v3/ai-signal.webp' },
-  { category: 'SIGNALS', name: 'Momentum', blurb: 'Alpha ranks the whole NSE board by trend strength. The fast-movers, surfaced first.', href: '/signals/momentum', motif: 'sparkline', image: '/images/v3/ai-momentum.webp' },
+  { category: 'SIGNALS', name: 'Alpha Picks', blurb: 'The 10-bar alpha-ranked book, gated by Regime. Entry, stop, target and the thesis behind every call.', href: '/signals/alpha-picks', motif: 'candles', image: '/images/v3/ai-signal.webp' },
+  { category: 'SIGNALS', name: 'Momentum Picks', blurb: 'The whole NSE board ranked by trend strength. The fast-movers, surfaced first.', href: '/signals/momentum-picks', motif: 'sparkline', image: '/images/v3/ai-momentum.webp' },
   { category: 'TOOLS', name: 'AI Scanner', blurb: 'Sweep the board by momentum, breakout, OI or news. No filter fits? Just describe the setup.', href: '/scanner', motif: 'scan', image: '/images/v3/ai-scanner.webp' },
   { category: 'PORTFOLIO', name: 'Portfolio Doctor', blurb: 'Know where your book breaks before it does. Concentration, drawdown, hedges and a rebalance plan.', href: '/portfolio/doctor', motif: 'gauge', image: '/images/v3/ai-risk.webp' },
   { category: 'TOOLS', name: 'AI Algos', blurb: 'Describe a strategy in plain English. We backtest it and gate it before a single rupee trades.', href: '/strategies', motif: 'flow', image: '/images/v3/ai-strategy.webp' },
@@ -220,7 +221,7 @@ function HomeInlineAnswer({
             type="button"
             onClick={onOpenThread}
             aria-label="Open in full chat"
-            className="inline-flex items-center gap-1 rounded-pill border border-line px-2 py-1 font-mono text-[10.5px] text-d-text-muted transition-colors hover:border-white/30 hover:text-d-text-primary"
+            className="glass-control inline-flex items-center gap-1 rounded-pill px-2 py-1 font-mono text-[10.5px] text-d-text-muted transition-colors hover:text-d-text-primary"
           >
             Open in chat <ArrowUpRight size={11} />
           </button>
@@ -256,221 +257,6 @@ function HomeInlineAnswer({
             ))}
           </div>
         )}
-      </div>
-    </div>
-  )
-}
-
-// ── Home ticker ("loader") ── ONE continuous horizontal scrolling marquee
-// below the composer that streams BOTH the headline indices (NIFTY 50 ·
-// India VIX · BANK NIFTY · SENSEX, from publicTrust.indices, 30s CDN cache) AND
-// the 50 NIFTY constituents with live quotes (screener.indexConstituents +
-// screener.getLivePrices, chunked, 20s refresh — the SAME data approach the old
-// grid used). Each item resolves IN: a compact shimmer while its price loads,
-// then a brief duotone green/red flash ONLY on a genuine tick. Linear scroll,
-// pauses on hover, reduced-motion-safe (static wrapped strip — no scroll, no
-// flash). Honest-empty: if BOTH feeds are down we show "Live market data
-// unavailable" — never a fabricated price. Thin full-width strip, border-y,
-// mono tabular ₹, Plus-Jakarta caps labels, masked edge fades.
-const NIFTY50_INDEX = 'NIFTY 50'
-
-const cleanSym = (s: string) => String(s || '').replace('.NS', '').toUpperCase()
-
-// Mirror the field access the /stocks browser uses for the live-price payload.
-function readQuote(p: Record<string, any>) {
-  return {
-    price: Number(p.price ?? p.last_price ?? 0),
-    changePct: Number(p.change_percent ?? p.change_pct ?? 0),
-  }
-}
-
-// A single resolved ticker item. `loading` → compact shimmer (the "loader"
-// feel); otherwise label + mono ₹ price + duotone %. `invert` flips the tone
-// for VIX (rising fear reads red).
-interface TickerItem {
-  key: string
-  label: string
-  price: number | null
-  changePct: number | null
-  invert?: boolean
-}
-
-// One marquee item. Holds its own last-seen price so it flashes ONLY on a real
-// change (unchanged values never re-animate). The flash is a GPU opacity-only
-// overlay that re-mounts per tick (≤300ms, ease-out; the global reduced-motion
-// guard collapses it to ~0). `animate` is false under reduced motion.
-function TickerCell({ item, animate }: { item: TickerItem; animate: boolean }) {
-  const loading = item.price == null
-  const lastRef = useRef<number | null>(null)
-  const [flash, setFlash] = useState<{ dir: 'up' | 'down'; key: number } | null>(null)
-  useEffect(() => {
-    if (item.price == null) return
-    const prev = lastRef.current
-    if (animate && prev != null && item.price !== prev) {
-      setFlash({ dir: item.price > prev ? 'up' : 'down', key: Date.now() })
-    }
-    lastRef.current = item.price
-  }, [item.price, animate])
-
-  // VIX inverts: rising VIX (fear) reads red, falling reads green.
-  const rawUp = (item.changePct ?? 0) >= 0
-  const up = item.invert ? !rawUp : rawUp
-  return (
-    <li className="relative inline-flex shrink-0 items-baseline gap-2.5 overflow-hidden rounded-sm px-1 text-[13px]">
-      {flash && (
-        <span
-          key={flash.key}
-          aria-hidden
-          className={`pointer-events-none absolute inset-0 rounded-sm ${flash.dir === 'up' ? 'price-flash-up' : 'price-flash-down'}`}
-        />
-      )}
-      <span aria-hidden className={`h-1.5 w-1.5 self-center rounded-pill ${loading ? 'bg-d-text-muted/40' : up ? 'bg-up' : 'bg-down'}`} />
-      <span className="font-sans text-[10px] font-semibold uppercase tracking-[0.12em] text-d-text-muted">{item.label}</span>
-      {loading ? (
-        <Skeleton w="56px" h="13px" rounded="sm" className="self-center" />
-      ) : (
-        <>
-          <span className={`numeric tabular-nums font-medium text-d-text-primary ${MONO}`}>
-            ₹{item.price!.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </span>
-          {item.changePct != null && (
-            <span className={`numeric tabular-nums text-[12px] ${MONO} ${up ? 'text-up' : 'text-down'}`}>
-              {rawUp ? '+' : ''}{item.changePct.toFixed(2)}%
-            </span>
-          )}
-        </>
-      )}
-    </li>
-  )
-}
-
-// Detect prefers-reduced-motion in JS (the CSS guard already neutralises the
-// marquee + flash; we ALSO need it to drop the duplicated track and let the
-// strip wrap statically rather than freeze mid-scroll with double items).
-function usePrefersReducedMotion() {
-  const [reduced, setReduced] = useState(false)
-  useEffect(() => {
-    if (typeof window === 'undefined' || !window.matchMedia) return
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const on = () => setReduced(mq.matches)
-    on()
-    mq.addEventListener('change', on)
-    return () => mq.removeEventListener('change', on)
-  }, [])
-  return reduced
-}
-
-function HomeTicker() {
-  const reduced = usePrefersReducedMotion()
-
-  // Headline indices — the same public feed the cockpit already used.
-  const { data: idxData, error: idxErr } = useSWR('public-indices', () => api.publicTrust.indices(), {
-    refreshInterval: 30_000, dedupingInterval: 15_000, revalidateOnFocus: false,
-  })
-
-  // NIFTY 50 constituents (once) — the real membership the app already knows.
-  const { data: constData, error: constErr } = useSWR(
-    'home:nifty50-constituents',
-    () => api.screener.indexConstituents(NIFTY50_INDEX, 60),
-    { revalidateOnFocus: false, dedupingInterval: 5 * 60_000 },
-  )
-  const symbols: string[] = (constData?.constituents ?? []).map((c) => c.symbol).slice(0, 50)
-
-  // Live quotes for the constituents — chunked by 50, refreshed every 20s.
-  const { data: quotes } = useSWR<Record<string, { price: number; changePct: number }>>(
-    symbols.length ? ['home:nifty50-prices', symbols.join(',')] : null,
-    async () => {
-      const map: Record<string, { price: number; changePct: number }> = {}
-      for (let i = 0; i < symbols.length; i += 50) {
-        const chunk = symbols.slice(i, i + 50)
-        try {
-          const json = await api.screener.getLivePrices(chunk)
-          if (json?.success && Array.isArray(json.prices)) {
-            for (const p of json.prices) {
-              const key = cleanSym(p.symbol)
-              if (key) map[key] = readQuote(p)
-            }
-          }
-        } catch { /* honest-empty: items stay shimmering until quotes resolve */ }
-      }
-      return map
-    },
-    { refreshInterval: 20_000, dedupingInterval: 10_000, revalidateOnFocus: false, keepPreviousData: true },
-  )
-
-  // Build the single stream: indices first, then the 50 constituents.
-  const idxItems: TickerItem[] = (idxData?.indices ?? []).map((r) => ({
-    key: `idx-${r.key}`,
-    label: r.label,
-    price: r.last,
-    changePct: r.change_pct,
-    invert: r.key === 'vix',
-  }))
-  const stockItems: TickerItem[] = symbols.map((s) => {
-    const q = quotes?.[cleanSym(s)]
-    const has = q && q.price > 0
-    return {
-      key: `stk-${cleanSym(s)}`,
-      label: cleanSym(s),
-      price: has ? q!.price : null,
-      changePct: has ? q!.changePct : null,
-    }
-  })
-  const items = [...idxItems, ...stockItems]
-
-  // A feed is "settled" once it has either returned data or errored; "down"
-  // means it settled with nothing usable. We only show honest-empty when BOTH
-  // feeds are settled-and-down — while either is still in flight we keep the
-  // shimmering loader up (never a fabricated row, never a premature error).
-  const idxSettled = !!idxData || !!idxErr
-  const constSettled = !!constData || !!constErr
-  const indicesDown = idxErr || (idxData && idxData.indices.length === 0)
-  const stocksDown = constErr || (constData && symbols.length === 0)
-  if (items.length === 0 && idxSettled && constSettled && indicesDown && stocksDown) {
-    return (
-      <div className="relative -mx-4 border-y border-line bg-wrap/30">
-        <p className="py-3 text-center font-sans text-[10.5px] uppercase tracking-[0.12em] text-d-text-muted">
-          Live market data unavailable
-        </p>
-      </div>
-    )
-  }
-
-  // No items yet but at least one feed is still loading — render shimmering
-  // placeholders so the strip has shape immediately (the "loader" reads in).
-  const list: TickerItem[] = items.length
-    ? items
-    : Array.from({ length: 12 }, (_, i) => ({ key: `ph-${i}`, label: '•••', price: null, changePct: null }))
-
-  // Duration scales with item count so the linear speed stays consistent as the
-  // stream grows from indices-only → indices + 50 stocks.
-  const duration = Math.max(40, Math.round(list.length * 2.4))
-
-  // Reduced-motion: a static, WRAPPED strip (no scroll, single track, no flash).
-  if (reduced) {
-    return (
-      <div className="relative -mx-4 border-y border-line bg-wrap/30">
-        <ul className="flex flex-wrap items-center gap-x-7 gap-y-2 px-4 py-3" aria-label="Live market data">
-          {list.map((it) => <TickerCell key={it.key} item={it} animate={false} />)}
-        </ul>
-      </div>
-    )
-  }
-
-  // Default: one continuous linear marquee. The track is duplicated so a -50%
-  // translate loops seamlessly; it pauses on hover and fades at both edges.
-  return (
-    <div className="relative -mx-4 border-y border-line bg-wrap/30">
-      <div className="marquee-pause mask-edge-fade relative overflow-hidden py-3">
-        <ul
-          className="flex w-max items-center gap-9 whitespace-nowrap animate-marquee"
-          style={{ ['--marquee-duration' as string]: `${duration}s` }}
-          aria-label="Live market data"
-        >
-          {[...list, ...list].map((it, i) => (
-            <TickerCell key={`${it.key}-${i}`} item={it} animate />
-          ))}
-        </ul>
       </div>
     </div>
   )
@@ -563,7 +349,15 @@ function CopilotHub() {
   const { user, loading: authLoading } = useAuth()
   const { mutate } = useSWRConfig()
   const searchParams = useSearchParams()
+  const router = useRouter()
   const lastLoadedRef = useRef<string | null>(null)
+
+  // /copilot is the AUTHED home. A logged-out visitor (lapsed/absent session)
+  // is sent to sign in and returned here afterwards — rather than being shown
+  // the signed-out marketing bands, which read as a different/"old" home.
+  useEffect(() => {
+    if (!authLoading && !user) router.replace('/login?redirect=/copilot')
+  }, [authLoading, user, router])
 
   const [turns, setTurns] = useState<Turn[]>([])
   const [input, setInput] = useState('')
@@ -902,8 +696,8 @@ function CopilotHub() {
         aria-busy={pending}
         className={
           hero
-            ? 'bg-gradient-cta grid h-10 w-10 shrink-0 place-items-center rounded-pill text-main transition-[transform,opacity] duration-150 ease-out active:scale-[0.97] enabled:hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-30'
-            : 'grid h-9 w-9 shrink-0 place-items-center rounded-pill border border-white bg-white text-main transition-[transform,background-color] duration-150 ease-out active:scale-[0.97] enabled:hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-30'
+            ? 'glass-control-accent grid h-10 w-10 shrink-0 place-items-center rounded-pill transition-[transform,filter] duration-150 ease-out active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-30'
+            : 'glass-control-accent grid h-9 w-9 shrink-0 place-items-center rounded-pill transition-[transform,filter] duration-150 ease-out active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-30'
         }
       >
         {pending ? <Loader2 size={hero ? 18 : 16} className="animate-spin" /> : <ArrowUp size={isz} />}
@@ -938,13 +732,13 @@ function CopilotHub() {
     return (
       <div className="relative">
         <div
-          className="group relative overflow-hidden rounded-2xl border border-line bg-wrap-hover transition-[border-color,box-shadow] duration-200 ease-out"
+          className="lg-surface group relative overflow-hidden rounded-[24px] transition-[border-color,box-shadow] duration-200 ease-out"
           style={
             composerFocused
               ? {
-                  borderColor: 'color-mix(in srgb, var(--color-up) 60%, transparent)',
+                  borderColor: 'color-mix(in srgb, var(--color-primary) 60%, transparent)',
                   boxShadow:
-                    '0 0 0 1px color-mix(in srgb, var(--color-up) 42%, transparent), 0 14px 50px -16px color-mix(in srgb, var(--color-up) 42%, transparent)',
+                    '0 0 0 1px color-mix(in srgb, var(--color-primary) 42%, transparent), 0 14px 50px -16px color-mix(in srgb, var(--color-primary) 42%, transparent)',
                 }
               : undefined
           }
@@ -956,7 +750,7 @@ function CopilotHub() {
             style={{
               opacity: composerFocused ? 1 : 0,
               background:
-                'radial-gradient(90% 80% at 50% 0%, color-mix(in srgb, var(--color-up) 16%, transparent), transparent 65%)',
+                'radial-gradient(90% 80% at 50% 0%, color-mix(in srgb, var(--color-primary) 16%, transparent), transparent 65%)',
             }}
           />
 
@@ -1004,13 +798,13 @@ function CopilotHub() {
                     disabled={pending}
                     aria-pressed={on}
                     title={m.label}
-                    className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[12.5px] font-medium transition-all duration-150 disabled:opacity-50 ${
+                    className={`inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-[12.5px] font-medium transition-all duration-150 disabled:opacity-50 ${
                       on
-                        ? 'bg-d-text-primary text-main shadow-sm'
-                        : 'text-d-text-secondary hover:bg-white/[0.06] hover:text-d-text-primary'
+                        ? 'glass-control-accent'
+                        : 'glass-control text-d-text-secondary hover:text-d-text-primary'
                     }`}
                   >
-                    <Icon size={14} className={on ? undefined : m.color} />
+                    <Icon size={14} />
                     <span className="hidden sm:inline">{m.label}</span>
                   </button>
                 )
@@ -1034,7 +828,7 @@ function CopilotHub() {
               >
                 <div className="flex items-center justify-between px-4 pt-2.5 pb-1">
                   <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-d-text-muted">
-                    <SugIcon size={12} className={detectedSym ? 'text-ai' : activeMode.color} />
+                    <SugIcon size={12} className="text-d-text-muted" />
                     {sugKind} · {sugLabel}
                   </span>
                   {!q && !detectedSym && (
@@ -1060,7 +854,7 @@ function CopilotHub() {
                         type="button"
                         onMouseDown={(e) => e.preventDefault()}
                         onClick={() => usePrompt(p)}
-                        className="group/row flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2.5 text-left transition-colors hover:bg-white/[0.05]"
+                        className="group/row flex w-full items-center gap-2.5 rounded-pill px-3 py-2.5 text-left transition-colors hover:bg-white/[0.05]"
                       >
                         <Sparkles size={13} className="shrink-0 text-ai" />
                         <span className="min-w-0 flex-1 truncate text-[13px] text-d-text-secondary transition-colors group-hover/row:text-d-text-primary">
@@ -1227,45 +1021,53 @@ function CopilotHub() {
   const authedHome = !!user
   const signedOutHome = !authLoading && !user
 
+  // Logged-out → the redirect effect above is sending them to /login; render a
+  // brief loader instead of flashing the signed-out marketing bands.
+  if (signedOutHome) {
+    return (
+      <div className="flex min-h-[70vh] w-full items-center justify-center">
+        <Loader2 className="h-5 w-5 animate-spin text-d-text-muted" />
+      </div>
+    )
+  }
+
   return (
-    <div className="relative mx-auto w-full max-w-5xl px-4 pb-16">
-      {/* ── HERO BAND ── mirrors Intellectia's home: a large ghosted "Quant X"
+    // Full-bleed home column: fills the app pane (AppShell already caps at
+    // 1440px and owns the px-4/md:px-6 gutter) — no more 1024px box with dead
+    // space either side. The market tape breaks the gutter to run edge-to-edge.
+    <div className="relative w-full pb-16">
+      {/* ── HERO BAND ── mirrors the reference's home: a large ghosted "Quant X"
           wordmark watermark behind the hero with a soft radial signature glow,
           then a single centred subline (NOT a giant "Ask Quant X" headline). ── */}
       <section className="relative flex flex-col items-center pb-2 pt-[clamp(2rem,8vh,5.5rem)]">
         {/* signature radial glow + mono dot field, behind everything */}
         <div aria-hidden className="bg-radial-glow pointer-events-none absolute inset-x-0 top-0 -z-20 h-[460px]" />
-        <DotPattern
-          width={22}
-          height={22}
-          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px] [mask-image:radial-gradient(ellipse_at_top,white,transparent_70%)] fill-white/[0.05]"
+        {/* DhanHQ-style glow behind the composer — a single directional
+            indigo → blue bloom (replaces the multi-hue aurora + dot grid). */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute left-1/2 top-[clamp(0.5rem,5vh,3.5rem)] -z-10 h-[360px] w-[min(760px,94%)] -translate-x-1/2 blur-[68px]"
+          style={{
+            background:
+              'radial-gradient(50% 58% at 46% 40%, color-mix(in srgb, var(--color-primary) 44%, transparent), transparent 72%), radial-gradient(46% 50% at 66% 60%, color-mix(in srgb, var(--color-ai) 40%, transparent), transparent 74%)',
+          }}
         />
-        {/* ghosted wordmark — large mono watermark behind the subline
-            (a faint ghosted brand watermark). Solid ink
-            at very low opacity so it reads as a clean watermark on BOTH themes,
-            never a coloured blob. */}
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-[clamp(0.5rem,3vh,2rem)] -z-10 flex justify-center overflow-hidden opacity-[0.07]">
-          <span className="select-none whitespace-nowrap font-display text-[clamp(4.5rem,18vw,12rem)] font-bold leading-none tracking-tight text-d-text-primary">
-            Quant X
-          </span>
-        </div>
 
-        {/* Full-width home column — the composer, prompt chips, index data, news
-            and CTAs all share THIS container's edges so the page reads as one
-            aligned column (no more 784-vs-992 jag). The input itself keeps a
-            comfortable centered max-width; everything below spans the column. */}
+        {/* Hero column. The CHAT BOX stays a centred, comfortable max-width (a
+            full-pane-wide input reads terrible); everything BELOW the hero — the
+            market tape, news grid, CTAs — spans the full pane. */}
         <div className="relative w-full pt-[clamp(2.5rem,7vw,5.5rem)]">
           <p className="mx-auto max-w-2xl text-center text-[19px] font-normal leading-snug text-d-text-secondary">
             The AI trading desk for India. Five engines. One gated signal. Every call explained.
           </p>
 
-          {/* ── COMPOSER ── the chat box: hairline input spanning the column,
-              in-box mode toolbar, an on-focus suggestion sheet, and the in-box
-              answer (the box grows to hold the thinking trace + streamed reply).
+          {/* ── COMPOSER ── the chat box: centred hairline input with the in-box
+              mode toolbar, an on-focus suggestion sheet, and the in-box answer
+              (the box grows to hold the thinking trace + streamed reply).
               Task-sized turns escalate to the full chat page. ── */}
-          <div className="mt-7">{composer(true)}</div>
+          <div className="mx-auto mt-7 w-full max-w-3xl">{composer(true)}</div>
 
-          {error && <p role="alert" className="mt-4 text-center text-[12px] text-down">{error}</p>}
+          {error && <p role="alert" className="mx-auto mt-4 max-w-3xl text-center text-[12px] text-down">{error}</p>}
         </div>
       </section>
 
@@ -1287,13 +1089,13 @@ function CopilotHub() {
               streaming the headline indices + the 50 NIFTY constituents. Replaces
               the boxed index cards AND the NIFTY 50 grid. ── */}
           <div className="mt-7">
-            <HomeTicker />
+            <MarketTicker />
           </div>
 
       {/* ── "EXPLORE QUANT X" ── 42px display heading, left-aligned. ── */}
       <section className="mt-14">
         <h2 className="font-display text-[clamp(2rem,5vw,2.625rem)] font-semibold leading-[1.05] tracking-tight text-d-text-primary">
-          Explore Quant X
+          <span className="text-silver">Explore</span> Quant X
         </h2>
         <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-d-text-secondary">
           The whole desk. Signals, scanners, strategy and execution. Each opens its own page.
@@ -1307,7 +1109,7 @@ function CopilotHub() {
             <BlurFade key={name} delay={i * 0.04} offset={8} duration={0.3}>
               <Link
                 href={href}
-                className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-line bg-wrap transition-colors hover:border-white/20 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40"
+                className="group relative flex h-full flex-col overflow-hidden rounded-[20px] bg-wrap transition-shadow hover:ring-1 hover:ring-primary/25 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40"
               >
                 {image ? (
                   // ── IMAGE-TOPPED media band ── on-brand dark art as the card
@@ -1364,7 +1166,7 @@ function CopilotHub() {
                 <Stat label="Profit factor" value={stats!.profit_factor != null ? stats!.profit_factor.toFixed(2) : '—'} />
                 <Stat label="Signals tracked" value={String(stats!.n)} />
               </div>
-              <div className="rounded-lg border border-line bg-wrap p-4">
+              <div className="rounded-[20px] bg-wrap p-4">
                 <div className="flex items-center justify-between">
                   <EyebrowMono className="text-[11px]">Cumulative return · 90d</EyebrowMono>
                   {track?.current_regime?.regime && <Badge tone="primary">{track.current_regime.regime} regime</Badge>}
@@ -1382,7 +1184,7 @@ function CopilotHub() {
             <p className="mt-3 text-[11px] text-d-text-secondary">Live, outcome-tracked signal performance over the last 90 days. Past performance does not guarantee future results.</p>
           </>
         ) : (
-          <div className="mt-5 flex flex-col gap-3 rounded-lg border border-line bg-wrap p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-5 flex flex-col gap-3 rounded-[20px] bg-wrap p-5 sm:flex-row sm:items-center sm:justify-between">
             <p className="max-w-2xl text-[13.5px] leading-relaxed text-d-text-secondary">
               Every signal we publish gets tracked to its outcome: win, loss or expiry. Audited, unedited, no cherry-picking. The live record builds right here as trades resolve.
               {(stats?.n ?? 0) > 0 && <span className="font-normal text-d-text-primary"> {stats!.n} signals tracked so far.</span>}
@@ -1397,6 +1199,8 @@ function CopilotHub() {
           <DisclaimerFooter />
         </>
       ) : null}
+
+      <HomeFooter />
     </div>
   )
 }
@@ -1413,7 +1217,7 @@ function SectionHead({ eyebrow, title }: { eyebrow: string; title: string }) {
 function Stat({ label, value, tone = 'neutral' }: { label: string; value: string; tone?: 'up' | 'down' | 'neutral' }) {
   const color = tone === 'up' ? 'text-up' : tone === 'down' ? 'text-down' : 'text-d-text-primary'
   return (
-    <div className="rounded-sm border border-line bg-wrap p-4">
+    <div className="rounded-[20px] bg-wrap p-4">
       <EyebrowMono className="text-[11px]">{label}</EyebrowMono>
       <div className={`mt-1 text-[26px] font-normal leading-none ${MONO} ${color}`}>{value}</div>
     </div>

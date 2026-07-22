@@ -13,13 +13,15 @@ export const Card = ({
 }: CardProps) => (
   <div
     className={cn(
-      // xAI: flat charcoal panel, 8px radius, hairline border, no shadow.
-      // `glass` = v4 liquid-glass surface (PR-V1) kept for that surface only.
+      // FintechX v4 + liquid glass: the default/elevated card is a frosted
+      // .glass-surface (translucent wrap fill, backdrop blur, light edge +
+      // top highlight) — text contrast holds in both themes since the fill
+      // stays ~78% opaque. `glass` keeps the lifted variant of the same
+      // surface. Fallback to flat --color-wrap on old engines (see globals).
       variant === 'glass'
-        ? 'lg-surface lift rounded-sm'
-        : 'rounded-sm border border-line bg-wrap',
-      variant === 'clickable' &&
-        'cursor-pointer transition-colors hover:bg-wrap-hover',
+        ? 'glass-surface lift rounded-2xl'
+        : 'glass-surface rounded-2xl',
+      variant === 'clickable' && 'cursor-pointer lift',
       className,
     )}
     {...rest}

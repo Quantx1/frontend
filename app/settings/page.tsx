@@ -62,7 +62,7 @@ export default function SettingsPage() {
   const VALID_TABS: TabKey[] = ['profile', 'trading', 'broker', 'notifications', 'appearance', 'tier', 'kill_switch', 'data']
   const [activeTab, setActiveTab] = useState<TabKey>('profile')
 
-  // Hash-anchored section nav (Intellectia archetype H: /settings#appearance).
+  // Hash-anchored section nav (the reference archetype H: /settings#appearance).
   // Deep-link in on mount + keep the URL hash in sync as the tab changes so
   // sections are shareable/bookmarkable. Falls back to 'profile' on a bad hash.
   useEffect(() => {
@@ -528,10 +528,10 @@ export default function SettingsPage() {
           </div>
         )}
 
-        {/* Section nav — Intellectia archetype H: a left sub-nav tab rail,
+        {/* Section nav — the reference archetype H: a left sub-nav tab rail,
             hash-anchored (#profile, #appearance, …) so sections deep-link. */}
         <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-6">
-          <aside className="h-fit rounded-sm border border-line bg-wrap p-2">
+          <aside className="h-fit rounded-[20px] border border-line bg-wrap p-2">
             <EyebrowMono className="px-3 pt-1 pb-2">Settings</EyebrowMono>
             <nav className="flex lg:flex-col gap-0.5 overflow-x-auto lg:overflow-visible">
               {tabs.map((tab) => {
@@ -549,7 +549,7 @@ export default function SettingsPage() {
                     }}
                     className={`flex items-center gap-2 px-3 py-2 text-[12px] rounded-sm transition-colors whitespace-nowrap ${
                       isActive
-                        ? 'bg-wrap-hover text-d-text-primary border border-line'
+                        ? 'glass-control text-d-text-primary'
                         : 'text-d-text-secondary hover:text-d-text-primary hover:bg-hover border border-transparent'
                     }`}
                   >
@@ -562,7 +562,7 @@ export default function SettingsPage() {
             </nav>
           </aside>
 
-          <div className="rounded-sm border border-line bg-wrap p-6 md:p-8 min-h-[500px]">
+          <div className="rounded-[20px] border border-line bg-wrap p-6 md:p-8 min-h-[500px]">
             {/* Profile Tab */}
             {activeTab === 'profile' && (
               <div className="space-y-6">
@@ -660,10 +660,10 @@ export default function SettingsPage() {
                                   setKillConfirmOpen(true)
                                 }
                               }}
-                              className={`px-3 py-1.5 rounded-sm text-xs font-bold transition-all duration-200 ${
+                              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 ${
                                 profile.kill_switch_active
-                                  ? 'border-2 border-down/40 bg-down/5 text-down hover:bg-down/10'
-                                  : 'bg-wrap-hover border border-line text-d-text-muted hover:bg-hover'
+                                  ? 'glass-control-danger text-down'
+                                  : 'glass-control text-d-text-muted'
                               }`}
                             >
                               {profile.kill_switch_active ? 'ACTIVE - Deactivate' : 'Activate Kill Switch'}
@@ -684,10 +684,10 @@ export default function SettingsPage() {
                         <button
                           key={risk}
                           onClick={() => setTradingForm({ ...tradingForm, risk_profile: risk })}
-                          className={`p-4 rounded-sm border transition-all duration-200 ${
+                          className={`p-4 rounded-sm transition-all duration-200 ${
                             tradingForm.risk_profile === risk
-                              ? 'border-primary bg-primary/10 text-primary'
-                              : 'border-line text-d-text-muted hover:border-wrap-line'
+                              ? 'glass-control-accent'
+                              : 'glass-control text-d-text-muted'
                           }`}
                         >
                           <span className="capitalize font-medium">{risk}</span>
@@ -708,10 +708,10 @@ export default function SettingsPage() {
                         <button
                           key={mode.id}
                           onClick={() => setTradingForm({ ...tradingForm, trading_mode: mode.id })}
-                          className={`p-4 rounded-sm border transition-all duration-200 text-left ${
+                          className={`p-4 rounded-sm glass-control transition-all duration-200 text-left ${
                             tradingForm.trading_mode === mode.id
-                              ? 'border-primary bg-primary/10'
-                              : 'border-line hover:border-wrap-line'
+                              ? 'ring-1 ring-primary/50'
+                              : ''
                           }`}
                         >
                           <span className={`font-medium ${tradingForm.trading_mode === mode.id ? 'text-primary' : 'text-d-text-primary'}`}>
@@ -983,14 +983,14 @@ export default function SettingsPage() {
                     <button
                       onClick={() => setAngelModalOpen(false)}
                       disabled={!!brokerBusy}
-                      className="flex-1 py-2 text-[13px] text-d-text-secondary border border-line rounded-sm hover:bg-hover transition-colors"
+                      className="flex-1 py-2 text-[13px] text-d-text-secondary glass-control rounded-full transition-colors"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={handleAngelSubmit}
                       disabled={!!brokerBusy || !angelForm.api_key || !angelForm.client_id || !angelForm.password || !angelForm.totp_secret}
-                      className="flex-1 py-2 text-[13px] font-medium bg-primary text-main rounded-sm hover:opacity-90 transition-opacity disabled:opacity-40"
+                      className="flex-1 py-2 text-[13px] font-medium glass-control-accent rounded-full active:scale-[0.98] transition-opacity disabled:opacity-40"
                     >
                       {brokerBusy === 'angelone' ? (
                         <span className="inline-flex items-center gap-1.5">
@@ -1060,14 +1060,14 @@ export default function SettingsPage() {
                     <button
                       onClick={() => setDhanModalOpen(false)}
                       disabled={!!brokerBusy}
-                      className="flex-1 py-2 text-[13px] text-d-text-secondary border border-line rounded-sm hover:bg-hover transition-colors"
+                      className="flex-1 py-2 text-[13px] text-d-text-secondary glass-control rounded-full transition-colors"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={handleDhanSubmit}
                       disabled={!!brokerBusy || !dhanForm.client_id || !dhanForm.access_token}
-                      className="flex-1 py-2 text-[13px] font-medium bg-primary text-main rounded-sm hover:opacity-90 transition-opacity disabled:opacity-40"
+                      className="flex-1 py-2 text-[13px] font-medium glass-control-accent rounded-full active:scale-[0.98] transition-opacity disabled:opacity-40"
                     >
                       {brokerBusy === 'dhan' ? (
                         <span className="inline-flex items-center gap-1.5">
@@ -1156,14 +1156,14 @@ export default function SettingsPage() {
                     <button
                       onClick={() => setKotakModalOpen(false)}
                       disabled={!!brokerBusy}
-                      className="flex-1 py-2 text-[13px] text-d-text-secondary border border-line rounded-sm hover:bg-hover transition-colors"
+                      className="flex-1 py-2 text-[13px] text-d-text-secondary glass-control rounded-full transition-colors"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={handleKotakSubmit}
                       disabled={!!brokerBusy || !kotakForm.client_id || !kotakForm.access_token || !kotakForm.session_token}
-                      className="flex-1 py-2 text-[13px] font-medium bg-primary text-main rounded-sm hover:opacity-90 transition-opacity disabled:opacity-40"
+                      className="flex-1 py-2 text-[13px] font-medium glass-control-accent rounded-full active:scale-[0.98] transition-opacity disabled:opacity-40"
                     >
                       {brokerBusy === 'kotakneo' ? (
                         <span className="inline-flex items-center gap-1.5">
@@ -1235,14 +1235,14 @@ export default function SettingsPage() {
                     <button
                       onClick={() => setAliceModalOpen(false)}
                       disabled={!!brokerBusy}
-                      className="flex-1 py-2 text-[13px] text-d-text-secondary border border-line rounded-sm hover:bg-hover transition-colors"
+                      className="flex-1 py-2 text-[13px] text-d-text-secondary glass-control rounded-full transition-colors"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={handleAliceSubmit}
                       disabled={!!brokerBusy || !aliceForm.client_id || !aliceForm.access_token}
-                      className="flex-1 py-2 text-[13px] font-medium bg-primary text-main rounded-sm hover:opacity-90 transition-opacity disabled:opacity-40"
+                      className="flex-1 py-2 text-[13px] font-medium glass-control-accent rounded-full active:scale-[0.98] transition-opacity disabled:opacity-40"
                     >
                       {brokerBusy === 'aliceblue' ? (
                         <span className="inline-flex items-center gap-1.5">
@@ -1288,14 +1288,14 @@ export default function SettingsPage() {
                     <button
                       onClick={() => setZerodhaModalOpen(false)}
                       disabled={!!brokerBusy}
-                      className="flex-1 py-2 text-[13px] text-d-text-secondary border border-line rounded-sm hover:bg-hover transition-colors"
+                      className="flex-1 py-2 text-[13px] text-d-text-secondary glass-control rounded-full transition-colors"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={handleZerodhaOAuth}
                       disabled={!!brokerBusy}
-                      className="flex-1 py-2 text-[13px] font-medium bg-primary text-main rounded-sm hover:opacity-90 transition-opacity disabled:opacity-40"
+                      className="flex-1 py-2 text-[13px] font-medium glass-control-accent rounded-full active:scale-[0.98] transition-opacity disabled:opacity-40"
                     >
                       {brokerBusy === 'zerodha' ? (
                         <span className="inline-flex items-center gap-1.5">
@@ -1447,7 +1447,7 @@ export default function SettingsPage() {
                   <button
                     type="button"
                     onClick={() => router.push('/settings/whatsapp')}
-                    className="w-full flex items-center justify-between gap-3 p-4 rounded-sm border border-line bg-main hover:bg-hover transition-colors text-left"
+                    className="w-full flex items-center justify-between gap-3 p-4 rounded-sm glass-control transition-colors text-left"
                   >
                     <div className="flex items-center gap-3">
                       <MessageCircle className="w-4 h-4 text-primary" />
@@ -1461,7 +1461,7 @@ export default function SettingsPage() {
                   <button
                     type="button"
                     onClick={() => selectTab('notifications')}
-                    className="w-full flex items-center justify-between gap-3 p-4 rounded-sm border border-line bg-main hover:bg-hover transition-colors text-left"
+                    className="w-full flex items-center justify-between gap-3 p-4 rounded-sm glass-control transition-colors text-left"
                   >
                     <div className="flex items-center gap-3">
                       <Bell className="w-4 h-4 text-primary" />

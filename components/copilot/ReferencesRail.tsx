@@ -57,7 +57,7 @@ export function ReferencesRail({ refs }: { refs: CopilotReference[] }) {
           const Icon = KIND_ICON[r.kind] ?? LineChart
           const href = hrefFor(r)
           const cls =
-            'group inline-flex items-center gap-1.5 rounded-sm border border-line bg-wrap-hover px-2 py-1 text-[11px] transition-colors hover:border-white/20'
+            'group inline-flex items-center gap-1.5 rounded-sm glass-control px-2 py-1 text-[11px] transition-colors'
           const inner = (
             <>
               <Icon size={11} className="shrink-0 text-d-text-muted" />

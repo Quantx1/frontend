@@ -229,7 +229,7 @@ export default function AdminTrainingPage() {
                   <td className="px-5 py-2.5 font-mono text-white">{t.name}</td>
                   <td className="px-5 py-2.5">
                     <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider"
-                          style={{ color: t.requires_gpu ? '#FEB113' : '#8e8e8e' }}>
+                          style={{ color: t.requires_gpu ? 'var(--color-warning)' : 'var(--color-muted)' }}>
                       {t.requires_gpu ? <Server className="w-3 h-3" /> : <Cpu className="w-3 h-3" />}
                       {t.requires_gpu ? 'GPU' : 'CPU'}
                     </span>
@@ -285,10 +285,10 @@ function RunRow({ run }: { run: Run }) {
     : run.status === 'ok' ? CheckCircle
     : run.status === 'partial' ? AlertCircle
     : AlertCircle
-  const color = run.status === 'running' ? '#4FECCD'
-    : run.status === 'ok' ? '#05B878'
-    : run.status === 'partial' ? '#FEB113'
-    : '#FF5947'
+  const color = run.status === 'running' ? 'var(--color-primary-text)'
+    : run.status === 'ok' ? 'var(--color-up)'
+    : run.status === 'partial' ? 'var(--color-warning)'
+    : 'var(--color-down)'
 
   return (
     <li className="px-5 py-3">
@@ -330,7 +330,7 @@ function RunRow({ run }: { run: Run }) {
           {run.reports.map((rep) => (
             <div key={rep.name} className="text-[11px] flex flex-wrap items-baseline gap-2">
               <span className="font-mono text-white">{rep.name}</span>
-              <span style={{ color: rep.status === 'ok' ? '#05B878' : rep.status === 'skipped' ? '#8e8e8e' : '#FF5947' }}>
+              <span style={{ color: rep.status === 'ok' ? 'var(--color-up)' : rep.status === 'skipped' ? 'var(--color-muted)' : 'var(--color-down)' }}>
                 {rep.status}
               </span>
               <span className="text-d-text-muted">{rep.duration_sec.toFixed(1)}s</span>

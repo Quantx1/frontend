@@ -2,22 +2,19 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { useTheme } from 'next-themes'
 import {
-  Activity, Bell, Eye, HelpCircle, LogOut, Monitor, Moon, Search, Settings, Sun, User,
+  Activity, Bell, Eye, HelpCircle, LogOut, Search, Settings, User,
 } from '@/lib/icons'
 import { useAuth } from '@/contexts/AuthContext'
 import { dispatchCopilotOpen } from '@/components/copilot/CopilotProvider'
 import { CopilotBot } from '@/components/copilot/CopilotBot'
+import { AnimatedThemeToggle } from '@/components/theme/AnimatedThemeToggle'
 import { cn } from '@/lib/utils'
 
 interface Props {
   /** Opens the existing CommandPalette (⌘K). */
   onSearch: () => void
 }
-
-type ThemeValue = 'light' | 'dark' | 'system'
-const THEME_ORDER: ThemeValue[] = ['light', 'dark', 'system']
 
 // 3-zone reference shell — RIGHT UTILITY RAIL (Wave 1, 2026-06-20).
 // Fixed 72px, bg-main, 1px border-line left border. A vertical stack of
@@ -40,7 +37,7 @@ export function RightRail({ onSearch }: Props) {
           onClick={() => dispatchCopilotOpen()}
           aria-label="Open Copilot (⌘/)"
           title="Copilot (⌘/)"
-          className="grid h-10 w-10 place-items-center rounded-lg bg-primary text-main transition-transform hover:scale-[1.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+          className="cta-gloss grid h-10 w-10 place-items-center rounded-full bg-gradient-cta text-primary-foreground transition-transform hover:scale-[1.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
         >
           <CopilotBot className="h-5 w-5" />
         </button>
@@ -65,7 +62,7 @@ export function RightRail({ onSearch }: Props) {
 }
 
 const railBtn =
-  'grid h-10 w-10 place-items-center rounded-lg text-d-text-muted transition-colors ' +
+  'grid h-10 w-10 place-items-center rounded-full text-d-text-muted transition-colors ' +
   'hover:bg-wrap-hover hover:text-d-text-primary focus-visible:outline-none ' +
   'focus-visible:ring-2 focus-visible:ring-accent/40'
 
@@ -124,7 +121,7 @@ function RailProfile() {
         title={name}
         className={cn(railBtn, open && 'bg-wrap-hover text-d-text-primary')}
       >
-        <span className="grid h-[26px] w-[26px] place-items-center rounded-full bg-primary text-[12px] font-bold text-main">
+        <span className="grid h-[26px] w-[26px] place-items-center rounded-full bg-primary text-[12px] font-bold text-primary-foreground">
           {initial}
         </span>
       </button>
@@ -132,10 +129,10 @@ function RailProfile() {
       {open && (
         <div
           role="menu"
-          className="absolute bottom-0 right-full z-50 mr-2 w-56 overflow-hidden rounded-xl border border-line bg-wrap"
+          className="absolute bottom-0 right-full z-50 mr-2 w-56 overflow-hidden rounded-2xl border border-line bg-wrap"
         >
           <div className="flex items-center gap-2.5 border-b border-line px-3 py-2.5">
-            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary text-[13px] font-bold text-main">
+            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary text-[13px] font-bold text-primary-foreground">
               {initial}
             </span>
             <div className="min-w-0">
@@ -176,27 +173,10 @@ function RailProfile() {
   )
 }
 
-// 3-way theme cycle (light → dark → system). The full segmented control lives
-// in Settings → Appearance; this is the dense rail affordance. SSR-safe:
-// renders the System glyph until mounted so server + client agree.
+// Quick light/dark flip with the View-Transition reveal. The full
+// Light / Dark / Auto control lives in Settings → Appearance; this is the
+// dense rail affordance. Bound to next-themes + ThemeModeContext (a tap sets
+// an explicit intent, exiting Auto). SSR-safe inside AnimatedThemeToggle.
 function RailThemeToggle() {
-  const { theme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
-
-  const current = (mounted ? (theme as ThemeValue) : 'system') ?? 'system'
-  const Icon = current === 'light' ? Sun : current === 'dark' ? Moon : Monitor
-  const next = THEME_ORDER[(THEME_ORDER.indexOf(current) + 1) % THEME_ORDER.length]
-
-  return (
-    <button
-      type="button"
-      onClick={() => setTheme(next)}
-      aria-label={`Theme: ${current}. Switch to ${next}.`}
-      title={`Theme: ${current} (tap for ${next})`}
-      className={cn(railBtn)}
-    >
-      <Icon className="h-5 w-5" aria-hidden="true" />
-    </button>
-  )
+  return <AnimatedThemeToggle className={cn(railBtn)} iconClassName="h-5 w-5" />
 }

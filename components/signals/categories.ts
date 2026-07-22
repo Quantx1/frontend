@@ -1,6 +1,8 @@
 /**
- * Signal categories — the 3 trading horizons + the Momentum engine each get
- * their own page.
+ * Signal books — the two live, gate-passing books each get their own page:
+ * Alpha Picks (internal: swing, 10-bar) and Momentum Picks (internal:
+ * momentum, 20-bar). Positional + intraday were removed 2026-07-21
+ * (positional model failed its quality gate; intraday needs a live feed).
  *
  * Holds the per-category copy ("what is X" + "how our AI finds them"), the
  * public engine names involved (brand-firewall: only Alpha/Mood/Regime/
@@ -9,22 +11,23 @@
  */
 
 import type { ComponentType } from 'react'
-import { Flame, Mountain, TrendingUp, Zap } from '@/lib/icons'
+import { Flame, TrendingUp } from '@/lib/icons'
 
 import type { Signal as ApiSignal } from '@/lib/api'
 import type { DisplaySignal } from './SignalCard'
 
-export type CategoryId = 'intraday' | 'swing' | 'positional' | 'momentum'
+export type CategoryId = 'swing' | 'momentum'
 
 export interface SignalCategory {
   id: CategoryId
+  /** Public route slug, e.g. /signals/alpha-picks. */
+  slug: string
   label: string
   title: string
   hold: string
   tagline: string
   icon: ComponentType<any>
   /** Per-category premium 3D hero render (Higgsfield illustration). */
-  heroImage: string
   /** Plain-English "what is this trading style". */
   whatIs: string
   /** How the AI finds these — each a short sentence, public engine names only. */
@@ -49,49 +52,19 @@ const FAQ_COMMON: { q: string; a: string }[] = [
   },
   {
     q: 'Do I need a broker connected?',
-    a: 'Daily and EOD signals work without one. Live intraday signals run on your own broker feed, so those need a connected broker. Nothing here places trades for you. You stay in control.',
+    a: 'No. Both books run on settled EOD data, so every signal works without a broker. Connect one only when you want to trade a pick live — nothing here places trades for you. You stay in control.',
   },
 ]
 
 export const CATEGORIES: Record<CategoryId, SignalCategory> = {
-  intraday: {
-    id: 'intraday',
-    label: 'Intraday',
-    title: 'Intraday signals',
-    hold: 'Same-day · squared off by 15:30 IST',
-    tagline: 'ML-ranked setups, in and out by the close.',
-    icon: Zap,
-    heroImage: '/images/v3/ai-chart-intraday.webp',
-    whatIs:
-      'Specialist engines read the live tape and fire setups that open and close inside one session. Nothing held overnight, nothing to gap against you. The edge is speed: catch a clean move between 09:15 and 15:30 IST, tight stop, quick exit. Built for traders who can watch the tape and pull the trigger as momentum builds.',
-    howAI: [
-      "Reads live price action, volume surges and market breadth tick-by-tick against the day's Regime read.",
-      'Alpha sorts the names moving on real conviction from the ones drifting on noise.',
-      'Regime throttles exposure the second volatility spikes. Disorderly tape, signals pause.',
-      'A setup fires only when momentum, volume and structure line up, entry, stop and target pre-computed.',
-    ],
-    engines: ['Alpha', 'Regime'],
-    holdDays: 1,
-    faq: [
-      {
-        q: 'How long do intraday signals stay open?',
-        a: 'Same-day only, squared off by 15:30 IST. You never carry overnight risk on an intraday signal.',
-      },
-      {
-        q: 'Why do signals pause sometimes?',
-        a: 'Regime throttles exposure the second volatility spikes. In disorderly tape the engine stops firing instead of forcing low-quality setups.',
-      },
-      ...FAQ_COMMON,
-    ],
-  },
   swing: {
     id: 'swing',
-    label: 'Swing',
-    title: 'Swing signals',
+    slug: 'alpha-picks',
+    label: 'Alpha Picks',
+    title: 'Alpha Picks',
     hold: '3-10 sessions',
     tagline: 'ML signal stack catches one clean leg of the trend.',
     icon: TrendingUp,
-    heroImage: '/images/v3/ai-chart-swing.webp',
     whatIs:
       "Multiple engines agree before a swing publishes: hold for roughly 3 to 10 sessions and take one leg of a bigger trend. You sit through the intraday noise and let the move work, with AI-managed targets and stops keeping you honest. The sweet spot if you can't stare at screens all day but want more than buy-and-hold.",
     howAI: [
@@ -104,54 +77,24 @@ export const CATEGORIES: Record<CategoryId, SignalCategory> = {
     holdDays: 7,
     faq: [
       {
-        q: 'How long is a swing held?',
+        q: 'How long is an Alpha Pick held?',
         a: 'Roughly 3 to 10 sessions. Long enough to catch one leg of a trend, short enough that you are not married to a multi-week thesis.',
       },
       {
-        q: 'What makes a swing signal publish?',
+        q: 'What makes an Alpha Pick publish?',
         a: 'Alpha ranks the cross-section, Mood checks the news tape, Regime sizes to the market state. The ensemble publishes only when the risk-adjusted edge clears a backtested gate.',
-      },
-      ...FAQ_COMMON,
-    ],
-  },
-  positional: {
-    id: 'positional',
-    label: 'Positional',
-    title: 'Positional signals',
-    hold: '2-8 weeks',
-    tagline: 'Regime-aware engines trade the thesis, not the tick.',
-    icon: Mountain,
-    heroImage: '/images/v3/ai-chart-positional.webp',
-    whatIs:
-      "ML engines hold for weeks on structural conviction, not short-term noise: earnings momentum, sector rotation, a regime tailwind. You trade the thesis, not the tick. Fewer signals, larger moves, far less screen time than swing or intraday.",
-    howAI: [
-      'Longer-horizon Alpha ranks surface names with durable, multi-week factor strength.',
-      'Mood weighs the earnings and sentiment trajectory that has to carry a position for weeks.',
-      "Regime's multi-week market-state probabilities decide how hard the thesis gets sized.",
-      'AutoPilot can carry these holds with Kelly-decayed sizing. The position stays open only while its factors stay aligned.',
-    ],
-    engines: ['Alpha', 'Mood', 'Regime', 'AutoPilot'],
-    holdDays: 30,
-    faq: [
-      {
-        q: 'How is positional different from swing?',
-        a: 'Positional trades run for weeks on structural conviction: earnings momentum, sector rotation, a regime tailwind. Fewer signals, larger moves, far less screen time than swing.',
-      },
-      {
-        q: 'When does a positional signal close?',
-        a: 'It stays open only while its factors stay aligned. AutoPilot can carry these holds with Kelly-decayed sizing, but the hard stop and target stay authoritative.',
       },
       ...FAQ_COMMON,
     ],
   },
   momentum: {
     id: 'momentum',
-    label: 'Momentum',
-    title: 'Momentum signals',
+    slug: 'momentum-picks',
+    label: 'Momentum Picks',
+    title: 'Momentum Picks',
     hold: 'Weekly rebalance · long-only',
     tagline: 'The whole NSE board, ML-ranked by forward return.',
     icon: Flame,
-    heroImage: '/images/v3/ai-chart-momentum.webp',
     whatIs:
       'Ride the stocks already moving with strength. The Alpha engine ranks the entire NSE cross-section by expected forward return, reading trend persistence, price acceleration and volatility-adjusted strength, then surfaces the top of the book. Long-only, weekly rebalance: hold the highest-ranked names while the edge lasts, rotate out as momentum fades.',
     howAI: [
@@ -177,9 +120,7 @@ export const CATEGORIES: Record<CategoryId, SignalCategory> = {
 }
 
 export const CATEGORY_LIST: SignalCategory[] = [
-  CATEGORIES.intraday,
   CATEGORIES.swing,
-  CATEGORIES.positional,
   CATEGORIES.momentum,
 ]
 
@@ -198,6 +139,7 @@ export const normalize = (s: ApiSignal): DisplaySignal => ({
   generated_at: s.created_at ?? s.generated_at ?? s.date ?? new Date().toISOString(),
   status: s.status,
   signal_type: (s as { signal_type?: string }).signal_type,
+  valid_until: (s as { valid_until?: string }).valid_until,
   pnl_pct: numOrUndef((s as { final_pnl_pct?: number; pnl_percent?: number }).final_pnl_pct ?? (s as { pnl_percent?: number }).pnl_percent),
 })
 
@@ -213,11 +155,9 @@ function numOrUndef(v: unknown): number | undefined {
  * only. Signals with signal_type "momentum" still fold into swing here so that
  * any legacy momentum signals from getToday() continue to appear on the swing page.
  */
-export const categoryOf = (s: DisplaySignal): Exclude<CategoryId, 'momentum'> => {
+export const categoryOf = (s: DisplaySignal): CategoryId => {
   const t = (s.signal_type || '').toLowerCase()
-  if (t.includes('intraday') || t.includes('5m')) return 'intraday'
-  if (t.includes('positional') || t.includes('long')) return 'positional'
-  return 'swing' // swing + momentum (legacy) + default
+  return t.includes('momentum') ? 'momentum' : 'swing'
 }
 
 const CLOSED_STATUSES = new Set(['target_hit', 'stop_loss_hit', 'sl_hit', 'expired', 'closed', 'cancelled'])

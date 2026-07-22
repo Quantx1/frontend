@@ -23,10 +23,10 @@ import type { Item } from './types'
 import AlertEditModal from './AlertEditModal'
 
 const CONSENSUS_COLOR: Record<string, string> = {
-  bullish: '#05B878',
-  bearish: '#FF5947',
-  mixed:   '#FEB113',
-  neutral: '#8e8e8e',
+  bullish: 'var(--color-up)',
+  bearish: 'var(--color-down)',
+  mixed:   'var(--color-warning)',
+  neutral: 'var(--color-muted)',
 }
 
 // Theme-aware text token per consensus value (re-derives per theme, WCAG-tuned
@@ -61,8 +61,8 @@ export default function WatchCard({
 
   return (
     <article
-      className="rounded-xl border bg-wrap overflow-hidden hover:border-d-border-hover transition-colors"
-      style={{ borderLeft: `3px solid ${consensusColor}`, borderColor: '#242838' }}
+      className="rounded-[20px] border bg-wrap overflow-hidden hover:border-d-border-hover transition-colors"
+      style={{ borderLeft: `3px solid ${consensusColor}`, borderColor: 'var(--color-line)' }}
     >
       {/* Header */}
       <header className="px-4 py-3 border-b border-d-border flex items-start justify-between gap-3">
@@ -89,8 +89,8 @@ export default function WatchCard({
           <span
             className={`inline-flex items-center gap-1 text-[9px] font-semibold tracking-wider uppercase rounded-full px-2 py-0.5 border ${CONSENSUS_TEXT[consensus]}`}
             style={{
-              borderColor: `${consensusColor}55`,
-              background: `${consensusColor}14`,
+              borderColor: `color-mix(in srgb, ${consensusColor} 33%, transparent)`,
+              background: `color-mix(in srgb, ${consensusColor} 8%, transparent)`,
             }}
           >
             {consensus === 'bullish' && <ArrowUpRight className="w-2.5 h-2.5" />}
@@ -100,7 +100,7 @@ export default function WatchCard({
           </span>
           <button
             onClick={onRemove}
-            className="p-1 rounded border border-d-border text-d-text-muted hover:text-down hover:border-down/40"
+            className="p-1 rounded-full glass-control text-d-text-muted hover:text-down"
             aria-label={`Remove ${i.symbol}`}
           >
             <Trash2 className="w-3 h-3" />

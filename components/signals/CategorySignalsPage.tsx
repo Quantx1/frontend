@@ -1,9 +1,9 @@
 'use client'
 
 /**
- * CategorySignalsPage — one trading-horizon page (Intraday / Swing / Positional /
- * Momentum), rebuilt to the competitor "engine-as-landing" archetype (B),
- * re-skinned to Quant X v2 tokens.
+ * CategorySignalsPage — one signal-book page (Alpha Picks / Momentum Picks),
+ * rebuilt to the competitor "engine-as-landing" archetype (B), re-skinned to
+ * Quant X v2 tokens.
  *
  * Structure (1:1 with the reference engine-as-landing pages):
  *   breadcrumb → 56px Bricolage H1 + tagline (decorative render bleeds right)
@@ -21,14 +21,12 @@
  *     deleted). Closed swing history stays on getHistory either way.
  *   • user:profile drives the min-confidence preset
  *   • computeStats → Key Stats; per-signal link to /signals/[id] preserved
- *   • the intraday broker-gate (BrokerLock) is preserved verbatim
  *
  * Brand firewall: only public engine names (Alpha · Mood · Regime · AutoPilot)
  * ship — never model architectures.
  */
 
 import { useMemo, useState } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import useSWR from 'swr'
 import { ArrowLeft, ArrowRight, ArrowUpRight, CheckCircle2, Inbox, Play, Sparkles, Star } from '@/lib/icons'
@@ -47,10 +45,8 @@ import { FaqAccordion } from './FaqAccordion'
 import { CATEGORIES, type CategoryId, normalize, categoryOf, isOpen, isClosed, computeStats } from './categories'
 import { dispatchCopilotOpen } from '@/components/copilot/CopilotProvider'
 import { AppShell } from '@/components/shell/AppShell'
-import { api } from '@/lib/api'
+import { api, type PaperWindowResponse } from '@/lib/api'
 import { MONO, AI } from '@/lib/tokens'
-import { useBrokerStatus } from '@/lib/hooks/useBrokerStatus'
-import BrokerLock from '@/components/broker/BrokerLock'
 
 const PERIOD_DAYS = 90
 
@@ -77,8 +73,7 @@ export function CategorySignalsPage({
   category: CategoryId
   demo?: CategoryDemo
   /** When embedded inside the /signals hub, drop the outer AppShell + the
-   *  breadcrumb and render the intraday BrokerLock inline (only the Intraday
-   *  panel is gated — the hub keeps the tab strip so users can switch away). */
+   *  breadcrumb (the hub owns the single shell + tab strip). */
   embedded?: boolean
 }) {
   const cat = CATEGORIES[category]
@@ -98,13 +93,17 @@ export function CategorySignalsPage({
   const presetMinConf = Number(profile.data?.signal_filter_defaults?.min_confidence) || 0
   const minConf = minConfOverride ?? presetMinConf
 
+  // Fetched for EVERY horizon (momentum included): the style-engine books are
+  // bridged into the signals table daily, so /today carries the REAL row ids
+  // + generated_at the ranked cards link to (detail page, debate, alerts).
   const today = useSWR(
-    demo || isMomentum ? null : 'signals:today',
+    demo ? null : 'signals:today',
     () => api.signals.getToday(),
-    { revalidateOnFocus: false, refreshInterval: 30_000, dedupingInterval: 10_000, keepPreviousData: true },
+    { revalidateOnFocus: false, refreshInterval: 30_000, dedupingInterval: 10_000, keepPreviousData: true, errorRetryCount: 3, errorRetryInterval: 4_000 },
   )
+  // Momentum included — bridged books expire daily into real history rows.
   const history = useSWR(
-    demo || isMomentum ? null : `signals:history:${PERIOD_DAYS}`,
+    demo ? null : `signals:history:${PERIOD_DAYS}`,
     () => api.signals.getHistory({ days: PERIOD_DAYS, limit: 300 }),
     { revalidateOnFocus: false, dedupingInterval: 60_000 },
   )
@@ -112,7 +111,7 @@ export function CategorySignalsPage({
   const momentumSWR = useSWR(
     demo || !isMomentum ? null : 'signals:momentum',
     () => api.signals.getMomentum(50),
-    { revalidateOnFocus: false, refreshInterval: 30_000, dedupingInterval: 10_000 },
+    { revalidateOnFocus: false, refreshInterval: 30_000, dedupingInterval: 10_000, errorRetryCount: 3, errorRetryInterval: 5_000 },
   )
   // Swing ML feed — same per-style contract as momentum. It drives the open
   // book ONLY while it serves status:'ok'; endpoint down / non-ok status →
@@ -121,16 +120,23 @@ export function CategorySignalsPage({
   const swingSWR = useSWR(
     demo || !isSwing ? null : 'signals:swing-ml',
     () => api.signals.getSwing(50),
-    { revalidateOnFocus: false, refreshInterval: 30_000, dedupingInterval: 10_000 },
+    { revalidateOnFocus: false, refreshInterval: 30_000, dedupingInterval: 10_000, errorRetryCount: 3, errorRetryInterval: 5_000 },
   )
   const swingML = isSwing && swingSWR.data?.status === 'ok'
+  // Paper evaluation window — live vs frozen-backtest expectancy per engine.
+  // Feeds the Model Book panel + the quant Key Reads (real numbers only).
+  const paperWindow = useSWR(
+    demo ? null : 'signals:paper-window',
+    () => api.signals.getPaperWindow().catch(() => null),
+    { revalidateOnFocus: false, dedupingInterval: 300_000 },
+  )
 
   const { open, closed, styleMeta } = useMemo(() => {
     if (demo) return { open: demo.open, closed: demo.closed, styleMeta: new Map<string, StyleMeta>() }
 
-    // Closed book — history feed. (Momentum's history fetch is disabled above,
-    // so its closed list stays empty: the weekly ranked book has no persisted
-    // history yet. Swing keeps its closed history even while the ML feed is live.)
+    // Closed book — history feed. Momentum rows now persist (daily bridge),
+    // so type-exact matching: the momentum tab gets ONLY momentum history and
+    // the swing tab no longer inherits momentum rows via the legacy fold.
     const closedList = (history.data?.signals ?? [])
       .map(normalize)
       .filter((s) => categoryOf(s) === category && isClosed(s))
@@ -139,28 +145,44 @@ export function CategorySignalsPage({
     // Ranked ML book — momentum always; swing while its feed reports 'ok'.
     if (isMomentum || swingML) {
       const raw = (isMomentum ? momentumSWR.data?.signals : swingSWR.data?.signals) ?? []
-      const metaMap = new Map<string, StyleMeta>()
-      const openList = raw.map((sig) => {
-        // Map StyleSignalRaw → DisplaySignal. The ranked books are long-only
-        // today (direction 'BUY'), so anything non-short coerces to 'LONG'.
-        const symbol = sig.symbol
-        const id = `${isMomentum ? 'mom' : 'swing'}-${symbol}`
-        const ds: DisplaySignal = {
-          id,
-          symbol,
-          direction: sig.direction === 'SHORT' || sig.direction === 'SELL' ? 'SHORT' : 'LONG',
-          entry_price: sig.entry_price,
-          target_price: sig.target,
-          stop_loss: sig.stop_loss,
-          confidence: sig.confidence,
-          risk_reward: sig.risk_reward,
-          generated_at: new Date().toISOString(),
-          status: 'active',
-          signal_type: category,
+      // The daily bridge writes this book into the signals table — join by
+      // symbol to pick up the REAL row id (working detail links + debate)
+      // and the honest generated_at (was fabricated `new Date()` before,
+      // which made every card read "just now" forever).
+      const engineType = isMomentum ? 'momentum' : 'swing'
+      const bridged = new Map<string, { id: string; generated_at: string; valid_until?: string }>()
+      for (const raw_r of today.data?.all_signals ?? []) {
+        const r = raw_r as { id?: string; symbol?: string; signal_type?: string; generated_at?: string; date?: string; valid_until?: string }
+        if (r?.signal_type === engineType && r?.symbol && r?.id) {
+          bridged.set(r.symbol, { id: r.id, generated_at: r.generated_at ?? r.date ?? '', valid_until: r.valid_until })
         }
-        metaMap.set(id, { rank: sig.rank, percentile: sig.percentile, expected_return: sig.expected_return })
-        return ds
-      })
+      }
+      const metaMap = new Map<string, StyleMeta>()
+      const openList = raw
+        .filter((sig) => (sig.confidence ?? 0) >= minConf)
+        .map((sig) => {
+          // Map StyleSignalRaw → DisplaySignal. The ranked books are long-only
+          // today (direction 'BUY'), so anything non-short coerces to 'LONG'.
+          const symbol = sig.symbol
+          const hit = bridged.get(symbol)
+          const id = hit?.id ?? `${isMomentum ? 'mom' : 'swing'}-${symbol}`
+          const ds: DisplaySignal = {
+            id,
+            symbol,
+            direction: sig.direction === 'SHORT' || sig.direction === 'SELL' ? 'SHORT' : 'LONG',
+            entry_price: sig.entry_price,
+            target_price: sig.target,
+            stop_loss: sig.stop_loss,
+            confidence: sig.confidence,
+            risk_reward: sig.risk_reward,
+            generated_at: hit?.generated_at ?? today.data?.date ?? new Date().toISOString(),
+            valid_until: hit?.valid_until,
+            status: 'active',
+            signal_type: category,
+          }
+          metaMap.set(id, { rank: sig.rank, percentile: sig.percentile, expected_return: sig.expected_return })
+          return ds
+        })
       return { open: openList, closed: closedList, styleMeta: metaMap }
     }
 
@@ -182,31 +204,35 @@ export function CategorySignalsPage({
       ? momentumSWR.isLoading && !momentumSWR.data
       : (today.isLoading && !today.data) || (isSwing && swingSWR.isLoading && !swingSWR.data))
 
-  const { isConnected, isLoading: brokerLoading } = useBrokerStatus()
-
-  if (category === 'intraday' && !brokerLoading && !isConnected) {
-    const lock = (
-      <div className="mx-auto max-w-2xl p-4">
-        <BrokerLock
-          feature="Live intraday signals"
-          description="Tick-reactive intraday signals run on your live broker feed. Connect a broker to see them — daily/EOD signals work without one."
-        />
-      </div>
-    )
-    // Embedded: gate ONLY the Intraday panel (the hub's tab strip stays, so the
-    // user can switch to another horizon). Standalone: full-page gate.
-    return embedded ? lock : <AppShell>{lock}</AppShell>
-  }
-
   const list = tab === 'opening' ? open : closed
   const seriesFor = (s: DisplaySignal) => demo?.series?.(s)
 
   // Key Reads — always-on, honest coverage/freshness. Never a fabricated win-rate
-  // or return (those live on the public /track-record once there's a real sample).
+  // or return: the expectancy tile quotes the FROZEN walk-forward backtest
+  // (labelled), and the live paper window reports its own status.
+  const pwEngine =
+    category === 'momentum' ? paperWindow.data?.engines.momentum
+    : category === 'swing' ? paperWindow.data?.engines.swing
+    : null
   const KEY_READS = [
     { label: 'Setups today', v: loading ? '…' : String(stats.signalsToday) },
     { label: 'Universe', v: 'NSE main board' },
     { label: 'Engines', v: cat.engines.join(' · ') },
+    ...(pwEngine
+      ? [
+          {
+            label: 'Backtest hit rate',
+            v: `${(pwEngine.expected.hit_rate * 100).toFixed(1)}%`,
+          },
+          {
+            label: 'Paper window',
+            v: pwEngine.status === 'collecting'
+              ? `Collecting · ${pwEngine.days_signaled}d`
+              : pwEngine.status.replace('_', ' '),
+          },
+          { label: 'Horizon', v: `${pwEngine.horizon} trading bars` },
+        ]
+      : []),
   ]
 
   const body = (
@@ -254,7 +280,7 @@ export function CategorySignalsPage({
               <button
                 type="button"
                 onClick={() => dispatchCopilotOpen(`Explain today's ${cat.label.toLowerCase()} signals and how you found them.`)}
-                className="bg-gradient-cta group inline-flex h-10 items-center gap-1.5 rounded-pill px-5 text-[13px] font-semibold text-on-signature transition-transform active:scale-[0.97]"
+                className="bg-gradient-cta cta-gloss group inline-flex h-10 items-center gap-1.5 rounded-pill px-5 text-[13px] font-semibold text-on-signature transition-transform active:scale-[0.97]"
               >
                 <Sparkles className="h-3.5 w-3.5" /> Ask AI about these
                 <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
@@ -271,24 +297,10 @@ export function CategorySignalsPage({
             </a>
           </div>
 
-          {/* per-category hero — a 3D illustrated render (Higgsfield), clearly
-              DECORATIVE so it is never mistaken for a live signal (the real,
-              live signals are the signal CARDS below). Framed as a clean
-              contained premium panel over a soft AI depth pool. */}
-          <div className="relative hidden min-h-[240px] items-center lg:flex">
-            <div aria-hidden className="bg-radial-glow-ai absolute -inset-6 -z-10 opacity-70" />
-            <div className="dark-media relative aspect-[4/3] w-full overflow-hidden rounded-2xl border shadow-[0_30px_70px_-30px_rgba(0,0,0,0.5)]">
-              <Image
-                src={cat.heroImage}
-                alt=""
-                aria-hidden
-                fill
-                priority
-                sizes="(min-width: 1024px) 520px, 100vw"
-                className="object-cover"
-              />
-            </div>
-          </div>
+          {/* per-category hero — the MODEL BOOK panel: the quant facts behind
+              this book (horizon, validation, baseline expectancy, risk
+              engine) instead of a decorative render. Every number is real. */}
+          <ModelBookPanel category={category} paperWindow={paperWindow.data ?? null} openCount={open.length} />
         </Reveal>
 
         {/* ── 5. Key Reads — always-on coverage/freshness (no blank stat, no
@@ -306,7 +318,7 @@ export function CategorySignalsPage({
           <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
             {KEY_READS.map((k, i) => (
               <Reveal key={k.label} delay={0.03 * i}>
-                <div className="min-h-[92px] rounded-sm border border-line bg-wrap p-4">
+                <div className="min-h-[92px] rounded-[20px] border border-line bg-wrap p-5">
                   <div className="font-mono text-[10.5px] font-medium uppercase tracking-[0.12em] text-d-text-muted">
                     {k.label}
                   </div>
@@ -364,7 +376,8 @@ export function CategorySignalsPage({
             {loading ? (
               <CardSkeletons />
             ) : list.length === 0 ? (
-              <EmptyState
+              <div className="tile-tint-lg px-6 py-10">
+                <EmptyState
                 icon={<Inbox className="h-6 w-6" />}
                 title={tab === 'opening' ? `No open ${cat.label.toLowerCase()} signals` : `No closed ${cat.label.toLowerCase()} signals yet`}
                 description={
@@ -394,7 +407,8 @@ export function CategorySignalsPage({
                     </div>
                   ) : undefined
                 }
-              />
+                />
+              </div>
             ) : (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 {list.map((s, i) => (
@@ -466,7 +480,7 @@ export function CategorySignalsPage({
 
 function CountPill({ n }: { n: number }) {
   return (
-    <span className="ml-1.5 rounded bg-wrap-hover px-1.5 py-0.5 text-[10px] font-medium text-d-text-muted">{n}</span>
+    <span className="ml-1.5 rounded-full bg-wrap-hover px-1.5 py-0.5 text-[10px] font-medium text-d-text-muted">{n}</span>
   )
 }
 
@@ -474,7 +488,7 @@ function CardSkeletons() {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="rounded-sm border border-line bg-wrap p-4">
+        <div key={i} className="rounded-[20px] border border-line bg-wrap p-4">
           <div className="flex items-center justify-between">
             <div className="h-4 w-20 animate-pulse rounded bg-wrap-hover" />
             <div className="h-5 w-12 animate-pulse rounded bg-wrap-hover" />
@@ -489,11 +503,85 @@ function CardSkeletons() {
   )
 }
 
+/** The quant hero panel — the model facts behind this book. Replaces the old
+ *  decorative illustration with numbers that are all real: model class +
+ *  validation, holding horizon, the FROZEN backtest expectancy (labelled with
+ *  its provenance), the live paper-window state, and the risk-engine design. */
+function ModelBookPanel({
+  category,
+  paperWindow,
+  openCount,
+}: {
+  category: CategoryId
+  paperWindow: PaperWindowResponse | null
+  openCount: number
+}) {
+  const eng =
+    category === 'momentum' ? paperWindow?.engines.momentum
+    : category === 'swing' ? paperWindow?.engines.swing
+    : null
+  const modelLine =
+'Cross-sectional ranker · walk-forward validated'
+
+  const Row = ({ k, v, tone }: { k: string; v: string; tone?: string }) => (
+    <div className="flex items-baseline justify-between gap-3 border-b border-line/60 py-2 last:border-0">
+      <span className="font-mono text-[9.5px] uppercase tracking-[0.12em] text-d-text-muted">{k}</span>
+      <span className={`text-right font-mono text-[12px] font-semibold tabular-nums ${tone ?? 'text-d-text-primary'}`}>{v}</span>
+    </div>
+  )
+
+  return (
+    <div className="relative hidden min-h-[240px] items-center lg:flex">
+      <div aria-hidden className="bg-radial-glow-ai absolute -inset-6 -z-10 opacity-70" />
+      <div className="lg-surface relative w-full rounded-[24px] p-5">
+        <div className="mb-1 flex items-center justify-between">
+          <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-ai">Model book</span>
+          <span className="font-mono text-[10px] text-d-text-muted">{openCount} open</span>
+        </div>
+        <Row k="Model" v={modelLine} />
+        <Row k="Horizon" v={eng ? `${eng.horizon} trading bars` : 'multi-session'} />
+        {eng && (
+          <>
+            <Row
+              k="Backtest hit rate"
+              v={`${(eng.expected.hit_rate * 100).toFixed(1)}%`}
+              tone="text-up"
+            />
+            <Row
+              k="Backtest excess"
+              v={`${eng.expected.mean_excess_h >= 0 ? '+' : ''}${(eng.expected.mean_excess_h * 100).toFixed(2)}% / ${eng.horizon} bars`}
+            />
+            <Row
+              k="Paper window"
+              v={
+                eng.status === 'collecting'
+                  ? `collecting · ${eng.days_signaled} signal days`
+                  : eng.live.hit_rate != null
+                    ? `${eng.status.replace('_', ' ')} · live ${(eng.live.hit_rate * 100).toFixed(1)}%`
+                    : eng.status.replace('_', ' ')
+              }
+              tone={eng.status === 'off_track' ? 'text-down' : 'text-d-text-primary'}
+            />
+          </>
+        )}
+        <Row k="Risk engine" v="ATR-scaled stop & target · R:R 2.0" />
+        <Row k="Lifecycle" v="fills → stop/target → expiry, marked daily" />
+        {eng && (
+          <p className="mt-2 text-[9.5px] leading-relaxed text-d-text-muted">
+            Expectancy from the frozen {eng.expected.source}. Backtested, not guaranteed — live
+            paper window tracks the same math against real sessions.
+          </p>
+        )}
+      </div>
+    </div>
+  )
+}
+
 /** Momentum-only info bar rendered above each SignalCard on the /signals/momentum page. */
 function MomentumMetaBar({ meta }: { meta: { rank: number; percentile: number; expected_return: number } }) {
   const pctSign = meta.expected_return >= 0 ? '+' : ''
   return (
-    <div className="flex items-center justify-between rounded-sm border border-line bg-main px-3 py-1.5 text-[11px]">
+    <div className="flex items-center justify-between rounded-full border border-line bg-main px-3.5 py-1.5 text-[11px]">
       <span className="text-d-text-muted">
         Rank <span className={`font-semibold text-d-text-primary ${MONO}`}>#{meta.rank}</span>
       </span>

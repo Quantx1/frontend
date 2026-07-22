@@ -92,7 +92,7 @@ function DefaultWidgetFallback({
       </p>
       <button
         onClick={onReset}
-        className="mt-1 inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] text-d-text-secondary border border-d-border rounded hover:bg-hover hover:text-d-text-primary transition-colors"
+        className="mt-1 inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] text-d-text-secondary glass-control rounded-full hover:text-d-text-primary transition-colors"
       >
         <RotateCcw className="w-3 h-3" />
         Retry

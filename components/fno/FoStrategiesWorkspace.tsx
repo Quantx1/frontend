@@ -521,7 +521,7 @@ export function FoStrategiesWorkspace() {
               <button
                 onClick={handleDeploy}
                 disabled={deploying || lots < 1}
-                className="bg-gradient-cta inline-flex h-9 items-center gap-1.5 rounded-pill px-4 text-[13px] font-semibold text-on-signature transition-transform active:scale-[0.97] disabled:opacity-50"
+                className="glass-control-accent inline-flex h-9 items-center gap-1.5 rounded-pill px-4 text-[13px] font-semibold transition-transform active:scale-[0.97] disabled:opacity-50"
               >
                 {deploying ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -567,7 +567,7 @@ export function FoStrategiesWorkspace() {
                 </p>
               </div>
             ) : backtestError ? (
-              <div className="rounded-md border border-down/30 bg-down/5 p-3 text-xs text-down">
+              <div className="rounded-xl border border-down/30 bg-down/5 p-3 text-xs text-down">
                 {backtestError}
               </div>
             ) : backtestResult ? (
@@ -620,14 +620,14 @@ export function FoStrategiesWorkspace() {
               <label className="font-mono text-[9px] uppercase tracking-wider text-d-text-muted">
                 Underlying
               </label>
-              <div className="mt-1 inline-flex w-full items-center gap-0.5 rounded-md border border-line p-0.5">
+              <div className="mt-1 inline-flex w-full items-center gap-0.5 rounded-full border border-line p-0.5">
                 {(['NIFTY', 'BANKNIFTY', 'FINNIFTY'] as const).map((s) => (
                   <button
                     key={s}
                     type="button"
                     onClick={() => setAiSymbol(s)}
-                    className={`flex-1 rounded px-2 py-1 font-mono text-[10px] uppercase tracking-wider ${
-                      aiSymbol === s ? 'bg-primary/15 text-primary'
+                    className={`flex-1 rounded-full px-2 py-1 font-mono text-[10px] uppercase tracking-wider ${
+                      aiSymbol === s ? 'glass-control-accent'
                                       : 'text-d-text-muted hover:text-d-text-primary'
                     }`}
                   >
@@ -675,7 +675,7 @@ export function FoStrategiesWorkspace() {
           </div>
 
           {/* PR-BE — Portfolio-aware toggle */}
-          <label className="flex items-start gap-2 rounded-md border border-line bg-wrap/60 px-3 py-2 text-xs text-d-text-secondary">
+          <label className="flex items-start gap-2 rounded-xl border border-line bg-wrap/60 px-3 py-2 text-xs text-d-text-secondary">
             <input
               type="checkbox"
               checked={aiIncludePortfolio}
@@ -708,7 +708,7 @@ export function FoStrategiesWorkspace() {
                 onChange={(e) => setAiFocusSymbol(e.target.value)}
                 placeholder="e.g. RELIANCE — leave empty to hedge whole book"
                 maxLength={20}
-                className="mt-1 w-full rounded-md border border-line bg-main px-3 py-1.5 font-mono text-xs uppercase text-d-text-primary outline-none placeholder:normal-case placeholder:text-d-text-muted focus:border-primary"
+                className="mt-1 w-full rounded-xl border border-line bg-main px-3 py-1.5 font-mono text-xs uppercase text-d-text-primary outline-none placeholder:normal-case placeholder:text-d-text-muted focus:border-primary"
               />
               <p className="mt-1 text-[10px] text-d-text-muted">
                 Narrows the hedge to a single underlying&apos;s exposure
@@ -734,7 +734,7 @@ export function FoStrategiesWorkspace() {
                     setAiPrompt(p)
                     if (hedge) setAiIncludePortfolio(true)
                   }}
-                  className="rounded-full border border-line bg-wrap/60 px-2.5 py-1 text-[10px] text-d-text-secondary transition-colors hover:bg-wrap-hover hover:text-d-text-primary"
+                  className="glass-control rounded-full px-2.5 py-1 text-[10px] text-d-text-secondary transition-colors hover:text-d-text-primary"
                 >
                   {p}
                 </button>
@@ -743,7 +743,7 @@ export function FoStrategiesWorkspace() {
           )}
 
           {aiError && (
-            <div className="rounded-md border border-down/30 bg-down/5 p-3 text-xs text-down">
+            <div className="rounded-xl border border-down/30 bg-down/5 p-3 text-xs text-down">
               {aiError}
             </div>
           )}
@@ -751,7 +751,7 @@ export function FoStrategiesWorkspace() {
           {/* Result */}
           {aiResult && (
             <div className="space-y-3 border-t border-line pt-3">
-              <div className="rounded-md border border-primary/30 bg-primary/[0.04] p-3">
+              <div className="rounded-xl border border-primary/30 bg-primary/[0.04] p-3">
                 <div className="flex items-start gap-2">
                   <Brain className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
                   <div className="min-w-0 flex-1">
@@ -786,7 +786,7 @@ export function FoStrategiesWorkspace() {
 
               {/* PR-BE — Portfolio context tile when hedge mode was on */}
               {aiResult.portfolio_context && aiResult.portfolio_context.has_positions && (
-                <div className="space-y-2 rounded-md border border-primary/20 bg-primary/[0.04] p-2">
+                <div className="space-y-2 rounded-xl border border-primary/20 bg-primary/[0.04] p-2">
                   <p className="font-mono text-[9px] uppercase tracking-wider text-primary">
                     Your book context (factored into the suggestion)
                   </p>
@@ -812,7 +812,7 @@ export function FoStrategiesWorkspace() {
 
                   {/* PR-BF.1 — Per-underlying breakdown */}
                   {Object.keys(aiResult.portfolio_context.by_symbol ?? {}).length > 0 && (
-                    <div className="rounded border border-line bg-wrap/40 p-2">
+                    <div className="rounded-lg border border-line bg-wrap/40 p-2">
                       <p className="mb-1 font-mono text-[9px] uppercase tracking-wider text-d-text-muted">
                         Top exposures · click to focus next ask
                       </p>
@@ -852,7 +852,7 @@ export function FoStrategiesWorkspace() {
               )}
 
               {aiResult.proposal && (
-                <div className="rounded-md border border-line bg-wrap/60 p-2">
+                <div className="rounded-xl border border-line bg-wrap/60 p-2">
                   <p className="mb-1 font-mono text-[9px] uppercase tracking-wider text-d-text-muted">
                     Pre-priced legs
                   </p>
@@ -910,7 +910,7 @@ export function FoStrategiesWorkspace() {
                 <button
                   onClick={deployAISuggestion}
                   disabled={aiSuggesting}
-                  className="bg-gradient-cta inline-flex h-9 items-center gap-1.5 rounded-pill px-4 text-[13px] font-semibold text-on-signature transition-transform active:scale-[0.97] disabled:opacity-50"
+                  className="glass-control-accent inline-flex h-9 items-center gap-1.5 rounded-pill px-4 text-[13px] font-semibold transition-transform active:scale-[0.97] disabled:opacity-50"
                 >
                   {aiSuggesting ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -990,7 +990,7 @@ function BacktestResultPanel({ result }: { result: Record<string, any> }) {
           value={<span className="text-down">{losers}</span>}
         />
       </div>
-      <div className="rounded-md border border-line bg-wrap/40 p-3">
+      <div className="rounded-xl border border-line bg-wrap/40 p-3">
         <p className="font-mono text-[9px] uppercase tracking-wider text-d-text-muted">
           Win rate
         </p>
@@ -1007,7 +1007,7 @@ function BacktestResultPanel({ result }: { result: Record<string, any> }) {
         </div>
       </div>
       {Array.isArray(result.trades) && result.trades.length > 0 && (
-        <details className="rounded-md border border-line bg-wrap/40 p-2">
+        <details className="rounded-xl border border-line bg-wrap/40 p-2">
           <summary className="cursor-pointer text-xs text-d-text-secondary">
             Last {Math.min(10, result.trades.length)} trade outcomes
           </summary>
@@ -1032,7 +1032,7 @@ function BacktestResultPanel({ result }: { result: Record<string, any> }) {
 
 function Kpi({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="rounded-md border border-line bg-wrap/60 p-2">
+    <div className="rounded-xl border border-line bg-wrap/60 p-2">
       <p className="font-mono text-[9px] uppercase tracking-wider text-d-text-muted">
         {label}
       </p>
@@ -1089,7 +1089,7 @@ function RecommendationCard({
           />
         </div>
 
-        <div className="rounded-md border border-line bg-wrap/60 p-2">
+        <div className="rounded-xl border border-line bg-wrap/60 p-2">
           <p className="mb-1 font-mono text-[9px] uppercase tracking-wider text-d-text-muted">
             Legs
           </p>
@@ -1193,7 +1193,7 @@ function OpenPositionCard({
             tone="down"
           />
         </div>
-        <div className="mx-4 mb-3 overflow-hidden rounded-md border border-line">
+        <div className="mx-4 mb-3 overflow-hidden rounded-xl border border-line">
           <div className="grid grid-cols-12 gap-2 border-b border-line bg-wrap/60 px-3 py-1.5 font-mono text-[9px] uppercase tracking-wider text-d-text-muted">
             <span className="col-span-2">Side</span>
             <span className="col-span-2">Type</span>
@@ -1229,7 +1229,7 @@ function ClosedPositionRow({ position: p }: { position: any }) {
   const realized = Number(p.realized_pnl) || 0
   const tone = realized > 0 ? 'text-up' : realized < 0 ? 'text-down' : 'text-d-text-primary'
   return (
-    <div className="grid grid-cols-12 items-center gap-2 rounded-md border border-line bg-wrap/40 px-3 py-2 text-xs">
+    <div className="grid grid-cols-12 items-center gap-2 rounded-xl border border-line bg-wrap/40 px-3 py-2 text-xs">
       <span className="col-span-3 font-mono text-d-text-primary">
         {p.underlying} · {STRATEGY_LABEL[p.template_slug ?? ''] ?? p.template_slug}
       </span>
@@ -1260,7 +1260,7 @@ function KPI({
 }) {
   const cls = tone === 'up' ? 'text-up' : tone === 'down' ? 'text-down' : 'text-d-text-primary'
   return (
-    <div className="rounded-md border border-line bg-wrap/60 p-2 text-center">
+    <div className="rounded-xl border border-line bg-wrap/60 p-2 text-center">
       <p className="font-mono text-[9px] uppercase tracking-wider text-d-text-muted">{label}</p>
       <p className={`mt-0.5 font-mono text-xs font-semibold tabular-nums ${cls}`}>{value}</p>
     </div>
@@ -1292,7 +1292,7 @@ function Meta({ label, value }: { label: string; value: string }) {
 
 function SmallMeta({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-md border border-line bg-wrap/60 p-2">
+    <div className="rounded-xl border border-line bg-wrap/60 p-2">
       <p className="font-mono text-[9px] uppercase tracking-wider text-d-text-muted">{label}</p>
       <p className="mt-0.5 font-mono text-xs font-medium text-d-text-primary tabular-nums">
         {value}
@@ -1424,15 +1424,15 @@ function OptionChainPanel() {
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
-        <div className="inline-flex items-center gap-0.5 rounded-md border border-line p-0.5">
+        <div className="inline-flex items-center gap-0.5 rounded-full border border-line p-0.5">
           {(['NIFTY', 'BANKNIFTY', 'FINNIFTY'] as const).map((s) => (
             <button
               key={s}
               type="button"
               onClick={() => setSymbol(s)}
-              className={`rounded px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider transition-colors ${
+              className={`rounded-full px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider transition-colors ${
                 symbol === s
-                  ? 'bg-primary/15 text-primary'
+                  ? 'glass-control-accent'
                   : 'text-d-text-muted hover:text-d-text-primary'
               }`}
             >
@@ -1440,15 +1440,15 @@ function OptionChainPanel() {
             </button>
           ))}
         </div>
-        <div className="inline-flex items-center gap-0.5 rounded-md border border-line p-0.5">
+        <div className="inline-flex items-center gap-0.5 rounded-full border border-line p-0.5">
           {(['trading', 'greeks', 'smile', 'term', 'cone'] as const).map((v) => (
             <button
               key={v}
               type="button"
               onClick={() => setView(v)}
-              className={`rounded px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider transition-colors ${
+              className={`rounded-full px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider transition-colors ${
                 view === v
-                  ? 'bg-primary/15 text-primary'
+                  ? 'glass-control-accent'
                   : 'text-d-text-muted hover:text-d-text-primary'
               }`}
             >
@@ -1745,7 +1745,7 @@ function BuilderPanel({
             return (
               <div
                 key={`${l.strike}-${l.option_type}`}
-                className="flex items-center justify-between rounded border border-line bg-wrap/60 px-2 py-1 font-mono text-xs"
+                className="flex items-center justify-between rounded-lg border border-line bg-wrap/60 px-2 py-1 font-mono text-xs"
               >
                 <span className="flex items-center gap-2">
                   <span className={`font-semibold ${sideTone}`}>{l.side}</span>
@@ -1921,30 +1921,30 @@ function ChainSmileChart({
               type="number"
               domain={['dataMin', 'dataMax']}
               tickFormatter={(v) => String(v)}
-              tick={{ fontSize: 10, fontFamily: 'monospace', fill: '#8B92A5' }}
-              stroke="#1C1E29"
+              tick={{ fontSize: 10, fontFamily: 'monospace', fill: 'var(--color-muted)' }}
+              stroke="var(--color-line)"
             />
             <YAxis
               tickFormatter={(v: number) => `${v.toFixed(1)}%`}
-              tick={{ fontSize: 10, fontFamily: 'monospace', fill: '#8B92A5' }}
-              stroke="#1C1E29"
+              tick={{ fontSize: 10, fontFamily: 'monospace', fill: 'var(--color-muted)' }}
+              stroke="var(--color-line)"
               domain={['auto', 'auto']}
               label={{
                 value: 'Implied vol',
                 angle: -90,
                 position: 'insideLeft',
-                style: { fontSize: 10, fill: '#8B92A5', fontFamily: 'monospace' },
+                style: { fontSize: 10, fill: 'var(--color-muted)', fontFamily: 'monospace' },
               }}
             />
             <RTooltip
               contentStyle={{
-                backgroundColor: 'rgba(17, 21, 32, 0.95)',
-                border: '1px solid #1C1E29',
+                backgroundColor: 'color-mix(in srgb, var(--color-wrap-hover) 95%, transparent)',
+                border: '1px solid var(--color-line)',
                 borderRadius: 8,
                 fontSize: 11,
                 fontFamily: 'monospace',
               }}
-              labelStyle={{ color: '#D0D5DD', fontWeight: 600 }}
+              labelStyle={{ color: 'var(--color-desc)', fontWeight: 600 }}
               formatter={(value: any, name: string) => {
                 if (value == null) return ['—', name]
                 return [`${Number(value).toFixed(2)}%`, name === 'ceIv' ? 'CE IV' : 'PE IV']
@@ -1958,12 +1958,12 @@ function ChainSmileChart({
             {atmStrike != null && (
               <ReferenceLine
                 x={atmStrike}
-                stroke="#3D80FF"
+                stroke="var(--chart-primary)"
                 strokeDasharray="4 4"
                 label={{
                   value: 'ATM',
                   position: 'top',
-                  fill: '#3D80FF',
+                  fill: 'var(--chart-primary)',
                   fontSize: 10,
                   fontFamily: 'monospace',
                 }}
@@ -1972,9 +1972,9 @@ function ChainSmileChart({
             <Line
               type="monotone"
               dataKey="ceIv"
-              stroke="#05B878"
+              stroke="var(--color-up)"
               strokeWidth={2}
-              dot={{ r: 2, fill: '#05B878' }}
+              dot={{ r: 2, fill: 'var(--color-up)' }}
               activeDot={{ r: 4 }}
               connectNulls
               name="ceIv"
@@ -1982,9 +1982,9 @@ function ChainSmileChart({
             <Line
               type="monotone"
               dataKey="peIv"
-              stroke="#FF5947"
+              stroke="var(--color-down)"
               strokeWidth={2}
-              dot={{ r: 2, fill: '#FF5947' }}
+              dot={{ r: 2, fill: 'var(--color-down)' }}
               activeDot={{ r: 4 }}
               connectNulls
               name="peIv"
@@ -2079,30 +2079,30 @@ function TermStructureChart({ symbol }: { symbol: string }) {
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(28,30,41,0.4)" />
             <XAxis
               dataKey="label"
-              tick={{ fontSize: 10, fontFamily: 'monospace', fill: '#8B92A5' }}
-              stroke="#1C1E29"
+              tick={{ fontSize: 10, fontFamily: 'monospace', fill: 'var(--color-muted)' }}
+              stroke="var(--color-line)"
             />
             <YAxis
               tickFormatter={(v: number) => `${v.toFixed(1)}%`}
-              tick={{ fontSize: 10, fontFamily: 'monospace', fill: '#8B92A5' }}
-              stroke="#1C1E29"
+              tick={{ fontSize: 10, fontFamily: 'monospace', fill: 'var(--color-muted)' }}
+              stroke="var(--color-line)"
               domain={['auto', 'auto']}
               label={{
                 value: 'ATM IV',
                 angle: -90,
                 position: 'insideLeft',
-                style: { fontSize: 10, fill: '#8B92A5', fontFamily: 'monospace' },
+                style: { fontSize: 10, fill: 'var(--color-muted)', fontFamily: 'monospace' },
               }}
             />
             <RTooltip
               contentStyle={{
-                backgroundColor: 'rgba(17, 21, 32, 0.95)',
-                border: '1px solid #1C1E29',
+                backgroundColor: 'color-mix(in srgb, var(--color-wrap-hover) 95%, transparent)',
+                border: '1px solid var(--color-line)',
                 borderRadius: 8,
                 fontSize: 11,
                 fontFamily: 'monospace',
               }}
-              labelStyle={{ color: '#D0D5DD', fontWeight: 600 }}
+              labelStyle={{ color: 'var(--color-desc)', fontWeight: 600 }}
               formatter={(v: any, name: string) => {
                 if (v == null) return ['—', name]
                 const labelMap: Record<string, string> = {
@@ -2118,29 +2118,29 @@ function TermStructureChart({ symbol }: { symbol: string }) {
             <Line
               type="monotone"
               dataKey="ceIv"
-              stroke="#05B878"
+              stroke="var(--color-up)"
               strokeWidth={1.5}
               strokeDasharray="3 3"
-              dot={{ r: 2, fill: '#05B878' }}
+              dot={{ r: 2, fill: 'var(--color-up)' }}
               connectNulls
               name="ceIv"
             />
             <Line
               type="monotone"
               dataKey="peIv"
-              stroke="#FF5947"
+              stroke="var(--color-down)"
               strokeWidth={1.5}
               strokeDasharray="3 3"
-              dot={{ r: 2, fill: '#FF5947' }}
+              dot={{ r: 2, fill: 'var(--color-down)' }}
               connectNulls
               name="peIv"
             />
             <Line
               type="monotone"
               dataKey="atmIv"
-              stroke="#3D80FF"
+              stroke="var(--chart-primary)"
               strokeWidth={2.5}
-              dot={{ r: 4, fill: '#3D80FF' }}
+              dot={{ r: 4, fill: 'var(--chart-primary)' }}
               activeDot={{ r: 6 }}
               name="atmIv"
             />
@@ -2257,31 +2257,31 @@ function VolConeChart({ symbol }: { symbol: string }) {
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(28,30,41,0.4)" />
             <XAxis
               dataKey="window"
-              tick={{ fontSize: 10, fontFamily: 'monospace', fill: '#8B92A5' }}
-              stroke="#1C1E29"
+              tick={{ fontSize: 10, fontFamily: 'monospace', fill: 'var(--color-muted)' }}
+              stroke="var(--color-line)"
               label={{
                 value: 'Realised vol window',
                 position: 'insideBottom',
                 offset: -5,
-                style: { fontSize: 10, fill: '#8B92A5', fontFamily: 'monospace' },
+                style: { fontSize: 10, fill: 'var(--color-muted)', fontFamily: 'monospace' },
               }}
             />
             <YAxis
               tickFormatter={(v: number) => `${v.toFixed(0)}%`}
-              tick={{ fontSize: 10, fontFamily: 'monospace', fill: '#8B92A5' }}
-              stroke="#1C1E29"
+              tick={{ fontSize: 10, fontFamily: 'monospace', fill: 'var(--color-muted)' }}
+              stroke="var(--color-line)"
               domain={['auto', 'auto']}
               label={{
                 value: 'Annualised vol',
                 angle: -90,
                 position: 'insideLeft',
-                style: { fontSize: 10, fill: '#8B92A5', fontFamily: 'monospace' },
+                style: { fontSize: 10, fill: 'var(--color-muted)', fontFamily: 'monospace' },
               }}
             />
             <RTooltip
               contentStyle={{
-                backgroundColor: 'rgba(17, 21, 32, 0.95)',
-                border: '1px solid #1C1E29',
+                backgroundColor: 'color-mix(in srgb, var(--color-wrap-hover) 95%, transparent)',
+                border: '1px solid var(--color-line)',
                 borderRadius: 8,
                 fontSize: 11,
                 fontFamily: 'monospace',
@@ -2295,17 +2295,17 @@ function VolConeChart({ symbol }: { symbol: string }) {
             <Line
               type="monotone"
               dataKey="p50"
-              stroke="#8B92A5"
+              stroke="var(--color-muted)"
               strokeWidth={2}
-              dot={{ r: 3, fill: '#8B92A5' }}
+              dot={{ r: 3, fill: 'var(--color-muted)' }}
               name="p50 (median)"
             />
             <Line
               type="monotone"
               dataKey="current_rv"
-              stroke="#FFAA00"
+              stroke="var(--color-warning)"
               strokeWidth={2}
-              dot={{ r: 4, fill: '#FFAA00' }}
+              dot={{ r: 4, fill: 'var(--color-warning)' }}
               name="Current RV"
             />
             {/* Each percentile as its own line for clarity */}
@@ -2317,7 +2317,7 @@ function VolConeChart({ symbol }: { symbol: string }) {
                 name="Current IV"
                 data={ivOverlay}
                 dataKey="iv"
-                fill="#3D80FF"
+                fill="var(--chart-primary)"
                 shape="diamond"
               />
             )}
@@ -2471,7 +2471,7 @@ function AdjustmentButton({ position }: { position: any }) {
           onClick={() => !loading && setOpen(false)}
         >
           <div
-            className="w-full max-w-2xl max-h-[80vh] overflow-y-auto rounded-2xl border border-line bg-main p-5 shadow-2xl"
+            className="w-full max-w-2xl max-h-[80vh] overflow-y-auto rounded-[20px] border border-line bg-main p-5 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-line pb-3">
@@ -2496,7 +2496,7 @@ function AdjustmentButton({ position }: { position: any }) {
                 {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} w="100%" h="60px" />)}
               </div>
             ) : error ? (
-              <p className="rounded-md border border-down/30 bg-down/10 px-3 py-2 text-sm text-down">
+              <p className="rounded-xl border border-down/30 bg-down/10 px-3 py-2 text-sm text-down">
                 {error}
               </p>
             ) : adjustments.length === 0 ? (
@@ -2507,14 +2507,14 @@ function AdjustmentButton({ position }: { position: any }) {
             ) : (
               <ul className="mt-3 space-y-2">
                 {adjustments.map((a, i) => (
-                  <li key={i} className="rounded-md border border-line bg-wrap p-3">
+                  <li key={i} className="rounded-xl border border-line bg-wrap p-3">
                     <div className="flex flex-wrap items-baseline justify-between gap-2">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium text-d-text-primary">
                           {a.name}
                         </span>
                         <span
-                          className={`rounded border px-1.5 py-0.5 text-[10px] capitalize ${
+                          className={`rounded-full border px-2 py-0.5 text-[10px] capitalize ${
                             a.urgency === 'critical' ? 'border-down bg-down/10 text-down'
                               : a.urgency === 'recommended' ? 'border-primary/60 bg-primary/5 text-primary'
                                 : 'border-line bg-main text-d-text-muted'

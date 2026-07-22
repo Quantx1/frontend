@@ -24,11 +24,11 @@ export function tierRank(t: Tier): number {
 }
 
 /** Brand accent color per tier. Free is neutral grey, Pro is primary,
- *  Elite is the warm yellow (#FFD166). */
+ *  Elite is the warning/gold token. */
 export function tierAccent(t: Tier): string {
-  if (t === 'elite') return '#FFD166'
-  if (t === 'pro') return '#4FECCD'
-  return '#8E8E8E'
+  if (t === 'elite') return 'var(--color-warning)'
+  if (t === 'pro') return 'var(--color-primary)'
+  return 'var(--color-muted)'
 }
 
 /** Headline + pitch shown above the delta bullets. */

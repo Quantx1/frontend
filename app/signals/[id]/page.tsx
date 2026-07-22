@@ -102,6 +102,9 @@ export default function SignalDetailPage() {
   const [tier, setTier] = useState<'free' | 'pro' | 'elite'>('free')
   const [isAdmin, setIsAdmin] = useState(false)
   const [showTrade, setShowTrade] = useState(false)
+  // Which execution path the trade modal drives: paper (virtual ₹10L book,
+  // free, no broker) or live (real broker order via /api/trades/execute).
+  const [tradeMode, setTradeMode] = useState<'paper' | 'live'>('paper')
   // Point-of-action calculator — seeds the planner from this signal's computed
   // levels. Conditionally rendered so it remounts (fresh state) on each open.
   const [showCalc, setShowCalc] = useState(false)
@@ -166,7 +169,7 @@ export default function SignalDetailPage() {
         setAlertOnSL(Boolean(p.sl_hit?.push ?? true))
       } catch (err: any) {
         // Pro-gated; Free users see the toggles but they're inert.
-        if (!cancelled) setAlertsError(err?.message ? null : null)
+        if (!cancelled) setAlertsError(err?.message ?? 'Alert preferences unavailable')
       } finally {
         if (!cancelled) setAlertsLoading(false)
       }
@@ -219,7 +222,7 @@ export default function SignalDetailPage() {
             <p className="text-[12px] text-d-text-muted mt-1">{error || 'Not found'}</p>
             <button
               onClick={() => router.push('/signals')}
-              className="mt-4 px-4 py-1.5 text-[12px] bg-primary text-primary-foreground rounded-md"
+              className="glass-control-accent mt-4 px-4 py-1.5 text-[12px] rounded-full"
             >
               Back to signals
             </button>
@@ -412,7 +415,7 @@ export default function SignalDetailPage() {
             <div className="lg-surface rounded-xl p-4 space-y-3">
               <h3 className="text-[11px] uppercase tracking-wider text-d-text-muted">Levels</h3>
 
-              <KV label="Entry" value={entry} color="var(--color-d-text-primary)" />
+              <KV label="Entry" value={entry} color="var(--color-light)" />
               <KV label="Stop loss" value={stop} color="var(--color-down)" suffix={pctRisk ? `−${pctRisk.toFixed(2)}%` : undefined} />
               <KV label="Target 1" value={target} color="var(--color-up)" suffix={pctUpside ? `+${pctUpside.toFixed(2)}%` : undefined} />
               {target2 > 0 && <KV label="Target 2" value={target2} color="var(--color-up)" />}
@@ -429,15 +432,15 @@ export default function SignalDetailPage() {
 
               <div className="pt-2 flex gap-2">
                 <button
-                  onClick={() => setShowTrade(true)}
-                  className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 text-[12px] font-medium bg-primary text-primary-foreground rounded-md hover:bg-primary-hover transition-colors"
+                  onClick={() => { setTradeMode('paper'); setShowTrade(true) }}
+                  className="glass-control-accent flex-1 inline-flex items-center justify-center gap-1.5 py-2 text-[12px] font-medium rounded-full transition-colors active:scale-[0.98]"
                 >
                   <Play className="w-3.5 h-3.5" />
                   Paper-trade
                 </button>
                 <button
-                  onClick={() => setShowTrade(true)}
-                  className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 text-[12px] font-medium border border-d-border text-d-text-primary rounded-md hover:bg-white/[0.03] transition-colors"
+                  onClick={() => { setTradeMode('live'); setShowTrade(true) }}
+                  className="glass-control flex-1 inline-flex items-center justify-center gap-1.5 py-2 text-[12px] font-medium text-d-text-primary rounded-full transition-colors"
                 >
                   <Zap className="w-3.5 h-3.5" />
                   Live trade
@@ -445,7 +448,7 @@ export default function SignalDetailPage() {
               </div>
               <button
                 onClick={() => setShowCalc(true)}
-                className="w-full inline-flex items-center justify-center gap-1.5 py-2 text-[12px] font-medium border border-line text-d-text-secondary rounded-md hover:text-d-text-primary hover:bg-white/[0.03] transition-colors"
+                className="glass-control w-full inline-flex items-center justify-center gap-1.5 py-2 text-[12px] font-medium text-d-text-secondary rounded-full hover:text-d-text-primary transition-colors"
               >
                 <Calculator className="w-3.5 h-3.5" />
                 Plan trade · Position size
@@ -529,8 +532,21 @@ export default function SignalDetailPage() {
           <QuickTrade
             isOpen={showTrade}
             onClose={() => setShowTrade(false)}
+            paperMode={tradeMode === 'paper'}
             onSubmit={async (data) => {
-              // Execute-only flow: place the signal as a real trade. QuickTrade
+              if (tradeMode === 'paper') {
+                // Paper path: virtual ₹10L book, executes at live market
+                // price through the shared paper executor. Free, no broker.
+                await api.paper.placeOrder({
+                  symbol: signal.symbol,
+                  action: signal.direction === 'SHORT' ? 'SELL' : 'BUY',
+                  quantity: data.quantity,
+                })
+                setShowTrade(false)
+                router.push('/paper-trading')
+                return
+              }
+              // Live path: place the signal as a real trade. QuickTrade
               // already gates this behind <BrokerLock> when no broker is
               // connected, so live orders can't fire without a broker.
               const result = await api.trades.execute({
@@ -673,7 +689,7 @@ function PriorSignalRow({ s }: { s: Signal & Record<string, any> }) {
   const color =
     status === 'target_hit' ? 'var(--color-up)'
       : status === 'sl_hit' || status === 'stop_loss_hit' ? 'var(--color-down)'
-        : 'var(--color-d-text-muted)'
+        : 'var(--color-muted)'
   return (
     <Link
       href={`/signals/${s.id}`}

@@ -3,9 +3,9 @@
 /**
  * Foundation Segmented — a generic value-filter segmented control.
  *
- * Fills the gap between `Tabs` (page/section nav — Radix, underline rail) and
- * hand-rolled chip rows. The active segment is a white / ink pill (the xAI
- * primary pill) that SLIDES between options via framer-motion `layoutId`;
+ * Fills the gap between `Tabs` (page/section nav — Radix pill rail) and
+ * hand-rolled chip rows. The active segment is a solid `--primary` pill
+ * (white ink) that SLIDES between options via framer-motion `layoutId`;
  * reduced motion swaps instantly. Do NOT use this for signals horizon tabs
  * (those stay Radix `Tabs`).
  *
@@ -62,7 +62,7 @@ export function Segmented<T extends string>({
       role="tablist"
       aria-label={ariaLabel}
       className={cn(
-        'inline-flex items-center gap-0.5 rounded-sm border border-line bg-wrap p-0.5',
+        'inline-flex items-center gap-0.5 rounded-full border border-line bg-wrap p-0.5',
         className,
       )}
     >
@@ -82,19 +82,20 @@ export function Segmented<T extends string>({
             aria-selected={active}
             onClick={() => onChange(opt.value)}
             className={cn(
-              'relative rounded-[3px] font-mono uppercase tracking-[0.06em] transition-colors',
-              'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40',
+              'relative rounded-full font-medium transition-colors',
+              'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
               'active:scale-[0.98]',
               pad,
               text,
-              active ? 'text-main' : inactiveTone,
+              // The active pill is the solid `--primary` fill → white ink.
+              active ? 'text-primary-foreground' : inactiveTone,
             )}
           >
             {active && (
               <motion.span
                 aria-hidden="true"
                 layoutId={reduce ? undefined : `segmented-pill-${uid}`}
-                className="absolute inset-0 rounded-[3px] bg-primary"
+                className="absolute inset-0 rounded-full bg-primary"
                 transition={{ type: 'spring', stiffness: 400, damping: 34 }}
               />
             )}

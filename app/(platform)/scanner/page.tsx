@@ -78,7 +78,7 @@ function ScannerContent() {
             {tier ? <Badge tone="primary">{isAdmin ? 'Admin' : tier.toUpperCase()}</Badge> : null}
             <Link
               href="/scanner/new"
-              className="bg-gradient-cta inline-flex h-9 items-center gap-1.5 rounded-pill px-4 text-[13px] font-semibold text-on-signature transition-transform active:scale-[0.97]"
+              className="glass-control-accent inline-flex h-9 items-center gap-1.5 rounded-pill px-4 text-[13px] font-semibold transition-transform active:scale-[0.97]"
             >
               <Sparkles className="h-4 w-4" /> Create with AI
             </Link>

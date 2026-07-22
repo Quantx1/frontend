@@ -21,12 +21,12 @@ interface Props {
   badges: Badge[]
 }
 
-// Medal-tier palette — intentional real-world medal colors (treated like
-// brand colors, kept as literals). Only these decorative tiers use hex.
+// Medal-tier palette — bronze stays a real-world medal literal; silver and
+// gold ride the theme tokens (muted / warning) so they re-theme with the app.
 const TIER_COLORS: Record<Badge['tier'], string> = {
   bronze: '#C68642',
-  silver: '#C0C0C0',
-  gold: '#FFD166',
+  silver: 'var(--color-muted)',
+  gold: 'var(--color-warning)',
 }
 
 type Tone = 'primary' | 'up' | 'down' | 'muted' | 'warning'
@@ -45,7 +45,7 @@ export default function AchievementsStrip({
   badges,
 }: Props) {
   return (
-    <div className="rounded-sm border border-line bg-wrap p-4 flex flex-wrap items-center gap-4">
+    <div className="rounded-[20px] border border-line bg-wrap p-4 flex flex-wrap items-center gap-4">
       <Stat icon={Flame} label="Streak" value={`${streakDays}d`} tone={streakDays >= 3 ? 'warning' : 'muted'} />
       <Divider />
       <Stat icon={Trophy} label="Trades" value={String(tradeCount)} tone="primary" />
@@ -67,7 +67,7 @@ export default function AchievementsStrip({
               <span
                 key={b.key}
                 className="inline-flex items-center gap-1 text-[10px] font-medium rounded-full px-2 py-0.5 border"
-                style={{ backgroundColor: `${c}18`, color: c, borderColor: `${c}40` }}
+                style={{ backgroundColor: `color-mix(in srgb, ${c} 9%, transparent)`, color: c, borderColor: `color-mix(in srgb, ${c} 25%, transparent)` }}
                 title={`${b.label} (${b.tier})`}
               >
                 {b.label}

@@ -2,10 +2,10 @@
 
 /**
  * SignalsHub — the single /signals surface. Collapses the master blotter +
- * the 4 per-horizon pages into ONE AppShell with horizon tabs:
- *   Overview · Swing · Momentum · Positional · Intraday
+ * the two book pages into ONE AppShell with tabs:
+ *   Overview · Alpha Picks · Momentum Picks
  *
- * The 4 per-horizon routes still exist and 200-render (NO redirect): each
+ * The per-book routes still exist and 200-render (NO redirect): each
  * passes `initialHorizon` so the URL is preserved as a shareable deep-link
  * (bookmarks, the public FeatureCarousel `/signals/momentum`, copilot cards).
  *
@@ -27,16 +27,13 @@ import { CategorySignalsPage } from './CategorySignalsPage'
 
 type Horizon = 'all' | CategoryId
 
-// Deliberate order: Overview first, Intraday last (it is broker-gated).
 const TABS: { value: Horizon; label: string }[] = [
   { value: 'all', label: 'Overview' },
   { value: 'swing', label: CATEGORIES.swing.label },
   { value: 'momentum', label: CATEGORIES.momentum.label },
-  { value: 'positional', label: CATEGORIES.positional.label },
-  { value: 'intraday', label: CATEGORIES.intraday.label },
 ]
 
-const HORIZONS: Horizon[] = ['all', 'swing', 'momentum', 'positional', 'intraday']
+const HORIZONS: Horizon[] = ['all', 'swing', 'momentum']
 const isHorizon = (v: string | null): v is Horizon => v != null && (HORIZONS as string[]).includes(v)
 
 /** Presentational shell — sticky tab strip + the active panel. Reads NO search

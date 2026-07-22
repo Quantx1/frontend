@@ -12,6 +12,7 @@
  */
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { Layers, Loader2, Play } from '@/lib/icons'
 
@@ -30,9 +31,9 @@ interface FactorResult {
 // Composite percentile -> a calm emerald/amber/grey ramp (inline style, no
 // arbitrary-hex Tailwind classes per the branding hooks).
 function scoreColor(v: number): string {
-  if (v >= 70) return '#05B878'
-  if (v >= 40) return '#FEB113'
-  return '#8b8f9a'
+  if (v >= 70) return 'var(--color-up)'
+  if (v >= 40) return 'var(--color-warning)'
+  return 'var(--color-muted)'
 }
 
 export default function FactorScreenerCard() {
@@ -87,7 +88,7 @@ export default function FactorScreenerCard() {
   const labelFor = (key: string) => available.find((f) => f.key === key)?.label ?? key
 
   return (
-    <div className="rounded-lg border border-line bg-wrap overflow-hidden">
+    <div className="rounded-[20px] border border-line bg-wrap overflow-hidden">
       <div className="flex items-center justify-between gap-2 border-b border-line px-4 py-2.5">
         <span className="flex items-center gap-2 text-[12px] font-semibold text-d-text-primary">
           <Layers className="h-3.5 w-3.5 text-primary" /> Factor Screener
@@ -106,10 +107,10 @@ export default function FactorScreenerCard() {
               onClick={() => toggle(f.key)}
               title={f.description}
               aria-pressed={active}
-              className={`rounded-md border px-2.5 py-1 text-[11px] transition-colors ${
+              className={`rounded-full px-3 py-1 text-[11px] transition-colors ${
                 active
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-line bg-main text-d-text-secondary hover:text-d-text-primary'
+                  ? 'glass-control-accent'
+                  : 'glass-control text-d-text-secondary hover:text-d-text-primary'
               }`}
             >
               {f.label}
@@ -120,7 +121,7 @@ export default function FactorScreenerCard() {
           type="button"
           onClick={run}
           disabled={state === 'loading' || selected.length === 0}
-          className="ml-auto flex items-center gap-1.5 rounded-md border border-primary bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary transition-colors hover:bg-primary/20 disabled:opacity-50"
+          className="glass-control-accent ml-auto flex items-center gap-1.5 rounded-full px-3.5 py-1 text-[11px] font-semibold transition-colors active:scale-[0.98] disabled:opacity-50"
         >
           {state === 'loading'
             ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -130,9 +131,20 @@ export default function FactorScreenerCard() {
       </div>
 
       {state === 'empty' && (
-        <p className="px-4 pb-3 text-[11px] text-d-text-muted">
-          No names qualified — try fewer factors or check back after the next data refresh.
-        </p>
+        <div className="tile-tint mx-4 mb-4 px-6 py-8 text-center">
+          <Image
+            src="/v4/illus/screener.png"
+            alt=""
+            aria-hidden
+            width={220}
+            height={220}
+            sizes="220px"
+            className="mx-auto w-full max-w-[220px] rounded-2xl"
+          />
+          <p className="mt-3 text-[11px] text-d-text-muted">
+            No names qualified — try fewer factors or check back after the next data refresh.
+          </p>
+        </div>
       )}
 
       {state === 'done' && results.length > 0 && (
@@ -174,7 +186,7 @@ export default function FactorScreenerCard() {
                   const v = r.factor_scores?.[f]
                   return (
                     <span key={f} className={`text-right text-[10.5px] tabular-nums ${MONO}`}
-                      style={{ color: v == null ? '#8b8f9a' : scoreColor(v) }}>
+                      style={{ color: v == null ? 'var(--color-muted)' : scoreColor(v) }}>
                       {v == null ? '—' : v.toFixed(0)}
                     </span>
                   )

@@ -144,10 +144,10 @@ export default function IntradayTab() {
               key={u.value}
               type="button"
               onClick={() => setUniverse(u.value)}
-              className={`rounded-md border px-2 py-1 text-[11px] ${
+              className={`rounded-md px-2 py-1 text-[11px] ${
                 universe === u.value
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-line bg-main text-d-text-secondary hover:text-d-text-primary'
+                  ? 'glass-control-accent'
+                  : 'glass-control text-d-text-secondary hover:text-d-text-primary'
               }`}
             >
               {u.label}
@@ -171,10 +171,10 @@ export default function IntradayTab() {
             <button
               type="button"
               onClick={() => setSelectedSetups([])}
-              className={`rounded-md border px-1.5 py-0.5 text-[10px] ${
+              className={`rounded-md px-1.5 py-0.5 text-[10px] ${
                 selectedSetups.length === 0
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-line bg-main text-d-text-secondary hover:text-d-text-primary'
+                  ? 'glass-control-accent'
+                  : 'glass-control text-d-text-secondary hover:text-d-text-primary'
               }`}
             >
               All ({catalog.setups.length})
@@ -187,10 +187,10 @@ export default function IntradayTab() {
                   type="button"
                   onClick={() => toggleSetup(s.id)}
                   title={`${s.tf} · ${s.direction}`}
-                  className={`rounded-md border px-1.5 py-0.5 text-[10px] capitalize transition-colors ${
+                  className={`rounded-md px-1.5 py-0.5 text-[10px] capitalize transition-colors ${
                     active
-                      ? 'border-primary bg-primary/10 text-primary'
-                      : 'border-line bg-main text-d-text-secondary hover:text-d-text-primary'
+                      ? 'glass-control-accent'
+                      : 'glass-control text-d-text-secondary hover:text-d-text-primary'
                   }`}
                 >
                   {s.id.replace(/_/g, ' ')}

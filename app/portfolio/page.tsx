@@ -284,10 +284,10 @@ export default function PortfolioPage() {
         </Reveal>
 
         {/* ─── KPI strip ─── */}
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2 rounded-[20px] border border-line bg-wrap p-2 lg:grid-cols-4">
           {KPIS.map((k, i) => (
-            <Reveal key={k.label} delay={0.03 * i}>
-              <Card variant="glass" className="p-4">
+            <Reveal key={k.label} delay={0.03 * i} className="h-full">
+              <div className="tile-tint h-full p-4">
                 <div className="flex items-center gap-1.5 text-[11px] text-d-text-secondary">
                   {k.icon}
                   {k.label}
@@ -305,14 +305,14 @@ export default function PortfolioPage() {
                     <ChangeBadge value={overallPnLPct} kind="percent" size="xs" hideArrow />
                   </div>
                 )}
-              </Card>
+              </div>
             </Reveal>
           ))}
         </div>
 
         {/* ─── Performance chart ─── */}
         <Reveal delay={0.06}>
-          <Card variant="glass" className="overflow-hidden">
+          <Card variant="glass" className="overflow-hidden rounded-[20px]">
             <div className="flex items-center justify-between border-b border-line px-4 py-3">
               <h2 className="text-sm font-semibold text-d-text-primary">Performance</h2>
               <Tabs value={period} onValueChange={(v) => setPeriod(v as any)}>
@@ -351,11 +351,11 @@ export default function PortfolioPage() {
                       <XAxis
                         dataKey="date"
                         tick={{ fontSize: 11 }}
-                        stroke="var(--color-d-text-muted)"
+                        stroke="var(--color-muted)"
                       />
                       <YAxis
                         tick={{ fontSize: 11 }}
-                        stroke="var(--color-d-text-muted)"
+                        stroke="var(--color-muted)"
                         tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`}
                       />
                       <RechartsTooltip
@@ -384,7 +384,7 @@ export default function PortfolioPage() {
 
         {/* ─── Positions table ─── */}
         <Reveal delay={0.09}>
-          <Card variant="glass" className="overflow-hidden">
+          <Card variant="glass" className="overflow-hidden rounded-[20px]">
             <div className="border-b border-line px-4 py-3">
               <h2 className="text-sm font-semibold text-d-text-primary">Positions</h2>
             </div>

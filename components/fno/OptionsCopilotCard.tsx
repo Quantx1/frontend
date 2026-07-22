@@ -97,10 +97,10 @@ export default function OptionsCopilotCard() {
               key={s}
               type="button"
               onClick={() => selectSymbol(s)}
-              className={`rounded-md border px-3 py-1 text-[11px] font-medium transition-colors ${
+              className={`rounded-md px-3 py-1 text-[11px] font-medium transition-colors ${
                 active
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-line bg-main text-d-text-secondary hover:text-d-text-primary'
+                  ? 'glass-control-accent'
+                  : 'glass-control text-d-text-secondary hover:text-d-text-primary'
               }`}
             >
               {s}
@@ -111,7 +111,7 @@ export default function OptionsCopilotCard() {
           type="button"
           onClick={() => ask(symbol)}
           disabled={state === 'loading'}
-          className="ml-auto flex items-center gap-1.5 rounded-md border border-primary bg-primary/10 px-3 py-1 text-[11px] font-medium text-primary transition-colors hover:bg-primary/20 disabled:opacity-60"
+          className="ml-auto flex items-center gap-1.5 rounded-full glass-control-accent px-3 py-1 text-[11px] font-medium transition-colors active:scale-[0.98] disabled:opacity-60"
         >
           {state === 'loading'
             ? <Loader2 className="h-3.5 w-3.5 animate-spin" />

@@ -58,32 +58,32 @@ export default function EquityCurveWithBenchmark({
       <AreaChart data={data} margin={{ top: 8, right: 12, left: 4, bottom: 0 }}>
         <defs>
           <linearGradient id="youGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#4FECCD" stopOpacity={0.45} />
-            <stop offset="100%" stopColor="#4FECCD" stopOpacity={0} />
+            <stop offset="0%" stopColor="var(--chart-primary)" stopOpacity={0.45} />
+            <stop offset="100%" stopColor="var(--chart-primary)" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid stroke="#2D303D" strokeDasharray="3 3" vertical={false} />
+        <CartesianGrid stroke="var(--color-line)" strokeDasharray="3 3" vertical={false} />
         <XAxis
           dataKey="date"
-          tick={{ fill: '#8E8E8E', fontSize: 10 }}
-          axisLine={{ stroke: '#2D303D' }}
+          tick={{ fill: 'var(--color-muted)', fontSize: 10 }}
+          axisLine={{ stroke: 'var(--color-line)' }}
           tickLine={false}
         />
         <YAxis
-          tick={{ fill: '#8E8E8E', fontSize: 10, fontFamily: 'DM Mono, monospace' }}
-          axisLine={{ stroke: '#2D303D' }}
+          tick={{ fill: 'var(--color-muted)', fontSize: 10, fontFamily: 'DM Mono, monospace' }}
+          axisLine={{ stroke: 'var(--color-line)' }}
           tickLine={false}
           tickFormatter={(v) => `${v >= 0 ? '+' : ''}${v.toFixed(1)}%`}
           width={50}
         />
         <Tooltip
           contentStyle={{
-            backgroundColor: '#111520',
-            border: '1px solid #2D303D',
+            backgroundColor: 'var(--color-wrap-hover)',
+            border: '1px solid var(--color-line)',
             borderRadius: 6,
             fontSize: 11,
           }}
-          labelStyle={{ color: '#8E8E8E', fontSize: 10 }}
+          labelStyle={{ color: 'var(--color-muted)', fontSize: 10 }}
           formatter={(v: any, name: string) => [`${Number(v).toFixed(2)}%`, name === 'you' ? 'You' : 'Nifty']}
         />
         {showBenchmark && (
@@ -92,13 +92,13 @@ export default function EquityCurveWithBenchmark({
             height={24}
             iconType="plainline"
             iconSize={12}
-            wrapperStyle={{ fontSize: 10, color: '#8E8E8E' }}
+            wrapperStyle={{ fontSize: 10, color: 'var(--color-muted)' }}
             formatter={(v) => (v === 'you' ? 'Your paper equity' : 'Nifty 50')}
           />
         )}
-        <Area type="monotone" dataKey="you" stroke="#4FECCD" strokeWidth={2} fill="url(#youGrad)" />
+        <Area type="monotone" dataKey="you" stroke="var(--chart-primary)" strokeWidth={2} fill="url(#youGrad)" />
         {showBenchmark && (
-          <Line type="monotone" dataKey="nifty" stroke="#8E8E8E" strokeWidth={1} dot={false} strokeDasharray="3 3" />
+          <Line type="monotone" dataKey="nifty" stroke="var(--color-muted)" strokeWidth={1} dot={false} strokeDasharray="3 3" />
         )}
       </AreaChart>
     </ResponsiveContainer>

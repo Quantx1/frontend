@@ -43,6 +43,8 @@ const RI = {
   Bell: "solar:bell-bold",
   CheckCircle2: "solar:check-circle-bold",
   Brain: "lucide:brain-circuit",
+  BrainCircuit: "lucide:brain-circuit",
+  Radar: "lucide:radar",
   Plus: "solar:add-square-bold",
   ArrowLeft: "solar:arrow-left-bold",
   Shield: "solar:shield-bold",
@@ -186,7 +188,7 @@ const RI = {
 }
 
 // The full set of names the app imports (from the enumeration pass).
-const NAMES = "Loader2,Sparkles,TrendingUp,RefreshCw,AlertTriangle,Activity,TrendingDown,ArrowUpRight,ArrowRight,Layers,AlertCircle,CheckCircle,Zap,X,Target,Check,ChevronDown,Search,Play,Bell,CheckCircle2,Brain,Plus,ArrowLeft,Shield,Eye,Clock,ChevronLeft,ChevronRight,BarChart3,ArrowDownRight,Newspaper,Trash2,XCircle,Calendar,Mail,Users,Info,Bot,Minus,ArrowUp,ScanLine,ShieldCheck,User,Lock,Inbox,LineChart,ExternalLink,Settings,Download,CreditCard,Cpu,Stethoscope,Briefcase,RotateCcw,ShieldAlert,Send,Gauge,Crown,Scale,HelpCircle,ArrowDown,Wallet,Save,EyeOff,Menu,DollarSign,Server,Globe,FileText,History,Power,PlayCircle,Calculator,Pause,Percent,MessageSquare,LayoutDashboard,MessageCircle,LogOut,Home,Wifi,Database,TableProperties,Star,Filter,Ban,UserX,UserCheck,BellOff,CheckCheck,Copy,Wand2,Layers3,Sigma,Radio,Wrench,RotateCw,PauseCircle,ClipboardList,Bookmark,Flame,Trophy,FlaskConical,Instagram,Linkedin,Twitter,Youtube,Monitor,Moon,Sun,ArrowLeftRight,ScrollText,Palette,Receipt,BellPlus,Grid3x3,LayoutGrid,Hash,MoreVertical,CircleDollarSign,Phone,HeartPulse,Gift,Share2,Compass,Settings2,PlusCircle,BookmarkCheck,CalendarDays,Pencil,ClipboardCheck,CalendarRange,Medal,Award,GitBranch,UserPlus,Store,ScanSearch,Plug,Unlink,SlidersHorizontal,PanelLeftClose,GitCompare,Code2,Gavel,ArrowDownLeft,ArrowUpLeft,AlertOctagon,ChevronsUpDown,BookOpen,Building2,Scissors,Banknote,Coins,Landmark,AlignLeft,Crosshair,CornerDownRight,Repeat,Volume2,Mountain".split(',')
+const NAMES = "Loader2,Sparkles,TrendingUp,RefreshCw,AlertTriangle,Activity,TrendingDown,ArrowUpRight,ArrowRight,Layers,AlertCircle,CheckCircle,Zap,X,Target,Check,ChevronDown,Search,Play,Bell,CheckCircle2,Brain,Plus,ArrowLeft,Shield,Eye,Clock,ChevronLeft,ChevronRight,BarChart3,ArrowDownRight,Newspaper,Trash2,XCircle,Calendar,Mail,Users,Info,Bot,Minus,ArrowUp,ScanLine,ShieldCheck,User,Lock,Inbox,LineChart,ExternalLink,Settings,Download,CreditCard,Cpu,Stethoscope,Briefcase,RotateCcw,ShieldAlert,Send,Gauge,Crown,Scale,HelpCircle,ArrowDown,Wallet,Save,EyeOff,Menu,DollarSign,Server,Globe,FileText,History,Power,PlayCircle,Calculator,Pause,Percent,MessageSquare,LayoutDashboard,MessageCircle,LogOut,Home,Wifi,Database,TableProperties,Star,Filter,Ban,UserX,UserCheck,BellOff,CheckCheck,Copy,Wand2,Layers3,Sigma,Radio,Wrench,RotateCw,PauseCircle,ClipboardList,Bookmark,Flame,Trophy,FlaskConical,Instagram,Linkedin,Twitter,Youtube,Monitor,Moon,Sun,ArrowLeftRight,ScrollText,Palette,Receipt,BellPlus,Grid3x3,LayoutGrid,Hash,MoreVertical,CircleDollarSign,Phone,HeartPulse,Gift,Share2,Compass,Settings2,PlusCircle,BookmarkCheck,CalendarDays,Pencil,ClipboardCheck,CalendarRange,Medal,Award,GitBranch,UserPlus,Store,ScanSearch,Plug,Unlink,SlidersHorizontal,PanelLeftClose,GitCompare,Code2,Gavel,ArrowDownLeft,ArrowUpLeft,AlertOctagon,ChevronsUpDown,BookOpen,Building2,Scissors,Banknote,Coins,Landmark,AlignLeft,Crosshair,CornerDownRight,Repeat,Volume2,Mountain,BrainCircuit,Radar".split(',')
 
 const camelKebab = (s) => s.replace(/([a-z0-9])([A-Z])/g, '$1-$2').replace(/([A-Z])([A-Z][a-z])/g, '$1-$2').toLowerCase()
 

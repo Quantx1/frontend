@@ -59,14 +59,14 @@ export default function GlobalKillSwitchPanel() {
   }
 
   const active = state?.active || false
-  const color = active ? '#FF5947' : '#05B878'
+  const color = active ? 'var(--color-down)' : 'var(--color-up)'
 
   return (
     <div
       className="rounded-xl border p-5"
       style={{
-        borderColor: `${color}55`,
-        background: `${color}0A`,
+        borderColor: `color-mix(in srgb, ${color} 33%, transparent)`,
+        background: `color-mix(in srgb, ${color} 4%, transparent)`,
         borderLeftWidth: 3,
       }}
     >
@@ -86,7 +86,7 @@ export default function GlobalKillSwitchPanel() {
         ) : (
           <span
             className="inline-flex items-center gap-1.5 text-[10px] font-semibold tracking-wider uppercase rounded-full px-2.5 py-1 border"
-            style={{ color, borderColor: `${color}55`, background: `${color}14` }}
+            style={{ color, borderColor: `color-mix(in srgb, ${color} 33%, transparent)`, background: `color-mix(in srgb, ${color} 8%, transparent)` }}
           >
             <span className="relative flex h-2 w-2">
               {active && (

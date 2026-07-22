@@ -318,10 +318,10 @@ export default function WatchlistPinsPanel() {
                     key={id}
                     type="button"
                     onClick={() => setBulkPreset(id)}
-                    className={`px-2.5 py-1 rounded-sm text-[10px] border transition-colors ${
+                    className={`px-2.5 py-1 rounded-sm text-[10px] transition-colors ${
                       bulkPreset === id
-                        ? 'border-primary/60 bg-primary/[0.10] text-primary'
-                        : 'border-line text-d-text-secondary hover:bg-hover hover:text-d-text-primary'
+                        ? 'glass-control-accent'
+                        : 'glass-control text-d-text-secondary hover:text-d-text-primary'
                     }`}
                   >
                     {PRESET_LABEL[id]}
@@ -332,7 +332,7 @@ export default function WatchlistPinsPanel() {
                 type="button"
                 onClick={applyBulk}
                 disabled={busy || selected.size === 0}
-                className="w-full inline-flex items-center justify-center gap-1.5 py-2 text-[12px] font-medium bg-primary text-main rounded-sm hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
+                className="w-full inline-flex items-center justify-center gap-1.5 py-2 text-[12px] font-medium glass-control-accent rounded-full active:scale-[0.98] transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {busy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
                 Pin {PRESET_LABEL[bulkPreset]} to {selected.size} {selected.size === 1 ? 'symbol' : 'symbols'}

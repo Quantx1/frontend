@@ -1,24 +1,26 @@
 'use client'
 
 /**
- * LightweightChart (PR-S16) — TradingView Lightweight Charts wrapped
- * around our own OHLCV data.
+ * LightweightChart (PR-S16, terminal upgrade 2026-07-21) — TradingView
+ * Lightweight Charts wrapped around our own OHLCV data.
  *
  * Drop-in replacement for the legacy TradingViewWidget (`tv.js`) which
- * recently gated NSE data behind a paywall. Same TradingView brand /
- * look-and-feel, but the candles come from /api/screener/prices/{sym}/
- * history (our Kite/jugaad/yfinance pipeline) so we never have a "this
- * symbol is only available on TradingView" upsell.
+ * gated NSE data behind a paywall. Same TradingView look-and-feel, but the
+ * candles come from /api/screener/prices/{sym}/history (our Kite/jugaad/
+ * yfinance pipeline) so we never hit a "this symbol is only on
+ * TradingView" upsell.
  *
- * What's included out of the box:
- *   * Candle chart (green up / red down — matches Quant X tokens)
- *   * Volume histogram on a separate pane
- *   * EMA 21 + 50 + 200 overlay (toggleable)
- *   * Crosshair with OHLC + change% tooltip
- *   * 6 timeframe presets (1M/3M/6M/1Y/2Y/5Y)
- *   * Auto-resize to container
+ * Terminal feature set:
+ *   * Candles / Line / Area chart types
+ *   * Volume histogram pane
+ *   * Ranges 1W → ALL (backend serves up to "max" period)
+ *   * D / W / M intervals (client-side aggregation of daily bars)
+ *   * EMA 21 + 50 + 200 overlays with warm-up fetch (correct at left edge)
+ *   * Log / linear price scale
+ *   * TradingView-style OHLC crosshair legend (ref-driven, no re-renders)
+ *   * Pattern overlay: entry/stop/target price lines + detection marker
  *
- * Bare minimum API to keep callers compatible with the old widget:
+ * Bare minimum API stays caller-compatible:
  *   <LightweightChart symbol="RELIANCE" height={520} />
  */
 
@@ -27,6 +29,7 @@ import {
   ColorType,
   CrosshairMode,
   LineStyle,
+  PriceScaleMode,
   createChart,
   type CandlestickData,
   type HistogramData,
@@ -34,6 +37,7 @@ import {
   type IPriceLine,
   type ISeriesApi,
   type LineData,
+  type MouseEventParams,
   type SeriesMarker,
   type Time,
 } from 'lightweight-charts'
@@ -46,7 +50,7 @@ interface Props {
   theme?: 'light' | 'dark'
   className?: string
   /** Initial timeframe — defaults to 1y. */
-  defaultRange?: '1M' | '3M' | '6M' | '1Y' | '2Y' | '5Y'
+  defaultRange?: '1W' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '2Y' | '5Y' | 'ALL'
   /**
    * When true (default), fetches /patterns/v2/explain/{symbol} and draws
    * entry/stop/target price lines + a marker on the detection bar.
@@ -64,43 +68,71 @@ interface OHLCBar {
   volume: number
 }
 
-const RANGE_DAYS: Record<string, number> = {
-  '1M': 30, '3M': 90, '6M': 180, '1Y': 365, '2Y': 730, '5Y': 1825,
+type RangeKey = '1W' | '1M' | '3M' | '6M' | 'YTD' | '1Y' | '2Y' | '5Y' | 'ALL'
+type IntervalKey = 'D' | 'W' | 'M'
+type ChartType = 'candles' | 'line' | 'area'
+
+const RANGE_DAYS: Record<Exclude<RangeKey, 'YTD'>, number> = {
+  '1W': 7, '1M': 30, '3M': 90, '6M': 180, '1Y': 365, '2Y': 730, '5Y': 1825, 'ALL': 7300,
+}
+const RANGE_ORDER: RangeKey[] = ['1W', '1M', '3M', '6M', 'YTD', '1Y', '2Y', '5Y', 'ALL']
+
+/** Extra daily bars fetched beyond the visible window so EMA 200 is
+ *  already warmed up at the left edge of the requested range. */
+const EMA_WARMUP_BARS = 300
+
+function rangeToDays(range: RangeKey): number {
+  if (range === 'YTD') {
+    const jan1 = new Date(new Date().getFullYear(), 0, 1).getTime()
+    return Math.max(7, Math.ceil((Date.now() - jan1) / 86_400_000))
+  }
+  return RANGE_DAYS[range]
 }
 
+/** Sensible default interval for a range — daily until charts get dense. */
+function autoInterval(range: RangeKey): IntervalKey {
+  if (range === 'ALL') return 'M'
+  if (range === '5Y') return 'W'
+  return 'D'
+}
 
 // Theme colors aligned with Quant X tokens (see globals.css).
 const PALETTE = {
   dark: {
-    background: '#0A0D14',
-    text: '#8B92A5',
-    grid: '#14172180',
-    border: '#1C1E29',
-    crosshair: '#3D80FF',
-    up: '#05B878',
-    down: '#FF5947',
-    volumeUp: '#05B87840',
-    volumeDown: '#FF594740',
-    ema21: '#3D80FF',
-    ema50: '#F5A524',
-    ema200: '#A371F7',
+    background: '#151517',
+    text: '#96969E',
+    grid: '#FFFFFF0F',
+    border: '#29292D',
+    primary: '#406AE4',
+    crosshair: '#8FB0FF',
+    up: '#10B981',
+    down: '#F5808C',
+    volumeUp: '#10B98140',
+    volumeDown: '#F5808C40',
+    ema21: '#8FB0FF',
+    ema50: '#F0A94F',
+    ema200: '#5290F4',
+    strongText: '#F7F7F8',
   },
   light: {
     background: '#FFFFFF',
-    text: '#5B5F6B',
-    grid: '#E5E1D580',
-    border: '#E5E1D5',
-    crosshair: '#1949C2',
-    up: '#05B878',
-    down: '#FF5947',
-    volumeUp: '#05B87840',
-    volumeDown: '#FF594740',
-    ema21: '#1949C2',
-    ema50: '#A66B00',
-    ema200: '#7A4FCC',
+    text: '#5F6B75',
+    grid: '#1D1D1D0F',
+    border: '#D5DEF4',
+    primary: '#406AE4',
+    crosshair: '#406AE4',
+    up: '#0A6B50',
+    down: '#B81C22',
+    volumeUp: '#0A6B5040',
+    volumeDown: '#B81C2240',
+    ema21: '#406AE4',
+    ema50: '#9A4D00',
+    ema200: '#2563EB',
+    strongText: '#1D1D1D',
   },
 }
 
+type Palette = (typeof PALETTE)['dark']
 
 /** Compute exponential moving average over a closes array. */
 function ema(values: number[], period: number): number[] {
@@ -114,12 +146,88 @@ function ema(values: number[], period: number): number[] {
   return out
 }
 
-
 function dateToTime(d: string): Time {
   // lightweight-charts accepts 'YYYY-MM-DD' as a business-day time
   return d as Time
 }
 
+/** Aggregate daily bars into weekly (ISO week) or monthly bars.
+ *  time = first session of the bucket, OHLC merged, volume summed. */
+function aggregateBars(daily: OHLCBar[], interval: IntervalKey): OHLCBar[] {
+  if (interval === 'D' || daily.length === 0) return daily
+  const keyOf = (d: string): string => {
+    if (interval === 'M') return d.slice(0, 7)
+    // ISO week key: year + week number
+    const dt = new Date(d + 'T00:00:00Z')
+    const day = (dt.getUTCDay() + 6) % 7 // Mon=0
+    const thursday = new Date(dt)
+    thursday.setUTCDate(dt.getUTCDate() - day + 3)
+    const jan1 = new Date(Date.UTC(thursday.getUTCFullYear(), 0, 1))
+    const week = Math.ceil(((thursday.getTime() - jan1.getTime()) / 86_400_000 + 1) / 7)
+    return `${thursday.getUTCFullYear()}-W${week}`
+  }
+  const out: OHLCBar[] = []
+  let cur: OHLCBar | null = null
+  let curKey = ''
+  for (const b of daily) {
+    const k = keyOf(b.date)
+    if (!cur || k !== curKey) {
+      if (cur) out.push(cur)
+      cur = { ...b }
+      curKey = k
+    } else {
+      cur.high = Math.max(cur.high, b.high)
+      cur.low = Math.min(cur.low, b.low)
+      cur.close = b.close
+      cur.volume += b.volume
+    }
+  }
+  if (cur) out.push(cur)
+  return out
+}
+
+/** Snap an ISO date to the covering aggregated bar's time (last bar whose
+ *  date <= target) so markers land on a real bar in W/M intervals. */
+function snapToBar(dateStr: string, bars: OHLCBar[]): string | null {
+  let best: string | null = null
+  for (const b of bars) {
+    if (b.date <= dateStr) best = b.date
+    else break
+  }
+  return best
+}
+
+const fmtVol = (v: number): string =>
+  v >= 1e7 ? `${(v / 1e7).toFixed(2)}Cr` : v >= 1e5 ? `${(v / 1e5).toFixed(2)}L` : v >= 1e3 ? `${(v / 1e3).toFixed(1)}K` : String(v)
+
+/** Paint the TradingView-style OHLC legend straight into the DOM (safe
+ *  createElement/textContent nodes only) so mousemove never re-renders
+ *  React. */
+function paintLegend(el: HTMLElement | null, b: OHLCBar | null, palette: Palette): void {
+  if (!el) return
+  el.textContent = ''
+  if (!b) return
+  const chg = b.close - b.open
+  const pct = b.open > 0 ? (chg / b.open) * 100 : 0
+  const addPair = (label: string, value: string, color?: string) => {
+    const l = document.createElement('span')
+    l.textContent = `${label} `
+    l.style.opacity = '0.55'
+    const v = document.createElement('span')
+    v.textContent = `${value}  `
+    if (color) v.style.color = color
+    el.append(l, v)
+  }
+  addPair('O', b.open.toFixed(2))
+  addPair('H', b.high.toFixed(2))
+  addPair('L', b.low.toFixed(2))
+  addPair(
+    'C',
+    `${b.close.toFixed(2)} ${chg >= 0 ? '+' : ''}${pct.toFixed(2)}%`,
+    chg >= 0 ? palette.up : palette.down,
+  )
+  addPair('Vol', fmtVol(b.volume))
+}
 
 interface PatternOverlayState {
   pattern_type: string
@@ -132,15 +240,17 @@ interface PatternOverlayState {
   rr: number
 }
 
-
 export function LightweightChart({
   symbol, height = 520, theme = 'dark', className,
   defaultRange = '1Y',
   showPatternOverlay = true,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const legendRef = useRef<HTMLDivElement>(null)
   const chartRef = useRef<IChartApi | null>(null)
   const candleSeriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null)
+  const lineSeriesRef = useRef<ISeriesApi<'Line'> | null>(null)
+  const areaSeriesRef = useRef<ISeriesApi<'Area'> | null>(null)
   const volumeSeriesRef = useRef<ISeriesApi<'Histogram'> | null>(null)
   const ema21Ref = useRef<ISeriesApi<'Line'> | null>(null)
   const ema50Ref = useRef<ISeriesApi<'Line'> | null>(null)
@@ -148,9 +258,15 @@ export function LightweightChart({
   // Held-onto price-line handles so we can remove old ones when the
   // pattern overlay changes (e.g. user swaps symbol).
   const overlayLinesRef = useRef<IPriceLine[]>([])
+  // Displayed bars mirrored into a ref so the crosshair handler (bound
+  // once per chart) can read them without re-subscribing.
+  const displayBarsRef = useRef<OHLCBar[]>([])
 
-  const [range, setRange] = useState(defaultRange)
-  const [bars, setBars] = useState<OHLCBar[] | null>(null)
+  const [range, setRange] = useState<RangeKey>(defaultRange)
+  const [interval, setBarInterval] = useState<IntervalKey>(autoInterval(defaultRange))
+  const [chartType, setChartType] = useState<ChartType>('candles')
+  const [logScale, setLogScale] = useState(false)
+  const [rawBars, setRawBars] = useState<OHLCBar[] | null>(null)
   const [status, setStatus] = useState<'loading' | 'ready' | 'empty' | 'error'>('loading')
   const [errorMsg, setErrorMsg] = useState<string>('')
   const [showEMA, setShowEMA] = useState<{ e21: boolean; e50: boolean; e200: boolean }>({
@@ -163,29 +279,30 @@ export function LightweightChart({
 
   // Decode the symbol once for display + API calls. Callers sometimes
   // pass through `useParams().symbol` which arrives URL-encoded (e.g.
-  // "M%26M" for the NSE ticker "M&M"). We decode here so the chart
-  // header reads "M&M" and the backend fetch hits /history/M&M, not
-  // /history/M%26M.
+  // "M%26M" for the NSE ticker "M&M").
   const decodedSymbol = useMemo(() => {
     try { return decodeURIComponent(symbol) } catch { return symbol }
   }, [symbol])
 
-  // Fetch bars whenever symbol or range changes
+  // Fetch daily bars whenever symbol or range changes. We over-fetch by
+  // EMA_WARMUP_BARS so the 200-EMA is already correct at the left edge of
+  // the visible window, then clamp the viewport below.
   useEffect(() => {
     if (!decodedSymbol) return
     let cancelled = false
     setStatus('loading')
     setErrorMsg('')
-    api.screener.getStockHistory(decodedSymbol, RANGE_DAYS[range])
+    const fetchDays = Math.min(7300, rangeToDays(range) + EMA_WARMUP_BARS)
+    api.screener.getStockHistory(decodedSymbol, fetchDays)
       .then((res: any) => {
         if (cancelled) return
         const hist: OHLCBar[] = res?.history || []
         if (hist.length === 0) {
           setStatus('empty')
-          setBars(null)
+          setRawBars(null)
           return
         }
-        setBars(hist)
+        setRawBars(hist)
         setStatus('ready')
       })
       .catch((e) => {
@@ -195,6 +312,15 @@ export function LightweightChart({
       })
     return () => { cancelled = true }
   }, [decodedSymbol, range])
+
+  // Range change picks a sensible interval (user can override afterwards).
+  useEffect(() => { setBarInterval(autoInterval(range)) }, [range])
+
+  // Aggregate to the selected interval.
+  const bars = useMemo(
+    () => (rawBars ? aggregateBars(rawBars, interval) : null),
+    [rawBars, interval],
+  )
 
   // Fetch the pattern overlay once per symbol (cheap — the explain endpoint
   // caches). Skip LLM thesis since we don't render it here.
@@ -207,7 +333,6 @@ export function LightweightChart({
     api.screener.patternsV2Explain(decodedSymbol, false)
       .then((res) => {
         if (cancelled || !res?.suggested?.entry) return
-        // Derive direction from pattern_type prefix where possible
         const ptype = res.pattern_type || ''
         const bearTokens = ['head_shoulders', 'double_top', 'triple_top', 'rising_wedge', 'bear_flag', 'bear_pennant', 'desc_triangle']
         const direction: 'bullish' | 'bearish' | null =
@@ -228,14 +353,15 @@ export function LightweightChart({
     return () => { cancelled = true }
   }, [decodedSymbol, showPatternOverlay])
 
-  // Create the chart once when container mounts
+  // Create the chart once when container mounts (re-created on theme flip
+  // via the caller's key= remount + this effect's dep).
   useEffect(() => {
     if (!containerRef.current) return
     const chart = createChart(containerRef.current, {
       layout: {
         background: { type: ColorType.Solid, color: palette.background },
         textColor: palette.text,
-        fontFamily: 'monospace',
+        fontFamily: 'var(--font-geist-mono), monospace',
       },
       grid: {
         vertLines: { color: palette.grid },
@@ -263,6 +389,15 @@ export function LightweightChart({
       wickUpColor: palette.up,
       wickDownColor: palette.down,
     })
+    const line = chart.addLineSeries({
+      color: palette.primary, lineWidth: 2,
+      priceLineVisible: false, visible: false,
+    })
+    const area = chart.addAreaSeries({
+      lineColor: palette.primary, lineWidth: 2,
+      topColor: palette.primary + '40', bottomColor: palette.primary + '00',
+      priceLineVisible: false, visible: false,
+    })
     const volume = chart.addHistogramSeries({
       priceFormat: { type: 'volume' },
       priceScaleId: 'volume',
@@ -282,28 +417,60 @@ export function LightweightChart({
 
     chartRef.current = chart
     candleSeriesRef.current = candle
+    lineSeriesRef.current = line
+    areaSeriesRef.current = area
     volumeSeriesRef.current = volume
     ema21Ref.current = e21
     ema50Ref.current = e50
     ema200Ref.current = e200
 
+    const onCrosshair = (param: MouseEventParams) => {
+      const all = displayBarsRef.current
+      const lastBar = all.length ? all[all.length - 1] : null
+      if (!param.time || !param.point) {
+        paintLegend(legendRef.current, lastBar, palette)
+        return
+      }
+      const t = String(param.time)
+      const hit = all.find((b) => b.date === t)
+      paintLegend(legendRef.current, hit ?? lastBar, palette)
+    }
+    chart.subscribeCrosshairMove(onCrosshair)
+
     return () => {
+      chart.unsubscribeCrosshairMove(onCrosshair)
       chart.remove()
       chartRef.current = null
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [theme])
 
+  // Chart type visibility + scale mode
+  useEffect(() => {
+    candleSeriesRef.current?.applyOptions({ visible: chartType === 'candles' })
+    lineSeriesRef.current?.applyOptions({ visible: chartType === 'line' })
+    areaSeriesRef.current?.applyOptions({ visible: chartType === 'area' })
+  }, [chartType])
+  useEffect(() => {
+    chartRef.current?.priceScale('right').applyOptions({
+      mode: logScale ? PriceScaleMode.Logarithmic : PriceScaleMode.Normal,
+    })
+  }, [logScale])
+
   // Feed bars + EMAs into the chart whenever they change
   useEffect(() => {
     if (!chartRef.current || !candleSeriesRef.current || !volumeSeriesRef.current) return
     if (!bars || bars.length === 0) return
+    displayBarsRef.current = bars
 
     const candles: CandlestickData[] = bars.map((b) => ({
       time: dateToTime(b.date),
       open: b.open, high: b.high, low: b.low, close: b.close,
     }))
     candleSeriesRef.current.setData(candles)
+    const closesLine: LineData[] = bars.map((b) => ({ time: dateToTime(b.date), value: b.close }))
+    lineSeriesRef.current?.setData(closesLine)
+    areaSeriesRef.current?.setData(closesLine)
 
     const volumes: HistogramData[] = bars.map((b, i) => {
       const prev = i > 0 ? bars[i - 1].close : b.open
@@ -328,18 +495,30 @@ export function LightweightChart({
     ema50Ref.current?.setData(showEMA.e50 ? toLine(e50) : [])
     ema200Ref.current?.setData(showEMA.e200 ? toLine(e200) : [])
 
-    chartRef.current.timeScale().fitContent()
-  }, [bars, showEMA, palette])
+    // Clamp the viewport to the *requested* window — the warm-up bars stay
+    // off-screen to the left (scrollable) but keep EMAs honest.
+    const fromMs = Date.now() - rangeToDays(range) * 86_400_000
+    const first = bars.find((b) => new Date(b.date + 'T00:00:00Z').getTime() >= fromMs)
+    if (range !== 'ALL' && first && first.date !== bars[0].date) {
+      chartRef.current.timeScale().setVisibleRange({
+        from: dateToTime(first.date),
+        to: dateToTime(bars[bars.length - 1].date),
+      })
+    } else {
+      chartRef.current.timeScale().fitContent()
+    }
+
+    // Seed the legend with the latest bar
+    paintLegend(legendRef.current, bars[bars.length - 1], palette)
+  }, [bars, showEMA, palette, range])
 
   // ── Pattern overlay layer ─────────────────────────────────────────
   // Draw entry/stop/target as horizontal priceLines + a marker on the
-  // detection bar. Recompute when overlay state, candle series, or the
-  // user's toggle changes. Lines are removed before re-adding so stale
-  // levels from a previous symbol don't linger.
+  // detection bar. Markers must land on a real bar, so the detection date
+  // is snapped to the covering bar in W/M intervals.
   useEffect(() => {
     const series = candleSeriesRef.current
     if (!series) return
-    // Always clear previous overlay artefacts first
     for (const line of overlayLinesRef.current) {
       try { series.removePriceLine(line) } catch { /* noop */ }
     }
@@ -386,23 +565,34 @@ export function LightweightChart({
       overlayLinesRef.current.push(t2)
     }
 
-    // Marker on detection bar — only add if we can resolve the date
-    if (overlay.detected_at) {
-      const marker: SeriesMarker<Time> = {
-        time: dateToTime(overlay.detected_at.slice(0, 10)),
-        position: overlay.direction === 'bearish' ? 'aboveBar' : 'belowBar',
-        color: overlay.direction === 'bearish' ? palette.down : palette.up,
-        shape: overlay.direction === 'bearish' ? 'arrowDown' : 'arrowUp',
-        text: overlay.pattern_type.replace(/_/g, ' '),
+    if (overlay.detected_at && bars && bars.length) {
+      const snapped = snapToBar(overlay.detected_at.slice(0, 10), bars)
+      if (snapped) {
+        const marker: SeriesMarker<Time> = {
+          time: dateToTime(snapped),
+          position: overlay.direction === 'bearish' ? 'aboveBar' : 'belowBar',
+          color: overlay.direction === 'bearish' ? palette.down : palette.up,
+          shape: overlay.direction === 'bearish' ? 'arrowDown' : 'arrowUp',
+          text: overlay.pattern_type.replace(/_/g, ' '),
+        }
+        series.setMarkers([marker])
       }
-      series.setMarkers([marker])
     }
-  }, [overlay, showOverlay, palette])
+  }, [overlay, showOverlay, palette, bars])
 
   const last = bars && bars.length > 0 ? bars[bars.length - 1] : null
   const prev = bars && bars.length > 1 ? bars[bars.length - 2] : null
   const change = last && prev ? last.close - prev.close : 0
   const changePct = last && prev && prev.close > 0 ? (change / prev.close) * 100 : 0
+
+  // Shared pill style for toolbar buttons
+  const pill = (active: boolean, activeColor?: string): React.CSSProperties => ({
+    padding: '2px 8px', fontSize: 11, fontFamily: 'var(--font-geist-mono), monospace',
+    background: active ? (activeColor ?? palette.primary) : 'transparent',
+    color: active ? '#FFFFFF' : palette.text,
+    border: `1px solid ${active ? (activeColor ?? palette.primary) : palette.border}`,
+    borderRadius: 4, cursor: 'pointer', lineHeight: '18px',
+  })
 
   return (
     <div
@@ -414,82 +604,98 @@ export function LightweightChart({
         border: `1px solid ${palette.border}`, borderRadius: 6,
       }}
     >
-      {/* Top header strip */}
+      {/* Row 1 — identity + OHLC legend */}
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '8px 12px', borderBottom: `1px solid ${palette.border}`,
-        fontFamily: 'monospace', fontSize: 12,
+        padding: '8px 12px 4px', fontFamily: 'var(--font-geist-mono), monospace', fontSize: 12,
         flexWrap: 'wrap', gap: 8,
       }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
-          <strong style={{ color: theme === 'dark' ? '#FFFFFF' : '#0A0D14', fontSize: 14 }}>{decodedSymbol}</strong>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
+          <strong style={{ color: palette.strongText, fontSize: 14 }}>{decodedSymbol}</strong>
           {last && (
             <>
-              <span style={{ color: theme === 'dark' ? '#FFFFFF' : '#0A0D14' }}>₹{last.close.toFixed(2)}</span>
+              <span style={{ color: palette.strongText }}>₹{last.close.toFixed(2)}</span>
               <span style={{ color: change >= 0 ? palette.up : palette.down }}>
                 {change >= 0 ? '+' : ''}{change.toFixed(2)} ({changePct >= 0 ? '+' : ''}{changePct.toFixed(2)}%)
+              </span>
+              <span style={{ opacity: 0.5, fontSize: 10 }}>
+                {interval === 'D' ? 'Daily' : interval === 'W' ? 'Weekly' : 'Monthly'} · EOD
               </span>
             </>
           )}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          {/* Range toggles */}
-          {(Object.keys(RANGE_DAYS) as Array<keyof typeof RANGE_DAYS>).map((r) => (
+        <div ref={legendRef} style={{ fontSize: 11, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} />
+      </div>
+
+      {/* Row 2 — toolbar: ranges · interval · type · EMA · log · pattern */}
+      <div style={{
+        display: 'flex', alignItems: 'center',
+        padding: '4px 12px 8px', borderBottom: `1px solid ${palette.border}`,
+        flexWrap: 'wrap', gap: 6, fontFamily: 'var(--font-geist-mono), monospace',
+      }}>
+        {RANGE_ORDER.map((r) => (
+          <button key={r} type="button" onClick={() => setRange(r)} style={pill(range === r)}>
+            {r}
+          </button>
+        ))}
+
+        <span style={{ width: 1, height: 16, background: palette.border, margin: '0 4px' }} />
+        {(['D', 'W', 'M'] as const).map((iv) => (
+          <button key={iv} type="button" onClick={() => setBarInterval(iv)} style={pill(interval === iv)} title={iv === 'D' ? 'Daily bars' : iv === 'W' ? 'Weekly bars' : 'Monthly bars'}>
+            {iv}
+          </button>
+        ))}
+
+        <span style={{ width: 1, height: 16, background: palette.border, margin: '0 4px' }} />
+        {([['candles', 'Candles'], ['line', 'Line'], ['area', 'Area']] as const).map(([t, label]) => (
+          <button key={t} type="button" onClick={() => setChartType(t)} style={pill(chartType === t)}>
+            {label}
+          </button>
+        ))}
+
+        <span style={{ width: 1, height: 16, background: palette.border, margin: '0 4px' }} />
+        <span style={{ opacity: 0.6, fontSize: 11 }}>EMA</span>
+        {(['e21', 'e50', 'e200'] as const).map((k, i) => {
+          const label = ['21', '50', '200'][i]
+          const color = [palette.ema21, palette.ema50, palette.ema200][i]
+          return (
             <button
-              key={r}
+              key={k}
               type="button"
-              onClick={() => setRange(r as any)}
+              onClick={() => setShowEMA((s) => ({ ...s, [k]: !s[k] }))}
               style={{
-                padding: '2px 8px', fontSize: 11, fontFamily: 'monospace',
-                background: range === r ? palette.crosshair : 'transparent',
-                color: range === r ? '#FFFFFF' : palette.text,
-                border: `1px solid ${range === r ? palette.crosshair : palette.border}`,
-                borderRadius: 3, cursor: 'pointer',
+                padding: '2px 6px', fontSize: 11, fontFamily: 'var(--font-geist-mono), monospace',
+                background: showEMA[k] ? color + '33' : 'transparent',
+                color: showEMA[k] ? color : palette.text + '60',
+                border: `1px solid ${showEMA[k] ? color + '80' : palette.border}`,
+                borderRadius: 4, cursor: 'pointer', lineHeight: '18px',
               }}
             >
-              {r}
+              {label}
             </button>
-          ))}
-          {/* EMA toggles */}
-          <span style={{ marginLeft: 8, opacity: 0.6 }}>EMA:</span>
-          {(['e21', 'e50', 'e200'] as const).map((k, i) => {
-            const label = ['21', '50', '200'][i]
-            const color = [palette.ema21, palette.ema50, palette.ema200][i]
-            return (
-              <button
-                key={k}
-                type="button"
-                onClick={() => setShowEMA((s) => ({ ...s, [k]: !s[k] }))}
-                style={{
-                  padding: '2px 6px', fontSize: 11, fontFamily: 'monospace',
-                  background: showEMA[k] ? color + '33' : 'transparent',
-                  color: showEMA[k] ? color : palette.text + '60',
-                  border: `1px solid ${showEMA[k] ? color + '80' : palette.border}`,
-                  borderRadius: 3, cursor: 'pointer',
-                }}
-              >
-                {label}
-              </button>
-            )
-          })}
-          {/* Pattern overlay toggle — only meaningful when we have a detection */}
-          {overlay && (
-            <button
-              type="button"
-              onClick={() => setShowOverlay((v) => !v)}
-              title={`${overlay.pattern_type.replace(/_/g, ' ')} · entry ${overlay.entry.toFixed(2)} · stop ${overlay.stop.toFixed(2)} · target ${overlay.target.toFixed(2)}`}
-              style={{
-                marginLeft: 8, padding: '2px 8px', fontSize: 11, fontFamily: 'monospace',
-                background: showOverlay ? palette.crosshair + '33' : 'transparent',
-                color: showOverlay ? palette.crosshair : palette.text + '80',
-                border: `1px solid ${showOverlay ? palette.crosshair + '80' : palette.border}`,
-                borderRadius: 3, cursor: 'pointer',
-              }}
-            >
-              {showOverlay ? '✓ ' : ''}Pattern
-            </button>
-          )}
-        </div>
+          )
+        })}
+
+        <button type="button" onClick={() => setLogScale((v) => !v)} style={{ ...pill(logScale), marginLeft: 4 }} title="Logarithmic price scale">
+          Log
+        </button>
+
+        {overlay && (
+          <button
+            type="button"
+            onClick={() => setShowOverlay((v) => !v)}
+            title={`${overlay.pattern_type.replace(/_/g, ' ')} · entry ${overlay.entry.toFixed(2)} · stop ${overlay.stop.toFixed(2)} · target ${overlay.target.toFixed(2)}`}
+            style={{
+              marginLeft: 4, padding: '2px 8px', fontSize: 11, fontFamily: 'var(--font-geist-mono), monospace',
+              background: showOverlay ? palette.crosshair + '33' : 'transparent',
+              color: showOverlay ? palette.crosshair : palette.text + '80',
+              border: `1px solid ${showOverlay ? palette.crosshair + '80' : palette.border}`,
+              borderRadius: 4, cursor: 'pointer', lineHeight: '18px',
+            }}
+          >
+            {showOverlay ? '✓ ' : ''}Pattern
+          </button>
+        )}
       </div>
 
       {/* Chart container */}
@@ -499,7 +705,7 @@ export function LightweightChart({
             position: 'absolute', inset: 0,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             background: palette.background + 'CC', color: palette.text,
-            fontFamily: 'monospace', fontSize: 13, zIndex: 5,
+            fontFamily: 'var(--font-geist-mono), monospace', fontSize: 13, zIndex: 5,
             textAlign: 'center', padding: 24,
           }}>
             {status === 'loading' && `Loading ${decodedSymbol}…`}

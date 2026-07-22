@@ -52,7 +52,7 @@ function ArtifactCtaChip({ cta }: { cta?: ArtifactCta }) {
     <div className="border-t border-line px-3 py-2">
       <Link
         href={cta.href}
-        className="inline-flex items-center gap-1 rounded-pill border border-line bg-wrap-hover px-2.5 py-1 text-[11px] text-d-text-secondary transition-colors hover:border-white/30 hover:text-d-text-primary"
+        className="inline-flex items-center gap-1 rounded-pill glass-control px-2.5 py-1 text-[11px] text-d-text-secondary transition-colors hover:text-d-text-primary"
       >
         {cta.label}
         <ArrowRight size={11} />
@@ -119,7 +119,7 @@ export function ArtifactCard({ a }: { a: CopilotArtifact }) {
               <YAxis
                 domain={[lo - pad, hi + pad]}
                 width={44}
-                tick={{ fill: 'var(--color-d-text-muted)', fontSize: 9 }}
+                tick={{ fill: 'var(--color-muted)', fontSize: 9 }}
                 axisLine={false}
                 tickLine={false}
                 tickFormatter={(v: number) => `${a.yLabel ?? ''}${v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v.toFixed(0)}`}
@@ -249,10 +249,10 @@ export function ArtifactCard({ a }: { a: CopilotArtifact }) {
         <div className="mt-2 h-[140px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={zeroCross} margin={{ top: 6, right: 8, left: 0, bottom: 0 }}>
-              <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} tick={{ fill: 'var(--color-d-text-muted)', fontSize: 9 }} axisLine={false} tickLine={false} tickFormatter={(v: number) => v.toFixed(0)} />
-              <YAxis tick={{ fill: 'var(--color-d-text-muted)', fontSize: 9 }} axisLine={false} tickLine={false} width={40} tickFormatter={(v: number) => (v >= 1000 || v <= -1000 ? (v / 1000).toFixed(0) + 'k' : v.toFixed(0))} />
-              <ReferenceLine y={0} stroke="var(--color-d-text-muted)" strokeDasharray="3 3" />
-              {a.spot != null && <ReferenceLine x={a.spot} stroke="var(--color-line)" label={{ value: 'spot', fontSize: 9, fill: 'var(--color-d-text-muted)' }} />}
+              <XAxis dataKey="x" type="number" domain={['dataMin', 'dataMax']} tick={{ fill: 'var(--color-muted)', fontSize: 9 }} axisLine={false} tickLine={false} tickFormatter={(v: number) => v.toFixed(0)} />
+              <YAxis tick={{ fill: 'var(--color-muted)', fontSize: 9 }} axisLine={false} tickLine={false} width={40} tickFormatter={(v: number) => (v >= 1000 || v <= -1000 ? (v / 1000).toFixed(0) + 'k' : v.toFixed(0))} />
+              <ReferenceLine y={0} stroke="var(--color-muted)" strokeDasharray="3 3" />
+              {a.spot != null && <ReferenceLine x={a.spot} stroke="var(--color-line)" label={{ value: 'spot', fontSize: 9, fill: 'var(--color-muted)' }} />}
               {(a.breakevens ?? []).map((be, i) => (
                 <ReferenceLine key={i} x={be} stroke="var(--color-primary)" strokeDasharray="2 2" />
               ))}

@@ -138,14 +138,14 @@ export default function DriftPanel({
                 const isDrifted =
                   wr !== null && wr < threshold && m.signal_count >= 30
                 const wrColor =
-                  wr === null ? '#8e8e8e'
-                  : wr >= 0.55 ? '#05B878'
-                  : wr >= threshold ? '#FEB113'
-                  : '#FF5947'
+                  wr === null ? 'var(--color-muted)'
+                  : wr >= 0.55 ? 'var(--color-up)'
+                  : wr >= threshold ? 'var(--color-warning)'
+                  : 'var(--color-down)'
                 const pnlColor =
-                  m.avg_pnl_pct == null ? '#8e8e8e'
-                  : m.avg_pnl_pct > 0 ? '#05B878'
-                  : '#FF5947'
+                  m.avg_pnl_pct == null ? 'var(--color-muted)'
+                  : m.avg_pnl_pct > 0 ? 'var(--color-up)'
+                  : 'var(--color-down)'
                 const { label, internal } = adminEngineLabel(m.model_name)
                 return (
                   <tr key={`${m.model_name}-${m.window_days}`} className="border-b border-d-border/50">

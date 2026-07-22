@@ -55,7 +55,7 @@ export default function AutopilotCard({ autopilot }: { autopilot: ManagedOvervie
               <button
                 onClick={() => togglePaper(true)}
                 disabled={busy}
-                className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-main transition-opacity hover:opacity-90 disabled:opacity-60"
+                className="inline-flex items-center gap-1.5 rounded-full glass-control-accent px-3 py-1.5 text-xs font-semibold disabled:opacity-60 active:scale-[0.98]"
               >
                 {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FlaskConical className="h-3.5 w-3.5" />}
                 Start Paper AutoPilot
@@ -63,7 +63,7 @@ export default function AutopilotCard({ autopilot }: { autopilot: ManagedOvervie
               {autopilot.available ? (
                 <Link
                   href="/autopilot"
-                  className="inline-flex items-center gap-1.5 rounded-md border border-d-border px-3 py-1.5 text-xs font-semibold text-d-text-primary transition-colors hover:bg-wrap-hover"
+                  className="inline-flex items-center gap-1.5 rounded-full glass-control px-3 py-1.5 text-xs font-semibold text-d-text-primary transition-colors"
                 >
                   <Play className="h-3.5 w-3.5" />
                   Go live
@@ -71,7 +71,7 @@ export default function AutopilotCard({ autopilot }: { autopilot: ManagedOvervie
               ) : (
                 <Link
                   href="/pricing"
-                  className="inline-flex items-center gap-1.5 rounded-md border border-d-border px-3 py-1.5 text-xs font-semibold text-d-text-primary transition-colors hover:bg-wrap-hover"
+                  className="inline-flex items-center gap-1.5 rounded-full glass-control px-3 py-1.5 text-xs font-semibold text-d-text-primary transition-colors"
                 >
                   <Bot className="h-3.5 w-3.5" />
                   Go live with Pro

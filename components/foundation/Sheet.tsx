@@ -47,9 +47,10 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
 const sheetVariants = cva(
-  // xAI: hairline edge surface, no heavy shadow. Slides from its edge with
-  // a dep-free keyframe (iOS-like drawer curve), ≤250ms enter / 200ms exit.
-  'fixed z-50 flex flex-col gap-3 border-line bg-wrap p-6 outline-none',
+  // Liquid glass: frosted translucent panel (.glass-surface — backdrop blur,
+  // light edge + top highlight) over the scrim. Slides from its edge with a
+  // dep-free keyframe (iOS-like drawer curve), ≤250ms enter / 200ms exit.
+  'fixed z-50 flex flex-col gap-3 border-line glass-surface p-6 outline-none',
   {
     variants: {
       side: {

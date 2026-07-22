@@ -79,7 +79,7 @@ export default function LoginPage() {
         <button
           onClick={handleGoogleLogin}
           disabled={isGoogleLoading}
-          className="mb-6 flex w-full items-center justify-center gap-3 rounded-[6px] border border-line bg-white/[0.03] px-6 py-3 text-sm font-medium text-d-text-primary shadow-glass transition-all hover:shadow-glass-hover disabled:cursor-not-allowed disabled:opacity-50"
+          className="glass-control mb-6 flex w-full items-center justify-center gap-3 rounded-full px-6 py-3 text-sm font-medium text-d-text-primary transition-[transform,filter] duration-150 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isGoogleLoading ? (
             <Loader2 className="h-5 w-5 animate-spin" />
@@ -172,7 +172,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="flex w-full items-center justify-center gap-2 rounded-[6px] bg-gradient-cta px-6 py-3 text-sm font-bold text-on-signature transition-all hover:opacity-90 hover:shadow-glow-primary disabled:cursor-not-allowed disabled:opacity-50"
+            className="glass-control-accent flex w-full items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-bold transition-[transform,filter] duration-150 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isLoading ? (
               <Loader2 className="h-5 w-5 animate-spin" />

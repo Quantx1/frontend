@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { MONO } from '@/lib/tokens'
-import { featureAccent } from '@/lib/feature-colors'
 import { NAV, NAV_SECTIONS, type NavItem, type NavSection } from './nav'
 
 interface Props {
@@ -55,39 +54,32 @@ export const NavList = ({ pathname, itemHeight = 'compact', onItemClick, collaps
         aria-current={active ? 'page' : undefined}
         title={collapsed ? label : undefined}
         className={cn(
-          'relative flex items-center rounded-md text-[14px] leading-5 transition-colors',
+          'relative flex items-center rounded-full text-[14px] leading-5 transition-colors',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40',
           collapsed
             ? 'justify-center px-0 py-3'
             : cn('gap-3 px-4', tall ? 'h-11' : 'h-[52px]'),
           active
-            ? 'bg-wrap-hover text-accent'
+            ? 'bg-primary/10 text-primary'
             : 'text-d-text-secondary hover:bg-wrap-hover hover:text-d-text-primary',
         )}
       >
-        {active && !collapsed && (
-          <span
-            className="absolute left-0 top-1/2 h-5 w-[2.5px] -translate-y-1/2 rounded-r bg-accent"
-            aria-hidden="true"
-          />
-        )}
         <Icon
           className={cn(
-            collapsed ? 'h-[22px] w-[22px]' : 'h-[18px] w-[18px]',
+            collapsed ? 'h-[18px] w-[18px]' : 'h-4 w-4',
             'shrink-0 transition-colors',
-            // Per-feature accent hue — colourful icons across the whole app.
-            // Active row already reads via bg + accent label + left bar, so the
-            // glyph keeps its feature colour (never washes to grey).
-            featureAccent(href),
+            // FintechX pill: the active row's glyph takes the primary ink to
+            // match the tinted pill. Colour is reserved for meaning elsewhere.
+            active && 'text-primary',
           )}
           aria-hidden="true"
         />
         {!collapsed && <span className="flex-1 truncate">{label}</span>}
         {!collapsed && tier === 'elite' && (
-          <span className="rounded bg-warning/10 px-1.5 py-0.5 text-[10px] font-semibold text-warning">Elite</span>
+          <span className="rounded-full bg-warning/10 px-1.5 py-0.5 text-[10px] font-semibold text-warning">Elite</span>
         )}
         {!collapsed && tier === 'pro' && (
-          <span className="rounded bg-accent/10 px-1.5 py-0.5 text-[10px] font-semibold text-accent">Pro</span>
+          <span className="rounded-full bg-accent/10 px-1.5 py-0.5 text-[10px] font-semibold text-accent">Pro</span>
         )}
       </Link>
     )

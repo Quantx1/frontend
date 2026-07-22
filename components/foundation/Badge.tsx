@@ -9,8 +9,9 @@ interface Props extends React.HTMLAttributes<HTMLSpanElement> {
 }
 
 const TONE: Record<Tone, string> = {
-  // xAI: mono chrome — white-translucent for neutral/primary, hairline for muted.
-  primary: 'bg-white/[0.06] text-d-text-primary border-white/15',
+  // FintechX v4: tinted pill chips (`bg-primary/10 text-primary` — the
+  // text scale maps to --rgb-primary-text, contrast-validated on the tint).
+  primary: 'bg-primary/10 text-primary border-primary/20',
   // Duotone — only on financial direction (up/down) + semantic state.
   up: 'bg-up/10 text-up border-up/20',
   down: 'bg-down/10 text-down border-down/20',
@@ -26,7 +27,7 @@ const TONE: Record<Tone, string> = {
 export const Badge = ({ tone = 'muted', className, children, ...rest }: Props) => (
   <span
     className={cn(
-      'inline-flex items-center px-2 py-0.5 text-xs font-normal rounded-sm border',
+      'inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full border',
       TONE[tone],
       className,
     )}

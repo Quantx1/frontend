@@ -245,7 +245,7 @@ function QuotaBanner({ quota }: { quota: { tier: string; runs_this_month: number
   const tone: Tone = low ? 'bad' : unlimited ? 'good' : 'warn'
   return (
     <section
-      className={`rounded-sm border px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 ${TONE_TINT[tone]}`}
+      className={`rounded-[20px] border px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 ${TONE_TINT[tone]}`}
     >
       <p className="text-[12px]">
         {unlimited
@@ -290,7 +290,7 @@ function HoldingsForm({
   onRun: () => void
 }) {
   return (
-    <div className="rounded-sm border border-line bg-wrap p-5">
+    <div className="rounded-[20px] border border-line bg-wrap p-5">
       <h2 className="text-[14px] font-normal text-d-text-primary flex items-center gap-2 mb-3">
         <ClipboardList className="w-4 h-4 text-d-text-secondary" />
         Your holdings
@@ -308,7 +308,7 @@ function HoldingsForm({
             value={capital}
             onChange={(e) => setCapital(e.target.value)}
             placeholder="500000"
-            className={`${MONO} flex-1 bg-main border border-line rounded-sm px-3 py-1.5 text-[13px] text-d-text-primary focus:outline-none focus:border-d-text-muted`}
+            className={`${MONO} flex-1 bg-main border border-line rounded-xl px-3 py-1.5 text-[13px] text-d-text-primary focus:outline-none focus:border-d-text-muted`}
           />
         </div>
       </div>
@@ -321,7 +321,7 @@ function HoldingsForm({
               value={p.symbol}
               onChange={(e) => updatePos(i, { symbol: e.target.value.toUpperCase() })}
               placeholder="TCS"
-              className="flex-1 bg-main border border-line rounded-sm px-3 py-1.5 text-[13px] text-d-text-primary focus:outline-none focus:border-d-text-muted"
+              className="flex-1 bg-main border border-line rounded-xl px-3 py-1.5 text-[13px] text-d-text-primary focus:outline-none focus:border-d-text-muted"
             />
             <div className="relative w-28">
               <input
@@ -332,14 +332,14 @@ function HoldingsForm({
                 value={p.weight}
                 onChange={(e) => updatePos(i, { weight: e.target.value })}
                 placeholder="25"
-                className={`${MONO} w-full bg-main border border-line rounded-sm px-3 py-1.5 pr-6 text-[13px] text-d-text-primary focus:outline-none focus:border-d-text-muted`}
+                className={`${MONO} w-full bg-main border border-line rounded-xl px-3 py-1.5 pr-6 text-[13px] text-d-text-primary focus:outline-none focus:border-d-text-muted`}
               />
               <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[11px] text-d-text-muted">%</span>
             </div>
             <button
               onClick={() => removePosition(i)}
               disabled={positions.length <= 1}
-              className="p-1.5 rounded-sm border border-line text-d-text-muted hover:text-down hover:border-down/40 disabled:opacity-40 disabled:hover:text-d-text-muted disabled:hover:border-line"
+              className="p-1.5 rounded-sm glass-control text-d-text-muted hover:text-down disabled:opacity-40 disabled:hover:text-d-text-muted"
             >
               <Trash2 className="w-3.5 h-3.5" />
             </button>
@@ -364,7 +364,7 @@ function HoldingsForm({
         <button
           onClick={onRun}
           disabled={!canRun}
-          className="inline-flex items-center gap-2 px-5 py-2 bg-primary text-main border border-primary rounded-pill text-[12px] font-normal hover:opacity-90 active:scale-[0.97] transition-[transform,opacity] duration-150 ease-out disabled:opacity-40 disabled:cursor-not-allowed"
+          className="inline-flex items-center gap-2 px-5 py-2 glass-control-accent rounded-full text-[12px] font-normal active:scale-[0.97] transition-[transform,opacity] duration-150 ease-out disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {running ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
           {running ? 'Grading holdings…' : 'Grade my portfolio'}
@@ -383,7 +383,7 @@ function HistoryPanel({
   onPick: (id: string) => void
 }) {
   return (
-    <div className="rounded-sm border border-line bg-wrap overflow-hidden">
+    <div className="rounded-[20px] border border-line bg-wrap overflow-hidden">
       <div className="px-5 py-3 border-b border-line">
         <p className="text-[13px] font-normal text-d-text-primary">Past checkups</p>
         <p className="text-[10px] text-d-text-muted">your last 20 AI portfolio reports</p>
@@ -442,7 +442,7 @@ function ReportView({ report, onBack }: { report: DoctorReport; onBack: () => vo
           onClick={() => {
             if (typeof window !== 'undefined') window.print()
           }}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm border border-line bg-main text-[11px] text-d-text-primary hover:bg-hover"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass-control text-[11px] text-d-text-primary"
         >
           <Download className="w-3.5 h-3.5" />
           Download PDF
@@ -450,7 +450,7 @@ function ReportView({ report, onBack }: { report: DoctorReport; onBack: () => vo
       </div>
 
       {/* Composite strip — tone-tinted, token-safe (no inline hex) */}
-      <section className={`rounded-sm border border-l-[3px] p-5 ${TONE_TINT[tone]}`}>
+      <section className={`rounded-[20px] border border-l-[3px] p-5 ${TONE_TINT[tone]}`}>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-d-text-muted">
@@ -498,7 +498,7 @@ function ReportView({ report, onBack }: { report: DoctorReport; onBack: () => vo
 
       {/* Risk flags */}
       {report.risk_flags.length > 0 && (
-        <section className="rounded-sm border border-line bg-wrap p-5">
+        <section className="rounded-[20px] border border-line bg-wrap p-5">
           <h3 className="text-[14px] font-normal text-d-text-primary flex items-center gap-2 mb-3">
             <AlertTriangle className="w-4 h-4 text-warning" />
             Risk flags
@@ -513,7 +513,7 @@ function ReportView({ report, onBack }: { report: DoctorReport; onBack: () => vo
       <RebalanceCard positions={report.per_position.map((p) => ({ symbol: p.symbol, weight: p.weight }))} />
 
       {/* Per-position grid */}
-      <section className="rounded-sm border border-line bg-wrap overflow-hidden">
+      <section className="rounded-[20px] border border-line bg-wrap overflow-hidden">
         <div className="px-5 py-3 border-b border-line flex items-center justify-between">
           <h3 className="text-[14px] font-normal text-d-text-primary">
             AI grade per holding · {report.per_position.length} positions
@@ -537,7 +537,7 @@ function RiskFlagRow({ f }: { f: DoctorRiskFlag }) {
   const sev = f.severity
   const tone: Tone = sev === 'high' ? 'bad' : sev === 'medium' ? 'warn' : 'muted'
   return (
-    <div className="flex items-start gap-3 px-3 py-2.5 rounded-sm border border-line bg-main">
+    <div className="tile-tint flex items-start gap-3 px-3 py-2.5">
       <span
         className={`mt-0.5 font-mono text-[9px] tracking-[0.1em] uppercase rounded-sm px-1.5 py-0.5 border ${TONE_TINT[tone]}`}
       >

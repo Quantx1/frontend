@@ -178,10 +178,10 @@ export function UniverseBacktestResults({
                   key={k}
                   type="button"
                   onClick={() => setSort(k)}
-                  className={`rounded-md border px-2 py-0.5 text-[10px] uppercase tracking-wider ${
+                  className={`rounded-md px-2 py-0.5 text-[10px] uppercase tracking-wider ${
                     sort === k
-                      ? 'border-primary bg-primary/10 text-primary'
-                      : 'border-line text-d-text-muted hover:text-d-text-primary'
+                      ? 'glass-control-accent'
+                      : 'glass-control text-d-text-muted hover:text-d-text-primary'
                   }`}
                 >
                   {k === 'return' ? 'Return%' : k === 'sharpe' ? 'Sharpe' : 'P&L'}

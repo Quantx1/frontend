@@ -10,17 +10,19 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
-  // The primary CTA — token-driven so it inverts per theme: a white-filled
-  // pill in dark, an ink-filled pill in light. `bg-primary` = var(--primary)
-  // (white→ink); `text-main` = canvas (near-black→near-white) → always the
-  // legible counter-ink. Both themes clear AA (18.8:1).
-  primary: 'bg-primary text-main border border-primary hover:opacity-90',
-  // canonical outline pill — translucent-white border
-  secondary: 'bg-transparent text-d-text-primary border border-white/20 hover:bg-white/[0.06]',
-  ghost: 'bg-transparent text-d-text-secondary hover:text-d-text-primary hover:bg-white/[0.04]',
-  danger: 'bg-transparent text-down border border-down/40 hover:bg-down/[0.08]',
-  // PR-V1 — AI / Copilot action (purple, kept as an outline)
-  ai: 'bg-transparent text-[var(--color-ai)] border border-[var(--color-ai)]/40 hover:bg-[var(--color-ai)]/[0.08]',
+  // Apple-style liquid glass, one register across every variant (see
+  // `.glass-control*` in globals.css): translucent backdrop-blur surface,
+  // bright top edge, soft shadow. The variant only changes the tint/ink.
+  // primary = blue accent glass (white ink, AA-safe over any backdrop).
+  primary: 'glass-control-accent',
+  // secondary = neutral glass, primary ink.
+  secondary: 'glass-control text-d-text-primary',
+  // ghost = same neutral glass, muted ink (kept consistent, not a bare link).
+  ghost: 'glass-control text-d-text-secondary hover:text-d-text-primary',
+  // danger = red-tinted glass.
+  danger: 'glass-control-danger text-down',
+  // ai / Copilot = neutral glass, AI-violet ink.
+  ai: 'glass-control text-[var(--color-ai)]',
 }
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {
@@ -34,12 +36,13 @@ export const Button = React.forwardRef<HTMLButtonElement, Props>(
     <button
       ref={ref}
       className={cn(
-        'inline-flex items-center justify-center gap-2 rounded-pill font-normal',
+        // FintechX v4 geometry: pill radius, Inter SemiBold labels (spec §2).
+        'inline-flex items-center justify-center gap-2 rounded-full font-semibold',
         // Press feedback (emil-design-eng): scale 0.97, ≤160ms ease-out.
         'transition-[transform,background-color,border-color] duration-150 ease-out',
         'active:scale-[0.97]',
         'disabled:opacity-50 disabled:cursor-not-allowed',
-        'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40',
+        'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
         VARIANT_CLASSES[variant],
         SIZE_CLASSES[size],
         className,

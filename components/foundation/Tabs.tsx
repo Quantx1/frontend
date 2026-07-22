@@ -12,9 +12,8 @@ export const TabsList = ({
 }: React.ComponentProps<typeof RT.List>) => (
   <RT.List
     className={cn(
-      // xAI: a hairline rail, mono-caps labels, underline indicator — no
-      // boxed background, no sliding pill.
-      'inline-flex items-center gap-1 border-b border-line',
+      // FintechX v4: a tinted pill rail — active tab is a raised wrap pill.
+      'inline-flex items-center gap-1 rounded-full border border-line bg-main p-1',
       className,
     )}
     {...rest}
@@ -27,12 +26,11 @@ export const TabsTrigger = ({
 }: React.ComponentProps<typeof RT.Trigger>) => (
   <RT.Trigger
     className={cn(
-      'px-3 py-2 -mb-px font-mono text-xs uppercase tracking-[0.08em] font-normal',
-      'border-b border-transparent text-d-text-muted',
-      'hover:text-d-text-secondary',
-      'data-[state=active]:border-white data-[state=active]:text-d-text-primary',
+      'px-3.5 py-1.5 rounded-full text-sm font-medium whitespace-nowrap',
+      'text-d-text-muted hover:text-d-text-primary',
+      'data-[state=active]:bg-wrap data-[state=active]:text-d-text-primary data-[state=active]:shadow-sm',
       'transition-colors',
-      'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40',
+      'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
       className,
     )}
     {...rest}

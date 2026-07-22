@@ -206,7 +206,7 @@ export default function AlertEditModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-sm rounded-xl border border-d-border bg-main p-5 space-y-4"
+        className="w-full max-w-sm rounded-[20px] border border-d-border bg-main p-5 space-y-4"
         onClick={(e) => e.stopPropagation()}
       >
         <header className="flex items-start justify-between gap-3">
@@ -234,11 +234,11 @@ export default function AlertEditModal({
         <div className="space-y-3">
           {/* Absolute ₹ vs relative ±% mode toggle. Disabled entirely
               when we don't have a live price to anchor against. */}
-          <div className="flex items-center gap-1 rounded-md border border-d-border p-0.5 w-fit text-[10px]">
+          <div className="flex items-center gap-1 rounded-full border border-d-border p-0.5 w-fit text-[10px]">
             <button
               type="button"
               onClick={() => { setMode('abs'); setAbove(''); setBelow(''); setActivePreset(null) }}
-              className={`px-2.5 py-1 rounded ${mode === 'abs' ? 'bg-primary/15 text-primary' : 'text-d-text-muted hover:text-d-text-primary'}`}
+              className={`px-2.5 py-1 rounded-full ${mode === 'abs' ? 'glass-control-accent' : 'text-d-text-muted hover:text-d-text-primary'}`}
             >
               ₹ absolute
             </button>
@@ -246,7 +246,7 @@ export default function AlertEditModal({
               type="button"
               onClick={() => { setMode('pct'); setAbove(''); setBelow(''); setActivePreset(null) }}
               disabled={live == null}
-              className={`px-2.5 py-1 rounded ${mode === 'pct' ? 'bg-primary/15 text-primary' : 'text-d-text-muted hover:text-d-text-primary disabled:opacity-40 disabled:cursor-not-allowed'}`}
+              className={`px-2.5 py-1 rounded-full ${mode === 'pct' ? 'glass-control-accent' : 'text-d-text-muted hover:text-d-text-primary disabled:opacity-40 disabled:cursor-not-allowed'}`}
             >
               ±% from current
             </button>
@@ -276,10 +276,10 @@ export default function AlertEditModal({
                       key={t.id}
                       type="button"
                       onClick={() => applyPreset(t.id, true)}
-                      className={`px-2.5 py-1 rounded-md text-[10px] border transition-colors ${
+                      className={`px-2.5 py-1 rounded-full text-[10px] transition-colors ${
                         isActive
-                          ? 'border-highlight/60 bg-highlight/[0.10] text-highlight'
-                          : 'border-d-border text-d-text-secondary hover:bg-white/[0.04] hover:text-d-text-primary'
+                          ? 'glass-control-accent'
+                          : 'glass-control text-d-text-secondary hover:text-d-text-primary'
                       }`}
                     >
                       {t.label}
@@ -299,10 +299,10 @@ export default function AlertEditModal({
                           type="button"
                           title={`ATR(14) = ₹${atr.toFixed(2)} · ±${t.mult}× ATR`}
                           onClick={() => applyPreset(t.id, true)}
-                          className={`px-2.5 py-1 rounded-md text-[10px] border transition-colors ${
+                          className={`px-2.5 py-1 rounded-full text-[10px] transition-colors ${
                             isActive
-                              ? 'border-highlight/60 bg-highlight/[0.10] text-highlight'
-                              : 'border-primary/40 bg-primary/[0.05] text-primary hover:bg-primary/[0.10]'
+                              ? 'glass-control-accent'
+                              : 'glass-control text-primary'
                           }`}
                         >
                           {t.label}
@@ -355,7 +355,7 @@ export default function AlertEditModal({
                 value={above}
                 onChange={(e) => { setAbove(e.target.value); setActivePreset(null) }}
                 placeholder={mode === 'pct' ? 'e.g. 5 = +5% above' : 'leave blank to disable'}
-                className="numeric flex-1 bg-main border border-d-border rounded-md px-3 py-1.5 text-[13px] text-d-text-primary placeholder:text-d-text-muted focus:outline-none focus:border-primary/50"
+                className="numeric flex-1 bg-main border border-d-border rounded-xl px-3 py-1.5 text-[13px] text-d-text-primary placeholder:text-d-text-muted focus:outline-none focus:border-primary/50"
               />
               {mode === 'pct' && <span className="text-[12px] text-d-text-muted">%</span>}
             </div>
@@ -385,7 +385,7 @@ export default function AlertEditModal({
                 value={below}
                 onChange={(e) => { setBelow(e.target.value); setActivePreset(null) }}
                 placeholder={mode === 'pct' ? 'e.g. 5 = −5% below' : 'leave blank to disable'}
-                className="numeric flex-1 bg-main border border-d-border rounded-md px-3 py-1.5 text-[13px] text-d-text-primary placeholder:text-d-text-muted focus:outline-none focus:border-primary/50"
+                className="numeric flex-1 bg-main border border-d-border rounded-xl px-3 py-1.5 text-[13px] text-d-text-primary placeholder:text-d-text-muted focus:outline-none focus:border-primary/50"
               />
               {mode === 'pct' && <span className="text-[12px] text-d-text-muted">%</span>}
             </div>
@@ -439,7 +439,7 @@ export default function AlertEditModal({
             type="button"
             onClick={onClear}
             disabled={saving}
-            className="flex-1 py-2 text-[12px] text-d-text-muted border border-d-border rounded-md hover:bg-white/[0.03] disabled:opacity-50"
+            className="flex-1 py-2 text-[12px] text-d-text-muted glass-control rounded-full disabled:opacity-50"
           >
             Clear all
           </button>
@@ -447,7 +447,7 @@ export default function AlertEditModal({
             type="button"
             onClick={onSave}
             disabled={!canSave}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 text-[12px] font-medium bg-primary text-primary-foreground rounded-md hover:bg-primary-hover disabled:opacity-40 disabled:cursor-not-allowed"
+            className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 text-[12px] font-medium glass-control-accent rounded-full active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
             Save

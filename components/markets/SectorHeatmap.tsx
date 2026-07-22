@@ -36,9 +36,21 @@ export function SectorHeatmap({ sectors, max = 12 }: { sectors: SectorTile[]; ma
   if (!sectors.length) return null
   const sorted = sectors.slice().sort((a, b) => b.avg_change_pct - a.avg_change_pct).slice(0, max)
 
+  // Complete-rectangle guarantee (lg = 5 cols): sum each tile's cell usage
+  // (hero 2×2 = 4, wide = 2, else 1) and trim trailing tiles until the total
+  // fills whole rows — no orphan tile floating in dead space. grid-flow-dense
+  // backfills any mid-grid gaps at the narrower breakpoints.
+  const spanCells = (s: SectorTile, i: number) => (i === 0 ? 4 : (s.count ?? 0) >= 30 || i === 1 ? 2 : 1)
+  let cells = sorted.reduce((a, s, i) => a + spanCells(s, i), 0)
+  const shown = sorted.slice()
+  while (shown.length > 5 && cells % 5 !== 0) {
+    const last = shown.pop()!
+    cells -= spanCells(last, shown.length)
+  }
+
   return (
-    <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-5" style={{ gridAutoRows: 'minmax(64px, auto)' }}>
-      {sorted.map((s, i) => {
+    <div className="grid grid-flow-dense grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-5" style={{ gridAutoRows: 'minmax(64px, auto)' }}>
+      {shown.map((s, i) => {
         const up = s.avg_change_pct >= 0
         const inten = Math.min(Math.abs(s.avg_change_pct) / 2.5, 1) // 0..1
         const bg = `color-mix(in srgb, var(--color-${up ? 'up' : 'down'}) ${Math.round(7 + inten * 22)}%, var(--color-wrap))`

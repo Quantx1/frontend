@@ -102,10 +102,10 @@ export default function NewsTab() {
               key={u.value}
               type="button"
               onClick={() => setUniverse(u.value)}
-              className={`rounded-md border px-2 py-1 text-[11px] ${
+              className={`rounded-md px-2 py-1 text-[11px] ${
                 universe === u.value
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-line bg-main text-d-text-secondary hover:text-d-text-primary'
+                  ? 'glass-control-accent'
+                  : 'glass-control text-d-text-secondary hover:text-d-text-primary'
               }`}
             >
               {u.label}
@@ -121,10 +121,10 @@ export default function NewsTab() {
               key={n}
               type="button"
               onClick={() => setLookback(n)}
-              className={`rounded-md border px-2 py-1 text-[11px] ${
+              className={`rounded-md px-2 py-1 text-[11px] ${
                 lookback === n
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-line bg-main text-d-text-secondary hover:text-d-text-primary'
+                  ? 'glass-control-accent'
+                  : 'glass-control text-d-text-secondary hover:text-d-text-primary'
               }`}
             >
               {n}d
@@ -152,10 +152,10 @@ export default function NewsTab() {
           <button
             type="button"
             onClick={() => setSelectedSectors([])}
-            className={`rounded-full border px-2.5 py-0.5 text-[11px] ${
+            className={`rounded-full px-2.5 py-0.5 text-[11px] ${
               selectedSectors.length === 0
-                ? 'border-primary bg-primary/10 text-primary'
-                : 'border-line bg-main text-d-text-secondary hover:text-d-text-primary'
+                ? 'glass-control-accent'
+                : 'glass-control text-d-text-secondary hover:text-d-text-primary'
             }`}
           >
             All
@@ -173,10 +173,10 @@ export default function NewsTab() {
                       : [...cur, s.sector],
                   )
                 }}
-                className={`rounded-full border px-2.5 py-0.5 text-[11px] transition-colors ${
+                className={`rounded-full px-2.5 py-0.5 text-[11px] transition-colors ${
                   active
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-line bg-main text-d-text-secondary hover:text-d-text-primary'
+                    ? 'glass-control-accent'
+                    : 'glass-control text-d-text-secondary hover:text-d-text-primary'
                 }`}
               >
                 {s.sector}

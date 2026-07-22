@@ -63,10 +63,10 @@ export default function MultiTimeframeTab() {
               key={tf.value}
               type="button"
               onClick={() => setTfs(tf.value)}
-              className={`rounded-md border px-2 py-1 text-[11px] ${
+              className={`rounded-md px-2 py-1 text-[11px] ${
                 tfs === tf.value
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-line bg-main text-d-text-secondary hover:text-d-text-primary'
+                  ? 'glass-control-accent'
+                  : 'glass-control text-d-text-secondary hover:text-d-text-primary'
               }`}
             >
               {tf.label}
@@ -82,10 +82,10 @@ export default function MultiTimeframeTab() {
               key={u.value}
               type="button"
               onClick={() => setUniverse(u.value)}
-              className={`rounded-md border px-2 py-1 text-[11px] ${
+              className={`rounded-md px-2 py-1 text-[11px] ${
                 universe === u.value
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-line bg-main text-d-text-secondary hover:text-d-text-primary'
+                  ? 'glass-control-accent'
+                  : 'glass-control text-d-text-secondary hover:text-d-text-primary'
               }`}
             >
               {u.label}
@@ -102,10 +102,10 @@ export default function MultiTimeframeTab() {
               key={d.label}
               type="button"
               onClick={() => setDirection(d.v)}
-              className={`rounded-md border px-2 py-1 text-[11px] ${
+              className={`rounded-md px-2 py-1 text-[11px] ${
                 direction === d.v
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-line bg-main text-d-text-secondary hover:text-d-text-primary'
+                  ? 'glass-control-accent'
+                  : 'glass-control text-d-text-secondary hover:text-d-text-primary'
               }`}
             >
               {d.label}

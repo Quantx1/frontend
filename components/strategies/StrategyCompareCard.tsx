@@ -65,7 +65,7 @@ export function StrategyCompareCard({ strategies }: { strategies: { id: string; 
                 key={s.id}
                 onClick={() => toggle(s.id)}
                 className={`rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors ${
-                  on ? 'bg-primary/15 text-primary' : 'bg-wrap-hover text-d-text-muted hover:text-d-text-primary'
+                  on ? 'glass-control-accent' : 'glass-control text-d-text-muted hover:text-d-text-primary'
                 }`}
               >
                 {s.name}

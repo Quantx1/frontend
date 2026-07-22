@@ -316,7 +316,7 @@ export default function UserStrategyDetailPage() {
                   onClick={() => setBtMode('single')}
                   className={`inline-flex items-center gap-1.5 px-3 py-1 text-[11px] rounded-md transition-colors ${
                     btMode === 'single'
-                      ? 'bg-primary text-primary-foreground font-semibold'
+                      ? 'glass-control-accent font-semibold'
                       : 'text-d-text-secondary hover:text-d-text-primary'
                   }`}
                 >
@@ -328,7 +328,7 @@ export default function UserStrategyDetailPage() {
                   onClick={() => setBtMode('universe')}
                   className={`inline-flex items-center gap-1.5 px-3 py-1 text-[11px] rounded-md transition-colors ${
                     btMode === 'universe'
-                      ? 'bg-primary text-primary-foreground font-semibold'
+                      ? 'glass-control-accent font-semibold'
                       : 'text-d-text-secondary hover:text-d-text-primary'
                   }`}
                 >

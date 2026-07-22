@@ -85,14 +85,14 @@ export default function SchedulerJobsPanel() {
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2 mb-4">
           {data.latest_by_job.slice(0, 12).map((j) => {
             const color =
-              j.status === 'ok' ? '#05B878'
-              : j.status === 'failed' ? '#FF5947'
-              : '#FEB113'
+              j.status === 'ok' ? 'var(--color-up)'
+              : j.status === 'failed' ? 'var(--color-down)'
+              : 'var(--color-warning)'
             return (
               <div
                 key={j.job_id}
                 className="px-3 py-2 rounded-md border"
-                style={{ borderColor: `${color}40`, background: `${color}0A` }}
+                style={{ borderColor: `color-mix(in srgb, ${color} 25%, transparent)`, background: `color-mix(in srgb, ${color} 4%, transparent)` }}
               >
                 <p className="text-[11px] font-medium text-white truncate">{j.job_id}</p>
                 <p className="text-[9px] text-d-text-muted numeric mt-0.5">
@@ -133,9 +133,9 @@ export default function SchedulerJobsPanel() {
             <tbody>
               {data.rows.map((r) => {
                 const color =
-                  r.status === 'ok' ? '#05B878'
-                  : r.status === 'failed' ? '#FF5947'
-                  : '#FEB113'
+                  r.status === 'ok' ? 'var(--color-up)'
+                  : r.status === 'failed' ? 'var(--color-down)'
+                  : 'var(--color-warning)'
                 const dur =
                   r.finished_at && r.started_at
                     ? Math.max(0, (new Date(r.finished_at).getTime() - new Date(r.started_at).getTime()) / 1000)

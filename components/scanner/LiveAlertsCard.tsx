@@ -16,10 +16,10 @@ import { stockHref } from '@/lib/stock-href'
 interface Alert { symbol: string; type: string; severity: string; message: string }
 
 const TYPE: Record<string, { icon: any; color: string }> = {
-  volume: { icon: Volume2, color: '#3B82F6' },
-  oi: { icon: Layers, color: '#8B5CF6' },
-  breakout: { icon: TrendingUp, color: '#05B878' },
-  iv: { icon: Gauge, color: '#FEB113' },
+  volume: { icon: Volume2, color: 'var(--color-primary-text)' },
+  oi: { icon: Layers, color: 'var(--color-ai)' },
+  breakout: { icon: TrendingUp, color: 'var(--color-up)' },
+  iv: { icon: Gauge, color: 'var(--color-warning)' },
 }
 
 export default function LiveAlertsCard() {
@@ -40,11 +40,11 @@ export default function LiveAlertsCard() {
     return () => { cancelled = true; clearInterval(id) }
   }, [])
 
-  if (state === 'loading') return <div className="rounded-lg border border-line bg-wrap h-[120px] animate-pulse" />
+  if (state === 'loading') return <div className="rounded-[20px] border border-line bg-wrap h-[120px] animate-pulse" />
   if (state === 'empty') return null
 
   return (
-    <div className="rounded-lg border border-line bg-wrap overflow-hidden">
+    <div className="rounded-[20px] border border-line bg-wrap overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-line">
         <span className="flex items-center gap-2 text-[12px] font-semibold text-d-text-primary">
           <Bell className="w-3.5 h-3.5 text-primary" /> Live Alerts
@@ -53,7 +53,7 @@ export default function LiveAlertsCard() {
       </div>
       <div className="max-h-[280px] overflow-y-auto divide-y divide-line">
         {alerts.map((a, i) => {
-          const t = TYPE[a.type] || { icon: Bell, color: '#8b8f9a' }
+          const t = TYPE[a.type] || { icon: Bell, color: 'var(--color-muted)' }
           const Icon = t.icon
           return (
             <Link

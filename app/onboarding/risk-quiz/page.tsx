@@ -36,9 +36,9 @@ type QuizQuestion = Awaited<ReturnType<typeof api.onboarding.quiz>>['quiz'][numb
 type QuizResult = Awaited<ReturnType<typeof api.onboarding.submit>>
 
 const PROFILE_COLOR: Record<string, string> = {
-  conservative: '#4FECCD',
-  moderate:     '#FEB113',
-  aggressive:   '#FF9900',
+  conservative: 'var(--color-primary)',
+  moderate:     'var(--color-warning)',
+  aggressive:   'var(--color-warning)',
 }
 
 // Theme-aware text token per profile (the hex above stays for the faint
@@ -225,10 +225,10 @@ export default function RiskQuizPage() {
                   <button
                     key={opt.value}
                     onClick={() => pick(opt.value)}
-                    className={`w-full text-left px-4 py-3 rounded-md border transition-all ${
+                    className={`w-full text-left px-4 py-3 rounded-md transition-all ${
                       picked
-                        ? 'bg-primary/10 border-primary/50 text-d-text-primary'
-                        : 'bg-main border-d-border text-d-text-secondary hover:border-d-border-hover hover:text-d-text-primary'
+                        ? 'glass-control-accent'
+                        : 'glass-control text-d-text-secondary hover:text-d-text-primary'
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -263,7 +263,7 @@ export default function RiskQuizPage() {
             <button
               onClick={submit}
               disabled={!allAnswered || submitting}
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground rounded-md text-[13px] font-semibold hover:bg-primary-hover disabled:opacity-40 disabled:cursor-not-allowed"
+              className="glass-control-accent inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-[13px] font-semibold active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {submitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
               {submitting ? 'Calibrating…' : 'Calibrate AutoPilot'}
@@ -293,7 +293,7 @@ export default function RiskQuizPage() {
 
 
 function ResultScreen({ result, onDone }: { result: QuizResult; onDone: () => void }) {
-  const profileColor = PROFILE_COLOR[result.risk_profile] || '#4FECCD'
+  const profileColor = PROFILE_COLOR[result.risk_profile] || 'var(--color-primary)'
   const tierCopy = TIER_COPY[result.recommended_tier]
   const TierIcon = tierCopy?.icon || Sparkles
 
@@ -303,8 +303,8 @@ function ResultScreen({ result, onDone }: { result: QuizResult; onDone: () => vo
         <div
           className="rounded-2xl border p-6 md:p-8"
           style={{
-            borderColor: `${profileColor}55`,
-            background: `${profileColor}08`,
+            borderColor: `color-mix(in srgb, ${profileColor} 33%, transparent)`,
+            background: `color-mix(in srgb, ${profileColor} 3%, transparent)`,
             borderLeftWidth: 4,
           }}
         >
@@ -341,7 +341,7 @@ function ResultScreen({ result, onDone }: { result: QuizResult; onDone: () => vo
             </div>
             <Link
               href="/pricing"
-              className="inline-flex items-center gap-1.5 px-4 py-2 border border-d-border text-[12px] text-d-text-primary rounded-md hover:bg-hover"
+              className="glass-control inline-flex items-center gap-1.5 px-4 py-2 text-[12px] text-d-text-primary rounded-full"
             >
               See plans
             </Link>
@@ -395,7 +395,7 @@ function ResultScreen({ result, onDone }: { result: QuizResult; onDone: () => vo
           </Link>
           <button
             onClick={onDone}
-            className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground rounded-md text-[13px] font-semibold hover:bg-primary-hover"
+            className="glass-control-accent inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-[13px] font-semibold active:scale-[0.98]"
           >
             Continue
             <ArrowRight className="w-3.5 h-3.5" />
@@ -472,9 +472,7 @@ function ModeChoiceScreen({
                 key={o.mode}
                 onClick={() => choose(o.mode)}
                 disabled={busy !== null}
-                className={`relative rounded-2xl border p-6 text-left transition-colors hover:border-primary/60 hover:bg-wrap-hover disabled:opacity-60 ${
-                  isRec ? 'border-primary/60 bg-primary/5' : 'border-d-border bg-wrap'
-                }`}
+                className="glass-control relative rounded-2xl p-6 text-left transition-colors disabled:opacity-60"
               >
                 {isRec && (
                   <span className="absolute right-4 top-4 rounded bg-primary/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">

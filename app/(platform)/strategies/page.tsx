@@ -46,10 +46,6 @@ import {
   toast,
 } from '@/components/foundation'
 import { dispatchCopilotOpen } from '@/components/copilot/CopilotProvider'
-import { EmbeddedAgent } from '@/components/copilot/EmbeddedAgent'
-import OptionsCopilotCard from '@/components/fno/OptionsCopilotCard'
-import { ChipRow, ArtifactCard, ActionRow } from '@/components/copilot/artifacts'
-import type { Tok } from '@/components/copilot/types'
 import { api } from '@/lib/api'
 import { handleApiError } from '@/lib/api'
 import { MONO, AI } from '@/lib/tokens'
@@ -99,12 +95,9 @@ export default function StrategiesPage() {
       />
 
       <div className="space-y-6 px-4 py-5 md:px-6 xl:px-8">
-        {/* Strategy Agent — frames the Studio with REAL catalog data (no LLM
-            tokens on load). The actual NL→DSL compile stays user-triggered in
-            the Builder tab, so cost only fires on an explicit Compile. */}
-        <Reveal delay={0.04}>
-          <StrategyAgentHero onOpenBuilder={() => setTab('builder')} />
-        </Reveal>
+        {/* No embedded agent hero (chat unification 2026-07-21): the header's
+            Ask Copilot button opens the global dock with strategy context, and
+            the Builder tab is where the NL→DSL compile actually lives. */}
 
         {/* tabs — every existing tab preserved */}
         <Reveal delay={0.08}>
@@ -145,122 +138,6 @@ export default function StrategiesPage() {
 
         <DisclaimerFooter />
       </div>
-    </div>
-  )
-}
-
-// ═══════════════════════════════════════════════════════════════════════
-// STRATEGY AGENT — embedded GenUI hero.
-//
-// LIVE mode: `run` hits /api/strategies/catalog/sections (pure data — no LLM
-// tokens), ranks the tested templates by Sharpe, and streams a Studio framing.
-// The real NL→DSL compile + backtest lives in the Builder tab below; the
-// "Open the Builder" CTA jumps there. Only the Builder's Compile button
-// spends LLM tokens — never page load.
-// ═══════════════════════════════════════════════════════════════════════
-
-function StrategyAgentHero({ onOpenBuilder }: { onOpenBuilder: () => void }) {
-  const router = useRouter()
-  const [tops, setTops] = useState<CatalogTemplate[]>([])
-
-  const run = async () => {
-    const r = await api.strategies.getCatalogSections()
-    const s = r.sections
-    const all = [s.exclusive, s.featured, s.swing, s.intraday, s.options]
-      .filter(Boolean)
-      .flatMap((sec) => sec.templates ?? [])
-    const ranked = all
-      .filter((t) => t.backtest_sharpe != null)
-      .sort((a, b) => (b.backtest_sharpe ?? 0) - (a.backtest_sharpe ?? 0))
-    const top = ranked.slice(0, 3)
-    setTops(top)
-    const best = ranked[0]
-
-    const narration: Tok[] = [
-      ['The library holds ', 0],
-      [`${all.length} strategies`, 1],
-      [', ', 0],
-      [`${ranked.length} with a logged backtest`, 1],
-      ['. ', 0],
-    ]
-    if (best) {
-      narration.push(['Strongest by risk-adjusted return: ', 0])
-      narration.push([`${best.name} (Sharpe ${best.backtest_sharpe!.toFixed(2)}`, 1])
-      if (best.backtest_win_rate != null) narration.push([`, ${formatPercent(best.backtest_win_rate, 0)} win`, 0])
-      narration.push(['). ', 0])
-    }
-    narration.push(["Describe your own in plain English. I compile it to a DSL, then walk-forward backtest it on out-of-sample data before anything trades.", 0])
-
-    return {
-      narration,
-      trace: (
-        <>
-          Scanned {all.length} templates · {ranked.length} backtested · ranked by Sharpe · gate: backtest → deploy
-        </>
-      ),
-    }
-  }
-
-  return (
-    <div className="space-y-2">
-      <EmbeddedAgent
-        name="Strategy Agent"
-        scope="Scoped to Studio · plain English in, walk-forward-gated DSL out"
-        query="What's in the strategy library, and how do I build my own?"
-        run={run}
-        askPrompt="Help me design a strategy — e.g. buy when 20EMA crosses 50EMA with RSI 50-70"
-        renderArtifacts={(step) => (
-          <>
-            {step >= 3 && (
-              <ChipRow
-                label="Studio"
-                addable={false}
-                items={[
-                  { icon: Wand2, k: 'AI compiles', v: 'Plain English → DSL' },
-                  { icon: TrendingUp, k: 'Then', v: 'Walk-forward backtest' },
-                  { icon: Sparkles, k: 'Gate', v: 'Sharpe → deploy' },
-                ]}
-              />
-            )}
-            {step >= 4 && tops.length > 0 && (
-              <ArtifactCard title="Strongest tested strategies" meta="ranked by Sharpe">
-                <div className="divide-y divide-line">
-                  {tops.map((t) => (
-                    <button
-                      key={t.slug}
-                      onClick={() => router.push(`/strategies/${t.slug}`)}
-                      className="grid w-full grid-cols-[1fr_auto_auto_auto] items-center gap-3 px-3 py-2 text-left text-[12px] hover:bg-wrap-hover"
-                    >
-                      <span className="truncate font-medium text-d-text-primary">{t.name}</span>
-                      <span className={`tabular-nums text-d-text-secondary ${MONO}`}>
-                        Sharpe {t.backtest_sharpe!.toFixed(2)}
-                      </span>
-                      <span className={`tabular-nums text-up ${MONO}`}>
-                        {t.backtest_win_rate != null ? formatPercent(t.backtest_win_rate, 0) : '-'}
-                      </span>
-                      <span className="rounded bg-wrap px-1.5 py-0.5 text-[10px] uppercase text-d-text-muted">
-                        {t.tier_required}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </ArtifactCard>
-            )}
-            {step >= 5 && <ActionRow items={[[Wand2, 'Describe your own in plain English'], [Sparkles, 'Ask Copilot']]} />}
-          </>
-        )}
-      />
-      {/* Real CTA — jumps to the Builder tab where the LLM compile happens. */}
-      <button
-        onClick={onOpenBuilder}
-        className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-line bg-surface-2 px-3 py-2 text-[12px] font-medium text-d-text-secondary transition-colors hover:text-d-text-primary"
-        style={{ borderColor: `color-mix(in srgb, ${AI} 30%, transparent)` }}
-      >
-        <Wand2 size={13} className="text-ai" /> Build your own
-      </button>
-      {/* F&O quick-Q&A agent. The full options workspace now lives on /fno
-          (Strategy Lab tab); this lightweight copilot stays here for convenience. */}
-      <OptionsCopilotCard />
     </div>
   )
 }
@@ -791,7 +668,7 @@ function BuilderTab() {
                 type="button"
                 onClick={() => onCompile()}
                 disabled={phase === 'compiling' || !prompt.trim()}
-                className="bg-gradient-cta inline-flex h-9 items-center gap-1.5 rounded-pill px-4 text-[13px] font-semibold text-on-signature transition-transform active:scale-[0.97] disabled:opacity-50"
+                className="glass-control-accent inline-flex h-9 items-center gap-1.5 rounded-pill px-4 text-[13px] font-semibold transition-transform active:scale-[0.97] disabled:opacity-50"
               >
                 {phase === 'compiling' ? 'Compiling…' : 'Compile to DSL'}
                 <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -841,7 +718,7 @@ function BuilderTab() {
                   type="button"
                   onClick={onAnswerClarify}
                   disabled={!clarifyAnswer.trim() || phase === 'compiling'}
-                  className="bg-gradient-cta inline-flex h-9 items-center gap-1.5 rounded-pill px-4 text-[13px] font-semibold text-on-signature transition-transform active:scale-[0.97] disabled:opacity-50"
+                  className="glass-control-accent inline-flex h-9 items-center gap-1.5 rounded-pill px-4 text-[13px] font-semibold transition-transform active:scale-[0.97] disabled:opacity-50"
                 >
                   Refine &amp; compile
                   <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -860,7 +737,7 @@ function BuilderTab() {
                 key={p}
                 type="button"
                 onClick={() => setPrompt(p)}
-                className="rounded-lg border border-line bg-wrap px-3 py-2.5 text-left text-xs text-d-text-secondary transition-colors hover:border-wrap-line hover:text-d-text-primary"
+                className="glass-control rounded-lg px-3 py-2.5 text-left text-xs text-d-text-secondary transition-colors hover:text-d-text-primary"
               >
                 {p}
               </button>

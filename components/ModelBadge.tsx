@@ -37,15 +37,15 @@ export default function ModelBadge({
 }: ModelBadgeProps) {
   const m = publicModel(modelKey)
   const name = m?.name ?? String(modelKey)
-  const hex = m?.hex ?? '#4FECCD'
+  const hex = m?.hex ?? 'var(--color-primary-text)'
   const role = m?.role
 
   const style =
     variant === 'solid'
-      ? { background: hex, color: '#0A0D14', borderColor: hex }
+      ? { background: hex, color: 'var(--color-main)', borderColor: hex }
       : variant === 'outline'
-        ? { background: 'transparent', color: hex, borderColor: `${hex}66` }
-        : { background: `${hex}14`, color: hex, borderColor: `${hex}55` }
+        ? { background: 'transparent', color: hex, borderColor: `color-mix(in srgb, ${hex} 40%, transparent)` }
+        : { background: `color-mix(in srgb, ${hex} 8%, transparent)`, color: hex, borderColor: `color-mix(in srgb, ${hex} 33%, transparent)` }
 
   return (
     <span

@@ -37,7 +37,7 @@ export default function StockMoodLookup() {
         <button
           type="submit"
           disabled={!input.trim()}
-          className="rounded-md bg-primary px-3 py-1 text-[11px] font-medium text-primary-foreground transition-opacity disabled:opacity-40"
+          className="glass-control-accent rounded-full px-3 py-1 text-[11px] font-medium transition-opacity active:scale-[0.98] disabled:opacity-40"
         >
           Go
         </button>

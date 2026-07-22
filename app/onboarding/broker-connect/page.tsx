@@ -259,7 +259,7 @@ export default function BrokerConnectPage() {
                   disabled={pending !== null}
                   aria-label={`Connect ${b.name}`}
                   aria-expanded={inline ? expanded : undefined}
-                  className="flex w-full items-center justify-between rounded-md border border-line bg-main p-3 text-left transition-colors hover:border-wrap-line hover:bg-wrap-hover disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="glass-control flex w-full items-center justify-between rounded-md p-3 text-left transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <div>
                     <p className="flex items-center gap-1.5 text-sm font-medium text-d-text-primary">

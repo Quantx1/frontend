@@ -18,85 +18,50 @@ const config: Config = {
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
-    './lib/**/*.{js,ts,jsx,tsx}',   // feature-colors / copilot-modes hold class strings
+    './lib/**/*.{js,ts,jsx,tsx}',   // class strings live in lib/ too (copilot-modes etc.)
     './src/**/*.{ts,tsx}',
   ],
   theme: {
     extend: {
       colors: {
         // ──────────────────────────────────────────────────────────────
-        // THEME-AWARE TOKENS (2026-05-18 audit)
-        // Wire the existing class names (bg-main / bg-wrap / text-d-text-* /
-        // border-d-border) — used in ~1700 places — to the CSS variables
-        // defined in globals.css so they actually theme. Without these
-        // they were silent no-ops; the cards stayed dark because each
-        // surface was using a hardcoded bg-[#hex] literal alongside.
+        // "FINTECHX" TOKENS (v4, 2026-07-14) — every semantic class
+        // resolves to a CSS variable in globals.css, so the whole app
+        // re-themes (dark ⇄ light) by variable values alone. No raw hex
+        // here except nothing — additions MUST go through globals.css.
         // ──────────────────────────────────────────────────────────────
-        main:               'var(--color-main)',           // L0 page bg
-        wrap:               'var(--color-wrap)',           // L1 cards
-        'wrap-hover':       'var(--color-wrap-hover)',     // L2 hover/elevated
-        hover:              'var(--color-hover)',          // L2 row hover
-        line:               'var(--color-line)',           // L3 borders
-        'wrap-line':        'var(--color-wrap-line)',      // L4 accent borders
-        'card-hover':       'var(--color-card-hover)',
-        'surface-2':        'var(--color-surface-2)',
-        'chart-bg':         'var(--color-chart-bg)',
-        up:                 'var(--color-up)',
-        down:               'var(--color-down)',
-        ai:                 'var(--color-ai)',          // AI / Copilot / agent surfaces ONLY (violet)
-        highlight:          'var(--color-highlight)',   // pricing tier / quiz rec
-        orange:             'var(--color-orange)',      // autopilot / regime panel
-        signature:          'var(--color-signature-ink)', // brand mint ink, theme-aware (AA on light)
-        // ── Per-feature accent hues (2026-07-13) — icon colors across the app
-        // (nav · headers · cards) via lib/feature-colors. Top-level so the
-        // `text-ax-*` utilities actually generate (nested groups don't here).
-        'ax-blue':          '#3B82F6',
-        'ax-cyan':          '#22D3EE',
-        'ax-teal':          '#14B8A6',
-        'ax-indigo':        '#6366F1',
-        'ax-amber':         '#F5A623',
-        'ax-pink':          '#EC4899',
-        'd-bg':             'var(--color-main)',
-        'd-bg-card':        'var(--color-wrap)',
-        'd-bg-sidebar':     'var(--color-wrap)',
-        'd-bg-elevated':    'var(--color-wrap-hover)',
-        'd-border':         'var(--color-line)',
-        'd-border-hover':   'var(--color-wrap-line)',
-        'd-text-primary':   'var(--color-light)',
-        'd-text-secondary': 'var(--color-desc)',
-        'd-text-muted':     'var(--color-muted)',
+        // Channel-based (`rgb(var(--rgb-x) / <alpha-value>)`) so opacity
+        // modifiers WORK — a plain var() string silently drops `bg-up/10`.
+        main:               'rgb(var(--rgb-main) / <alpha-value>)',        // L0 page bg
+        wrap:               'rgb(var(--rgb-wrap) / <alpha-value>)',        // L1 cards
+        'wrap-hover':       'rgb(var(--rgb-wrap-hover) / <alpha-value>)',  // L2 hover/elevated
+        hover:              'rgb(var(--rgb-wrap-hover) / <alpha-value>)',  // L2 row hover
+        line:               'rgb(var(--rgb-line) / <alpha-value>)',        // L3 borders
+        'wrap-line':        'rgb(var(--rgb-wrap-line) / <alpha-value>)',   // L4 accent borders
+        'card-hover':       'rgb(var(--rgb-wrap-hover) / <alpha-value>)',
+        'surface-2':        'rgb(var(--rgb-wrap-hover) / <alpha-value>)',
+        'chart-bg':         'rgb(var(--rgb-main) / <alpha-value>)',
+        up:                 'rgb(var(--rgb-up) / <alpha-value>)',          // P&L ONLY
+        down:               'rgb(var(--rgb-down) / <alpha-value>)',        // P&L ONLY
+        ai:                 'rgb(var(--rgb-ai) / <alpha-value>)',          // AI / Copilot accents
+        cyan:               'rgb(var(--rgb-cyan) / <alpha-value>)',        // live / energy secondary
+        highlight:          'rgb(var(--rgb-warning) / <alpha-value>)',     // pricing tier / quiz rec
+        orange:             'rgb(var(--rgb-warning) / <alpha-value>)',     // true-caution surfaces
+        signature:          'var(--color-signature-ink)',                  // brand ink, theme-aware
+        'd-bg':             'rgb(var(--rgb-main) / <alpha-value>)',
+        'd-bg-card':        'rgb(var(--rgb-wrap) / <alpha-value>)',
+        'd-bg-sidebar':     'rgb(var(--rgb-wrap) / <alpha-value>)',
+        'd-bg-elevated':    'rgb(var(--rgb-wrap-hover) / <alpha-value>)',
+        'd-border':         'rgb(var(--rgb-line) / <alpha-value>)',
+        'd-border-hover':   'rgb(var(--rgb-wrap-line) / <alpha-value>)',
+        'd-text-primary':   'rgb(var(--rgb-ink) / <alpha-value>)',
+        'd-text-secondary': 'rgb(var(--rgb-desc) / <alpha-value>)',
+        'd-text-muted':     'rgb(var(--rgb-muted) / <alpha-value>)',
 
-        // Deep Space Theme Colors
         background: {
           primary: 'rgb(var(--background-primary) / <alpha-value>)',
           surface: 'rgb(var(--background-surface) / <alpha-value>)',
           elevated: 'rgb(var(--background-elevated) / <alpha-value>)',
-        },
-        // Deep space specific colors
-        space: {
-          void: '#04060e',
-          deep: '#080c18',
-          nebula: '#0c1220',
-          star: '#ffffff',
-        },
-        // Neon accent colors for 2026 fintech
-        neon: {
-          cyan: '#00e5ff',
-          green: '#00ff88',
-          purple: '#8b5cf6',
-          pink: '#f472b6',
-          gold: '#fbbf24',
-        },
-        tv: {
-          blue: {
-            DEFAULT: '#0057FF',
-            primary: '#0057FF',
-            dark: '#003E8B',
-            deeper: '#002F9A',
-          },
-          green: '#028901',
-          red: '#D00D00',
-          orange: '#F97C00',
         },
         primary: {
           DEFAULT: 'rgb(var(--primary) / <alpha-value>)',
@@ -137,18 +102,27 @@ const config: Config = {
         },
         border: 'rgb(var(--border) / <alpha-value>)',
         ring: 'rgb(var(--ring) / <alpha-value>)',
-        // Glass colors
-        glass: {
-          light: 'rgba(255, 255, 255, 0.06)',
-          medium: 'rgba(255, 255, 255, 0.1)',
-          border: 'rgba(255, 255, 255, 0.08)',
+      },
+      // The accent is a FILL colour: white sits on it (5.3:1 dark / 5.9:1
+      // light). As TEXT it needs its own ink — lightened violet on dark,
+      // deepened on light — or every `bg-primary/10 text-primary` chip goes
+      // low-contrast. Remap ONLY the text scale; bg-/border-primary keep the
+      // true accent, and text-primary-foreground stays white.
+      textColor: {
+        primary: {
+          DEFAULT: 'rgb(var(--rgb-primary-text) / <alpha-value>)',
+          foreground: 'rgb(var(--primary-foreground) / <alpha-value>)',
+        },
+        // accent == primary (one accent); as TEXT it takes the same ink split.
+        accent: {
+          DEFAULT: 'rgb(var(--rgb-primary-text) / <alpha-value>)',
+          foreground: 'rgb(var(--accent-foreground) / <alpha-value>)',
         },
       },
       fontFamily: {
-        // v2 PRIMARY family — Plus Jakarta Sans (--font-sans) for titles + body
-        // + UI (2026-06-20). `display` resolves to the same
-        // family via the --font-display alias (globals.css) — kept so legacy
-        // `font-display` callers don't churn. Headings run 600-700, body 400.
+        // FintechX v4 — Inter (--font-sans) for body + UI; Bricolage
+        // Grotesque (--font-display) for display headings (600/700).
+        // Numerics: Geist Mono (--font-mono).
         sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
         display: ['var(--font-display)', 'var(--font-sans)', 'system-ui', 'sans-serif'],
         serif: ['var(--font-serif)', 'Georgia', 'serif'],
@@ -190,54 +164,17 @@ const config: Config = {
         '32': '128px',
       },
       backgroundImage: {
-        // Deep space gradients
-        'gradient-space': 'linear-gradient(180deg, #04060e 0%, #080c18 50%, #0c1220 100%)',
-        'gradient-nebula': 'radial-gradient(ellipse 80% 50% at 20% 40%, rgba(0, 229, 255, 0.08) 0%, transparent 50%), radial-gradient(ellipse 60% 80% at 80% 20%, rgba(139, 92, 246, 0.06) 0%, transparent 50%)',
-        'gradient-aurora': 'radial-gradient(ellipse 150% 80% at 50% 120%, rgba(0, 229, 255, 0.15) 0%, transparent 50%), radial-gradient(ellipse 100% 60% at 30% -20%, rgba(139, 92, 246, 0.12) 0%, transparent 50%)',
-        // Neon gradients
-        'gradient-primary': 'linear-gradient(135deg, #00e5ff 0%, #00ff88 100%)',
-        'gradient-accent': 'linear-gradient(135deg, #00e5ff 0%, #8b5cf6 100%)',
-        'gradient-success': 'linear-gradient(135deg, #00ff88 0%, #22c55e 100%)',
-        'gradient-danger': 'linear-gradient(135deg, #ff4757 0%, #ef4444 100%)',
-        'gradient-gold': 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        // Glass gradient
-        'gradient-glass': 'linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%)',
-        // v2 signature — the ONE gradient family (emerald → cyan → violet).
-        // Mirrors --gradient-signature / .bg-gradient-signature in globals.css.
-        'gradient-signature': 'linear-gradient(110deg, #00E6A7 0%, #22D3EE 52%, #8B5CF6 100%)',
-        // CTA fill (mint → violet pill) — mirrors --gradient-cta / .bg-gradient-cta.
-        'gradient-cta': 'linear-gradient(120deg, #00E6A7 0%, #22D3EE 45%, #8B5CF6 100%)',
+        // The ONE gradient family (glossy blue). Mirrors --gradient-signature /
+        // --gradient-cta in globals.css; anything on these fills takes
+        // text-primary-foreground (white).
+        'gradient-signature': 'linear-gradient(180deg, #5290F4 0%, #406AE4 55%, #3055C2 100%)',
+        'gradient-cta': 'linear-gradient(180deg, #5290F4 0%, #406AE4 55%, #3055C2 100%)',
       },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-in-out',
         'fade-in-up': 'fadeInUp 0.4s ease-out',
-        'slide-in-right': 'slideInRight 0.3s ease-out',
-        'slide-in-left': 'slideInLeft 0.3s ease-out',
-        'scale-in': 'scaleIn 0.2s ease-out',
-        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'shimmer': 'shimmer 2s linear infinite',
-        'ticker': 'ticker 30s linear infinite',
-        'float': 'float 6s ease-in-out infinite',
-        'grid': 'grid 18s linear infinite',
-        'aurora': 'aurora 60s linear infinite',
-        'spotlight': 'spotlight 2s ease 0.75s 1 forwards',
-        'glow-pulse': 'glowPulse 2s ease-in-out infinite',
-        'gradient-shift': 'gradientShift 8s ease-in-out infinite',
-        'starfield': 'starfield 100s linear infinite',
-        // 2026 Enhanced Animations
-        'mesh': 'meshFlow 20s ease-in-out infinite',
-        'blob': 'blobMorph 8s ease-in-out infinite',
-        'border-rotate': 'borderRotate 4s linear infinite',
-        'slide-up-stagger': 'slideUpStagger 0.5s ease-out forwards',
-        'ring-spin': 'ringSpin 2s linear infinite',
-        'status-pulse': 'statusPulse 2s ease-in-out infinite',
-        'dock-bounce': 'dockBounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
-        'number-tick': 'numberTick 0.3s ease-out',
-        'reveal-up': 'revealUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-        'reveal-left': 'revealLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-        'reveal-right': 'revealRight 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-        // ── xAI dep-free overlay motion (replaces tailwindcss-animate). ──
+        // ── Dep-free overlay motion (replaces tailwindcss-animate). ──
         // Strong ease-out, sub-300ms, scale from 0.97 (never 0). Origin is
         // set on the element (Radix transform-origin var) so pop/tip scale
         // from their trigger; dialog stays centered.
@@ -267,112 +204,13 @@ const config: Config = {
           '0%': { opacity: '0', transform: 'translateY(20px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
-        slideInRight: {
-          '0%': { transform: 'translateX(100%)' },
-          '100%': { transform: 'translateX(0)' },
-        },
-        slideInLeft: {
-          '0%': { transform: 'translateX(-100%)' },
-          '100%': { transform: 'translateX(0)' },
-        },
-        scaleIn: {
-          '0%': { transform: 'scale(0.95)', opacity: '0' },
-          '100%': { transform: 'scale(1)', opacity: '1' },
-        },
-        shimmer: {
-          '0%': { backgroundPosition: '-1000px 0' },
-          '100%': { backgroundPosition: '1000px 0' },
-        },
-        ticker: {
-          '0%': { transform: 'translateX(0)' },
-          '100%': { transform: 'translateX(-50%)' },
-        },
-        float: {
-          '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-20px)' },
-        },
-        grid: {
-          '0%': { transform: 'translateY(0)' },
-          '100%': { transform: 'translateY(60px)' },
-        },
-        aurora: {
-          from: { backgroundPosition: '50% 50%, 50% 50%' },
-          to: { backgroundPosition: '350% 50%, 350% 50%' },
-        },
-        spotlight: {
-          '0%': { opacity: '0', transform: 'translate(-72%, -62%) scale(0.5)' },
-          '100%': { opacity: '1', transform: 'translate(-50%, -40%) scale(1)' },
-        },
-        glowPulse: {
-          '0%, 100%': { boxShadow: '0 0 20px rgba(0, 229, 255, 0.3)' },
-          '50%': { boxShadow: '0 0 40px rgba(0, 229, 255, 0.6)' },
-        },
-        gradientShift: {
-          '0%': { backgroundPosition: '0% 50%' },
-          '50%': { backgroundPosition: '100% 50%' },
-          '100%': { backgroundPosition: '0% 50%' },
-        },
-        starfield: {
-          '0%': { transform: 'translateY(0)' },
-          '100%': { transform: 'translateY(-2000px)' },
-        },
-        // 2026 Enhanced Keyframes
-        meshFlow: {
-          '0%': { backgroundPosition: '0% 0%' },
-          '25%': { backgroundPosition: '50% 25%' },
-          '50%': { backgroundPosition: '100% 50%' },
-          '75%': { backgroundPosition: '50% 75%' },
-          '100%': { backgroundPosition: '0% 0%' },
-        },
-        blobMorph: {
-          '0%, 100%': { borderRadius: '60% 40% 30% 70% / 60% 30% 70% 40%' },
-          '50%': { borderRadius: '30% 60% 70% 40% / 50% 60% 30% 60%' },
-        },
-        borderRotate: {
-          to: { '--border-angle': '360deg' } as any,
-        },
-        slideUpStagger: {
-          '0%': { opacity: '0', transform: 'translateY(30px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
-        ringSpin: {
-          to: { transform: 'rotate(360deg)' },
-        },
-        statusPulse: {
-          '0%, 100%': { transform: 'scale(1)', opacity: '1' },
-          '50%': { transform: 'scale(1.4)', opacity: '0.7' },
-        },
-        dockBounce: {
-          '0%': { transform: 'translateY(0)' },
-          '40%': { transform: 'translateY(-8px)' },
-          '100%': { transform: 'translateY(0)' },
-        },
-        numberTick: {
-          '0%': { transform: 'translateY(-100%)', opacity: '0' },
-          '100%': { transform: 'translateY(0)', opacity: '1' },
-        },
-        revealUp: {
-          '0%': { opacity: '0', transform: 'translateY(40px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
-        revealLeft: {
-          '0%': { opacity: '0', transform: 'translateX(40px)' },
-          '100%': { opacity: '1', transform: 'translateX(0)' },
-        },
-        revealRight: {
-          '0%': { opacity: '0', transform: 'translateX(-40px)' },
-          '100%': { opacity: '1', transform: 'translateX(0)' },
-        },
-        // ── xAI dep-free overlay keyframes ──
+        // ── Dep-free overlay keyframes ──
         overlayIn:  { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
         overlayOut: { '0%': { opacity: '1' }, '100%': { opacity: '0' } },
-        // Pop/tip: scale from 0.97 + opacity (transform-origin set on element).
         popIn:  { '0%': { opacity: '0', transform: 'scale(0.97)' }, '100%': { opacity: '1', transform: 'scale(1)' } },
         popOut: { '0%': { opacity: '1', transform: 'scale(1)' }, '100%': { opacity: '0', transform: 'scale(0.97)' } },
-        // Dialog: centered, scales from 0.97 (origin stays center).
         dialogIn:  { '0%': { opacity: '0', transform: 'translate(-50%, -50%) scale(0.97)' }, '100%': { opacity: '1', transform: 'translate(-50%, -50%) scale(1)' } },
         dialogOut: { '0%': { opacity: '1', transform: 'translate(-50%, -50%) scale(1)' }, '100%': { opacity: '0', transform: 'translate(-50%, -50%) scale(0.97)' } },
-        // Sheets slide from their edge.
         sheetInRight:  { '0%': { transform: 'translateX(100%)' }, '100%': { transform: 'translateX(0)' } },
         sheetOutRight: { '0%': { transform: 'translateX(0)' }, '100%': { transform: 'translateX(100%)' } },
         sheetInLeft:   { '0%': { transform: 'translateX(-100%)' }, '100%': { transform: 'translateX(0)' } },
@@ -387,31 +225,22 @@ const config: Config = {
         '2xl': '40px',
       },
       boxShadow: {
-        // Glow shadows
-        'glow-sm': '0 0 10px rgba(0, 229, 255, 0.3)',
-        'glow-md': '0 0 20px rgba(0, 229, 255, 0.4)',
-        'glow-lg': '0 0 30px rgba(0, 229, 255, 0.5)',
-        'glow-success': '0 0 20px rgba(0, 255, 136, 0.4)',
-        'glow-danger': '0 0 20px rgba(255, 71, 87, 0.4)',
-        // Glass shadows
+        // Neutral elevation only — depth comes from borders first, shadow
+        // second. No colored glows; accent halos live in globals.css
+        // (.glow-signature / .glow-ai) where they stay token-driven.
         'glass': '0 8px 32px -4px rgba(0, 0, 0, 0.4), inset 0 1px 0 0 rgba(255, 255, 255, 0.06)',
         'glass-lg': '0 16px 48px -8px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.08)',
-        // Soft elevation
         'soft': '0 4px 24px -1px rgba(0, 0, 0, 0.3)',
-        'soft-lg': '0 8px 32px -4px rgba(0, 0, 0, 0.4), 0 16px 64px -8px rgba(0, 0, 0, 0.2)',
-        // Inner glow
-        'inner-glow': 'inset 0 1px 0 0 rgba(255, 255, 255, 0.05)',
-        'inner-glow-lg': 'inset 0 2px 4px 0 rgba(255, 255, 255, 0.06)',
       },
       borderRadius: {
-        'sm': '8px',       // xAI card radius
-        'pill': '9999px',  // xAI interactive shape
+        'sm': '8px',
+        'pill': '9999px',
         '4xl': '2rem',
         '5xl': '2.5rem',
       },
       transitionTimingFunction: {
-        // Strong custom ease-out for UI (per emil-design-eng). Built-in
-        // easings are too weak for entering/exiting overlays.
+        // Strong custom ease-out for UI. Built-in easings are too weak for
+        // entering/exiting overlays.
         'xai-out': 'cubic-bezier(0.23, 1, 0.32, 1)',
       },
     },

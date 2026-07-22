@@ -37,7 +37,7 @@ const BUCKETS = [
   { key: 'short_buildup',   label: 'Short Buildup',   icon: ArrowDownRight, tone: 'text-down', help: 'Price ↓ + OI ↑ — fresh short positioning' },
   { key: 'short_covering',  label: 'Short Covering',  icon: ArrowUpLeft,    tone: 'text-up',   help: 'Price ↑ + OI ↓ — shorts squeeze-cover' },
   { key: 'long_unwinding',  label: 'Long Unwinding',  icon: ArrowDownLeft,  tone: 'text-down', help: 'Price ↓ + OI ↓ — longs covering (exhaustion warning)' },
-  { key: 'oi_spike',        label: 'OI Spike',        icon: Zap,            tone: 'text-amber-400', help: 'Single-symbol ΔOI ≥ 20% — institutional footprint' },
+  { key: 'oi_spike',        label: 'OI Spike',        icon: Zap,            tone: 'text-warning', help: 'Single-symbol ΔOI ≥ 20% — institutional footprint' },
 ] as const
 
 
@@ -66,7 +66,7 @@ export default function FnoStockScanners() {
   return (
     <div className="space-y-4">
       {/* FII/DII header strip */}
-      <div className="flex flex-wrap items-center gap-3 rounded-md border border-line bg-wrap/60 px-3 py-2 text-xs">
+      <div className="flex flex-wrap items-center gap-3 rounded-[20px] border border-line bg-wrap/60 px-3 py-2 text-xs">
         <span className="text-[10px] font-semibold uppercase tracking-wider text-d-text-muted">Institutional flow</span>
         {data ? (
           <>
@@ -90,7 +90,7 @@ export default function FnoStockScanners() {
 
       {/* OI-feed warning when data unavailable */}
       {data && !data.oi_source?.startsWith('bhavcopy') && data.oi_last_error && (
-        <div className="rounded-md border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-[11px] text-amber-300">
+        <div className="rounded-xl border border-warning/30 bg-warning/5 px-3 py-2 text-[11px] text-warning">
           <strong>NSE OI feed unavailable today:</strong> {data.oi_last_error}.
           OI buildup buckets degrade to empty until the NSE bhavcopy publishes
           (usually post 5 PM IST). FII/DII flow still works via the live API.
@@ -104,7 +104,7 @@ export default function FnoStockScanners() {
           const rows: OiRow[] = (data?.buckets?.[b.key] ?? []) as OiRow[]
           const count = data?.counts?.[b.key] ?? 0
           return (
-            <div key={b.key} className="rounded-xl border border-line bg-wrap">
+            <div key={b.key} className="rounded-[20px] border border-line bg-wrap">
               <header className="flex items-center justify-between border-b border-line px-3 py-2">
                 <div className="flex items-center gap-2">
                   <Icon className={`h-4 w-4 ${b.tone}`} />
@@ -130,7 +130,7 @@ export default function FnoStockScanners() {
                         <span className={r.change_pct >= 0 ? 'text-up' : 'text-down'}>
                           {r.change_pct >= 0 ? '+' : ''}{r.change_pct.toFixed(1)}%
                         </span>
-                        <span className={r.oi_change_pct >= 0 ? 'text-amber-300' : 'text-d-text-muted'}>
+                        <span className={r.oi_change_pct >= 0 ? 'text-warning' : 'text-d-text-muted'}>
                           OI {r.oi_change_pct >= 0 ? '+' : ''}{r.oi_change_pct.toFixed(0)}%
                         </span>
                       </span>

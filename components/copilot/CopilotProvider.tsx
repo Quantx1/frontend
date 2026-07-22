@@ -430,7 +430,7 @@ export default function CopilotProvider() {
               className={cn(
                 'flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[11.5px] font-medium transition-colors',
                 on
-                  ? 'bg-d-text-primary text-main'
+                  ? 'glass-control-accent'
                   : 'text-d-text-muted hover:bg-wrap-hover hover:text-d-text-primary',
               )}
             >
@@ -451,7 +451,7 @@ export default function CopilotProvider() {
               {starters.map((s) => (
                 <button
                   key={s} type="button" onClick={() => send(s)}
-                  className="group flex items-center justify-between rounded-lg border border-line bg-main px-3 py-2 text-left text-[12px] text-d-text-secondary hover:border-accent/40 hover:text-d-text-primary"
+                  className="group flex items-center justify-between rounded-pill glass-control px-3.5 py-2 text-left text-[12px] text-d-text-secondary hover:text-d-text-primary"
                 >
                   <span className="truncate">{s}</span>
                   <ChevronRight className="h-3.5 w-3.5 shrink-0 text-d-text-muted group-hover:text-accent" />
@@ -477,7 +477,7 @@ export default function CopilotProvider() {
                   {m.followups.map((f) => (
                     <button
                       key={f} type="button" onClick={() => send(f)}
-                      className="rounded-pill border border-line bg-main px-2.5 py-1 text-[11px] text-d-text-secondary transition-colors hover:border-accent/40 hover:text-d-text-primary"
+                      className="rounded-pill glass-control px-2.5 py-1 text-[11px] text-d-text-secondary transition-colors hover:text-d-text-primary"
                     >
                       {f}
                     </button>
@@ -509,14 +509,14 @@ export default function CopilotProvider() {
           {streaming ? (
             <button
               type="button" onClick={stop} title="Stop"
-              className="shrink-0 rounded-lg border border-line px-2 py-1 text-[11px] font-medium text-d-text-secondary hover:text-d-text-primary"
+              className="shrink-0 rounded-lg glass-control px-2 py-1 text-[11px] font-medium text-d-text-secondary hover:text-d-text-primary"
             >
               Stop
             </button>
           ) : (
             <button
               type="button" onClick={() => send()} disabled={!input.trim()} title="Send (Enter)"
-              className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-gradient-signature text-on-signature disabled:opacity-40"
+              className="grid h-7 w-7 shrink-0 place-items-center rounded-full glass-control-accent disabled:opacity-40 active:scale-[0.98]"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
@@ -537,7 +537,7 @@ export default function CopilotProvider() {
         onClick={() => setOpen(true)}
         aria-label="Open Copilot"
         className={cn(
-          'fixed bottom-5 right-4 z-40 grid h-12 w-12 place-items-center rounded-full bg-gradient-signature text-on-signature shadow-[0_10px_30px_-8px_rgba(0,0,0,0.6)]',
+          'fixed bottom-5 right-4 z-40 grid h-12 w-12 place-items-center rounded-full glass-control-accent shadow-[0_10px_30px_-8px_rgba(0,0,0,0.6)] active:scale-[0.98]',
           hasRail && 'lg:hidden',
         )}
       >
@@ -621,8 +621,8 @@ function ActionCard({ action, onRun }: { action: ActionState; onRun: () => void 
           type="button"
           onClick={onRun}
           className={cn(
-            'mt-2 rounded-md px-2.5 py-1 text-[11px] font-semibold transition-colors',
-            danger ? 'bg-down text-white hover:opacity-90' : 'bg-gradient-signature text-on-signature',
+            'mt-2 rounded-full px-2.5 py-1 text-[11px] font-semibold transition-colors active:scale-[0.98]',
+            danger ? 'glass-control-danger text-down' : 'glass-control-accent',
           )}
         >
           {danger ? 'Place order' : 'Confirm'}

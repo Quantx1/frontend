@@ -5,7 +5,7 @@
  * A/D line (slope = participation). Real per-day counts over the universe.
  */
 
-import { useEffect, useState } from 'react'
+import useSWR from 'swr'
 import { Scale } from '@/lib/icons'
 
 import { api } from '@/lib/api'
@@ -16,27 +16,21 @@ interface Breadth {
   ad_line: Array<{ ad_line: number }>
 }
 
-const UP = '#05B878'
-const DOWN = '#FF5947'
+const UP = 'var(--color-up)'
+const DOWN = 'var(--color-down)'
 
 export default function BreadthCard() {
-  const [b, setB] = useState<Breadth | null>(null)
-  const [state, setState] = useState<'loading' | 'ok' | 'empty'>('loading')
+  // SWR with retry + keep-last-good — the old one-shot useEffect fetch left a
+  // permanent hole on a single transient error.
+  const { data, isLoading } = useSWR<Breadth | null>(
+    'mkt-breadth',
+    () => api.screener.breadth(90).then((r) => (r?.today ? (r as Breadth) : null)).catch(() => null),
+    { revalidateOnFocus: false, dedupingInterval: 120_000, keepPreviousData: true, errorRetryCount: 4 },
+  )
+  const b = data
 
-  useEffect(() => {
-    let cancelled = false
-    ;(async () => {
-      try {
-        const r = await api.screener.breadth(90)
-        if (cancelled) return
-        if (r?.today) { setB(r as Breadth); setState('ok') } else setState('empty')
-      } catch { if (!cancelled) setState('empty') }
-    })()
-    return () => { cancelled = true }
-  }, [])
-
-  if (state === 'loading') return <div className="rounded-lg border border-line bg-wrap h-[120px] animate-pulse" />
-  if (state === 'empty' || !b?.today) return null
+  if (isLoading && !b) return <div className="rounded-[20px] bg-wrap h-[120px] animate-pulse" />
+  if (!b?.today) return null
 
   const { adv, dec } = b.today
   const tot = adv + dec || 1
@@ -44,7 +38,7 @@ export default function BreadthCard() {
   const line = b.ad_line.map((p) => p.ad_line)
 
   return (
-    <div className="rounded-lg border border-line bg-wrap px-4 py-3">
+    <div className="flex h-full flex-col rounded-[20px] bg-wrap px-4 py-3">
       <div className="flex items-center justify-between mb-2">
         <span className="flex items-center gap-2 text-[12px] font-semibold text-d-text-primary">
           <Scale className="w-3.5 h-3.5 text-primary" /> Market Breadth
@@ -61,8 +55,10 @@ export default function BreadthCard() {
         <div style={{ width: `${100 - advPct}%`, background: DOWN }} />
       </div>
 
+      <div className="mt-auto">
       {line.length > 2 && <AdSparkline values={line} />}
       <p className="mt-1 text-[9px] uppercase tracking-wider text-d-text-muted">Cumulative A/D line</p>
+      </div>
     </div>
   )
 }

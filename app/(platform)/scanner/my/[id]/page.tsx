@@ -129,7 +129,7 @@ export default function MyScreenPage() {
           action={
             <Link
               href="/scanner"
-              className="inline-flex h-9 items-center rounded-pill border border-line px-4 text-[13px] text-d-text-primary transition-colors hover:bg-wrap-hover"
+              className="glass-control inline-flex h-9 items-center rounded-pill px-4 text-[13px] text-d-text-primary transition-colors"
             >
               Back to Screener
             </Link>

@@ -65,14 +65,23 @@ export default function NewsIntelligenceCard({
       </CardHeader>
       <CardBody>
         {isLoading ? (
-          <Skeleton className="h-44 w-full rounded-lg" />
+          <div>
+            <Skeleton className="h-44 w-full rounded-lg" />
+            {/* The first uncached read fans out to every news source and
+                scores each story — honest about the wait so a slow cold
+                call doesn't read as broken. Cached reads are instant. */}
+            <p className="mt-2 text-[11px] text-d-text-muted">
+              Pulling and scoring multi-source headlines for {symbol} — the first read can take up to a
+              minute. It&rsquo;s cached after that.
+            </p>
+          </div>
         ) : !data || !data.available ? (
           <p className="text-sm text-d-text-muted">No recent news for {symbol} across our sources.</p>
         ) : (
           <div className="space-y-4">
             {/* thesis-change alert */}
             {data.thesis?.at_risk && (
-              <div className={`flex items-start gap-2 rounded-md px-3 py-2 text-xs ${data.thesis.severity === 'high' ? 'bg-danger/10 text-danger' : 'bg-warning/10 text-warning'}`}>
+              <div className={`flex items-start gap-2 rounded-xl px-3 py-2 text-xs ${data.thesis.severity === 'high' ? 'bg-danger/10 text-danger' : 'bg-warning/10 text-warning'}`}>
                 <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                 <span>{data.thesis.reason} Review your {data.thesis.position}.</span>
               </div>
@@ -103,7 +112,7 @@ export default function NewsIntelligenceCard({
             <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-d-text-muted">
               <span>Sources:</span>
               {data.providers.map((p) => (
-                <span key={p} className="rounded bg-wrap-hover px-1.5 py-0.5 capitalize">{p}</span>
+                <span key={p} className="rounded-full bg-wrap-hover px-2 py-0.5 capitalize">{p}</span>
               ))}
               <span className="ml-1">· {data.models.length} sentiment models</span>
             </div>
@@ -138,7 +147,7 @@ export default function NewsIntelligenceCard({
                         {s.event_type !== 'other' && (
                           <span className="font-medium text-d-text-secondary">{s.event_label}</span>
                         )}
-                        <span className={`rounded px-1.5 py-0.5 font-medium ${IMPACT_CLASS[s.impact]}`}>{s.impact}</span>
+                        <span className={`rounded-full px-2 py-0.5 font-medium ${IMPACT_CLASS[s.impact]}`}>{s.impact}</span>
                         {URGENCY_LABEL[s.urgency] && <span>{URGENCY_LABEL[s.urgency]}</span>}
                         <span>{s.source}</span>
                         {s.member_count > 1 && <span>· +{s.member_count - 1} more outlets</span>}

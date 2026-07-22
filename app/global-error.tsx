@@ -39,9 +39,9 @@ export default function GlobalError({
           justifyContent: 'center',
           padding: '24px',
           fontFamily:
-            'DM Sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-          background: '#0A0D14',
-          color: '#FFFFFF',
+            'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          background: '#0D0D0E',
+          color: '#F7F7F8',
         }}
       >
         <div style={{ maxWidth: 420, textAlign: 'center' }}>
@@ -51,16 +51,16 @@ export default function GlobalError({
               height: 56,
               margin: '0 auto 20px',
               borderRadius: 999,
-              background: 'rgba(255, 89, 71, 0.1)',
+              background: 'rgba(245, 128, 140, 0.1)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              border: '1px solid rgba(255, 89, 71, 0.35)',
+              border: '1px solid rgba(245, 128, 140, 0.35)',
             }}
           >
             <span
               style={{
-                color: '#FF5947',
+                color: '#F5808C',
                 fontSize: 28,
                 fontWeight: 700,
                 lineHeight: 1,
@@ -77,14 +77,14 @@ export default function GlobalError({
               margin: '12px 0 24px',
               fontSize: 13,
               lineHeight: 1.6,
-              color: '#8E8E8E',
+              color: '#96969E',
             }}
           >
             We logged it and will take a look. You can retry below, or reload the page.
             {error?.digest ? (
               <>
                 {' '}
-                <span style={{ fontFamily: 'DM Mono, monospace', fontSize: 11 }}>
+                <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11 }}>
                   ref: {error.digest}
                 </span>
               </>
@@ -105,10 +105,10 @@ export default function GlobalError({
                 padding: '10px 20px',
                 fontSize: 13,
                 fontWeight: 600,
-                color: '#0A0D14',
-                background: '#4FECCD',
+                color: '#FFFFFF',
+                background: '#406AE4',
                 border: 'none',
-                borderRadius: 6,
+                borderRadius: 999,
                 cursor: 'pointer',
               }}
             >
@@ -123,10 +123,10 @@ export default function GlobalError({
                 padding: '10px 20px',
                 fontSize: 13,
                 fontWeight: 500,
-                color: '#FFFFFF',
+                color: '#F7F7F8',
                 background: 'transparent',
-                border: '1px solid #2A2F3E',
-                borderRadius: 6,
+                border: '1px solid #29292D',
+                borderRadius: 999,
                 cursor: 'pointer',
               }}
             >

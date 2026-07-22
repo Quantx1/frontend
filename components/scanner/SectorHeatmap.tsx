@@ -98,7 +98,7 @@ export default function SectorHeatmap() {
                       <Link
                         key={m.symbol}
                         href={stockHref(m.symbol)}
-                        className="inline-flex items-center gap-0.5 rounded border border-line/60 px-1.5 py-0.5 font-mono text-[10px] hover:border-primary/40"
+                        className="glass-control inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 font-mono text-[10px]"
                       >
                         <span className="text-d-text-primary">{m.symbol}</span>
                         <span className={m.change_pct > 0 ? 'text-up' : 'text-down'}>

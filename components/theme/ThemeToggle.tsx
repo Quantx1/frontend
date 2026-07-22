@@ -1,45 +1,40 @@
 'use client'
 
 /**
- * ThemeToggle — three-option segmented control: Light / Dark / System.
+ * ThemeToggle — three-option segmented control: Light / Dark / Auto.
  *
- * Wired into /settings under Appearance. Uses next-themes (configured in
- * app/providers.tsx with storageKey="quantx.theme", defaultTheme="system",
- * enableSystem). The OS-level "system" option follows prefers-color-scheme
- * and updates live if the OS theme flips.
+ * Wired into /settings under Appearance. Backed by ThemeModeContext (which
+ * layers on next-themes, storageKey="quantx.theme"). "Auto" adapts to BOTH the
+ * device (prefers-color-scheme) AND the local time of day — light through the
+ * day, dark after hours — updating live when the OS flips or the clock crosses
+ * dawn/dusk. Light / Dark are explicit overrides.
  *
  * Tap target: 40px min-height (mobile AA).
  */
 
-import { useEffect, useState } from 'react'
 import { Monitor, Moon, Sun } from '@/lib/icons'
-import { useTheme } from 'next-themes'
-
-type ThemeValue = 'light' | 'dark' | 'system'
+import { useThemeMode, type ThemeMode } from '@/contexts/ThemeModeContext'
+import { AnimatedThemeToggle } from '@/components/theme/AnimatedThemeToggle'
 
 const OPTIONS: Array<{
-  value: ThemeValue
+  value: ThemeMode
   label: string
   icon: React.ComponentType<{ className?: string }>
   hint: string
 }> = [
-  { value: 'light',  label: 'Light',  icon: Sun,     hint: 'Refined cool near-white, daylight reading' },
-  { value: 'dark',   label: 'Dark',   icon: Moon,    hint: 'Near-black canvas, after-hours' },
-  { value: 'system', label: 'System', icon: Monitor, hint: 'Follow your OS preference (default)' },
+  { value: 'light', label: 'Light', icon: Sun, hint: 'Refined cool near-white, daylight reading' },
+  { value: 'dark', label: 'Dark', icon: Moon, hint: 'Near-black canvas, after-hours' },
+  { value: 'auto', label: 'Auto', icon: Monitor, hint: 'Match your device + time of day (default)' },
 ]
 
 
 export function ThemeToggle({ className = '' }: { className?: string }) {
-  const { theme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
+  const { mode, setMode, mounted } = useThemeMode()
 
-  // next-themes can't know the resolved theme on the server, so we
-  // wait one tick before mirroring it into the radio state. Until
-  // then the buttons render unselected — the boot script has already
-  // applied the right class to <html>, so this is purely about which
-  // pill the user sees as active.
-  useEffect(() => setMounted(true), [])
-  const active = mounted ? (theme as ThemeValue | undefined) : undefined
+  // Until mounted the intent isn't known on the server, so render every pill
+  // unselected — the next-themes boot script has already applied the right
+  // class to <html>; this is only about which pill reads as active.
+  const active = mounted ? mode : undefined
 
   return (
     <div
@@ -55,7 +50,7 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
             role="radio"
             aria-checked={selected}
             title={hint}
-            onClick={() => setTheme(value)}
+            onClick={() => setMode(value)}
             className={[
               'inline-flex items-center gap-2 px-3 py-2 rounded-md text-[12px] font-medium',
               'transition-all min-h-[40px] spring-press',
@@ -76,33 +71,20 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
 
 /**
  * Compact single-button variant for top bars / app shells. Tap →
- * toggle between light and dark explicitly. Use ThemeToggle in
- * Settings; ThemeToggleCompact in dense navigation.
+ * animated light/dark reveal (View Transitions). A manual flip sets an
+ * explicit light/dark intent (exits Auto). Use ThemeToggle in Settings;
+ * ThemeToggleCompact in dense navigation.
  */
 export function ThemeToggleCompact({ className = '' }: { className?: string }) {
-  const { resolvedTheme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
-
-  // SSR-safe icon — render nothing theme-specific until mounted, then
-  // swap to match the resolved theme (system-aware).
-  const isDark = mounted ? resolvedTheme === 'dark' : false
-  const Icon = isDark ? Sun : Moon
-  const label = isDark ? 'Switch to light mode' : 'Switch to dark mode'
-
   return (
-    <button
-      onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      aria-label={label}
-      title={label}
+    <AnimatedThemeToggle
+      iconClassName="w-4 h-4"
       className={[
         'inline-flex h-8 w-8 items-center justify-center rounded-md',
         'border border-d-border text-d-text-muted',
         'transition-colors hover:border-primary/30 hover:text-primary',
         className,
       ].join(' ')}
-    >
-      <Icon className="w-4 h-4" />
-    </button>
+    />
   )
 }

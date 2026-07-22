@@ -196,7 +196,7 @@ export default function NewScreenPage() {
                 <button
                   key={ex}
                   onClick={() => setPrompt(ex)}
-                  className="rounded-pill border border-line px-3 py-1 text-[11.5px] text-d-text-secondary transition-colors hover:bg-wrap-hover"
+                  className="glass-control rounded-pill px-3 py-1 text-[11.5px] text-d-text-secondary transition-colors"
                 >
                   {ex}
                 </button>
@@ -284,10 +284,10 @@ export default function NewScreenPage() {
                         key={n}
                         onClick={() => setMinHits(n)}
                         aria-pressed={minHits === n}
-                        className={`h-7 w-7 rounded-pill border text-[12px] ${MONO} transition-colors ${
+                        className={`h-7 w-7 rounded-pill text-[12px] ${MONO} transition-colors ${
                           minHits === n
-                            ? 'border-transparent bg-primary text-on-signature'
-                            : 'border-line text-d-text-secondary hover:bg-wrap-hover'
+                            ? 'glass-control-accent'
+                            : 'glass-control text-d-text-secondary'
                         }`}
                       >
                         {n}

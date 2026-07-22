@@ -44,16 +44,16 @@ function readVars() {
   const s = getComputedStyle(document.documentElement)
   const g = (n: string, fb: string) => s.getPropertyValue(n).trim() || fb
   return {
-    primary: g('--color-primary', '#3FB950'),
-    up: g('--color-up', '#3FB950'),
-    down: g('--color-down', '#F85149'),
-    line: g('--color-line', '#242830'),
-    muted: g('--color-d-text-muted', '#8A8F9C'),
+    primary: g('--color-primary', '#406AE4'),
+    up: g('--color-up', '#10B981'),
+    down: g('--color-down', '#F5808C'),
+    line: g('--color-line', '#29292D'),
+    muted: g('--color-muted', '#96969E'),
   }
 }
 
 export function RichScreenResults({ rows }: { rows: ScreenMatch[] }) {
-  const [c, setC] = useState({ primary: '#3FB950', up: '#3FB950', down: '#F85149', line: '#242830', muted: '#8A8F9C' })
+  const [c, setC] = useState({ primary: '#406AE4', up: '#10B981', down: '#F5808C', line: '#29292D', muted: '#96969E' })
   useEffect(() => { setC(readVars()) }, [])
 
   const [sortKey, setSortKey] = useState<SortKey>('change_pct')
@@ -113,7 +113,7 @@ export function RichScreenResults({ rows }: { rows: ScreenMatch[] }) {
       {/* A chart: matches-by-sector when we have sectors (single-hue magnitude),
           else top movers (diverging around a zero baseline, duotone). */}
       {stats.sectors.length > 1 ? (
-        <div className="rounded-lg border border-line bg-wrap p-3">
+        <div className="rounded-[20px] border border-line bg-wrap p-4">
           <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-d-text-muted">Matches by sector</p>
           <ResponsiveContainer width="100%" height={Math.max(120, stats.sectors.length * 26)}>
             <BarChart data={stats.sectors} layout="vertical" margin={{ top: 2, right: 28, bottom: 2, left: 2 }}>
@@ -133,7 +133,7 @@ export function RichScreenResults({ rows }: { rows: ScreenMatch[] }) {
           </ResponsiveContainer>
         </div>
       ) : stats.movers.length > 1 ? (
-        <div className="rounded-lg border border-line bg-wrap p-3">
+        <div className="rounded-[20px] border border-line bg-wrap p-4">
           <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-d-text-muted">Top movers · change %</p>
           <ResponsiveContainer width="100%" height={Math.max(120, stats.movers.length * 26)}>
             <BarChart data={stats.movers} layout="vertical" margin={{ top: 2, right: 34, bottom: 2, left: 2 }}>
@@ -201,7 +201,7 @@ export function RichScreenResults({ rows }: { rows: ScreenMatch[] }) {
 
 function Tile({ label, value, tone, small }: { label: string; value: string; tone?: 'up' | 'down'; small?: boolean }) {
   return (
-    <div className="rounded-lg border border-line bg-wrap p-3">
+    <div className="rounded-[20px] border border-line bg-wrap p-4">
       <p className="text-[9px] font-medium uppercase tracking-wider text-d-text-muted">{label}</p>
       <p
         className={`mt-0.5 ${small ? 'text-[13px]' : 'text-[18px]'} font-semibold tabular-nums ${MONO} ${
