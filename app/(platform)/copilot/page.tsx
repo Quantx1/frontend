@@ -854,7 +854,7 @@ function CopilotHub() {
                       <button
                         type="button"
                         onMouseDown={(e) => e.preventDefault()}
-                        onClick={() => usePrompt(p)}
+                        onClick={() => applyPrompt(p)}
                         className="group/row flex w-full items-center gap-2.5 rounded-pill px-3 py-2.5 text-left transition-colors hover:bg-white/[0.05]"
                       >
                         <Sparkles size={13} className="shrink-0 text-ai" />
