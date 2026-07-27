@@ -1158,6 +1158,27 @@ html.light .app-canvas::before {
   }
 }
 
+/* Kill the native number-input spinner "rectangle boxes" (webkit up/down
+   steppers + Firefox), and the search-field decoration/cancel widgets —
+   these render as small grey boxes inside our styled inputs. */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
 /* Remove 300ms tap delay + double-tap zoom on interactive elements. */
 button,
 a,

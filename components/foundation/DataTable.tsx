@@ -41,6 +41,7 @@ import * as React from 'react'
 import { ArrowDown, ArrowUp, ChevronsUpDown } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 import { Skeleton } from './Skeleton'
+import { ErrorState } from './ErrorState'
 
 export interface Column<Row> {
   /** Unique key. Used for React keys, sort state, and column identity. */
@@ -165,7 +166,7 @@ export function DataTable<Row extends Record<string, any>>({
         <tbody>
           <tr>
             <td colSpan={columns.length} className="py-12">
-              <p className="text-center text-sm text-down">{error}</p>
+              <ErrorState size="sm" title="Couldn't load" description={error} />
             </td>
           </tr>
         </tbody>
@@ -268,7 +269,7 @@ export function DataTable<Row extends Record<string, any>>({
   const renderCards = () => {
     if (error) {
       return (
-        <p className="rounded-sm border border-line bg-wrap p-4 text-center text-sm text-down">{error}</p>
+        <ErrorState size="sm" title="Couldn't load" description={error} />
       )
     }
     if (loading) {

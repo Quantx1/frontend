@@ -4,7 +4,6 @@ import {
   Bot,
   ScanLine,
   Brain,
-  Stethoscope,
   Wand2,
   Layers,
   Briefcase,
@@ -12,7 +11,6 @@ import {
   ScrollText,
   ShieldAlert,
   Search,
-  Flame,
 } from '@/lib/icons'
 
 // Grouped 3-zone IA (Wave 1 shell redesign, 2026-06-20).
@@ -55,8 +53,6 @@ export const NAV: NavItem[] = [
   // ── AI TOOLS ──
   { href: '/scanner', label: 'Screener', icon: ScanLine, section: 'tools' },
   { href: '/patterns', label: 'Chart Patterns', icon: Brain, section: 'tools' },
-  { href: '/ipo', label: 'IPO', icon: Flame, section: 'tools' },
-  { href: '/portfolio/doctor', label: 'Portfolio Doctor', icon: Stethoscope, section: 'tools' },
   // Strategies = the unified equity + options hub. (The old /fo-strategies is
   // retired — middleware redirects it here with ?filter=options — so there is
   // no separate "F&O Strategies" item.) F&O analytics live on /fno.

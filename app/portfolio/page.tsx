@@ -26,7 +26,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { Stethoscope, TrendingUp, Wallet, Briefcase, BarChart3, Inbox, Sparkles } from '@/lib/icons'
+import { TrendingUp, Wallet, Briefcase, BarChart3, Inbox, Sparkles } from '@/lib/icons'
 import Link from 'next/link'
 
 import {
@@ -265,12 +265,6 @@ export default function PortfolioPage() {
           </div>
           <div className="flex gap-2">
             <TradeTicketButton label="New order" size="md" />
-            <Link href="/portfolio/doctor">
-              <Button variant="secondary">
-                <Stethoscope className="mr-1 h-4 w-4" />
-                Doctor
-              </Button>
-            </Link>
             <Button
               variant="ai"
               onClick={() =>

@@ -51,7 +51,7 @@ function renderInline(text: string, keyPrefix: string): React.ReactNode[] {
       )
     } else if (tok.startsWith('**')) {
       nodes.push(
-        <strong key={key} className="font-semibold text-d-text-primary">
+        <strong key={key} className="font-semibold text-primary">
           {tok.slice(2, -2)}
         </strong>,
       )

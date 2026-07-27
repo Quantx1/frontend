@@ -570,19 +570,6 @@ export type DoctorReport = {
 
 // Phase 4 — one IPO issue in the primary-market calendar. `subscription_x` is
 // only present for currently-open issues; GMP is intentionally absent.
-export interface IpoIssue {
-  symbol: string | null
-  company: string | null
-  price_band: string | null
-  price_band_low?: number | null
-  price_band_high?: number | null
-  open_date: string | null
-  close_date: string | null
-  status: string
-  series?: string | null
-  subscription_x: number | null
-}
-
 export const api = {
   user: {
     getProfile: () => request<Record<string, any>>('/api/user/profile'),
@@ -609,15 +596,6 @@ export const api = {
         '/api/user/ui-preferences',
         { method: 'PUT', body: { ui_preferences } },
       ),
-  },
-
-  // Phase 4 — IPO calendar (NSE primary-market feed). Public, honest-empty.
-  ipo: {
-    calendar: () =>
-      request<{
-        success: boolean; available: boolean; as_of: string | null; note?: string | null
-        open: IpoIssue[]; upcoming: IpoIssue[]
-      }>('/api/ipo/calendar', { auth: false }),
   },
 
   // Dual-mode 2026-06-12 — the beginner ("managed") Home aggregate.

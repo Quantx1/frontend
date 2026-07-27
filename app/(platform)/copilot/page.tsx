@@ -69,7 +69,6 @@ const FEATURE_CARDS: {
   { category: 'SIGNALS', name: 'Alpha Picks', blurb: 'The 10-bar alpha-ranked book, gated by Regime. Entry, stop, target and the thesis behind every call.', href: '/signals/alpha-picks', motif: 'candles', image: '/images/v3/ai-signal.webp' },
   { category: 'SIGNALS', name: 'Momentum Picks', blurb: 'The whole NSE board ranked by trend strength. The fast-movers, surfaced first.', href: '/signals/momentum-picks', motif: 'sparkline', image: '/images/v3/ai-momentum.webp' },
   { category: 'TOOLS', name: 'AI Scanner', blurb: 'Sweep the board by momentum, breakout, OI or news. No filter fits? Just describe the setup.', href: '/scanner', motif: 'scan', image: '/images/v3/ai-scanner.webp' },
-  { category: 'PORTFOLIO', name: 'Portfolio Doctor', blurb: 'Know where your book breaks before it does. Concentration, drawdown, hedges and a rebalance plan.', href: '/portfolio/doctor', motif: 'gauge', image: '/images/v3/ai-risk.webp' },
   { category: 'TOOLS', name: 'AI Algos', blurb: 'Describe a strategy in plain English. We backtest it and gate it before a single rupee trades.', href: '/strategies', motif: 'flow', image: '/images/v3/ai-strategy.webp' },
   { category: 'EXECUTION', name: 'AutoPilot', blurb: 'Hands-off execution on the names the engines rank highest. Regime-aware, hard stops authoritative.', href: '/autopilot', motif: 'pilot', tier: 'Elite', image: '/images/v3/ai-autopilot.webp' },
 ]

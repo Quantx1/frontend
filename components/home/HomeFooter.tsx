@@ -29,7 +29,7 @@ const SOCIALS = [
 
 const COLUMNS: { title: string; links: Links }[] = [
   { title: 'Product', links: [['Markets', '/markets'], ['Signals', '/signals'], ['AI Screener', '/scanner'], ['Chart Patterns', '/patterns'], ['F&O Desk', '/fno']] },
-  { title: 'AI Tools', links: [['Copilot', '/copilot'], ['AI Algos', '/strategies'], ['Portfolio Doctor', '/portfolio/doctor'], ['AutoPilot', '/autopilot'], ['News Intelligence', '/markets']] },
+  { title: 'AI Tools', links: [['Copilot', '/copilot'], ['AI Algos', '/strategies'], ['AutoPilot', '/autopilot'], ['News Intelligence', '/markets']] },
   { title: 'Company', links: [['Pricing', '/pricing'], ['Track record', '/proof'], ['About', '#'], ['Contact', '#']] },
   { title: 'Legal', links: [['Terms', '/legal/terms'], ['Privacy', '/legal/privacy'], ['Disclaimer', '/legal/disclaimer'], ['Risk Disclosure', '/legal/risk'], ['Refund Policy', '/legal/refund']] },
 ]
@@ -40,7 +40,7 @@ const EXPLORE: { title: string; links: Links }[] = [
   { title: 'Signals by segment', links: [['Nifty 50', '/signals'], ['Bank Nifty', '/signals'], ['Large-caps', '/signals'], ['Mid-caps', '/signals'], ['Swing setups', '/signals']] },
   { title: 'Strategies', links: [['Intraday', '/strategies'], ['Swing', '/strategies'], ['Options buying', '/strategies'], ['Options selling', '/strategies'], ['Hedging', '/strategies']] },
   { title: 'F&O & Options', links: [['Option chain', '/fno'], ['Vol cone', '/fno'], ['Term structure', '/fno'], ['Greeks', '/fno'], ['OI analysis', '/fno']] },
-  { title: 'AI Tools', links: [['Copilot', '/copilot'], ['Portfolio Doctor', '/portfolio/doctor'], ['AutoPilot', '/autopilot'], ['Chart Patterns', '/patterns'], ['Backtesting', '/strategies']] },
+  { title: 'AI Tools', links: [['Copilot', '/copilot'], ['AutoPilot', '/autopilot'], ['Chart Patterns', '/patterns'], ['Backtesting', '/strategies']] },
   { title: 'Markets', links: [['Indices', '/markets'], ['Sectors', '/markets'], ['FII / DII', '/markets'], ['Global cues', '/markets'], ['Movers', '/markets']] },
   { title: 'Learn', links: [['Getting started', '#'], ['Paper trading', '#'], ['Connect broker', '#'], ['Pricing', '/pricing'], ['FAQ', '#']] },
   { title: 'Company', links: [['About', '#'], ['Track record', '/proof'], ['Careers', '#'], ['Contact', '#'], ['Blog', '#']] },

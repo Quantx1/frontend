@@ -14,7 +14,6 @@ import {
   CheckCircle2,
   Copy,
   Gift,
-  Loader2,
   Mail,
   MessageCircle,
   RefreshCw,
@@ -24,7 +23,7 @@ import {
 } from '@/lib/icons'
 
 import { api, handleApiError } from '@/lib/api'
-import { Reveal } from '@/components/foundation'
+import { Reveal, PageLoader } from '@/components/foundation'
 import { MONO } from '@/lib/tokens'
 
 
@@ -94,11 +93,7 @@ export default function ReferralsPage() {
   }
 
   if (loading) {
-    return (
-      <div className="max-w-5xl mx-auto px-4 md:px-6 py-10">
-        <Loader2 className="w-5 h-5 text-primary animate-spin" />
-      </div>
-    )
+    return <PageLoader label="Loading your referrals…" />
   }
 
   if (error && !data) {

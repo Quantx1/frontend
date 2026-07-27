@@ -15,7 +15,7 @@ import Link from 'next/link'
 import useSWR from 'swr'
 import {
   Newspaper, ExternalLink, ArrowRight, Sparkles, Bot, BrainCircuit, ShieldCheck,
-  ScanLine, Stethoscope, Radar, Layers, Zap,
+  ScanLine, Radar, Layers, Zap,
 } from '@/lib/icons'
 import { api } from '@/lib/api'
 
@@ -191,7 +191,6 @@ export function MarketNewsFeed() {
 
 const FEATURE_LINKS = [
   { icon: ScanLine, title: 'AI Screener', desc: 'Describe a setup in plain English', href: '/scanner' },
-  { icon: Stethoscope, title: 'Portfolio Doctor', desc: 'Fix concentration & drawdown risk', href: '/portfolio/doctor' },
   { icon: Radar, title: 'ML Signals', desc: 'Gated NSE calls across horizons', href: '/signals' },
   { icon: Layers, title: 'F&O Desk', desc: 'Chain, OI, greeks & strategies', href: '/fno' },
 ]

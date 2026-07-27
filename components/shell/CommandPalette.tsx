@@ -31,7 +31,6 @@ const ENTRIES: PaletteEntry[] = [
   { href: '/settings', label: 'Settings', group: 'Workspace' },
 
   // Sub-surfaces
-  { href: '/portfolio/doctor', label: 'Portfolio Doctor', group: 'Portfolio' },
   { href: '/paper-trading', label: 'Paper trading', group: 'Paper' },
   { href: '/trades', label: 'Trade journal', group: 'Paper' },
   { href: '/referrals', label: 'Referrals', group: 'Account' },
