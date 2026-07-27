@@ -1,5 +1,7 @@
 'use client'
 
+import { Skeleton } from '@/components/foundation'
+
 /**
  * Market Breadth — true advance/decline issue counts today + the cumulative
  * A/D line (slope = participation). Real per-day counts over the universe.
@@ -29,7 +31,7 @@ export default function BreadthCard() {
   )
   const b = data
 
-  if (isLoading && !b) return <div className="rounded-[20px] bg-wrap h-[120px] animate-pulse" />
+  if (isLoading && !b) return <Skeleton h="120px" rounded="lg" className="rounded-[20px]" />
   if (!b?.today) return null
 
   const { adv, dec } = b.today

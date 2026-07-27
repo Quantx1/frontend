@@ -42,6 +42,7 @@ import { ArrowDown, ArrowUp, ChevronsUpDown } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 import { Skeleton } from './Skeleton'
 import { ErrorState } from './ErrorState'
+import { EmptyState } from './EmptyState'
 
 export interface Column<Row> {
   /** Unique key. Used for React keys, sort state, and column identity. */
@@ -205,7 +206,7 @@ export function DataTable<Row extends Record<string, any>>({
           <tr>
             <td colSpan={columns.length} className="p-0">
               {empty ?? (
-                <p className="py-12 text-center text-sm text-d-text-muted">No rows</p>
+                <EmptyState size="sm" title="No rows" description="Nothing to show here yet." />
               )}
             </td>
           </tr>
@@ -289,7 +290,7 @@ export function DataTable<Row extends Record<string, any>>({
     }
     if (sortedData.length === 0) {
       return empty ?? (
-        <p className="rounded-sm border border-line bg-wrap py-12 text-center text-sm text-d-text-muted">No rows</p>
+        <EmptyState size="sm" title="No rows" description="Nothing to show here yet." />
       )
     }
     const cols = columns.filter((c) => !c.hideOnMobile)

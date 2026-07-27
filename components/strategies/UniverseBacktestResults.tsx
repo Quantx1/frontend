@@ -13,7 +13,7 @@
 import { useMemo, useState } from 'react'
 import { TrendingDown, TrendingUp } from '@/lib/icons'
 
-import { Badge, Card, CardBody, CardHeader, DataTable, DisclaimerFooter } from '@/components/foundation'
+import { Badge, Card, CardBody, CardHeader, DataTable, DisclaimerFooter, ErrorState } from '@/components/foundation'
 import { formatPercent } from '@/lib/utils'
 
 interface SymbolRow {
@@ -93,17 +93,15 @@ export function UniverseBacktestResults({
 
   if (!aggregate) {
     return (
-      <Card className="border-down/40 bg-down/5">
-        <CardBody className="space-y-2">
-          <p className="text-sm font-semibold text-down">
-            Universe backtest produced no usable results
-          </p>
-          <p className="text-xs text-d-text-muted">
+      <ErrorState
+        title="Universe backtest produced no usable results"
+        description={
+          <>
             Of {symbols_attempted} symbol(s) attempted: {skipped.length} skipped
             (insufficient history), {failed.length} failed. See the lists below.
-          </p>
-        </CardBody>
-      </Card>
+          </>
+        }
+      />
     )
   }
 

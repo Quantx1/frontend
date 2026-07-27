@@ -1,5 +1,7 @@
 'use client'
 
+import { Skeleton } from '@/components/foundation'
+
 /**
  * Sector Rotation (RRG) — leaders/laggards by relative strength + momentum vs
  * the market, over short (~5d) and long (~20d) windows. Real candle data (no
@@ -32,7 +34,7 @@ export default function SectorRotationCard() {
   )
   const rows = data ?? []
 
-  if (isLoading && !data) return <div className="rounded-[20px] bg-wrap h-[160px] animate-pulse" />
+  if (isLoading && !data) return <Skeleton h="160px" rounded="lg" className="rounded-[20px]" />
   if (!rows.length) return null
 
   return (

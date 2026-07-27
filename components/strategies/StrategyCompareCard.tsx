@@ -13,8 +13,8 @@
 import { useState } from 'react'
 import { GitCompare, Loader2, Trophy } from '@/lib/icons'
 
-import { Card, CardBody, CardHeader, Button, DisclaimerFooter } from '@/components/foundation'
-import { api } from '@/lib/api'
+import { Card, CardBody, CardHeader, Button, DisclaimerFooter, toast } from '@/components/foundation'
+import { api, handleApiError } from '@/lib/api'
 
 type CompareResult = Awaited<ReturnType<typeof api.strategies.compare>>
 
@@ -41,8 +41,11 @@ export function StrategyCompareCard({ strategies }: { strategies: { id: string; 
     setBusy(true)
     try {
       setResult(await api.strategies.compare(selected))
-    } catch {
+    } catch (e) {
+      // Never fail silently: without this the user clicks Compare, watches the
+      // spinner, and gets nothing back with no explanation.
       setResult(null)
+      toast.error('Compare failed', { description: handleApiError(e) })
     } finally {
       setBusy(false)
     }

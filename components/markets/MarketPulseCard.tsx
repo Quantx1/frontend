@@ -1,5 +1,7 @@
 'use client'
 
+import { Skeleton } from '@/components/foundation'
+
 /**
  * Market Pulse — the market-internals band of the daily desk. Everything here
  * is EOD-derived analytics (SEBI-safe, labelled): the "what changed vs
@@ -31,7 +33,7 @@ export default function MarketPulseCard() {
     { revalidateOnFocus: false, dedupingInterval: 120_000, keepPreviousData: true, errorRetryCount: 4 },
   )
 
-  if (isLoading && !data) return <div className="h-[210px] animate-pulse rounded-[20px] bg-wrap" />
+  if (isLoading && !data) return <Skeleton h="210px" rounded="lg" className="rounded-[20px]" />
   const b = data?.breadth
   if (!b) return null
   const vol = data?.vol

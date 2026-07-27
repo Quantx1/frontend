@@ -24,10 +24,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   Activity,
-  X, ArrowUpRight, ChevronRight, Loader2, PlusCircle,
+  X, ArrowUpRight, ChevronRight, PlusCircle,
 } from '@/lib/icons'
 import { api, type CopilotStep, type CopilotReference, type CopilotArtifact } from '@/lib/api'
-import { DisclaimerFooter } from '@/components/foundation'
+import { DisclaimerFooter, Spinner } from '@/components/foundation'
 import { cn } from '@/lib/utils'
 import { MODES, type CopilotMode } from '@/lib/copilot-modes'
 import { CopilotBot } from './CopilotBot'
@@ -106,6 +106,9 @@ interface Msg {
 }
 
 const SYMBOL_RE = /@([A-Za-z][A-Za-z0-9_&-]{1,15})/g
+// One error string for every copilot failure path — the two call sites
+// previously said different things for the same condition.
+const COPILOT_ERROR_MSG = 'Copilot is unavailable right now. Please try again.'
 // Cheap client gate so we only spend an LLM proposal call on plausibly-actionable
 // turns (keeps pure Q&A fast). Trade/Screen modes always propose.
 const ACTION_VERBS = /\b(add|remove|buy|sell|watch|screen|scan|alert|draft|create|place|exit|book|rebalance)\b/i
@@ -254,7 +257,7 @@ export default function CopilotProvider() {
                 ...(done.followups ? { followups: done.followups } : {}),
               }),
             onError: (msg) =>
-              patchLast({ content: msg || 'Something went wrong.', streaming: false, error: true }),
+              patchLast({ content: msg || COPILOT_ERROR_MSG, streaming: false, error: true }),
             onSaved: (id) => {
               if (id) setConversationId(id)
             },
@@ -285,7 +288,7 @@ export default function CopilotProvider() {
             ? '(stopped)'
             : err instanceof Error
               ? err.message
-              : 'Copilot is unavailable right now.'
+              : COPILOT_ERROR_MSG
         patchLast({ content: msg, streaming: false, error: true })
       } finally {
         setStreaming(false)
@@ -629,7 +632,7 @@ function ActionCard({ action, onRun }: { action: ActionState; onRun: () => void 
         </button>
       ) : status === 'running' ? (
         <p className="mt-2 flex items-center gap-1 text-d-text-muted">
-          <Loader2 className="h-3 w-3 animate-spin" /> running…
+          <Spinner size="sm" className="h-3 w-3" /> running…
         </p>
       ) : (
         <p className={cn('mt-2', status === 'error' ? 'text-down' : 'text-accent')}>

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import useSWR, { useSWRConfig } from 'swr'
+import { Skeleton } from '@/components/foundation'
 import {
   Instagram, Linkedin, Menu, MessageSquare, PanelLeftClose,
   Plus, Send, Sparkles, Trash2, Twitter, Youtube,
@@ -55,7 +56,7 @@ const SOCIALS = [
 // Re-skinned to OUR theme-aware tokens (no teal, no hex). Collapses below `lg`
 // where the MobileDrawer takes over.
 export const Sidebar = ({ pathname, collapsed, onToggle, animate }: Props) => {
-  const { data } = useSWR(
+  const { data, isLoading: convLoading } = useSWR(
     'copilot:conversations',
     () => api.ai.copilotListConversations(),
     { revalidateOnFocus: false, keepPreviousData: true },
@@ -133,6 +134,15 @@ export const Sidebar = ({ pathname, collapsed, onToggle, animate }: Props) => {
       <NavList pathname={pathname} collapsed={collapsed} />
 
       {/* History — recent chats, date-grouped, active-highlighted, delete on hover */}
+      {/* First load: show a skeleton so History doesn't silently pop in. */}
+      {!collapsed && convLoading && conversations.length === 0 && (
+        <div className="border-t border-line px-4 py-3 space-y-2" aria-hidden="true">
+          <Skeleton w="56px" h="12px" />
+          <Skeleton h="14px" />
+          <Skeleton h="14px" />
+        </div>
+      )}
+
       {!collapsed && conversations.length > 0 && (
         <nav aria-label="History" className="min-h-0 max-h-[34%] flex-shrink overflow-y-auto border-t border-line px-2 py-2">
           <div className="px-2 pb-1 pt-1 text-[12px] font-semibold text-d-text-secondary">History</div>

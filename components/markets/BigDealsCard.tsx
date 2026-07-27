@@ -1,5 +1,7 @@
 'use client'
 
+import { Skeleton } from '@/components/foundation'
+
 /**
  * Big Deals — the institutional paper trail: largest bulk/block deals of the
  * last few sessions (ranked by ₹ value) + upcoming corporate actions (ex-dates)
@@ -31,7 +33,7 @@ export default function BigDealsCard() {
     return perSymbol[d.symbol] <= 2
   })
   const actions = data?.corporate_actions ?? []
-  if (isLoading && !data) return <div className="h-[160px] animate-pulse rounded-[20px] bg-wrap" />
+  if (isLoading && !data) return <Skeleton h="160px" rounded="lg" className="rounded-[20px]" />
   if (!deals.length && !actions.length) return null
 
   return (

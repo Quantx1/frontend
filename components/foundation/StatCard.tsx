@@ -36,7 +36,7 @@
  *   />
  */
 import * as React from 'react'
-import { Info } from '@/lib/icons'
+import { Info, AlertCircle } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 import { ChangeBadge, type ChangeKind } from './ChangeBadge'
 import { Sparkline } from './Sparkline'
@@ -100,7 +100,10 @@ export const StatCard = ({
         {loading ? (
           <Skeleton w="60%" h="28px" rounded="md" />
         ) : error ? (
-          <p className="text-sm text-down">{error}</p>
+          <p className="flex items-center gap-1.5 text-sm text-down" role="alert">
+            <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            <span className="truncate">{error}</span>
+          </p>
         ) : (
           <p className="truncate font-mono text-2xl font-normal text-d-text-primary tabular-nums">
             {value}
