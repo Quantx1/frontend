@@ -113,7 +113,7 @@ export function SignalsOverview() {
     const total = open.length
     const longCount = open.filter((s) => s.direction === 'LONG').length
     const rrs = open.map((s) => s.risk_reward).filter((n) => Number.isFinite(n) && n > 0)
-    const byHorizon: Record<CategoryId, number> = { swing: 0, momentum: 0 }
+    const byHorizon: Record<CategoryId, number> = { swing: 0, momentum: 0, momentum30: 0 }
     for (const s of open) byHorizon[horizonOf(s)] += 1
     const byConf = CONF_BANDS.map((b) => ({ label: b.label, n: open.filter((s) => b.test(s.confidence)).length }))
     return {

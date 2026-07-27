@@ -11,12 +11,12 @@
  */
 
 import type { ComponentType } from 'react'
-import { Flame, TrendingUp } from '@/lib/icons'
+import { BarChart3, Flame, TrendingUp } from '@/lib/icons'
 
 import type { Signal as ApiSignal } from '@/lib/api'
 import type { DisplaySignal } from './SignalCard'
 
-export type CategoryId = 'swing' | 'momentum'
+export type CategoryId = 'swing' | 'momentum' | 'momentum30'
 
 export interface SignalCategory {
   id: CategoryId
@@ -113,6 +113,40 @@ export const CATEGORIES: Record<CategoryId, SignalCategory> = {
       {
         q: 'How often does the book rotate?',
         a: 'Momentum is long-only with a weekly rebalance. Hold the highest-ranked names while the edge lasts, rotate out as momentum fades.',
+      },
+      ...FAQ_COMMON,
+    ],
+  },
+  momentum30: {
+    id: 'momentum30',
+    slug: 'index-momentum-30',
+    label: 'Index Momentum 30',
+    title: 'Index Momentum 30',
+    hold: 'Monthly rebalance · long-only',
+    tagline: 'The Nifty-200, ranked against itself. Own the top 30.',
+    icon: BarChart3,
+    whatIs:
+      'A cross-sectional momentum book built on the published NSE Indices Nifty200-Momentum-30 construction. Each stock\'s 6-month and 12-month returns are divided by its own volatility, then scored against every other name in the universe — so a place in the book is earned by out-ranking peers, not by clearing a fixed threshold. Long-only, equal-weight, rebalanced monthly.',
+    howAI: [
+      'Every Nifty-200 name is scored on 12-month and 6-month return, each divided by its own annualised volatility — so a calm riser outranks a wild one with the same gain.',
+      'Those two legs are z-scored ACROSS the universe and blended 50/50, which is what makes the book relative rather than absolute.',
+      'The top 30 by score are held equal-weight and refreshed monthly; names that fall out of the top rank are rotated out.',
+      'Backtested over 179 monthly rebalances (2011-2026) net of real costs: 29.7% CAGR vs 22.0% for an equal-weight benchmark, with a shallower worst drawdown.',
+    ],
+    engines: ['Alpha', 'Regime'],
+    holdDays: 30,
+    faq: [
+      {
+        q: 'How is this different from Momentum Picks?',
+        a: 'Momentum Picks is a per-symbol ML ranker rebalanced weekly. This book is cross-sectional and monthly: it scores each name RELATIVE to the rest of the Nifty-200 using the published index construction. They can disagree, and that is intentional — they measure different things.',
+      },
+      {
+        q: 'Has it been working recently?',
+        a: 'Honestly, not lately. Across 2011-2026 the book beat an equal-weight benchmark by about 7.7% a year with a better risk-adjusted return and a shallower drawdown. But split by period, the edge was clear in 2011-14, 2015-18 and 2019-22, and roughly FLAT in 2023-26 — momentum has been crowded. We show the long-run record and this caveat together rather than only the good years.',
+      },
+      {
+        q: 'What are the limits of the backtest?',
+        a: 'It applies today\'s index membership to history, so companies that were dropped or delisted are missing — that survivorship bias flatters the result. It is also a backtest, not live trading. Paper-trade it before committing real money.',
       },
       ...FAQ_COMMON,
     ],
