@@ -1,6 +1,29 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Tailwind CSS v4 — single import replaces the legacy @tailwind directives.
+   The bespoke FintechX theme (channel-based color tokens, custom fontSize/
+   spacing/animation scales, textColor remap) still lives in the JS config,
+   loaded here via the @config bridge so the v4 engine reads it 1:1. */
+@import 'tailwindcss';
+@config '../tailwind.config.ts';
+
+/* ── Tailwind v4 compatibility ──────────────────────────────────────
+   v4 changed the default border/ring color from gray-200 / blue-500 to
+   `currentColor`. In this near-black, light-ink theme that would turn
+   every bare `border` / `ring-*` (no explicit color) bright. Pin the
+   defaults back to the FintechX hairline + accent tokens so the app
+   renders identically to the v3 build. Explicit border-/ring-<color>
+   utilities still override these. */
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: rgb(var(--border));
+  }
+  * {
+    --tw-ring-color: rgb(var(--ring));
+  }
+}
 
 /* ════════════════════════════════════════════════════════════════
    QUANT X DESIGN SYSTEM — "FINTECHX" (v4, 2026-07-14)
@@ -419,7 +442,7 @@ select option {
 
 /* ════════════════════════════════════════════════════════════════
    GRADIENT FAMILY — signature / CTA / text (the ONE family)
-   ════════════════════════════════════════════════════════════════ */
+   ═══════════��════════════════════════════════════════════════════ */
 
 /* Display / hero heading gradient — theme-aware text stops. */
 .text-gradient {
