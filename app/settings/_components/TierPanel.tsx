@@ -55,10 +55,6 @@ export default function TierPanel({
     return () => { active = false }
   }, [quizRec])
 
-  if (!tierInfo) {
-    return <div className="flex items-center justify-center min-h-[200px]"><Loader2 className="w-5 h-5 text-primary animate-spin" /></div>
-  }
-
   const tierMeta: Record<Tier, { name: string; price: string; bullets: string[]; cta: string; href: string }> = {
     free: {
       name: 'Free',
@@ -99,9 +95,10 @@ export default function TierPanel({
       href: '/pricing',
     },
   }
-  const current = tierMeta[tierInfo.tier] ?? tierMeta.free
+  const current = (tierInfo ? tierMeta[tierInfo.tier] : undefined) ?? tierMeta.free
 
   const showQuizRec =
+    tierInfo !== null &&
     quizRec !== null &&
     quizRec.recommended_tier !== 'free' &&
     tierRank(quizRec.recommended_tier) > tierRank(tierInfo.tier) &&
@@ -136,8 +133,16 @@ export default function TierPanel({
   }, [showQuizRec, tierInfo?.tier])
 
   const recDelta = showQuizRec
-    ? quizRecDelta(tierInfo.tier, quizRec!.recommended_tier, recVariant)
+    ? quizRecDelta(tierInfo!.tier, quizRec!.recommended_tier, recVariant)
     : null
+
+  // Loading state. Placed AFTER all hooks so hook order is stable across
+  // renders (React Rules of Hooks — was previously an early return before
+  // useState/useEffect, which eslint-config-next@16's react-hooks rules
+  // correctly flagged as a conditional-hook bug).
+  if (!tierInfo) {
+    return <div className="flex items-center justify-center min-h-[200px]"><Loader2 className="w-5 h-5 text-primary animate-spin" /></div>
+  }
 
   return (
     <div className="space-y-6">

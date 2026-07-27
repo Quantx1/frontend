@@ -95,7 +95,6 @@ try {
     project: process.env.SENTRY_PROJECT,
     authToken: process.env.SENTRY_AUTH_TOKEN,
     // Don't upload source maps in dev — wasted bandwidth + slow rebuilds.
-    disableLogger: true,
     sourcemaps: {
       disable: !process.env.SENTRY_AUTH_TOKEN,
     },

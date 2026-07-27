@@ -655,7 +655,9 @@ function CopilotHub() {
     }
   }
 
-  const usePrompt = (p: string) => {
+  // Not a hook — `use` prefix is reserved for React hooks, so this handler is
+  // named `applyPrompt` (fills the input, no auto-send).
+  const applyPrompt = (p: string) => {
     setInput(p)
     inputRef.current?.focus()
   }

@@ -224,7 +224,10 @@ function buildResponseWithCsp(request: NextRequest): NextResponse {
   return response
 }
 
-export function middleware(request: NextRequest) {
+// Next.js 16 renamed the `middleware` file convention to `proxy`. The
+// exported function must now be named `proxy` (was `middleware`). Behaviour
+// is unchanged — per-request CSP nonce, route redirects, and auth gating.
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // PR-A: 301 redirect retired v1 routes BEFORE any auth gate so they

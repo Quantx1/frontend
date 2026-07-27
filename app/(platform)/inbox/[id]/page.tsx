@@ -17,11 +17,13 @@ import {
  * deep links to the originating signal / portfolio holding / agent
  * run, and a "mark read" / "snooze" action bar.
  */
-export default function InboxItemPage({
+export default async function InboxItemPage({
   params,
 }: {
-  params: { id: string }
+  // Next.js 16: dynamic route params are now async and must be awaited.
+  params: Promise<{ id: string }>
 }) {
+  const { id } = await params
   return (
     <div className="mx-auto max-w-3xl space-y-6 px-6 py-8">
       <Link
@@ -34,12 +36,12 @@ export default function InboxItemPage({
 
       <header className="flex items-start justify-between gap-4">
         <div className="space-y-1">
-          <EyebrowMono>Notification · {params.id}</EyebrowMono>
+          <EyebrowMono>Notification · {id}</EyebrowMono>
           <h1 className="text-lg font-semibold text-d-text-primary">
             <Skeleton w="60%" h="22px" className="inline-block" />
           </h1>
           <p className="text-xs text-d-text-muted">
-            Plan 3 wires this to /api/notifications/{params.id}.
+            Plan 3 wires this to /api/notifications/{id}.
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
