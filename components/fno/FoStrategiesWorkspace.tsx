@@ -1543,7 +1543,7 @@ function ChainTradingTable({
     if (!onLegClick || !ltp) return
     const existing = isSelected(strike, ot)
     // Shift-click → SELL, plain click → BUY. Or cycle if same.
-    let side: 'BUY' | 'SELL' = e.shiftKey ? 'SELL' : 'BUY'
+    const side: 'BUY' | 'SELL' = e.shiftKey ? 'SELL' : 'BUY'
     if (existing && existing.side === side) {
       // Same side already selected → toggle off via parent's matching delete
       onLegClick({ side, option_type: ot, strike, ltp })
@@ -2501,7 +2501,7 @@ function AdjustmentButton({ position }: { position: any }) {
               </p>
             ) : adjustments.length === 0 ? (
               <p className="py-6 text-center text-sm text-d-text-muted">
-                Position doesn't match any adjustment rule right now —
+                Position doesn&apos;t match any adjustment rule right now —
                 hold per your original thesis.
               </p>
             ) : (

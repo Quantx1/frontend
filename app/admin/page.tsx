@@ -405,30 +405,30 @@ export default function AdminDashboard() {
         <div className="glass-card hover:border-primary transition-colors p-6">
           <h2 className="text-lg font-semibold text-white mb-4">Quick Actions</h2>
           <div className="flex flex-wrap gap-3">
-            <a
+            <Link
               href="/admin/users"
               className="px-4 py-2 bg-primary/10 hover:bg-primary/20 border border-primary/20 rounded-lg text-primary text-sm font-medium transition-all"
             >
               View All Users
-            </a>
-            <a
+            </Link>
+            <Link
               href="/admin/payments"
               className="px-4 py-2 bg-up/10 hover:bg-up/20 border border-up/20 rounded-lg text-up text-sm font-medium transition-all"
             >
               Payment History
-            </a>
-            <a
+            </Link>
+            <Link
               href="/admin/signals"
               className="px-4 py-2 bg-ai/10 hover:bg-ai/20 border border-ai/20 rounded-lg text-ai text-sm font-medium transition-all"
             >
               Signal Analytics
-            </a>
-            <a
+            </Link>
+            <Link
               href="/admin/system"
               className="px-4 py-2 bg-warning/10 hover:bg-warning/20 border border-warning/20 rounded-lg text-warning text-sm font-medium transition-all"
             >
               System Health
-            </a>
+            </Link>
           </div>
         </div>
       </div>
