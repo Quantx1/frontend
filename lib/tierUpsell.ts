@@ -54,12 +54,12 @@ export function quizRecCopy(recommended: Tier): { name: string; pitch: string } 
 export function quizRecReason(recommended: Tier, risk: RiskProfile | null): string | null {
   if (recommended === 'free' || !risk) return null
   if (recommended === 'pro') {
-    if (risk === 'conservative') return 'Defensive profile — Pro adds Portfolio Doctor and the Weekly Review so you know what your holdings are doing without taking on more trades.'
+    if (risk === 'conservative') return 'Defensive profile — Pro adds the AI weekly portfolio review so you know what your holdings are doing without taking on more trades.'
     if (risk === 'moderate')     return 'Balanced profile — unlimited swing signals + Scanner Lab give you enough setups per week without overwhelming the watchlist.'
     return 'Active profile — you said you trade weekly+; Pro removes the 1/day signal cap and unlocks intraday + WhatsApp digest.'
   }
-  if (risk === 'conservative') return "Defensive profile — Elite's Counterpoint debate + unlimited Portfolio Doctor suit hands-off long-term capital better than active trading."
-  if (risk === 'moderate')     return "Balanced profile — Elite's unlimited Portfolio Doctor + F&O strategies compound into a managed-portfolio outcome with light oversight."
+  if (risk === 'conservative') return "Defensive profile — Elite's Counterpoint debate suits hands-off long-term capital better than active trading."
+  if (risk === 'moderate')     return "Balanced profile — Elite's F&O strategies compound into a managed-portfolio outcome with light oversight."
   return 'Active profile — AutoPilot, F&O strategies, and Counterpoint were built for traders who want full automation with override control.'
 }
 
@@ -79,7 +79,7 @@ export const QUIZ_REC_DELTA: Record<DeltaVariant, Record<string, string[]>> = {
     'free->pro': [
       'Unlimited swing + intraday signals (vs 1/day on Free)',
       'Scanner Lab unlocked — 50+ live screeners + Pattern Scanner',
-      'Copilot 50 messages/day + WhatsApp digest + Portfolio Doctor',
+      'Copilot 50 messages/day + WhatsApp digest',
     ],
     'free->elite': [
       'AutoPilot — live auto-trader with Kelly sizing + VIX overlay',
