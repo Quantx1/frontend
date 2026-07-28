@@ -532,8 +532,6 @@ export type DossierEngineBlock = {
   confidence?: string | null
 }
 
-// Phase 4 — one IPO issue in the primary-market calendar. `subscription_x` is
-// only present for currently-open issues; GMP is intentionally absent.
 export const api = {
   user: {
     getProfile: () => request<Record<string, any>>('/api/user/profile'),
