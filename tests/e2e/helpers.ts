@@ -81,7 +81,6 @@ export const PUBLIC_ROUTES: { path: string; expectedText?: string | RegExp }[] =
  */
 export const PROTECTED_ROUTES: string[] = [
   '/portfolio',
-  '/portfolio/doctor',
   '/trades',
   '/watchlist',
   '/signals',

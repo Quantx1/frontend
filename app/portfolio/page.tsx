@@ -45,7 +45,6 @@ import {
 } from '@/components/foundation'
 import { dispatchCopilotOpen } from '@/components/copilot/CopilotProvider'
 import { TradeTicketButton } from '@/components/trade/TradeTicketButton'
-import RebalanceCard from '@/components/portfolio/RebalanceCard'
 import { BrokerPositionsPanel } from '@/components/broker/BrokerPositionsPanel'
 import { SymbolLogo } from '@/components/ui/BrandLogo'
 import { AppShell } from '@/components/shell/AppShell'
@@ -419,15 +418,6 @@ export default function PortfolioPage() {
             <BrokerPositionsPanel />
           </div>
         </Reveal>
-
-        {/* AIL v2 P3 — click-triggered AI rebalancing over the live holdings (weights normalized 0..1) */}
-        {positions.length >= 2 && totalValue > 0 && (
-          <Reveal delay={0.12}>
-            <RebalanceCard
-              positions={positions.map((p) => ({ symbol: p.symbol, weight: p.value / totalValue }))}
-            />
-          </Reveal>
-        )}
 
         <DisclaimerFooter />
       </div>

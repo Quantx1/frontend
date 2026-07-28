@@ -14,7 +14,7 @@ const RETIRED_ROUTES: Array<[string, string]> = [
   // '/alerts' un-retired by WP-ALERTS-CALC — it now renders the Alerts Studio
   // (a real 200 page), so it must NOT be asserted as a 301 redirect here.
   ['/notifications', '/inbox'],
-  ['/weekly-review', '/portfolio/doctor'],
+  ['/weekly-review', '/portfolio'],
   ['/ai-portfolio', '/portfolio'],
   // WP-CONSOLIDATE 3c — /dashboard folded into the /copilot home; /tools follows it.
   ['/dashboard', '/copilot'],

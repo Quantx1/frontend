@@ -532,42 +532,6 @@ export type DossierEngineBlock = {
   confidence?: string | null
 }
 
-// PR 34 — Portfolio Doctor report shape (shared: analyze + report)
-export type DoctorRiskFlag = {
-  kind: 'concentration' | 'sector_skew' | 'drawdown' | 'stale_stop'
-  severity: 'low' | 'medium' | 'high'
-  message: string
-  meta?: Record<string, any>
-}
-export type DoctorPositionResult = {
-  symbol: string
-  weight: number
-  composite_score: number
-  action: string
-  narrative: string
-}
-export type DoctorReport = {
-  id: string
-  created_at: string
-  source: 'manual' | 'broker' | 'csv'
-  position_count: number
-  capital: number | null
-  composite_score: number
-  diversification_score?: number
-  risk_score?: number
-  action: 'rebalance' | 'hold' | 'reduce_risk' | 'increase_risk'
-  narrative: string
-  per_position: DoctorPositionResult[]
-  risk_flags: DoctorRiskFlag[]
-  agents: Record<string, any>
-  quota: {
-    tier: 'free' | 'pro' | 'elite'
-    runs_this_month: number
-    quota: number | null
-    remaining: number | null
-  }
-}
-
 // Phase 4 — one IPO issue in the primary-market calendar. `subscription_x` is
 // only present for currently-open issues; GMP is intentionally absent.
 export const api = {
@@ -1904,57 +1868,6 @@ export const api = {
           explanation_text: string | null
         } | null
       }>(`/api/dossier/${symbol}`),
-  },
-
-  // PR 34 — Portfolio Doctor (F7, Pro+)
-  portfolioDoctor: {
-    analyze: (body: {
-      source?: 'manual' | 'broker' | 'csv'
-      capital?: number
-      positions: Array<{
-        symbol: string
-        weight: number
-        qty?: number
-        entry_price?: number
-        current_price?: number
-      }>
-    }) =>
-      request<DoctorReport>('/api/portfolio/doctor/analyze', {
-        method: 'POST',
-        body,
-      }),
-
-    rebalance: (positions: Array<{ symbol: string; weight: number }>, useLlm = true) =>
-      request<{
-        success: boolean
-        correlation: { avg_corr: number | null; pairs: Array<{ a: string; b: string; corr: number }>; symbols: string[] }
-        suggestions: Array<{ action: string; symbol: string | null; sector?: string; pair?: string[]; from_pct?: number; to_pct?: number | null; reason: string }>
-        narrative: string | null
-      }>('/api/portfolio/doctor/rebalance', { method: 'POST', body: { positions }, query: { use_llm: useLlm } }),
-
-    quota: () =>
-      request<{
-        tier: 'free' | 'pro' | 'elite'
-        runs_this_month: number
-        quota: number | null
-        remaining: number | null
-        engine: string
-      }>('/api/portfolio/doctor/quota'),
-
-    reports: (limit = 20) =>
-      request<
-        Array<{
-          id: string
-          created_at: string
-          source: 'manual' | 'broker' | 'csv'
-          position_count: number
-          composite_score: number
-          action: string
-        }>
-      >('/api/portfolio/doctor/reports', { query: { limit } }),
-
-    report: (id: string) =>
-      request<DoctorReport>(`/api/portfolio/doctor/reports/${id}`),
   },
 
   // PR 37 — Onboarding risk-profile quiz (N5)
