@@ -10,6 +10,7 @@ import { UiModeProvider } from '../contexts/UiModeContext'
 import { ThemeModeProvider } from '../contexts/ThemeModeContext'
 import { ClientAuthGate } from '@/components/auth/ClientAuthGate'
 import { GlobalCopilot } from '@/components/copilot/GlobalCopilot'
+import { OfflineBanner } from '@/components/system/OfflineBanner'
 
 /**
  * Pointer-driven spotlight for .glass-card. Uses event delegation: one
@@ -108,6 +109,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
           <AuthProvider>
             <UiModeProvider>
               <ClientAuthGate />
+              {/* Ambient connectivity state. Renders nothing while online, so it
+                  costs one listener pair and no layout. */}
+              <OfflineBanner />
               {/* Chat unification (2026-07-11): ONE Copilot dock for the whole
                   app — auth- and route-gated inside GlobalCopilot. */}
               <GlobalCopilot />
