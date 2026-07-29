@@ -2501,7 +2501,7 @@ function AdjustmentButton({ position }: { position: any }) {
               </p>
             ) : adjustments.length === 0 ? (
               <p className="py-6 text-center text-sm text-d-text-muted">
-                Position doesn't match any adjustment rule right now —
+                Position doesn&apos;t match any adjustment rule right now —
                 hold per your original thesis.
               </p>
             ) : (
