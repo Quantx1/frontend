@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { captureErrors, PUBLIC_ROUTES } from './helpers'
+import { captureErrors, gotoSettled, PUBLIC_ROUTES } from './helpers'
 
 /**
  * Aggregate console-error sweep across every public route. Run last so
@@ -13,8 +13,9 @@ import { captureErrors, PUBLIC_ROUTES } from './helpers'
 test('public surface — aggregate error sweep', async ({ page }) => {
   const errors = captureErrors(page)
   for (const route of PUBLIC_ROUTES) {
-    await page.goto(route.path, { waitUntil: 'domcontentloaded' })
-    await page.waitForLoadState('networkidle', { timeout: 12_000 }).catch(() => {})
+    // gotoSettled, not goto: `/` client-redirects to /copilot, and the next
+    // goto in this loop used to race that hop and die with net::ERR_ABORTED.
+    await gotoSettled(page, route.path)
     await page.waitForTimeout(400)
   }
   const ignoreApi = (f: { url: string }) => !f.url.includes('/api/') && !f.url.includes(':8000')
