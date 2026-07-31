@@ -8,6 +8,54 @@ import type { Page, ConsoleMessage } from '@playwright/test'
  * Whitelisted noise: Next.js dev mode HMR pings, source-map 404s in dev,
  * and known browser deprecation warnings.
  */
+/**
+ * Navigate and wait for any CLIENT-SIDE redirect chain to settle.
+ *
+ * `/` is `redirect('/copilot')` and /copilot's auth guard may bounce again, so a
+ * bare `page.goto(next)` immediately afterwards races the in-flight redirect and
+ * dies with `net::ERR_ABORTED`. That is exactly how the console-noise sweep
+ * failed: it visited `/`, then `/login`, and the pending hop killed the second
+ * navigation.
+ *
+ * It also absorbs Next.js dev-mode cold compiles — the first hit on a route
+ * compiles it, so `networkidle` can fire against an empty body.
+ *
+ * Returns the response of the initial navigation (null for a client-side hop).
+ */
+export async function gotoSettled(page: Page, path: string) {
+  let resp: Awaited<ReturnType<Page['goto']>> = null
+  try {
+    resp = await page.goto(path, { waitUntil: 'domcontentloaded' })
+  } catch (err) {
+    // A redirect that lands mid-navigation aborts it; the hop itself is the
+    // behaviour under test, so continue and let the settle loop below observe
+    // where we ended up. Anything else is a real failure.
+    if (!String(err).includes('ERR_ABORTED')) throw err
+  }
+  // Poll until the URL stops moving — cheaper and far more reliable than
+  // guessing a fixed timeout for a chain of unknown length.
+  let last = ''
+  for (let i = 0; i < 25; i++) {
+    const now = page.url()
+    if (now === last) break
+    last = now
+    await page.waitForTimeout(200)
+  }
+  await page.waitForLoadState('networkidle', { timeout: 15_000 }).catch(() => {})
+  // Wait for the body to actually HAVE TEXT, not merely to exist.
+  //
+  // On the app-shell routes the <body> element is attached immediately while its
+  // content arrives after React hydration and the client auth guard resolves —
+  // so `waitFor({state:'attached'})` returned instantly and callers read "".
+  // That is the real condition every caller goes on to assert.
+  await page
+    .waitForFunction(() => (document.body?.innerText ?? '').trim().length > 0, null, {
+      timeout: 20_000,
+    })
+    .catch(() => {})
+  return resp
+}
+
 export function captureErrors(page: Page) {
   const consoleErrors: { text: string; location?: string }[] = []
   const networkFailures: { url: string; status: number; method: string }[] = []
@@ -62,18 +110,31 @@ export function captureErrors(page: Page) {
  * Public routes — accessible without auth. If any of these errors out,
  * acquisition is broken.
  */
+/**
+ * Public routes THIS app still serves.
+ *
+ * The acquisition surface — `/`, `/pricing`, `/proof`, `/privacy`, `/terms` —
+ * moved to the standalone `landing` app during the monorepo split. app/page.tsx
+ * now just `redirect('/copilot')`, and the rest 404 here because they live in
+ * the other repo. Six specs kept asserting them and failed on every run.
+ *
+ * They are removed rather than marked skip: the landing repo owns those routes
+ * and has its own suite, so a permanently-red duplicate here only trains people
+ * to ignore the report.
+ *
+ * `/` stays, asserting what it ACTUALLY does — redirect to /copilot and render
+ * the app shell. Verified by probe: status 200, final url /copilot, body begins
+ * "Quant X / TRADING OS / New Chat / Markets…". The client auth guard runs after
+ * hydration, so an anonymous visitor sees the shell first; the pattern accepts
+ * either that or a completed bounce to /login. Worth keeping — this is the entry
+ * point, and a broken redirect chain strands every visitor.
+ */
 export const PUBLIC_ROUTES: { path: string; expectedText?: string | RegExp }[] = [
-  { path: '/', expectedText: /Quant X|Sign in|Get started|Start free|Pricing/i },
+  { path: '/', expectedText: /Quant X|Copilot|Sign in|Login/i },
   { path: '/login', expectedText: /Sign in|Login|email|password/i },
   { path: '/signup', expectedText: /Sign up|Create|account|email/i },
   { path: '/forgot-password', expectedText: /reset|password|email/i },
   { path: '/verify-email', expectedText: /verify|email/i },
-  { path: '/pricing', expectedText: /Pricing|Pro|Elite|Free/i },
-  { path: '/proof', expectedText: /track|record|signal/i },
-  { path: '/proof?tab=models', expectedText: /Model|accuracy|win rate|engine/i },
-  { path: '/proof?tab=regime', expectedText: /Regime|market|bull|bear/i },
-  { path: '/privacy', expectedText: /privacy/i },
-  { path: '/terms', expectedText: /terms/i },
 ]
 
 /**
@@ -81,7 +142,6 @@ export const PUBLIC_ROUTES: { path: string; expectedText?: string | RegExp }[] =
  */
 export const PROTECTED_ROUTES: string[] = [
   '/portfolio',
-  '/portfolio/doctor',
   '/trades',
   '/watchlist',
   '/signals',

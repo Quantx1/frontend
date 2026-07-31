@@ -97,7 +97,7 @@ export default function CopilotQuotaModal() {
 
         <div className="rounded-md border border-d-border bg-d-bg-card p-3">
           <div className="flex items-center justify-between text-[11px] text-d-text-muted">
-            <span>Today's usage</span>
+            <span>Today&apos;s usage</span>
             <span className="font-mono num-display text-d-text-primary">
               {usage.credits_used}/{usage.credits_limit}
             </span>

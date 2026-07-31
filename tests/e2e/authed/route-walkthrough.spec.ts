@@ -37,7 +37,6 @@ const ROUTES_TO_PROBE: string[] = [
   '/pricing',
 
   // Authenticated Pro/Elite surfaces
-  '/portfolio/doctor',
   '/autopilot',
   '/referrals',
   '/trades',

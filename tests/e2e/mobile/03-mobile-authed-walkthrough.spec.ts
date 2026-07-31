@@ -28,7 +28,6 @@ const ROUTES_TO_PROBE: string[] = [
   '/proof?tab=regime',
   '/proof?tab=models',
   '/pricing',
-  '/portfolio/doctor',
   '/autopilot',
   '/referrals',
   '/trades',

@@ -13,6 +13,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Catches assets referenced by this app but absent from ITS OWN public/.
+      # The split routed public/v4/illus/*.png to `landing` only while leaving
+      # the components here, so /login rendered a broken <Image>. Pure stdlib,
+      # no deps — runs before the Node setup so it fails in seconds.
+      - name: Static asset references
+        run: python3 scripts/qa/check_public_assets.py
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
