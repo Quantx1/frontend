@@ -22,7 +22,9 @@ const RETIRED_ROUTE_REDIRECTS: Record<string, string> = {
   // '/alerts' is a LIVE page again (WP-ALERTS-CALC) — the Alerts Studio. Do
   // NOT re-add a redirect here or it silently 301s over the real surface.
   '/notifications': '/inbox',
-  '/weekly-review': '/portfolio/doctor',
+  // Was '/portfolio/doctor' — that feature is gone and the route 404s, so this
+  // redirect was a 301 into a dead end. Points at the live portfolio surface.
+  '/weekly-review': '/portfolio',
   '/ai-portfolio': '/portfolio',
   '/login/mfa': '/settings?tab=security',
   '/settings/security': '/settings?tab=security',

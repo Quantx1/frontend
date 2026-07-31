@@ -147,7 +147,7 @@ export default function OiHeatmap() {
           </div>
           <footer className="border-t border-line px-3 py-2 text-[10px] text-d-text-muted">
             Highlighted row = ATM. Put OI bars (green) flag support, Call OI bars (red) flag resistance.
-            ΔOI overlay shows today's institutional flow per strike.
+            ΔOI overlay shows today&apos;s institutional flow per strike.
           </footer>
         </div>
       )}

@@ -55,6 +55,46 @@ export default function TierPanel({
     return () => { active = false }
   }, [quizRec])
 
+  // Whether to show the quiz recommendation banner. Computed BEFORE the loading
+  // guard below and explicitly null-safe on tierInfo, because the A/B hooks that
+  // follow depend on it and hooks may not sit behind an early return.
+  const showQuizRec =
+    tierInfo !== null &&
+    quizRec !== null &&
+    quizRec.recommended_tier !== 'free' &&
+    tierRank(quizRec.recommended_tier) > tierRank(tierInfo.tier) &&
+    !recDismissed
+
+  // A/B variant. Fires EXPERIMENT_EXPOSED on tier-tab mount so Settings
+  // users count toward the denominator.
+  //
+  // These two hooks USED TO live after the `if (!tierInfo)` return below, which
+  // crashed the tab on every single load. tierInfo is a prop that the parent
+  // initializes to null (app/settings/page.tsx:85) and this component's own
+  // effect fetches, so the first render always took the spinner path with 4
+  // hooks and the second ran 6 — "Rendered more hooks than during the previous
+  // render." Not an edge case: it was the only path.
+  const [recVariant, setRecVariant] = useState<DeltaVariant>('feature_led')
+  useEffect(() => {
+    if (!showQuizRec) return
+    let active = true
+    Promise.all([
+      import('@/lib/abVariant'),
+      import('@/lib/supabase').then((m) => m.supabase.auth.getUser()),
+    ]).then(([mod, userResp]) => {
+      if (!active) return
+      const uid = userResp?.data?.user?.id ?? null
+      const v = mod.getVariant('quiz_rec_delta_copy', ['feature_led', 'outcome_led'] as const, uid)
+      setRecVariant(v)
+      // Tag exposure with tier so per-arm conversion is decomposable by
+      // tier. tierInfo is non-null here since showQuizRec is gated on it.
+      void mod.reportExposure('quiz_rec_delta_copy', v, {
+        current_tier: tierInfo?.tier ?? null,
+      })
+    }).catch(() => {})
+    return () => { active = false }
+  }, [showQuizRec, tierInfo?.tier])
+
   if (!tierInfo) {
     return <div className="flex items-center justify-center min-h-[200px]"><Loader2 className="w-5 h-5 text-primary animate-spin" /></div>
   }
@@ -80,7 +120,7 @@ export default function TierPanel({
         'Momentum Picks + Scanner Lab',
         'Copilot 150 messages / day',
         'WhatsApp digest + Alerts Studio',
-        'Portfolio Doctor + Weekly Review',
+        'AI weekly portfolio review',
       ],
       cta: 'Upgrade to Elite',
       href: '/pricing',
@@ -93,7 +133,6 @@ export default function TierPanel({
         'F&O strategies',
         'Counterpoint debate on signals',
         'Copilot unlimited',
-        'Portfolio Doctor unlimited',
       ],
       cta: 'Manage billing',
       href: '/pricing',
@@ -101,39 +140,13 @@ export default function TierPanel({
   }
   const current = tierMeta[tierInfo.tier] ?? tierMeta.free
 
-  const showQuizRec =
-    quizRec !== null &&
-    quizRec.recommended_tier !== 'free' &&
-    tierRank(quizRec.recommended_tier) > tierRank(tierInfo.tier) &&
-    !recDismissed
+  // Derived display values — plain, not hooks, so they stay below the guard
+  // where tierInfo is narrowed non-null. showQuizRec is computed above.
   const recCopy = showQuizRec ? quizRecCopy(quizRec!.recommended_tier) : null
 
   const recReason = showQuizRec
     ? quizRecReason(quizRec!.recommended_tier, quizRec!.risk_profile)
     : null
-
-  // A/B variant. Fires EXPERIMENT_EXPOSED on tier-tab mount so Settings
-  // users count toward the denominator.
-  const [recVariant, setRecVariant] = useState<DeltaVariant>('feature_led')
-  useEffect(() => {
-    if (!showQuizRec) return
-    let active = true
-    Promise.all([
-      import('@/lib/abVariant'),
-      import('@/lib/supabase').then((m) => m.supabase.auth.getUser()),
-    ]).then(([mod, userResp]) => {
-      if (!active) return
-      const uid = userResp?.data?.user?.id ?? null
-      const v = mod.getVariant('quiz_rec_delta_copy', ['feature_led', 'outcome_led'] as const, uid)
-      setRecVariant(v)
-      // Tag exposure with tier so per-arm conversion is decomposable by
-      // tier. tierInfo is non-null here since showQuizRec is gated on it.
-      void mod.reportExposure('quiz_rec_delta_copy', v, {
-        current_tier: tierInfo?.tier ?? null,
-      })
-    }).catch(() => {})
-    return () => { active = false }
-  }, [showQuizRec, tierInfo?.tier])
 
   const recDelta = showQuizRec
     ? quizRecDelta(tierInfo.tier, quizRec!.recommended_tier, recVariant)

@@ -13,13 +13,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # SEBI execute-only gate. Pure text assertions, no deps — run it first so
-      # a compliance regression fails in seconds rather than after a full build.
-      # The monorepo ran this from release-hardening-gates.yml, which was not
-      # carried into the split; the script sat in the backend repo unreferenced
-      # (and unrunnable there — it asserts on a frontend page).
+      # Two independent pre-build gates. Both are pure text/stdlib assertions
+      # with no dependencies, so they run before the Node setup and fail in
+      # seconds rather than after a full install-and-build.
+      #
+      # They arrived from opposite sides of a merge and are complementary, not
+      # alternatives — keeping both is the resolution.
+
+      # SEBI execute-only gate. The monorepo ran this from
+      # release-hardening-gates.yml, which was not carried into the split; the
+      # script sat in the backend repo unreferenced, and unrunnable there since
+      # it asserts on a frontend page.
       - name: Execute-only compliance gate
         run: bash scripts/qa/frontend_execute_only_gate.sh
+
+      # Catches assets referenced by this app but absent from ITS OWN public/.
+      # The split routed public/v4/illus/*.png to `landing` only while leaving
+      # the components here, so /login rendered a broken <Image>.
+      - name: Static asset references
+        run: python3 scripts/qa/check_public_assets.py
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

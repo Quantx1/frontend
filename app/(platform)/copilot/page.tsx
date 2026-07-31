@@ -655,7 +655,10 @@ function CopilotHub() {
     }
   }
 
-  const usePrompt = (p: string) => {
+  // NOT a hook — an ordinary click handler. Named `usePrompt` until now, which
+  // made react-hooks/rules-of-hooks (correctly, by its own rules) read it as a
+  // custom hook and error on the call inside the onClick callback below.
+  const fillPrompt = (p: string) => {
     setInput(p)
     inputRef.current?.focus()
   }
@@ -665,7 +668,7 @@ function CopilotHub() {
   //     (analyse · buy-or-not · trade plan · news · portfolio fit),
   //  2. else typing → fuzzy-filter the active lens's pool,
   //  3. else empty + focused → a rotating starter window (Shuffle pages it).
-  // Selecting one FILLS the box (usePrompt → no surprise send). Kept to the
+  // Selecting one FILLS the box (fillPrompt → no surprise send). Kept to the
   // empty home state (turns === 0) — once an answer is live the box owns it.
   const q = input.trim().toLowerCase()
   const detectedSym = detectSymbol(input)
@@ -852,7 +855,7 @@ function CopilotHub() {
                       <button
                         type="button"
                         onMouseDown={(e) => e.preventDefault()}
-                        onClick={() => usePrompt(p)}
+                        onClick={() => fillPrompt(p)}
                         className="group/row flex w-full items-center gap-2.5 rounded-pill px-3 py-2.5 text-left transition-colors hover:bg-white/[0.05]"
                       >
                         <Sparkles size={13} className="shrink-0 text-ai" />

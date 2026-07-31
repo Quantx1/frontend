@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { captureErrors, PUBLIC_ROUTES } from './helpers'
+import { captureErrors, gotoSettled, PUBLIC_ROUTES } from './helpers'
 
 /**
  * Public-page smoke. Every route in PUBLIC_ROUTES must:
@@ -14,13 +14,14 @@ test.describe('Public pages — acquisition surface', () => {
   for (const route of PUBLIC_ROUTES) {
     test(`loads ${route.path}`, async ({ page }) => {
       const errors = captureErrors(page)
-      const resp = await page.goto(route.path, { waitUntil: 'domcontentloaded' })
+      // gotoSettled waits out the client redirect chain (`/` -> /copilot -> the
+      // auth guard) and Next.js dev cold-compiles. Plain goto + networkidle
+      // could assert against an empty body on a first, uncompiled hit.
+      const resp = await gotoSettled(page, route.path)
       expect(resp, `goto returned null for ${route.path}`).not.toBeNull()
       // Allow client redirects (e.g. /verify-email may redirect when session present).
       const status = resp!.status()
       expect(status, `${route.path} returned ${status}`).toBeLessThan(500)
-      // Wait for hydration — Next.js sets data-nextjs-router-tree-load-stamp etc.
-      await page.waitForLoadState('networkidle', { timeout: 15_000 }).catch(() => {})
       if (route.expectedText) {
         const body = await page.locator('body').innerText()
         expect(body, `${route.path} missing expected content`).toMatch(route.expectedText)

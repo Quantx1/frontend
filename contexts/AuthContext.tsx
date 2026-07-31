@@ -8,7 +8,9 @@
 
 import { createContext, useContext, useEffect, useState, useMemo, useCallback } from 'react'
 import { User } from '@supabase/supabase-js'
+import { toast } from 'sonner'
 import { supabase, getUserProfile, createUserProfile } from '../lib/supabase'
+import { onSessionExpired } from '../lib/api'
 import { UserProfile } from '../types'
 import { useRouter } from 'next/navigation'
 import { logger } from '../lib/logger'
@@ -367,6 +369,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setProfile(null)
       router.push('/')
     }
+  }, [router])
+
+  // ============================================================================
+  // SESSION EXPIRY FROM THE API LAYER
+  // ============================================================================
+
+  // lib/api.ts is a plain module and cannot call useAuth(), so request() cannot
+  // sign the user out itself. Previously a 401 mid-session surfaced as a generic
+  // error message wherever the user happened to be — no redirect, no sign-out,
+  // no explanation, and the stale session lingered.
+  //
+  // request() already forces one supabase.auth.refreshSession() before giving
+  // up, so reaching here means the session is genuinely unrecoverable.
+  useEffect(() => {
+    onSessionExpired(() => {
+      setUser(null)
+      setProfile(null)
+      toast.error('Your session has expired. Please sign in again.')
+      router.push('/login')
+    })
+    return () => onSessionExpired(null)
   }, [router])
 
   // ============================================================================

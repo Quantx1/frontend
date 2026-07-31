@@ -23,6 +23,12 @@ type RequestOptions = {
   body?: Record<string, unknown>
   query?: Record<string, Primitive>
   auth?: boolean
+  /** Override REQUEST_TIMEOUT_MS for a deliberately long call (a full-universe
+   *  scan, say). Pass 0 to disable the timeout entirely. */
+  timeoutMs?: number
+  /** Internal: set when replaying a request after a 401 token refresh, so one
+   *  failed refresh cannot loop. */
+  _isRetry?: boolean
 }
 
 type StructuredDetail = {
@@ -67,6 +73,81 @@ export class ApiError extends Error {
   }
 }
 
+/* ── Typed failure modes ───────────────────────────────────────────────────
+ * Everything below subclasses ApiError, so existing `catch (e)` /
+ * handleApiError() call sites keep working untouched — they just get a more
+ * specific instance. Callers that want to render a dedicated state can
+ * `instanceof` instead of matching on message text.
+ *
+ * These exist because the app had no way to tell them apart: request() threw a
+ * bare ApiError for every non-2xx, and a dropped connection surfaced as fetch's
+ * raw "Failed to fetch" TypeError. Across 263 tsx files, `navigator.onLine`
+ * appeared in ZERO of them.
+ */
+
+/** No network. Distinct from a server error — retrying may just work. */
+export class OfflineError extends ApiError {
+  constructor(message = 'You appear to be offline. Check your connection and try again.') {
+    super(message, 0, null)
+    this.name = 'OfflineError'
+  }
+}
+
+/** Request exceeded REQUEST_TIMEOUT_MS and was aborted client-side.
+ *  Status 0 — no response was ever received. */
+export class TimeoutError extends ApiError {
+  constructor(public readonly timeoutMs: number, message?: string) {
+    super(message ?? `This is taking longer than expected (over ${Math.round(timeoutMs / 1000)}s). Please try again.`, 0, null)
+    this.name = 'TimeoutError'
+  }
+}
+
+/** 401 — the session is gone or the token is no longer accepted. Raised only
+ *  AFTER a refresh attempt has already failed, so it means "re-authenticate",
+ *  not "transient blip". */
+export class SessionExpiredError extends ApiError {
+  constructor(message = 'Your session has expired. Please sign in again.') {
+    super(message, 401, null)
+    this.name = 'SessionExpiredError'
+  }
+}
+
+/** 403 — authenticated but not allowed. NOT the same as 402, which carries the
+ *  tier-gate upgrade payload and must keep flowing through as a plain
+ *  ApiError so the upgrade CTA still renders. */
+export class PermissionDeniedError extends ApiError {
+  constructor(message = "You don't have permission to do that.", detail: StructuredDetail | string | null = null) {
+    super(message, 403, detail)
+    this.name = 'PermissionDeniedError'
+  }
+}
+
+/* ── Cross-cutting request config ─────────────────────────────────────────── */
+
+/** Hard ceiling on any single request. `fetch` has NO default timeout, which is
+ *  why /api/screener/news/scan, /intraday/scan, /v2/mtf-scan and
+ *  /news-intelligence hung past 120s in testing — the UI had no way to give up
+ *  and show a slow-network state. Per-call override via RequestOptions.timeoutMs. */
+export const REQUEST_TIMEOUT_MS = 30_000
+
+/** AuthContext registers here so a 401 deep inside any call can trigger the
+ *  real sign-out + redirect. lib/api.ts is a plain module and cannot use
+ *  useAuth(), so this is the bridge — one slot, last registration wins. */
+type SessionExpiredHandler = () => void
+let sessionExpiredHandler: SessionExpiredHandler | null = null
+
+export function onSessionExpired(handler: SessionExpiredHandler | null): void {
+  sessionExpiredHandler = handler
+}
+
+/** True when the browser is certain there is no network. `navigator.onLine`
+ *  only reliably reports the negative case — `true` can still mean a captive
+ *  portal or dead uplink, so we never use it to assume connectivity, only to
+ *  fail fast when it is explicitly false. */
+function isDefinitelyOffline(): boolean {
+  return typeof navigator !== 'undefined' && navigator.onLine === false
+}
+
 function buildPath(path: string, query?: Record<string, Primitive>): string {
   if (!query) {
     return path
@@ -108,8 +189,21 @@ async function getAuthToken(): Promise<string | null> {
 }
 
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { method = 'GET', body, query, auth = true } = options
+  const {
+    method = 'GET',
+    body,
+    query,
+    auth = true,
+    timeoutMs = REQUEST_TIMEOUT_MS,
+    _isRetry = false,
+  } = options
   const fullPath = buildPath(path, query)
+
+  // Fail fast rather than firing a request the browser will drop anyway. Only
+  // trusted in the negative direction — see isDefinitelyOffline().
+  if (isDefinitelyOffline()) {
+    throw new OfflineError()
+  }
 
   const headers: Record<string, string> = {
     Accept: 'application/json',
@@ -126,14 +220,24 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     }
   }
 
+  // fetch never times out on its own; without this a stalled upstream hangs the
+  // calling component forever with no way to render a slow-network state.
+  const controller = new AbortController()
+  const timer = timeoutMs > 0 ? setTimeout(() => controller.abort(), timeoutMs) : null
+
+  let response: Response
+  let payload: unknown = null
   try {
-    const response = await fetch(`${API_BASE}${fullPath}`, {
+    response = await fetch(`${API_BASE}${fullPath}`, {
       method,
       headers,
       body: body ? JSON.stringify(body) : undefined,
+      signal: controller.signal,
     })
 
-    let payload: unknown = null
+    // Read the body INSIDE the timeout window. fetch resolves as soon as headers
+    // arrive, so a server that streams a slow/stalled body would otherwise sit
+    // here untimed with the timer already cleared.
     const text = await response.text()
     if (text) {
       try {
@@ -142,21 +246,58 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
         payload = text
       }
     }
+  } catch (error) {
+    // fetch (and the body read) reject for two reasons we care about: we aborted,
+    // or the network failed. Both arrive opaque, so classify here — otherwise
+    // every component sees a bare "Failed to fetch".
+    if (controller.signal.aborted) {
+      throw new TimeoutError(timeoutMs)
+    }
+    if (isDefinitelyOffline() || error instanceof TypeError) {
+      throw new OfflineError()
+    }
+    throw error
+  } finally {
+    if (timer) clearTimeout(timer)
+  }
 
-    if (!response.ok) {
-      const err = (payload as ApiErrorShape) || {}
-      const message = extractErrorMessage(err, response.status)
-      const detailPayload =
-        err.detail && typeof err.detail === 'object' ? (err.detail as StructuredDetail)
-        : typeof err.detail === 'string' ? err.detail
-        : null
-      throw new ApiError(message, response.status, detailPayload)
+  if (!response.ok) {
+    const err = (payload as ApiErrorShape) || {}
+    const message = extractErrorMessage(err, response.status)
+    const detailPayload =
+      err.detail && typeof err.detail === 'object' ? (err.detail as StructuredDetail)
+      : typeof err.detail === 'string' ? err.detail
+      : null
+
+    if (response.status === 401 && auth) {
+      // The client has autoRefreshToken on, but the token can still expire in
+      // the window between getSession() and the request landing. Force one
+      // refresh and replay before declaring the session dead. _isRetry stops
+      // a dead refresh from looping.
+      if (!_isRetry) {
+        try {
+          const { data, error: refreshError } = await supabase.auth.refreshSession()
+          if (!refreshError && data.session?.access_token) {
+            return request<T>(path, { ...options, _isRetry: true })
+          }
+        } catch {
+          // fall through to session-expired
+        }
+      }
+      sessionExpiredHandler?.()
+      throw new SessionExpiredError()
     }
 
-    return payload as T
-  } catch (error) {
-    throw error
+    if (response.status === 403) {
+      throw new PermissionDeniedError(message, detailPayload)
+    }
+
+    // 402 deliberately NOT special-cased: it carries the tier-gate payload the
+    // upgrade CTA reads off ApiError.detail.
+    throw new ApiError(message, response.status, detailPayload)
   }
+
+  return payload as T
 }
 
 export function handleApiError(error: unknown): string {
@@ -532,44 +673,6 @@ export type DossierEngineBlock = {
   confidence?: string | null
 }
 
-// PR 34 — Portfolio Doctor report shape (shared: analyze + report)
-export type DoctorRiskFlag = {
-  kind: 'concentration' | 'sector_skew' | 'drawdown' | 'stale_stop'
-  severity: 'low' | 'medium' | 'high'
-  message: string
-  meta?: Record<string, any>
-}
-export type DoctorPositionResult = {
-  symbol: string
-  weight: number
-  composite_score: number
-  action: string
-  narrative: string
-}
-export type DoctorReport = {
-  id: string
-  created_at: string
-  source: 'manual' | 'broker' | 'csv'
-  position_count: number
-  capital: number | null
-  composite_score: number
-  diversification_score?: number
-  risk_score?: number
-  action: 'rebalance' | 'hold' | 'reduce_risk' | 'increase_risk'
-  narrative: string
-  per_position: DoctorPositionResult[]
-  risk_flags: DoctorRiskFlag[]
-  agents: Record<string, any>
-  quota: {
-    tier: 'free' | 'pro' | 'elite'
-    runs_this_month: number
-    quota: number | null
-    remaining: number | null
-  }
-}
-
-// Phase 4 — one IPO issue in the primary-market calendar. `subscription_x` is
-// only present for currently-open issues; GMP is intentionally absent.
 export const api = {
   user: {
     getProfile: () => request<Record<string, any>>('/api/user/profile'),
@@ -1904,57 +2007,6 @@ export const api = {
           explanation_text: string | null
         } | null
       }>(`/api/dossier/${symbol}`),
-  },
-
-  // PR 34 — Portfolio Doctor (F7, Pro+)
-  portfolioDoctor: {
-    analyze: (body: {
-      source?: 'manual' | 'broker' | 'csv'
-      capital?: number
-      positions: Array<{
-        symbol: string
-        weight: number
-        qty?: number
-        entry_price?: number
-        current_price?: number
-      }>
-    }) =>
-      request<DoctorReport>('/api/portfolio/doctor/analyze', {
-        method: 'POST',
-        body,
-      }),
-
-    rebalance: (positions: Array<{ symbol: string; weight: number }>, useLlm = true) =>
-      request<{
-        success: boolean
-        correlation: { avg_corr: number | null; pairs: Array<{ a: string; b: string; corr: number }>; symbols: string[] }
-        suggestions: Array<{ action: string; symbol: string | null; sector?: string; pair?: string[]; from_pct?: number; to_pct?: number | null; reason: string }>
-        narrative: string | null
-      }>('/api/portfolio/doctor/rebalance', { method: 'POST', body: { positions }, query: { use_llm: useLlm } }),
-
-    quota: () =>
-      request<{
-        tier: 'free' | 'pro' | 'elite'
-        runs_this_month: number
-        quota: number | null
-        remaining: number | null
-        engine: string
-      }>('/api/portfolio/doctor/quota'),
-
-    reports: (limit = 20) =>
-      request<
-        Array<{
-          id: string
-          created_at: string
-          source: 'manual' | 'broker' | 'csv'
-          position_count: number
-          composite_score: number
-          action: string
-        }>
-      >('/api/portfolio/doctor/reports', { query: { limit } }),
-
-    report: (id: string) =>
-      request<DoctorReport>(`/api/portfolio/doctor/reports/${id}`),
   },
 
   // PR 37 — Onboarding risk-profile quiz (N5)
