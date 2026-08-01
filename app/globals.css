@@ -419,7 +419,7 @@ select option {
 
 /* ════════════════════════════════════════════════════════════════
    GRADIENT FAMILY — signature / CTA / text (the ONE family)
-   ════════════════════════════════════════════════════════════════ */
+   ═══════════��════════════════════════════════════════════════════ */
 
 /* Display / hero heading gradient — theme-aware text stops. */
 .text-gradient {
@@ -1083,6 +1083,77 @@ html.light .app-canvas::before {
   .glass-control { background: var(--color-wrap); border-color: var(--color-line); backdrop-filter: none; -webkit-backdrop-filter: none; }
   .glass-control-accent { background: var(--color-primary); backdrop-filter: none; -webkit-backdrop-filter: none; }
   .glass-control-danger { background: var(--color-wrap); border-color: color-mix(in srgb, var(--color-down) 40%, transparent); backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   WAVE-2 SHELL REFINEMENTS (2026-08) — ADDITIVE ONLY. A refined
+   neutral elevation scale, one AI-accent focus ring, an active-nav
+   rail cue and a soft section divider. Every value is theme-aware and
+   token-driven (hexes stay in this file). Nothing above is removed —
+   components opt into these classes; older styling keeps working.
+   ════════════════════════════════════════════════════════════════ */
+
+/* Refined neutral elevation — layered soft shadow, depth without a border.
+   e1 = resting card · e2 = hovered/floating · e3 = popovers/menus. */
+.elev-1 { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16), 0 6px 20px -10px rgba(0, 0, 0, 0.42); }
+.elev-2 { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.20), 0 16px 40px -14px rgba(0, 0, 0, 0.52); }
+.elev-3 { box-shadow: 0 4px 10px rgba(0, 0, 0, 0.24), 0 28px 60px -18px rgba(0, 0, 0, 0.60); }
+html.light .elev-1 { box-shadow: 0 1px 2px rgba(29, 29, 29, 0.04), 0 6px 20px -10px rgba(29, 29, 29, 0.12); }
+html.light .elev-2 { box-shadow: 0 2px 6px rgba(29, 29, 29, 0.06), 0 16px 40px -14px rgba(29, 29, 29, 0.14); }
+html.light .elev-3 { box-shadow: 0 4px 10px rgba(29, 29, 29, 0.08), 0 28px 60px -18px rgba(29, 29, 29, 0.18); }
+
+/* Ambient card lift — a resting hairline + soft elevation that firms up on
+   hover. The reference "card that feels physical" register. */
+.card-lift {
+  transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.26s ease;
+}
+.card-lift:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-line));
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.20), 0 18px 44px -16px color-mix(in srgb, var(--color-primary) 26%, rgba(0, 0, 0, 0.4));
+}
+html.light .card-lift:hover {
+  box-shadow: 0 2px 6px rgba(29, 29, 29, 0.06), 0 18px 44px -18px color-mix(in srgb, var(--color-primary) 22%, rgba(29, 29, 29, 0.16));
+}
+
+/* One reusable AI-accent focus ring — a 2px accent halo over a canvas gap. Wire
+   it on the composer + primary controls for a consistent keyboard affordance. */
+.focus-ring-ai:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--color-main),
+    0 0 0 4px color-mix(in srgb, var(--color-ai) 62%, transparent);
+}
+
+/* Active-nav rail cue — a short accent bar pinned to the left edge of the
+   current route's pill. Pairs with the existing tinted-pill active state. */
+.nav-rail-cue { position: relative; }
+.nav-rail-cue::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  height: 20px;
+  width: 3px;
+  transform: translateY(-50%);
+  border-radius: 0 4px 4px 0;
+  background: var(--color-primary);
+  box-shadow: 0 0 12px -1px color-mix(in srgb, var(--color-primary) 70%, transparent);
+}
+
+/* Soft top divider — a hairline that fades at both ends (premium section split,
+   quieter than a full-width border). */
+.divider-soft {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(90deg, transparent, var(--color-line) 12%, var(--color-line) 88%, transparent);
+}
+
+/* Signature chip halo — the small brand/AI status dot backdrop. */
+.chip-ai {
+  background: color-mix(in srgb, var(--color-ai) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-ai) 32%, transparent);
+  color: var(--color-ai);
 }
 
 /* ════════════════════════════════════════════════════════════════

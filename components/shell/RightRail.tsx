@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import {
   Activity, Bell, Eye, HelpCircle, LogOut, Search, Settings, User,
 } from '@/lib/icons'
@@ -23,13 +24,15 @@ interface Props {
 // Hidden below `lg` (the MobileDrawer + footer carry these on small screens).
 // Re-skinned to OUR theme-aware tokens — no teal, no hex.
 export function RightRail({ onSearch }: Props) {
+  const pathname = usePathname() ?? '/'
+  const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/')
   return (
     <aside
       aria-label="Utilities"
-      className="fixed right-0 top-0 z-40 hidden h-full w-[72px] flex-col items-center border-l border-line bg-main py-3 lg:flex"
+      className="fixed right-0 top-0 z-40 hidden h-full w-[72px] flex-col items-center border-l border-line glass-chrome py-3.5 lg:flex"
     >
       {/* top group */}
-      <div className="flex flex-col items-center gap-2">
+      <div className="flex flex-col items-center gap-1.5">
         {/* Copilot dock launcher — the primary affordance (⌘/). Opens the
             context-aware panel on the current page instead of navigating away. */}
         <button
@@ -37,23 +40,24 @@ export function RightRail({ onSearch }: Props) {
           onClick={() => dispatchCopilotOpen()}
           aria-label="Open Copilot (⌘/)"
           title="Copilot (⌘/)"
-          className="cta-gloss grid h-10 w-10 place-items-center rounded-full bg-gradient-cta text-primary-foreground transition-transform hover:scale-[1.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+          className="cta-gloss glow-ai grid h-11 w-11 place-items-center rounded-2xl bg-gradient-cta text-primary-foreground transition-transform duration-150 hover:scale-[1.05] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
         >
           <CopilotBot className="h-5 w-5" />
         </button>
-        <div className="my-1 h-px w-6 bg-line" aria-hidden="true" />
-        <RailLink href="/watchlist" label="Watchlist" icon={Eye} />
-        <RailLink href="/inbox" label="Notifications" icon={Bell} />
+        <div className="my-1.5 h-px w-7 bg-line" aria-hidden="true" />
+        <RailLink href="/watchlist" label="Watchlist" icon={Eye} active={isActive('/watchlist')} />
+        <RailLink href="/inbox" label="Notifications" icon={Bell} active={isActive('/inbox')} />
         <RailButton label="Search (⌘K)" icon={Search} onClick={onSearch} />
         {/* WP-SIMPLEVIEW — /activity retired; its 7-day log is folded into the
             Simple band on the /copilot home. */}
-        <RailLink href="/copilot" label="Activity" icon={Activity} />
+        <RailLink href="/copilot" label="Activity" icon={Activity} active={isActive('/copilot')} />
       </div>
 
       {/* pinned bottom: settings · help · account · theme */}
-      <div className="mt-auto flex flex-col items-center gap-2">
-        <RailLink href="/settings" label="Settings" icon={Settings} />
-        <RailLink href="/pricing" label="Help & plans" icon={HelpCircle} />
+      <div className="mt-auto flex flex-col items-center gap-1.5">
+        <RailLink href="/settings" label="Settings" icon={Settings} active={isActive('/settings')} />
+        <RailLink href="/pricing" label="Help & plans" icon={HelpCircle} active={isActive('/pricing')} />
+        <div className="my-0.5 h-px w-7 bg-line" aria-hidden="true" />
         <RailProfile />
         <RailThemeToggle />
       </div>
@@ -62,13 +66,19 @@ export function RightRail({ onSearch }: Props) {
 }
 
 const railBtn =
-  'grid h-10 w-10 place-items-center rounded-full text-d-text-muted transition-colors ' +
+  'grid h-10 w-10 place-items-center rounded-2xl text-d-text-muted transition-colors ' +
   'hover:bg-wrap-hover hover:text-d-text-primary focus-visible:outline-none ' +
   'focus-visible:ring-2 focus-visible:ring-accent/40'
 
-function RailLink({ href, label, icon: Icon }: { href: string; label: string; icon: React.ElementType }) {
+function RailLink({ href, label, icon: Icon, active }: { href: string; label: string; icon: React.ElementType; active?: boolean }) {
   return (
-    <Link href={href} aria-label={label} title={label} className={railBtn}>
+    <Link
+      href={href}
+      aria-label={label}
+      aria-current={active ? 'page' : undefined}
+      title={label}
+      className={cn(railBtn, active && 'bg-primary/12 text-primary ring-1 ring-inset ring-primary/25 hover:bg-primary/12 hover:text-primary')}
+    >
       <Icon className="h-5 w-5" aria-hidden="true" />
     </Link>
   )

@@ -54,16 +54,23 @@ export const NavList = ({ pathname, itemHeight = 'compact', onItemClick, collaps
         aria-current={active ? 'page' : undefined}
         title={collapsed ? label : undefined}
         className={cn(
-          'relative flex items-center rounded-full text-[14px] leading-5 transition-colors',
+          'group/nav relative flex items-center rounded-2xl text-[14px] leading-5 transition-all duration-150',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40',
           collapsed
             ? 'justify-center px-0 py-3'
-            : cn('gap-3 px-4', tall ? 'h-11' : 'h-[52px]'),
+            : cn('gap-3 px-3.5', tall ? 'h-11' : 'h-12'),
           active
-            ? 'bg-primary/10 text-primary'
+            ? 'bg-primary/12 text-primary ring-1 ring-inset ring-primary/25'
             : 'text-d-text-secondary hover:bg-wrap-hover hover:text-d-text-primary',
         )}
       >
+        {/* Active rail cue — a short accent bar pinned to the row's left edge. */}
+        {active && !collapsed && (
+          <span
+            aria-hidden="true"
+            className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-primary shadow-[0_0_10px_-1px_rgba(64,106,228,0.7)]"
+          />
+        )}
         <Icon
           className={cn(
             collapsed ? 'h-[18px] w-[18px]' : 'h-4 w-4',
@@ -99,8 +106,8 @@ export const NavList = ({ pathname, itemHeight = 'compact', onItemClick, collaps
               <div
                 className={cn(
                   MONO,
-                  'px-4 pb-1 pt-4 text-[12px] font-semibold uppercase leading-4 tracking-[0.06em]',
-                  groupActive ? 'text-accent' : 'text-d-text-muted',
+                  'px-3.5 pb-1.5 pt-5 text-[10.5px] font-semibold uppercase leading-4 tracking-[0.14em] transition-colors',
+                  groupActive ? 'text-primary' : 'text-d-text-muted/80',
                 )}
               >
                 {section.label}
