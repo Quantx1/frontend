@@ -698,7 +698,7 @@ function CopilotHub() {
         aria-busy={pending}
         className={
           hero
-            ? 'glass-control-accent grid h-10 w-10 shrink-0 place-items-center rounded-pill transition-[transform,filter] duration-150 ease-out active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-30'
+            ? 'glass-control-accent glow-ai grid h-10 w-10 shrink-0 place-items-center rounded-pill transition-[transform,filter] duration-150 ease-out hover:scale-[1.04] active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:scale-100'
             : 'glass-control-accent grid h-9 w-9 shrink-0 place-items-center rounded-pill transition-[transform,filter] duration-150 ease-out active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-30'
         }
       >
@@ -709,7 +709,7 @@ function CopilotHub() {
     if (!hero) {
       // Docked pill — unchanged single-row layout.
       return (
-        <div className="group relative flex items-end gap-2 rounded-pill border border-line bg-wrap-hover p-2 pl-4 transition-colors duration-150 ease-out focus-within:border-white/30">
+        <div className="group relative flex items-end gap-2 rounded-pill border border-line bg-wrap-hover p-2 pl-4 transition-colors duration-150 ease-out focus-within:border-primary/50">
           <textarea
             ref={inputRef}
             value={input}
@@ -734,7 +734,7 @@ function CopilotHub() {
     return (
       <div className="relative">
         <div
-          className="lg-surface group relative overflow-hidden rounded-[24px] transition-[border-color,box-shadow] duration-200 ease-out"
+          className="lg-surface elev-2 group relative overflow-hidden rounded-[24px] transition-[border-color,box-shadow] duration-200 ease-out"
           style={
             composerFocused
               ? {
@@ -856,7 +856,7 @@ function CopilotHub() {
                         type="button"
                         onMouseDown={(e) => e.preventDefault()}
                         onClick={() => fillPrompt(p)}
-                        className="group/row flex w-full items-center gap-2.5 rounded-pill px-3 py-2.5 text-left transition-colors hover:bg-white/[0.05]"
+                        className="group/row flex w-full items-center gap-2.5 rounded-pill px-3 py-2.5 text-left transition-colors hover:bg-wrap-hover"
                       >
                         <Sparkles size={13} className="shrink-0 text-ai" />
                         <span className="min-w-0 flex-1 truncate text-[13px] text-d-text-secondary transition-colors group-hover/row:text-d-text-primary">
@@ -930,7 +930,7 @@ function CopilotHub() {
                       <BlurFade key={i} offset={6} duration={0.22}>
                         <div className="flex flex-col items-end gap-1.5">
                           <EyebrowMono>YOU</EyebrowMono>
-                          <div className="max-w-[82%] whitespace-pre-wrap rounded-sm border border-line bg-wrap-hover px-3.5 py-2.5 text-[13.5px] leading-relaxed text-d-text-primary">
+                          <div className="max-w-[82%] whitespace-pre-wrap rounded-2xl rounded-br-md border border-primary/25 bg-primary/10 px-3.5 py-2.5 text-[13.5px] leading-relaxed text-d-text-primary">
                             <span className="sr-only">You: </span>{t.text}
                           </div>
                         </div>
@@ -963,7 +963,7 @@ function CopilotHub() {
                             ) : (
                               <span className="inline">
                                 <MarkdownMessage content={shown} />
-                                {showCursor && <span className="ml-0.5 inline-block h-3.5 w-[2px] translate-y-[3px] animate-pulse bg-white align-middle" />}
+                                {showCursor && <span className="ml-0.5 inline-block h-3.5 w-[2px] translate-y-[3px] animate-pulse bg-ai align-middle" />}
                               </span>
                             )}
                           </div>
@@ -1059,7 +1059,18 @@ function CopilotHub() {
             full-pane-wide input reads terrible); everything BELOW the hero — the
             market tape, news grid, CTAs — spans the full pane. */}
         <div className="relative w-full pt-[clamp(2.5rem,7vw,5.5rem)]">
-          <p className="mx-auto max-w-2xl text-center text-[19px] font-normal leading-snug text-d-text-secondary">
+          {/* Brand eyebrow — a small AI-status chip that anchors the hero and
+              signals the product is live before the composer draws the eye. */}
+          <div className="mb-5 flex justify-center">
+            <span className={`chip-ai inline-flex items-center gap-2 rounded-pill px-3 py-1 text-[11.5px] font-medium ${MONO}`}>
+              <span aria-hidden className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-ai opacity-60" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-ai" />
+              </span>
+              <span className="uppercase tracking-[0.14em]">AI Trading Desk · Live</span>
+            </span>
+          </div>
+          <p className="mx-auto max-w-2xl text-balance text-center text-[clamp(19px,2.4vw,22px)] font-normal leading-snug text-d-text-secondary">
             The AI trading desk for India. Five engines. One gated signal. Every call explained.
           </p>
 
@@ -1111,7 +1122,7 @@ function CopilotHub() {
             <BlurFade key={name} delay={i * 0.04} offset={8} duration={0.3}>
               <Link
                 href={href}
-                className="group relative flex h-full flex-col overflow-hidden rounded-[20px] bg-wrap transition-shadow hover:ring-1 hover:ring-primary/25 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40"
+                className="card-lift elev-1 group relative flex h-full flex-col overflow-hidden rounded-[20px] border border-line bg-wrap focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/50"
               >
                 {image ? (
                   // ── IMAGE-TOPPED media band ── on-brand dark art as the card
@@ -1219,7 +1230,7 @@ function SectionHead({ eyebrow, title }: { eyebrow: string; title: string }) {
 function Stat({ label, value, tone = 'neutral' }: { label: string; value: string; tone?: 'up' | 'down' | 'neutral' }) {
   const color = tone === 'up' ? 'text-up' : tone === 'down' ? 'text-down' : 'text-d-text-primary'
   return (
-    <div className="rounded-[20px] bg-wrap p-4">
+    <div className="elev-1 rounded-[20px] border border-line bg-wrap p-4">
       <EyebrowMono className="text-[11px]">{label}</EyebrowMono>
       <div className={`mt-1 text-[26px] font-normal leading-none ${MONO} ${color}`}>{value}</div>
     </div>
