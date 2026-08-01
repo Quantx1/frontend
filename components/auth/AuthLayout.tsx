@@ -1,8 +1,8 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
 import { QuantXMark } from '@/components/brand/QuantXMark'
+import { Bot, Activity, TrendingUp, ShieldCheck, Zap, Cpu, Radar } from '@/lib/icons'
 
 interface AuthLayoutProps {
   children: React.ReactNode
@@ -10,80 +10,142 @@ interface AuthLayoutProps {
   subtitle?: string
 }
 
+const ENGINES = [
+  { icon: TrendingUp, label: 'Momentum' },
+  { icon: Radar, label: 'Scanner' },
+  { icon: Cpu, label: 'ML Alpha' },
+  { icon: Zap, label: 'F&O' },
+  { icon: ShieldCheck, label: 'Risk' },
+]
+
 export default function AuthLayout({
   children,
-  title = 'AI-Powered Trading Intelligence',
-  subtitle = 'Advanced stock screening and swing trading signals for the Indian market.',
+  title = 'The AI trading desk for India',
+  subtitle = 'Five engines. One gated signal. Every call explained — screening, swing signals and paper trading for NSE & BSE.',
 }: AuthLayoutProps) {
   return (
-    <div className="light-landing flex min-h-screen bg-hero-sky">
-      {/* Left brand panel — light sky wash with the security illustration
-          floating in a tinted tile (flat FintechX register, no dark canvas).
-          Honest stats only, no win-rate claim. */}
-      <div className="relative hidden overflow-hidden lg:flex lg:w-[45%]">
-        <div className="relative z-10 flex h-full flex-col justify-between p-10 xl:p-14">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <QuantXMark className="h-10 w-10 drop-shadow-[0_2px_8px_rgba(58,119,229,0.35)]" />
-            <div className="flex flex-col">
-              <span className="text-lg font-bold tracking-tight text-d-text-primary">Quant X</span>
-              <span className="text-[9px] font-medium uppercase tracking-[0.15em] text-d-text-muted">Trading Intelligence</span>
-            </div>
-          </Link>
+    <div className="auth-dark auth-canvas relative flex min-h-screen overflow-hidden">
+      {/* ── Animated background layers (decorative) ── */}
+      <div className="auth-aurora" aria-hidden="true" />
+      <div className="auth-grid" aria-hidden="true" />
+      <div className="auth-orb auth-orb--a h-[42vh] w-[42vh] left-[-8vh] top-[-10vh]" aria-hidden="true" />
+      <div className="auth-orb auth-orb--b h-[36vh] w-[36vh] right-[-6vh] bottom-[-8vh]" aria-hidden="true" />
+      <div className="auth-orb auth-orb--c h-[28vh] w-[28vh] right-[22%] top-[8%]" aria-hidden="true" />
 
-          {/* Main text */}
-          <div>
-            <h1 className="font-display mb-5 text-3xl font-semibold leading-tight tracking-tight text-d-text-primary xl:text-4xl">
-              {title}
-            </h1>
-            <p className="max-w-sm text-base leading-relaxed text-d-text-secondary">
-              {subtitle}
-            </p>
+      {/* ── Left brand panel ── */}
+      <div className="relative z-10 hidden w-[52%] flex-col justify-between p-10 xl:p-14 lg:flex">
+        {/* Logo */}
+        <Link href="/" className="group flex w-fit items-center gap-2.5">
+          <QuantXMark className="h-10 w-10 drop-shadow-[0_2px_12px_rgba(64,106,228,0.55)]" />
+          <div className="flex flex-col leading-tight">
+            <span className="text-lg font-bold tracking-tight text-d-text-primary">Quant X</span>
+            <span className="font-mono text-[9px] font-medium uppercase tracking-[0.2em] text-d-text-muted">Trading OS</span>
+          </div>
+        </Link>
 
-            {/* security illustration — tinted tile, flat card register */}
-            <div aria-hidden className="mt-8 max-w-[340px] rounded-[24px] bg-main p-2.5">
-              <Image
-                src="/v4/illus/security.png"
-                alt=""
-                aria-hidden
-                width={1024}
-                height={1024}
-                priority
-                sizes="(min-width: 1024px) 320px, 0px"
-                className="w-full rounded-2xl"
+        {/* Headline + live signal cluster */}
+        <div className="max-w-xl">
+          {/* Live status chip */}
+          <span className="chip-ai mb-6 inline-flex items-center gap-2 rounded-pill px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-[0.16em]">
+            <span aria-hidden="true" className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-up opacity-60" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-up" />
+            </span>
+            Market Intelligence · Live
+          </span>
+
+          <h1 className="font-display text-balance text-[clamp(2rem,3.4vw,3.25rem)] font-semibold leading-[1.05] tracking-tight text-d-text-primary">
+            {title}
+          </h1>
+          <p className="mt-5 max-w-md text-[15px] leading-relaxed text-d-text-secondary">
+            {subtitle}
+          </p>
+
+          {/* Floating live-signal cluster (decorative) */}
+          <div aria-hidden="true" className="relative mt-10 h-[188px] max-w-[440px]">
+            {/* dashed connector */}
+            <svg className="absolute inset-0 h-full w-full" viewBox="0 0 440 188" fill="none" preserveAspectRatio="none">
+              <path
+                d="M120 70 C 200 70, 210 132, 300 132"
+                stroke="var(--color-ai)"
+                strokeOpacity="0.5"
+                strokeWidth="1.5"
+                className="flow-line"
               />
+            </svg>
+
+            {/* Primary engine card */}
+            <div className="signal-card signal-float-a absolute left-0 top-0 w-[240px] rounded-2xl p-3.5">
+              <div className="flex items-center gap-2">
+                <span className="grid h-7 w-7 place-items-center rounded-lg bg-primary/15 text-primary-text">
+                  <Bot className="h-4 w-4" />
+                </span>
+                <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-d-text-muted">Alpha Engine</span>
+                <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-up/12 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-up">
+                  BUY
+                </span>
+              </div>
+              <div className="mt-2.5 flex items-end justify-between">
+                <div>
+                  <p className="text-[13px] font-semibold text-d-text-primary">RELIANCE</p>
+                  <p className="font-mono text-[11px] text-d-text-muted">₹2,945.20</p>
+                </div>
+                <p className="font-mono text-[15px] font-semibold text-up">+2.41%</p>
+              </div>
+              {/* mini sparkline */}
+              <svg className="mt-2 h-8 w-full" viewBox="0 0 200 32" fill="none" preserveAspectRatio="none">
+                <polyline
+                  points="0,26 24,22 48,24 72,16 96,18 120,10 144,13 168,6 200,2"
+                  stroke="var(--color-up)"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </div>
 
-            {/* Honest proof — facts about coverage, not a performance claim */}
-            <div className="mt-10 flex items-center gap-8">
-              {[
-                { value: '5', label: 'AI engines' },
-                { value: '1,800+', label: 'NSE stocks' },
-                { value: '₹10L', label: 'Paper, free' },
-              ].map((stat) => (
-                <div key={stat.label}>
-                  <p className="num-display text-xl font-bold text-d-text-primary">{stat.value}</p>
-                  <p className="mt-0.5 text-[10px] font-medium uppercase tracking-wider text-d-text-muted">{stat.label}</p>
-                </div>
-              ))}
+            {/* Secondary index chip */}
+            <div className="signal-card signal-float-b absolute right-0 bottom-2 w-[190px] rounded-2xl p-3.5">
+              <div className="flex items-center gap-2">
+                <Activity className="h-4 w-4 text-cyan" />
+                <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-d-text-muted">NIFTY 50</span>
+              </div>
+              <div className="mt-2 flex items-end justify-between">
+                <p className="font-mono text-[15px] font-semibold text-d-text-primary">24,180</p>
+                <p className="inline-flex items-center gap-1 font-mono text-[12px] font-semibold text-up">
+                  <TrendingUp className="h-3.5 w-3.5" />+0.74%
+                </p>
+              </div>
             </div>
           </div>
+        </div>
 
-          <p className="text-xs text-d-text-muted">
-            &copy; {new Date().getFullYear()} Quant X Technologies. All rights reserved.
+        {/* Footer: engines + copyright */}
+        <div>
+          <div className="mb-6 flex flex-wrap items-center gap-2">
+            {ENGINES.map(({ icon: Icon, label }) => (
+              <span
+                key={label}
+                className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-wrap/60 px-2.5 py-1 text-[11px] font-medium text-d-text-secondary backdrop-blur"
+              >
+                <Icon className="h-3.5 w-3.5 text-primary-text" />
+                {label}
+              </span>
+            ))}
+          </div>
+          <p className="font-mono text-[11px] text-d-text-muted">
+            &copy; {new Date().getFullYear()} Quant X Technologies · Educational use, not investment advice
           </p>
         </div>
       </div>
 
-      {/* Right form panel — light glass card floating on the sky wash */}
-      <div className="flex flex-1 items-center justify-center p-6 sm:p-8">
-        <div className="lg-surface w-full max-w-md rounded-[24px] p-6 sm:p-8">
+      {/* ── Right form panel ── */}
+      <div className="relative z-10 flex flex-1 items-center justify-center p-6 sm:p-8">
+        <div className="lg-surface elev-3 w-full max-w-md rounded-[28px] p-6 sm:p-8">
           {/* Mobile logo */}
           <div className="mb-8 flex items-center justify-center gap-2.5 lg:hidden">
-            <QuantXMark className="h-10 w-10 drop-shadow-[0_2px_8px_rgba(58,119,229,0.35)]" />
-            <span className="text-xl font-bold tracking-tight text-d-text-primary">
-              Quant X
-            </span>
+            <QuantXMark className="h-10 w-10 drop-shadow-[0_2px_12px_rgba(64,106,228,0.55)]" />
+            <span className="text-xl font-bold tracking-tight text-d-text-primary">Quant X</span>
           </div>
 
           {children}

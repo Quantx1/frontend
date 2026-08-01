@@ -419,7 +419,7 @@ select option {
 
 /* ════════════════════════════════════════════════════════════════
    GRADIENT FAMILY — signature / CTA / text (the ONE family)
-   ═══════════��════════════════════════════════════════════════════ */
+   ═══════════����════════════════════════════════════════════════════ */
 
 /* Display / hero heading gradient — theme-aware text stops. */
 .text-gradient {
@@ -1548,4 +1548,208 @@ html.light .qxw-c, .light-landing .qxw-c { stop-color: #9AA0AC; }
     animation: none;
   }
   .illus-draw { stroke-dashoffset: 0; }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   AUTH CANVAS (2026 AI-SaaS) — an immersive, always-dark, animated
+   sign-in stage: a luminous aurora arc, a drifting perspective grid,
+   floating glow orbs, glass "live signal" cards and flowing dashed
+   connectors. Forced dark regardless of app theme. Hexes live here.
+   All motion is transform/opacity + reduced-motion guarded.
+   ════════════════════════════════════════════════════════════════ */
+
+/* Force the dark palette inside .auth-dark even when html.light is set.
+   The compound selector out-specifies `html.light`'s token block. */
+.auth-dark,
+html.light .auth-dark {
+  --color-main: #08090C;
+  --color-wrap: #101218;
+  --color-wrap-hover: #171A22;
+  --color-hover: #171A22;
+  --color-line: #23262F;
+  --color-wrap-line: #333743;
+  --color-card: #101218;
+  --color-card-hover: #171A22;
+  --color-surface-2: #171A22;
+  --color-light: #F7F8FB;
+  --color-pure-white: #FFFFFF;
+  --color-desc: #C9CCD6;
+  --color-muted: #878B99;
+  --color-primary: #406AE4;
+  --color-primary-hover: #3055C2;
+  --color-primary-text: #8FB0FF;
+  --color-signature-ink: #8FB0FF;
+  --color-ai: #8FB0FF;
+  --color-cyan: #5290F4;
+  --color-up: #16C784;
+  --color-down: #EA3943;
+  --color-warning: #F0A94F;
+  --background: 8 9 12;
+  --foreground: 247 248 251;
+  --card: 16 18 24;
+  --card-foreground: 247 248 251;
+  --popover: 23 26 34;
+  --popover-foreground: 247 248 251;
+  --primary: 64 106 228;
+  --primary-foreground: 255 255 255;
+  --secondary: 23 26 34;
+  --secondary-foreground: 247 248 251;
+  --muted: 23 26 34;
+  --muted-foreground: 135 139 153;
+  --accent: 64 106 228;
+  --accent-foreground: 255 255 255;
+  --border: 35 38 47;
+  --input: 35 38 47;
+  --ring: 64 106 228;
+  --rgb-main: 8 9 12;
+  --rgb-wrap: 16 18 24;
+  --rgb-wrap-hover: 23 26 34;
+  --rgb-line: 35 38 47;
+  --rgb-wrap-line: 51 55 67;
+  --rgb-ink: 247 248 251;
+  --rgb-desc: 201 204 214;
+  --rgb-muted: 135 139 153;
+  --rgb-up: 22 199 132;
+  --rgb-down: 234 57 67;
+  --rgb-warning: 240 169 79;
+  --rgb-ai: 143 176 255;
+  --rgb-cyan: 82 144 244;
+  --rgb-primary-text: 143 176 255;
+  color-scheme: dark;
+}
+
+/* The stage — dark base with two ambient depth glows baked in. */
+.auth-canvas {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(120% 90% at 12% 8%, rgba(64, 106, 228, 0.16), transparent 46%),
+    radial-gradient(90% 80% at 92% 96%, rgba(82, 144, 244, 0.12), transparent 50%),
+    #08090C;
+}
+
+/* Aurora arc — a large ring sitting mostly off the left edge; its glowing
+   border reads as a crescent of light (inspiration frame 1). Slow drift. */
+.auth-aurora {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -1;
+}
+.auth-aurora::before {
+  content: '';
+  position: absolute;
+  left: -34%;
+  top: 50%;
+  height: 128vh;
+  width: 128vh;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  border: 1.5px solid rgba(175, 198, 255, 0.42);
+  box-shadow:
+    0 0 140px 34px rgba(143, 176, 255, 0.30),
+    inset 0 0 120px 30px rgba(82, 144, 244, 0.14);
+  filter: blur(2px);
+  animation: auth-aurora-drift 22s ease-in-out infinite alternate;
+}
+.auth-aurora::after {
+  content: '';
+  position: absolute;
+  left: -18%;
+  top: 42%;
+  height: 60vh;
+  width: 60vh;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(143, 176, 255, 0.22), transparent 70%);
+  filter: blur(30px);
+  animation: auth-aurora-pulse 9s ease-in-out infinite;
+}
+
+/* Perspective grid — faint, mask-faded, drifting upward. */
+.auth-grid {
+  position: absolute;
+  inset: -2px;
+  pointer-events: none;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(175, 198, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(175, 198, 255, 0.05) 1px, transparent 1px);
+  background-size: 46px 46px;
+  -webkit-mask-image: radial-gradient(120% 90% at 30% 20%, #000 0%, transparent 72%);
+  mask-image: radial-gradient(120% 90% at 30% 20%, #000 0%, transparent 72%);
+  animation: auth-grid-pan 26s linear infinite;
+}
+
+/* Floating glow orbs — soft blurred accents. */
+.auth-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+  filter: blur(46px);
+}
+.auth-orb--a { background: radial-gradient(closest-side, rgba(64, 106, 228, 0.42), transparent 70%); animation: auth-orb-a 16s ease-in-out infinite; }
+.auth-orb--b { background: radial-gradient(closest-side, rgba(82, 144, 244, 0.34), transparent 70%); animation: auth-orb-b 20s ease-in-out infinite; }
+.auth-orb--c { background: radial-gradient(closest-side, rgba(22, 199, 132, 0.20), transparent 70%); animation: auth-orb-a 24s ease-in-out infinite reverse; }
+
+/* Live-signal glass card — floats on the brand panel. */
+.signal-card {
+  border: 1px solid color-mix(in srgb, var(--color-wrap-line) 70%, transparent);
+  background: color-mix(in srgb, var(--color-wrap) 70%, transparent);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  box-shadow: 0 18px 44px -20px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+.signal-float-a { animation: auth-float-a 7s ease-in-out infinite; }
+.signal-float-b { animation: auth-float-b 8.5s ease-in-out infinite; }
+
+/* Flowing dashed connector between signal cards. */
+.flow-line { stroke-dasharray: 5 7; animation: auth-dash-flow 1.4s linear infinite; }
+
+@keyframes auth-aurora-drift {
+  0%   { transform: translateY(-50%) scale(1) rotate(0deg); }
+  100% { transform: translateY(-46%) scale(1.06) rotate(8deg); }
+}
+@keyframes auth-aurora-pulse {
+  0%, 100% { opacity: 0.7; }
+  50%      { opacity: 1; }
+}
+@keyframes auth-grid-pan {
+  from { background-position: 0 0, 0 0; }
+  to   { background-position: 0 -46px, 46px 0; }
+}
+@keyframes auth-orb-a {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(24px, -30px); }
+}
+@keyframes auth-orb-b {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(-28px, 22px); }
+}
+@keyframes auth-float-a {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-9px); }
+}
+@keyframes auth-float-b {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(7px); }
+}
+@keyframes auth-dash-flow {
+  to { stroke-dashoffset: -24; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-aurora::before,
+  .auth-aurora::after,
+  .auth-grid,
+  .auth-orb--a,
+  .auth-orb--b,
+  .auth-orb--c,
+  .signal-float-a,
+  .signal-float-b,
+  .flow-line {
+    animation: none;
+  }
 }
