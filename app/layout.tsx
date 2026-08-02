@@ -1,8 +1,24 @@
 import './globals.css'
 import type { Metadata, Viewport } from 'next'
-import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
+import { Space_Grotesk, Inter } from 'next/font/google'
 import { Providers } from './providers'
+
+// Space Grotesk — display / headings — expressive, wide tracking, premium feel
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-space-grotesk',
+  display: 'swap',
+})
+
+// Inter — clean UI body text — tight, legible, modern SaaS standard
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-inter',
+  display: 'swap',
+})
 
 // PR 59 — mobile viewport config. `viewportFit: 'cover'` lets the page
 // extend into the iOS notch + home-indicator areas; the safe-area CSS
@@ -16,11 +32,11 @@ export const viewport: Viewport = {
   themeColor: '#0D0D0E',
 }
 
-// Type system (2026-07-20 — clean modern-SaaS, Cursor / Vercel register):
-//   • Geist Sans — ONE family for everything: titles/headings (bold, tight
-//     tracking via `.heading-display`) AND body/UI/content. A precise neutral
-//     grotesque. Its `--font-geist-sans` var is aliased onto BOTH --font-sans
-//     and --font-display in globals.css.
+// Type system (2026-08-02 — expressive multi-font):
+//   • Space Grotesk — display/headings. Wide, geometric, premium trading feel.
+//     --font-space-grotesk → --font-display in globals.css.
+//   • Inter — body/UI text. The world-standard legible SaaS font.
+//     --font-inter → --font-sans in globals.css.
 //   • Geist Mono — numerics ONLY (price/% columns, tabular-nums) via
 //     --font-geist-mono → --font-mono. Functional alignment, not decoration.
 
@@ -90,7 +106,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${GeistSans.variable} ${GeistMono.variable}`}
+      className={`${spaceGrotesk.variable} ${inter.variable} ${GeistMono.variable}`}
       suppressHydrationWarning
     >
       <body

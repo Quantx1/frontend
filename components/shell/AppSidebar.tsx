@@ -121,10 +121,10 @@ export function AppSidebar({ pathname, onSearch }: AppSidebarProps) {
               <Link href="/copilot" aria-label="Quant X — Trading OS">
                 <QuantXMark className="size-8 shrink-0 drop-shadow-[0_2px_10px_rgba(58,119,229,0.45)]" />
                 <div className="flex flex-col leading-tight">
-                  <span className="text-[15px] font-bold tracking-tight text-sidebar-foreground">
+                  <span className="font-display text-[15px] font-bold tracking-tight text-gradient">
                     Quant X
                   </span>
-                  <span className="flex items-center gap-1 text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+                  <span className="flex items-center gap-1 text-eyebrow text-muted-foreground/70">
                     <span className="inline-block size-1.5 rounded-full bg-green-500 shadow-[0_0_6px_rgba(22,199,132,0.8)]" />
                     Trading OS
                   </span>
@@ -159,7 +159,7 @@ export function AppSidebar({ pathname, onSearch }: AppSidebarProps) {
           return (
             <SidebarGroup key={section.key}>
               {section.label && (
-                <SidebarGroupLabel className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/70">
+                <SidebarGroupLabel className="text-eyebrow text-muted-foreground/60">
                   {section.label}
                 </SidebarGroupLabel>
               )}
@@ -252,12 +252,12 @@ export function AppSidebar({ pathname, onSearch }: AppSidebarProps) {
         {/* Upgrade CTA */}
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild tooltip="Upgrade to Pro" className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground font-semibold">
+              <SidebarMenuButton asChild tooltip="Upgrade to Pro" className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground font-semibold">
               <Link href="/pricing">
                 <Sparkles className="size-4" />
                 <div className="flex flex-col leading-tight">
-                  <span className="text-[12.5px]">Upgrade to Pro</span>
-                  <span className="text-[10px] font-normal opacity-80">Unlimited signals & Copilot</span>
+                  <span className="font-display text-[12.5px] font-semibold tracking-tight">Upgrade to Pro</span>
+                  <span className="text-eyebrow font-normal opacity-75">Unlimited signals & Copilot</span>
                 </div>
               </Link>
             </SidebarMenuButton>

@@ -30,10 +30,10 @@ const ACCENT_BORDER: Record<MetricTone, string> = {
 }
 
 const VALUE_TONE: Record<MetricTone, string> = {
-  up:      'text-green-600 dark:text-green-400',
-  down:    'text-red-600 dark:text-red-400',
-  ai:      'text-foreground',
-  warning: 'text-amber-600 dark:text-amber-400',
+  up:      'text-gradient-up',
+  down:    'text-gradient-down',
+  ai:      'text-gradient-ai',
+  warning: 'text-gradient-gold',
   neutral: 'text-foreground',
 }
 
@@ -81,13 +81,13 @@ export function MetricCard({
       )}
     >
       <div className="flex items-start justify-between gap-2">
-        <p className={cn('truncate font-mono text-[11px] font-normal uppercase tracking-[0.1em] text-muted-foreground')}>
+        <p className="text-eyebrow truncate text-muted-foreground/70">
           {label}
         </p>
-        {icon && <span className="shrink-0 text-muted-foreground">{icon}</span>}
+        {icon && <span className="shrink-0 text-muted-foreground/70">{icon}</span>}
       </div>
 
-      <div className={cn('mt-2 text-[22px] leading-none font-normal tabular-nums', MONO, VALUE_TONE[tone])}>
+      <div className={cn('mt-2 text-[24px] leading-none font-semibold tabular-nums font-display tracking-tight', VALUE_TONE[tone])}>
         {prefix}
         {typeof value === 'number' ? <NumberTicker value={value} decimalPlaces={decimals} /> : value}
         {suffix}

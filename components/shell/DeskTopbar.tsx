@@ -59,14 +59,14 @@ export function DeskTopbar({ title, eyebrow, status = 'none', actions, className
         <BreadcrumbList className="flex-nowrap">
           {eyebrow && (
             <>
-              <BreadcrumbItem className="hidden xl:block text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground/70">
+              <BreadcrumbItem className="hidden xl:block text-eyebrow text-muted-foreground/60">
                 {eyebrow}
               </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden xl:block" />
+              <BreadcrumbSeparator className="hidden xl:block opacity-40" />
             </>
           )}
           <BreadcrumbItem>
-            <BreadcrumbPage className="text-[14px] font-semibold tracking-tight text-foreground">
+            <BreadcrumbPage className="font-display text-[15px] font-semibold tracking-tight text-gradient">
               {title}
             </BreadcrumbPage>
           </BreadcrumbItem>
