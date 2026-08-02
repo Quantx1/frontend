@@ -263,19 +263,12 @@ export function SignalsOverview() {
   ]
 
   return (
-    <div className="w-full space-y-6 p-4 md:p-6 xl:px-8">
-      {/* header */}
-      <Reveal className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-d-text-muted">ML signal stack · all horizons</div>
-          <h1 className="flex items-center gap-2 text-[22px] font-bold tracking-tight text-d-text-primary">
-            <Activity size={18} className="text-signature" /> Signals analysis
-            <DataBadge mode="eod" />
-          </h1>
-          <div className="mt-1 text-[11px] text-d-text-muted">Delayed end-of-day research — not investment advice.</div>
-          <div className="mt-0.5 max-w-2xl text-[12px] text-d-text-muted">
-            Every open Alpha Pick and Momentum Pick — filtered, sorted and analysable in one view. Tap any row for the full engine breakdown.
-          </div>
+    <div className="w-full space-y-4 p-4 md:p-6 xl:px-8">
+      {/* sub-header — compact; DeskTopbar carries the main title on desktop */}
+      <Reveal className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2.5 text-[12px] text-d-text-muted">
+          <DataBadge mode="eod" />
+          <span>Delayed end-of-day research · not investment advice</span>
         </div>
         <div className="flex gap-2">
           <TradeTicketButton label="Trade" size="md" />

@@ -57,8 +57,8 @@ export const NavList = ({ pathname, itemHeight = 'compact', onItemClick, collaps
           'group/nav relative flex items-center rounded-2xl text-[14px] leading-5 transition-all duration-150',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40',
           collapsed
-            ? 'justify-center px-0 py-3'
-            : cn('gap-3 px-3.5', tall ? 'h-11' : 'h-12'),
+            ? 'justify-center px-0 py-2.5'
+            : cn('gap-2.5 px-3', tall ? 'h-10' : 'h-9'),
           active
             ? 'bg-primary/12 text-primary ring-1 ring-inset ring-primary/25'
             : 'text-d-text-secondary hover:bg-wrap-hover hover:text-d-text-primary',
@@ -106,7 +106,7 @@ export const NavList = ({ pathname, itemHeight = 'compact', onItemClick, collaps
               <div
                 className={cn(
                   MONO,
-                  'px-3.5 pb-1.5 pt-5 text-[10.5px] font-semibold uppercase leading-4 tracking-[0.14em] transition-colors',
+                  'px-3 pb-1 pt-4 text-[10px] font-semibold uppercase leading-4 tracking-[0.14em] transition-colors',
                   groupActive ? 'text-primary' : 'text-d-text-muted/80',
                 )}
               >

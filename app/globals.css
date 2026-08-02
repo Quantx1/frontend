@@ -103,7 +103,7 @@
   --border: 41 41 45;
   --input: 41 41 45;
   --ring: 64 106 228;
-  --radius: 0.75rem;
+  --radius: 0.5rem;        /* 8px — pro-finance terminal sharpness */
 
   /* ── Channel vars referenced by tailwind.config.ts ── */
   --success: 16 185 129;
@@ -419,7 +419,7 @@ select option {
 
 /* ════════════════════════════════════════════════════════════════
    GRADIENT FAMILY — signature / CTA / text (the ONE family)
-   ═══════════�������════════════════════════════════════════════════════ */
+   ═══════════��������════════════════════════════════════════════════════ */
 
 /* Display / hero heading gradient — theme-aware text stops. */
 .text-gradient {
@@ -1012,13 +1012,12 @@ html.light .app-canvas::before {
     inset 0 -1px 1px color-mix(in srgb, var(--color-pure-white) 9%, transparent);
 }
 
-/* Frosted chrome — full-edge app shell panels (sidebar / topbar / drawer).
-   Same tint family as .glass-surface but WITHOUT a border or shadow, so the
-   panel keeps its own single hairline edge (border-r / border-b). */
+/* Shell chrome — app shell panels (sidebar / topbar / right-rail / drawer).
+   FLAT opaque surface — trading terminal panels must be sharp and readable,
+   not frosted. The blur-tint register is reserved for content overlays
+   (.glass-surface). A hairline border defines depth instead. */
 .glass-chrome {
-  background: color-mix(in srgb, var(--color-wrap) 68%, transparent);
-  backdrop-filter: blur(24px) saturate(1.9);
-  -webkit-backdrop-filter: blur(24px) saturate(1.9);
+  background: var(--color-wrap);
 }
 
 /* Flat recessed tinted tile — the template's card register: page-tint fill,
@@ -1055,8 +1054,6 @@ html.light .app-canvas::before {
   }
   .glass-chrome {
     background: var(--color-wrap);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
   }
 }
 
@@ -1835,31 +1832,22 @@ html.light .auth-dark {
 .metric-card[data-tone='neutral'] { --accent: var(--color-wrap-line); }
 
 /* Control-tower page grid: one decisive primary column + a supporting
-   insight rail. Collapses to a single stack under lg. */
+   insight rail. Collapses to a single stack on mobile. On lg+ the rail
+   is 320px fixed — wide enough for the AI panel to breathe. */
 .control-tower {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 16px;
+  align-items: start;
 }
 @media (min-width: 1024px) {
   .control-tower {
-    grid-template-columns: minmax(0, 1fr) 340px;
-    align-items: start;
+    grid-template-columns: minmax(0, 1fr) 320px;
   }
   .control-tower__rail {
     position: sticky;
-    top: 16px;
+    top: 60px; /* below the DeskTopbar (48px) + gap */
   }
-}
-
-/* AI insight rail surface — a subtly tinted panel so the "why" reads as a
-   distinct, AI-owned region rather than just another data card. */
-.insight-rail {
-  border-radius: 12px;
-  border: 1px solid color-mix(in srgb, var(--color-ai) 26%, var(--color-line));
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--color-ai) 7%, transparent), transparent 42%),
-    var(--color-wrap);
 }
 
 /* Section label: the mono-caps eyebrow used to title each desk region. */

@@ -19,6 +19,7 @@ import {
 import { api } from '@/lib/api'
 import { useBrokerStatus } from '@/lib/hooks/useBrokerStatus'
 import { AppShell } from '@/components/shell/AppShell'
+import { DeskTopbar } from '@/components/shell/DeskTopbar'
 import { Reveal, Card, Skeleton, DisclaimerFooter, EyebrowMono, EmptyState, ControlTower, MetricGrid, MetricCard, InsightRail, type MetricTone } from '@/components/foundation'
 import { MONO } from '@/lib/tokens'
 import MarketPulseCard from '@/components/markets/MarketPulseCard'
@@ -190,15 +191,12 @@ export default function MarketsPage() {
 
   return (
     <AppShell>
+      <DeskTopbar
+        title="Markets"
+        eyebrow="Regime-aware desk"
+        status={mktLabel === 'Live' ? 'live' : mktLabel === 'Pre-open' ? 'delayed' : mktLabel === 'Closed' ? 'closed' : 'none'}
+      />
       <div className="w-full space-y-4 p-4 md:p-6 xl:px-8">
-        <Reveal className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <EyebrowMono>Regime-aware desk</EyebrowMono>
-            <h1 className="heading-display mt-1 flex items-center gap-2 text-[clamp(1.6rem,3vw,2.2rem)] font-semibold tracking-tight text-d-text-primary"><LineChart size={22} className="text-primary" /> Markets</h1>
-            <p className="mt-1 text-[12.5px] text-d-text-muted">Your AI market desk — the full read before the bell and the wrap after the close.</p>
-          </div>
-          {mktLabel && <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-wrap px-3 py-1.5 text-[11.5px]"><span className={`h-2 w-2 rounded-full ${mktLabel === 'Live' ? 'bg-up' : mktLabel === 'Pre-open' ? 'bg-warning' : 'bg-d-text-muted'}`} /><span className="font-semibold text-d-text-secondary">Market {mktLabel}</span></span>}
-        </Reveal>
 
         {/* ── Telemetry strip — the pro-finance metric row: regime, breadth,
              momentum, top global cue. Accent-bordered MetricCards. ── */}

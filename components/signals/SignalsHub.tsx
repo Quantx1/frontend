@@ -20,6 +20,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 
 import { AppShell } from '@/components/shell/AppShell'
+import { DeskTopbar } from '@/components/shell/DeskTopbar'
 import { Tabs, TabsList, TabsTrigger } from '@/components/foundation'
 import { CATEGORIES, type CategoryId } from './categories'
 import { SignalsOverview } from './SignalsOverview'
@@ -42,8 +43,9 @@ function HubContent({ horizon, onChange }: { horizon: Horizon; onChange: (v: str
   const reduce = useReducedMotion()
   return (
     <>
+      <DeskTopbar title="Signals analysis" eyebrow="ML Signal Stack · All Horizons" />
       {/* sticky horizon tabs — full-bleed within the shell gutter, hairline rail */}
-      <div className="sticky top-0 z-20 -mx-4 border-b border-line bg-main px-4 pt-3 md:-mx-6 md:px-6 xl:px-8">
+      <div className="sticky top-12 z-20 -mx-4 border-b border-line bg-main px-4 pt-3 md:-mx-6 md:px-6 xl:px-8">
         <Tabs value={horizon} onValueChange={onChange}>
           <TabsList className="border-b-0">
             {TABS.map((t) => (
