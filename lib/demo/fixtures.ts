@@ -341,7 +341,7 @@ export function demoMarketExplainer() {
   }
 }
 
-/* ── /api/market/deals ──────────────────────────────────────────────────── */
+/* ── /api/market/deals ───────────────────────��──────────────────────────── */
 export function demoDeals() {
   return {
     label: 'NSE EOD-published bulk & block deals',
@@ -379,4 +379,158 @@ export function demoSetupFinder() {
     { key: 'reversal', label: 'Reversal', count: 5, symbols: ['ZEEL', 'TATASTEEL'] },
   ]
   return { success: true, ok: true, total: setups.reduce((a, s) => a + s.count, 0), setups }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SIGNALS HUB — /signals (Overview + Alpha/Momentum books)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+const STOCKS: Array<{ s: string; px: number }> = [
+  { s: 'RELIANCE', px: 2860 }, { s: 'INFY', px: 1912 }, { s: 'TCS', px: 4180 },
+  { s: 'HDFCBANK', px: 1684 }, { s: 'ICICIBANK', px: 1244 }, { s: 'LT', px: 3620 },
+  { s: 'DLF', px: 892 }, { s: 'BAJFINANCE', px: 7420 }, { s: 'MARUTI', px: 12680 },
+  { s: 'SUNPHARMA', px: 1820 }, { s: 'TATAMOTORS', px: 984 }, { s: 'NTPC', px: 412 },
+  { s: 'AXISBANK', px: 1156 }, { s: 'TITAN', px: 3480 }, { s: 'WIPRO', px: 548 },
+  { s: 'HINDUNILVR', px: 2740 }, { s: 'ADANIPORTS', px: 1420 }, { s: 'POWERGRID', px: 336 },
+]
+
+/** One faithful `Signal` (types/index.ts). Deterministic per (symbol,index). */
+function demoSignal(i: number, opts: { segment?: 'EQUITY' | 'FUTURES' | 'OPTIONS'; direction?: 'LONG' | 'SHORT' } = {}) {
+  const base = STOCKS[i % STOCKS.length]
+  const direction = opts.direction ?? (i % 4 === 0 ? 'SHORT' : 'LONG')
+  const segment = opts.segment ?? 'EQUITY'
+  const entry = +wob(base.px, i + 3, base.px * 0.01).toFixed(2)
+  const long = direction === 'LONG'
+  // Per-signal risk/reward variety so the book reads like real data rather than
+  // one repeated multiple: stop 1.8–3.4%, target 3.5–9.5% from entry.
+  const stopPct = Math.min(0.034, Math.max(0.018, Math.abs(wob(0.026, i + 31, 0.01))))
+  const tgtPct = Math.min(0.095, Math.max(0.035, Math.abs(wob(0.062, i + 37, 0.03))))
+  const stop = +(long ? entry * (1 - stopPct) : entry * (1 + stopPct)).toFixed(2)
+  const target = +(long ? entry * (1 + tgtPct) : entry * (1 - tgtPct)).toFixed(2)
+  const confidence = Math.round(Math.min(94, Math.max(58, wob(78, i + 5, 16))))
+  const rr = +(Math.abs(target - entry) / Math.abs(entry - stop)).toFixed(2)
+  return {
+    id: `demo-sig-${segment}-${i}-${base.s}`,
+    symbol: base.s,
+    exchange: segment === 'OPTIONS' || segment === 'FUTURES' ? 'NFO' : 'NSE',
+    segment,
+    direction,
+    entry_price: entry,
+    stop_loss: stop,
+    target,
+    target_1: target,
+    confidence,
+    risk_reward: rr,
+    risk_reward_ratio: rr,
+    catboost_score: +Math.min(0.98, Math.max(0.5, wob(0.78, i + 9, 0.18))).toFixed(2),
+    tft_score: +Math.min(0.98, Math.max(0.5, wob(0.74, i + 13, 0.2))).toFixed(2),
+    stockformer_score: +Math.min(0.98, Math.max(0.5, wob(0.71, i + 17, 0.2))).toFixed(2),
+    ensemble_confidence: confidence,
+    model_agreement: +Math.min(1, Math.max(0.6, wob(0.85, i + 21, 0.14))).toFixed(2),
+    strategy_names: long ? ['Momentum Breakout', 'ML Meta-Label'] : ['Mean Reversion'],
+    reasons: long
+      ? ['Price reclaimed 20-DMA on rising volume', 'ML ensemble agreement above 80%', 'Sector in leading quadrant']
+      : ['Lost 50-DMA with expanding range', 'Bearish RSI divergence'],
+    sentiment_score: +wob(0.2, i + 25, 0.5).toFixed(2),
+    sentiment_label: long ? 'bullish' : 'bearish',
+    regime_context: 'bull',
+    regime_confidence: 0.81,
+    is_premium: i % 3 === 0,
+    status: 'active' as const,
+    created_at: now(),
+    generated_at: now(),
+    date: new Date().toISOString().slice(0, 10),
+  }
+}
+
+/* ── /api/signals/today ─────────────────────────────────────────────────── */
+export function demoSignalsToday() {
+  const all = Array.from({ length: 14 }).map((_, i) =>
+    demoSignal(i, { segment: i < 8 ? 'EQUITY' : i < 11 ? 'FUTURES' : 'OPTIONS' }),
+  )
+  const longs = all.filter((s) => s.direction === 'LONG')
+  const shorts = all.filter((s) => s.direction === 'SHORT')
+  return {
+    date: new Date().toISOString().slice(0, 10),
+    total: all.length,
+    long_signals: longs,
+    short_signals: shorts,
+    equity_signals: all.filter((s) => s.segment === 'EQUITY'),
+    futures_signals: all.filter((s) => s.segment === 'FUTURES'),
+    options_signals: all.filter((s) => s.segment === 'OPTIONS'),
+    all_signals: all,
+    tier_cap_applied: false,
+    tier_cap: null,
+  }
+}
+
+/* ── /api/signals/history ───────────────────────────────────────────────── */
+export function demoSignalsHistory(limit = 300) {
+  const n = Math.min(limit, 60)
+  const signals = Array.from({ length: n }).map((_, i) => {
+    const s = demoSignal(i, { segment: i % 5 === 0 ? 'FUTURES' : 'EQUITY' })
+    const d = new Date()
+    d.setDate(d.getDate() - (i + 1))
+    const status: 'triggered' | 'executed' = i % 3 === 0 ? 'triggered' : 'executed'
+    return { ...s, status, date: d.toISOString().slice(0, 10), created_at: d.toISOString(), generated_at: d.toISOString() }
+  })
+  return { signals, tier_cap_applied: false, tier_cap: null }
+}
+
+/* ── /api/signals/momentum · /api/signals/swing (ranked ML books) ───────── */
+export function demoStyleSignals(style: 'momentum' | 'swing', topN = 50) {
+  const n = Math.min(topN, 24)
+  const signals = Array.from({ length: n }).map((_, i) => {
+    const base = STOCKS[i % STOCKS.length]
+    const entry = +wob(base.px, i + 2, base.px * 0.01).toFixed(2)
+    const pct = 1 - i / (n + 4)
+    return {
+      symbol: base.s,
+      style,
+      rank: i + 1,
+      percentile: +pct.toFixed(3),
+      confidence: +Math.min(0.97, Math.max(0.55, wob(0.8, i + 6, 0.16))).toFixed(3),
+      direction: 'long',
+      entry_price: entry,
+      stop_loss: +(entry * 0.97).toFixed(2),
+      target: +(entry * (style === 'momentum' ? 1.07 : 1.05)).toFixed(2),
+      risk_reward: +(style === 'momentum' ? 2.3 : 1.8),
+      reasons: style === 'momentum'
+        ? ['Top-decile 20d momentum', 'Volume expansion confirmed', 'Above all key DMAs']
+        : ['Oversold bounce setup', 'Support reclaim on volume'],
+      expected_return: +Math.max(0.01, wob(0.06, i + 8, 0.03)).toFixed(4),
+      top_decile_prob: +Math.min(0.95, Math.max(0.3, pct * 0.9)).toFixed(3),
+    }
+  })
+  return { signals, count: signals.length, status: 'ok', style }
+}
+
+/* ── /api/signals/style/paper-window ────────────────────────────────────── */
+export function demoPaperWindow() {
+  const engine = (horizon: number, hit: number, excess: number) => ({
+    horizon,
+    days_signaled: 42,
+    days_matured: 30,
+    live: { hit_rate: hit, mean_excess_h: excess, mean_gross_h: excess + 0.008, n_dates: 30 },
+    expected: { hit_rate: hit - 0.02, mean_excess_h: excess - 0.004, source: 'backtest 2023-07..2026-06' },
+    status: 'on_track' as const,
+  })
+  return {
+    window_start: new Date(Date.now() - 42 * 864e5).toISOString().slice(0, 10),
+    as_of: new Date().toISOString().slice(0, 10),
+    engines: { momentum: engine(20, 0.58, 0.021), swing: engine(10, 0.61, 0.016) },
+  }
+}
+
+/* ── /api/user/profile (Pro tier so nothing is gated in review) ─────────── */
+export function demoUserProfile() {
+  return {
+    id: 'demo-user',
+    email: 'demo@quantx.app',
+    full_name: 'Demo Trader',
+    subscription_tier: 'pro',
+    tier: 'pro',
+    is_premium: true,
+    created_at: now(),
+  }
 }

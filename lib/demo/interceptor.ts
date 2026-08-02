@@ -29,6 +29,11 @@ import {
   demoDeals,
   demoLiveAlerts,
   demoSetupFinder,
+  demoSignalsToday,
+  demoSignalsHistory,
+  demoStyleSignals,
+  demoPaperWindow,
+  demoUserProfile,
 } from './fixtures'
 
 const FLAG_KEY = 'quantx.demo'
@@ -80,6 +85,13 @@ const ROUTES: Record<string, Handler> = {
   '/api/screener/market-explainer': () => demoMarketExplainer(),
   '/api/screener/alerts/live': (p) => demoLiveAlerts(Number(p.get('limit')) || 24),
   '/api/screener/setups': () => demoSetupFinder(),
+  // Signals hub
+  '/api/signals/today': () => demoSignalsToday(),
+  '/api/signals/history': (p) => demoSignalsHistory(Number(p.get('limit')) || 300),
+  '/api/signals/momentum': (p) => demoStyleSignals('momentum', Number(p.get('top_n')) || 50),
+  '/api/signals/swing': (p) => demoStyleSignals('swing', Number(p.get('top_n')) || 50),
+  '/api/signals/style/paper-window': () => demoPaperWindow(),
+  '/api/user/profile': () => demoUserProfile(),
 }
 
 function resolvePathname(input: RequestInfo | URL): { pathname: string; search: string } | null {
@@ -129,11 +141,12 @@ export function installDemoInterceptor(): void {
   }
 }
 
-/** Enable/disable demo mode from the browser console or a UI toggle. */
+/** Enable/disable demo mode from the browser console or a UI toggle. Writes an
+ *  explicit '0' when turning off so it overrides the "no backend → default on"
+ *  fallback (otherwise the exit toggle would be a no-op in this review env). */
 export function setDemoMode(on: boolean): void {
   try {
-    if (on) window.localStorage.setItem(FLAG_KEY, '1')
-    else window.localStorage.removeItem(FLAG_KEY)
+    window.localStorage.setItem(FLAG_KEY, on ? '1' : '0')
   } catch {
     /* ignore */
   }
