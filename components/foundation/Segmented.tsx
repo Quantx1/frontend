@@ -62,7 +62,7 @@ export function Segmented<T extends string>({
       role="tablist"
       aria-label={ariaLabel}
       className={cn(
-        'inline-flex items-center gap-0.5 rounded-full border border-line bg-wrap p-0.5',
+        'inline-flex items-center gap-0.5 rounded-full border bg-muted p-0.5',
         className,
       )}
     >
@@ -73,7 +73,7 @@ export function Segmented<T extends string>({
             ? 'text-up'
             : opt.tone === 'down'
               ? 'text-down'
-              : 'text-d-text-secondary hover:text-d-text-primary'
+              : 'text-muted-foreground hover:text-foreground'
         return (
           <button
             key={opt.value}

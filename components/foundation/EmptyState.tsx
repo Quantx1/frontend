@@ -50,10 +50,10 @@ interface Props {
 }
 
 const TONE_CLASSES: Record<Required<Props>['tone'], string> = {
-  info: 'text-d-text-muted',
-  success: 'text-up',
-  warning: 'text-warning',
-  error: 'text-down',
+  info:    'text-muted-foreground',
+  success: 'text-green-600 dark:text-green-400',
+  warning: 'text-amber-600 dark:text-amber-400',
+  error:   'text-destructive',
 }
 
 export const EmptyState = ({
@@ -69,8 +69,7 @@ export const EmptyState = ({
     role="status"
     aria-live="polite"
     className={cn(
-      // xAI: a framed charcoal panel, flat hairline, 8px radius.
-      'flex flex-col items-center justify-center gap-3 rounded-sm bg-wrap-hover text-center',
+      'flex flex-col items-center justify-center gap-3 rounded-md bg-muted/50 text-center',
       size === 'sm' ? 'p-8' : 'p-12',
       className,
     )}
@@ -78,8 +77,8 @@ export const EmptyState = ({
     {icon && (
       <div
         className={cn(
-          'flex items-center justify-center rounded-full border border-line bg-wrap',
-          size === 'sm' ? 'h-10 w-10' : 'h-14 w-14',
+          'flex items-center justify-center rounded-full border bg-background',
+          size === 'sm' ? 'size-10' : 'size-14',
           TONE_CLASSES[tone],
         )}
         aria-hidden="true"
@@ -88,9 +87,9 @@ export const EmptyState = ({
       </div>
     )}
     <div className="max-w-sm">
-      <h3 className="text-sm font-normal text-d-text-primary">{title}</h3>
+      <h3 className="text-sm font-medium text-foreground">{title}</h3>
       {description && (
-        <div className="mt-1 text-sm text-d-text-secondary">{description}</div>
+        <div className="mt-1 text-sm text-muted-foreground">{description}</div>
       )}
     </div>
     {action && <div className="mt-2">{action}</div>}

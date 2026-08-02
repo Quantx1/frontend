@@ -1,13 +1,11 @@
 'use client'
 
 /**
- * Foundation MetricCard — the pro-finance KPI tile.
+ * Foundation MetricCard — pro-finance KPI tile built on shadcn Card.
  *
- * A tighter, sharper card (`.metric-card`) with a coloured left accent keyed
- * to semantic tone, a mono-caps label, a large tabular value (count-up when
- * numeric), an optional signed delta, and an optional trailing sparkline.
- * This is the single repeating unit of the redesigned data desks
- * (Markets / Signals / Portfolio), replacing the assorted inline stat cells.
+ * A shadcn Card with a 2px left-border accent keyed to semantic tone,
+ * a mono-caps label, a large tabular value (count-up when numeric),
+ * an optional signed delta, and an optional trailing sparkline.
  *
  * @example
  *   <MetricCard label="Net P&L" value={128450} prefix="₹" tone="up"
@@ -18,16 +16,25 @@ import * as React from 'react'
 import { NumberTicker } from '@/components/motion'
 import { Sparkline } from './Sparkline'
 import { MONO } from '@/lib/tokens'
+import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 
 export type MetricTone = 'up' | 'down' | 'ai' | 'warning' | 'neutral'
 
+const ACCENT_BORDER: Record<MetricTone, string> = {
+  up:      'border-l-green-500',
+  down:    'border-l-red-500',
+  ai:      'border-l-primary',
+  warning: 'border-l-amber-500',
+  neutral: 'border-l-border',
+}
+
 const VALUE_TONE: Record<MetricTone, string> = {
-  up: 'text-up',
-  down: 'text-down',
-  ai: 'text-d-text-primary',
-  warning: 'text-warning',
-  neutral: 'text-d-text-primary',
+  up:      'text-green-600 dark:text-green-400',
+  down:    'text-red-600 dark:text-red-400',
+  ai:      'text-foreground',
+  warning: 'text-amber-600 dark:text-amber-400',
+  neutral: 'text-foreground',
 }
 
 interface Props {
@@ -64,10 +71,20 @@ export function MetricCard({
 }: Props) {
   const deltaTone = delta == null ? 'neutral' : delta >= 0 ? 'up' : 'down'
   return (
-    <div data-tone={tone} className={cn('metric-card px-3.5 py-3', className)}>
+    <Card
+      className={cn(
+        // Left accent border — the single strongest "trading terminal" signal
+        'border-l-2',
+        ACCENT_BORDER[tone],
+        'px-3.5 py-3',
+        className,
+      )}
+    >
       <div className="flex items-start justify-between gap-2">
-        <p className="desk-label truncate">{label}</p>
-        {icon && <span className="shrink-0 text-d-text-muted">{icon}</span>}
+        <p className={cn('truncate font-mono text-[11px] font-normal uppercase tracking-[0.1em] text-muted-foreground')}>
+          {label}
+        </p>
+        {icon && <span className="shrink-0 text-muted-foreground">{icon}</span>}
       </div>
 
       <div className={cn('mt-2 text-[22px] leading-none font-normal tabular-nums', MONO, VALUE_TONE[tone])}>
@@ -81,7 +98,9 @@ export function MetricCard({
           <span
             className={cn(
               'inline-flex items-center rounded-sm px-1.5 py-0.5 text-[11px] font-medium tabular-nums',
-              deltaTone === 'up' ? 'bg-up/12 text-up' : 'bg-down/12 text-down',
+              deltaTone === 'up'
+                ? 'bg-green-500/10 text-green-600 dark:text-green-400'
+                : 'bg-red-500/10 text-red-600 dark:text-red-400',
             )}
           >
             {delta >= 0 ? '+' : ''}
@@ -95,7 +114,7 @@ export function MetricCard({
         )}
       </div>
 
-      {hint != null && <p className="mt-1.5 text-[11px] text-d-text-muted">{hint}</p>}
-    </div>
+      {hint != null && <p className="mt-1.5 text-[11px] text-muted-foreground">{hint}</p>}
+    </Card>
   )
 }

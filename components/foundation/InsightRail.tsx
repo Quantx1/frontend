@@ -1,11 +1,10 @@
 'use client'
 
 /**
- * Foundation InsightRail — the persistent AI "why" panel.
+ * Foundation InsightRail — the persistent AI "why" panel built on shadcn Card.
  *
- * Pro-finance design: a clearly AI-owned region with a strong left-border
- * accent, tinted background, and crisp section structure. Inspired by
- * Intellectia's "AI Read" panel and LuxAlgo's market context sidebar.
+ * A shadcn Card with a thick left-border AI accent, crisp section structure,
+ * and a tinted header to signal AI ownership.
  *
  * @example
  *   <InsightRail
@@ -17,17 +16,24 @@
  */
 
 import * as React from 'react'
-import { Sparkles } from '@/lib/icons'
+import { Sparkles } from 'lucide-react'
 import { AiStreamingText } from '@/components/motion'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+} from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 
 type Tone = 'up' | 'down' | 'neutral' | 'warning'
 
-const VERDICT_CLASSES: Record<Tone, { pill: string; dot: string }> = {
-  up:      { pill: 'bg-up/12 text-up border border-up/20',           dot: 'bg-up' },
-  down:    { pill: 'bg-down/12 text-down border border-down/20',     dot: 'bg-down' },
-  warning: { pill: 'bg-warning/12 text-warning border border-warning/20', dot: 'bg-warning' },
-  neutral: { pill: 'bg-primary/10 text-[color:var(--color-ai)] border border-primary/20', dot: 'bg-[color:var(--color-ai)]' },
+const VERDICT_CLASSES: Record<Tone, { badge: string; dot: string }> = {
+  up:      { badge: 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20', dot: 'bg-green-500' },
+  down:    { badge: 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20',         dot: 'bg-red-500' },
+  warning: { badge: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20', dot: 'bg-amber-500' },
+  neutral: { badge: 'bg-primary/10 text-primary border-primary/20',                           dot: 'bg-primary' },
 }
 
 interface Props {
@@ -59,81 +65,78 @@ export function InsightRail({
   const vc = VERDICT_CLASSES[tone]
 
   return (
-    <div
+    <Card
       className={cn(
-        // Strong AI-owned panel: thick left border accent, tinted bg
-        'relative overflow-hidden rounded-lg border border-[color:var(--color-line)]',
-        'border-l-[3px] border-l-[color:var(--color-ai)]',
+        // Strong left accent border for AI ownership signal
+        'border-l-2 border-l-primary overflow-hidden',
         className,
       )}
-      style={{
-        background:
-          'linear-gradient(160deg, color-mix(in srgb, var(--color-ai) 6%, transparent) 0%, transparent 50%), var(--color-wrap)',
-      }}
     >
       {/* Header */}
-      <div className="flex items-center gap-2 border-b border-line px-4 py-3">
-        <span className="grid h-[22px] w-[22px] shrink-0 place-items-center rounded-md bg-[color:var(--color-ai)]/15 text-[color:var(--color-ai)]">
-          <Sparkles size={12} />
+      <CardHeader className="flex flex-row items-center gap-2 px-4 py-3 space-y-0 border-b">
+        <span className="grid size-[22px] shrink-0 place-items-center rounded-md bg-primary/10 text-primary">
+          <Sparkles className="size-3" />
         </span>
-        <span className="flex-1 font-mono text-[10.5px] font-semibold uppercase tracking-[0.12em] text-d-text-muted">
+        <span className="flex-1 font-mono text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
           {title}
         </span>
         {verdict && (
-          <span className={cn('rounded px-2 py-0.5 text-[10.5px] font-semibold', vc.pill)}>
+          <Badge variant="outline" className={cn('rounded px-2 py-0.5 text-[10.5px] font-semibold', vc.badge)}>
             {verdict.label}
-          </span>
+          </Badge>
         )}
-      </div>
+      </CardHeader>
 
       {/* Body */}
-      <div className="flex flex-col gap-0 divide-y divide-line">
+      <div className="flex flex-col divide-y divide-border">
         {/* Summary */}
-        <div className="px-4 py-3">
-          <p className="text-[12.5px] leading-[1.6] text-d-text-secondary">
+        <CardContent className="px-4 py-3">
+          <p className="text-[12.5px] leading-[1.6] text-muted-foreground">
             <AiStreamingText text={summary} />
           </p>
-        </div>
+        </CardContent>
 
         {/* Drivers */}
         {drivers && drivers.length > 0 && (
-          <div className="px-4 py-3">
-            <p className="mb-2 font-mono text-[9.5px] font-semibold uppercase tracking-[0.14em] text-d-text-muted/70">
+          <CardContent className="px-4 py-3">
+            <p className="mb-2 font-mono text-[9.5px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/70">
               Drivers
             </p>
             <ul className="flex flex-col gap-1.5">
               {drivers.map((d, i) => (
-                <li key={i} className="flex items-start gap-2 text-[12px] text-d-text-secondary">
-                  <span className={cn('mt-[5px] h-1 w-1 shrink-0 rounded-full', vc.dot)} />
+                <li key={i} className="flex items-start gap-2 text-[12px] text-muted-foreground">
+                  <span className={cn('mt-[5px] size-1 shrink-0 rounded-full', vc.dot)} />
                   <span>{d}</span>
                 </li>
               ))}
             </ul>
-          </div>
+          </CardContent>
         )}
 
         {/* What to watch */}
         {watch && watch.length > 0 && (
-          <div className="px-4 py-3">
-            <p className="mb-2 font-mono text-[9.5px] font-semibold uppercase tracking-[0.14em] text-d-text-muted/70">
+          <CardContent className="px-4 py-3">
+            <p className="mb-2 font-mono text-[9.5px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/70">
               What to watch
             </p>
             <ul className="flex flex-col gap-1.5">
               {watch.map((w, i) => (
-                <li key={i} className="flex items-start gap-2 text-[12px] text-d-text-secondary">
-                  <span className="mt-[5px] h-1 w-1 shrink-0 rounded-full bg-warning" />
+                <li key={i} className="flex items-start gap-2 text-[12px] text-muted-foreground">
+                  <span className="mt-[5px] size-1 shrink-0 rounded-full bg-amber-500" />
                   <span>{w}</span>
                 </li>
               ))}
             </ul>
-          </div>
+          </CardContent>
         )}
 
         {/* Footer */}
         {footer && (
-          <div className="px-4 py-2.5 text-[10.5px] text-d-text-muted">{footer}</div>
+          <CardContent className="px-4 py-2.5 text-[10.5px] text-muted-foreground">
+            {footer}
+          </CardContent>
         )}
       </div>
-    </div>
+    </Card>
   )
 }

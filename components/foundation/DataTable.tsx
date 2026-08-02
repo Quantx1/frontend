@@ -1,67 +1,36 @@
 'use client'
 
 /**
- * Foundation DataTable — typed, sortable, accessible table primitive.
+ * Foundation DataTable — typed, sortable, accessible table built on shadcn Table.
  *
- * Designed for the signal lists / position lists / scanner results /
- * trade journals — the dense data surfaces every trading app needs.
- * Built on plain <table> for screen-reader semantics; no virtualisation
- * by default (rows <500 render fine; for >5000 wrap in react-window).
- *
- * Features:
- *  - Generic over row type — full TS inference for cell renderers
- *  - Column definitions: header, cell renderer, sortable flag, align,
- *    width hint, sticky behavior
- *  - Sort: client-side by default; pass ``onSortChange`` to delegate
- *  - States: loading (row skeletons) / empty / error — all built in
- *  - Row click navigation with keyboard support (Enter / Space)
- *  - Sticky header with optional sticky first column for mobile scroll
- *  - Responsive: horizontal scroll on small viewports + sticky first
- *    column keeps the symbol visible
- *  - A11y: aria-sort on headers, aria-busy on container, native button
- *    semantics for sortable headers, focus rings on rows
- *
- * @example  Signal list
- *   <DataTable
- *     data={signals}
- *     columns={[
- *       { key: 'symbol',     header: 'Symbol',     sortable: true, sticky: true },
- *       { key: 'direction',  header: 'Direction',  cell: (r) => <Badge>{r.direction}</Badge> },
- *       { key: 'confidence', header: 'Conf',       align: 'right', sortable: true,
- *         cell: (r) => `${r.confidence.toFixed(0)}%` },
- *       { key: 'change_pct', header: 'Change',     align: 'right', sortable: true,
- *         cell: (r) => <ChangeBadge value={r.change_pct} /> },
- *     ]}
- *     onRowClick={(r) => router.push(`/signals/${r.id}`)}
- *     loading={isLoading}
- *     empty={<EmptyState icon={…} title="No signals yet" … />}
- *   />
+ * Designed for signal lists / position lists / scanner results / trade journals.
+ * Uses shadcn Table, TableHeader, TableBody, TableRow, TableHead, TableCell
+ * for consistent styling. All existing callers work unchanged.
  */
 import * as React from 'react'
-import { ArrowDown, ArrowUp, ChevronsUpDown } from '@/lib/icons'
+import { ArrowDown, ArrowUp, ChevronsUpDown } from 'lucide-react'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import { Skeleton } from './Skeleton'
 import { ErrorState } from './ErrorState'
 import { EmptyState } from './EmptyState'
 
 export interface Column<Row> {
-  /** Unique key. Used for React keys, sort state, and column identity. */
   key: string
-  /** Header label or JSX. */
   header: React.ReactNode
-  /** Cell renderer. Receives the row + row index. If omitted, ``row[key]`` is rendered as text. */
   cell?: (row: Row, rowIndex: number) => React.ReactNode
-  /** Sort getter — return any primitive comparable value. If omitted, ``row[key]`` is used. */
   sortValue?: (row: Row) => string | number | null | undefined
-  /** Show sort affordance in header. */
   sortable?: boolean
-  /** Alignment in cell + header. */
   align?: 'left' | 'right' | 'center'
-  /** Fixed CSS width (e.g. ``'80px'`` or ``'10%'``). */
   width?: string
-  /** Sticks the column to the left edge — useful for symbol column on mobile. */
   sticky?: boolean
-  /** Hide this column at sm breakpoint and below. */
   hideOnMobile?: boolean
 }
 
@@ -70,27 +39,17 @@ export type SortDirection = 'asc' | 'desc'
 interface Props<Row> {
   data: Row[]
   columns: Column<Row>[]
-  /** Stable row key. Defaults to ``row.id`` if present, else array index (warning logged). */
   rowKey?: (row: Row, index: number) => string | number
-  /** Click handler — row gets keyboard activation + focus ring. */
   onRowClick?: (row: Row) => void
-  /** Loading state — renders 5 skeleton rows. */
   loading?: boolean
-  /** Number of skeleton rows when loading. Default 5. */
   loadingRows?: number
-  /** What to render when data is empty (and not loading). Pass an ``EmptyState``. */
   empty?: React.ReactNode
-  /** Error message — replaces the table body. */
   error?: string
-  /** Controlled sort — omit for uncontrolled (client-side) sort. */
   sort?: { key: string; direction: SortDirection } | null
   onSortChange?: (sort: { key: string; direction: SortDirection } | null) => void
-  /** Dense mode: shorter row height. */
   dense?: boolean
-  /** Render a sticky header. Default true. */
   stickyHeader?: boolean
   className?: string
-  /** Accessible name for the table (e.g. "Today's signals"). */
   ariaLabel: string
 }
 
@@ -110,7 +69,6 @@ export function DataTable<Row extends Record<string, any>>({
   className,
   ariaLabel,
 }: Props<Row>) {
-  // Uncontrolled sort state when no ``sort`` prop is provided.
   const [localSort, setLocalSort] = React.useState<{
     key: string
     direction: SortDirection
@@ -123,7 +81,7 @@ export function DataTable<Row extends Record<string, any>>({
       sort?.key === col.key && sort.direction === 'asc'
         ? { key: col.key, direction: 'desc' }
         : sort?.key === col.key && sort.direction === 'desc'
-          ? null // third click clears
+          ? null
           : { key: col.key, direction: 'asc' }
     if (onSortChange) {
       onSortChange(next)
@@ -132,7 +90,6 @@ export function DataTable<Row extends Record<string, any>>({
     }
   }
 
-  // Client-side sort when no onSortChange (uncontrolled).
   const sortedData = React.useMemo(() => {
     if (!sort || onSortChange) return data
     const col = columns.find((c) => c.key === sort.key)
@@ -160,29 +117,30 @@ export function DataTable<Row extends Record<string, any>>({
   const alignClass = (a?: Column<Row>['align']) =>
     a === 'right' ? 'text-right' : a === 'center' ? 'text-center' : 'text-left'
 
-  // Bodies — error and empty render outside the table to skip the row scaffold.
+  const cellOf = (col: Column<Row>, row: Row, i: number): React.ReactNode =>
+    col.cell ? col.cell(row, i) : String((row as any)[col.key] ?? '')
+
   const renderBody = () => {
     if (error) {
       return (
-        <tbody>
-          <tr>
-            <td colSpan={columns.length} className="py-12">
+        <TableBody>
+          <TableRow>
+            <TableCell colSpan={columns.length} className="py-12">
               <ErrorState size="sm" title="Couldn't load" description={error} />
-            </td>
-          </tr>
-        </tbody>
+            </TableCell>
+          </TableRow>
+        </TableBody>
       )
     }
     if (loading) {
       return (
-        <tbody>
+        <TableBody>
           {Array.from({ length: loadingRows }).map((_, i) => (
-            <tr key={`skel-${i}`} className="border-t border-line">
+            <TableRow key={`skel-${i}`}>
               {columns.map((col, ci) => (
-                <td
+                <TableCell
                   key={col.key}
                   className={cn(
-                    'px-4',
                     dense ? 'py-2' : 'py-3',
                     col.hideOnMobile && 'hidden sm:table-cell',
                   )}
@@ -193,91 +151,79 @@ export function DataTable<Row extends Record<string, any>>({
                     h={dense ? '14px' : '16px'}
                     rounded="sm"
                   />
-                </td>
+                </TableCell>
               ))}
-            </tr>
+            </TableRow>
           ))}
-        </tbody>
+        </TableBody>
       )
     }
     if (sortedData.length === 0) {
       return (
-        <tbody>
-          <tr>
-            <td colSpan={columns.length} className="p-0">
+        <TableBody>
+          <TableRow>
+            <TableCell colSpan={columns.length} className="p-0">
               {empty ?? (
                 <EmptyState size="sm" title="No rows" description="Nothing to show here yet." />
               )}
-            </td>
-          </tr>
-        </tbody>
+            </TableCell>
+          </TableRow>
+        </TableBody>
       )
     }
+    const interactive = !!onRowClick
     return (
-      <tbody>
-        {sortedData.map((row, i) => {
-          const interactive = !!onRowClick
-          return (
-            <tr
-              key={getKey(row, i)}
-              tabIndex={interactive ? 0 : undefined}
-              role={interactive ? 'button' : undefined}
-              onClick={interactive ? () => onRowClick(row) : undefined}
-              onKeyDown={
-                interactive
-                  ? (e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
-                        onRowClick(row)
-                      }
+      <TableBody>
+        {sortedData.map((row, i) => (
+          <TableRow
+            key={getKey(row, i)}
+            tabIndex={interactive ? 0 : undefined}
+            role={interactive ? 'button' : undefined}
+            onClick={interactive ? () => onRowClick(row) : undefined}
+            onKeyDown={
+              interactive
+                ? (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      onRowClick(row)
                     }
-                  : undefined
-              }
-              className={cn(
-                'border-t border-line transition-colors',
-                interactive &&
-                  'cursor-pointer hover:bg-wrap-hover focus-visible:bg-wrap-hover focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-primary/40',
-              )}
-            >
-              {columns.map((col) => (
-                <td
-                  key={col.key}
-                  className={cn(
-                    'px-4 text-sm text-d-text-secondary',
-                    dense ? 'py-2' : 'py-3',
-                    alignClass(col.align),
-                    col.hideOnMobile && 'hidden sm:table-cell',
-                    col.sticky && 'sticky left-0 bg-wrap z-[1]',
-                  )}
-                  style={col.width ? { width: col.width } : undefined}
-                >
-                  {col.cell ? col.cell(row, i) : String((row as any)[col.key] ?? '')}
-                </td>
-              ))}
-            </tr>
-          )
-        })}
-      </tbody>
+                  }
+                : undefined
+            }
+            className={cn(
+              interactive && 'cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-primary/40',
+            )}
+          >
+            {columns.map((col) => (
+              <TableCell
+                key={col.key}
+                className={cn(
+                  'text-sm text-muted-foreground',
+                  dense ? 'py-2' : 'py-3',
+                  alignClass(col.align),
+                  col.hideOnMobile && 'hidden sm:table-cell',
+                  col.sticky && 'sticky left-0 bg-card z-[1]',
+                )}
+                style={col.width ? { width: col.width } : undefined}
+              >
+                {col.cell ? col.cell(row, i) : String((row as any)[col.key] ?? '')}
+              </TableCell>
+            ))}
+          </TableRow>
+        ))}
+      </TableBody>
     )
   }
 
-  const cellOf = (col: Column<Row>, row: Row, i: number): React.ReactNode =>
-    col.cell ? col.cell(row, i) : String((row as any)[col.key] ?? '')
-
-  // Below `sm` a wide table is unreadable, so each row becomes a stacked card:
-  // the first column is the title, the rest are label/value pairs. Honors
-  // hideOnMobile (those columns are dropped) + onRowClick (card is the button).
   const renderCards = () => {
     if (error) {
-      return (
-        <ErrorState size="sm" title="Couldn't load" description={error} />
-      )
+      return <ErrorState size="sm" title="Couldn't load" description={error} />
     }
     if (loading) {
       return (
         <div className="flex flex-col gap-2">
           {Array.from({ length: loadingRows }).map((_, i) => (
-            <div key={`mskel-${i}`} className="rounded-sm border border-line bg-wrap p-3">
+            <div key={`mskel-${i}`} className="rounded-md border bg-card p-3">
               <Skeleton w="50%" h="16px" rounded="sm" />
               <div className="mt-2 flex flex-col gap-1.5">
                 <Skeleton w="80%" h="12px" rounded="sm" />
@@ -289,8 +235,10 @@ export function DataTable<Row extends Record<string, any>>({
       )
     }
     if (sortedData.length === 0) {
-      return empty ?? (
-        <EmptyState size="sm" title="No rows" description="Nothing to show here yet." />
+      return (
+        empty ?? (
+          <EmptyState size="sm" title="No rows" description="Nothing to show here yet." />
+        )
       )
     }
     const cols = columns.filter((c) => !c.hideOnMobile)
@@ -314,22 +262,22 @@ export function DataTable<Row extends Record<string, any>>({
                 : undefined
             }
             className={cn(
-              'rounded-sm border border-line bg-wrap p-3',
+              'rounded-md border bg-card p-3',
               interactive &&
-                'cursor-pointer transition-colors hover:bg-wrap-hover focus-visible:bg-wrap-hover focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-primary/40',
+                'cursor-pointer transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-primary/40',
             )}
           >
             {cols.map((col, ci) =>
               ci === 0 ? (
-                <div key={col.key} className="mb-1 text-sm font-medium text-d-text-primary">
+                <div key={col.key} className="mb-1 text-sm font-medium text-foreground">
                   {cellOf(col, row, i)}
                 </div>
               ) : (
-                <div key={col.key} className="flex items-center justify-between gap-3 border-t border-line py-1">
-                  <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.08em] text-d-text-muted">
+                <div key={col.key} className="flex items-center justify-between gap-3 border-t py-1">
+                  <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.08em] text-muted-foreground">
                     {col.header}
                   </span>
-                  <span className="min-w-0 text-right text-[13px] text-d-text-secondary">
+                  <span className="min-w-0 text-right text-[13px] text-muted-foreground">
                     {cellOf(col, row, i)}
                   </span>
                 </div>
@@ -343,71 +291,65 @@ export function DataTable<Row extends Record<string, any>>({
 
   return (
     <div className={cn('w-full', className)} aria-busy={loading || undefined}>
-      {/* sm+ : full table (horizontal scroll only as a last resort) */}
-      <div className="hidden overflow-auto rounded-sm border border-line bg-wrap sm:block">
-        <table className="w-full border-collapse" aria-label={ariaLabel}>
-        <thead
-          className={cn(
-            stickyHeader && 'sticky top-0 z-[2] bg-wrap-hover',
-          )}
-        >
-          <tr>
-            {columns.map((col) => {
-              const isSorted = sort?.key === col.key
-              const ariaSort: 'ascending' | 'descending' | 'none' = isSorted
-                ? sort?.direction === 'asc'
-                  ? 'ascending'
-                  : 'descending'
-                : 'none'
-              return (
-                <th
-                  key={col.key}
-                  aria-sort={col.sortable ? ariaSort : undefined}
-                  className={cn(
-                    'border-b border-line bg-wrap-hover px-4 font-mono text-[11px] font-normal uppercase tracking-[0.08em] text-d-text-muted',
-                    dense ? 'py-2' : 'py-3',
-                    alignClass(col.align),
-                    col.hideOnMobile && 'hidden sm:table-cell',
-                    col.sticky && 'sticky left-0 z-[3]',
-                  )}
-                  style={col.width ? { width: col.width } : undefined}
-                  scope="col"
-                >
-                  {col.sortable ? (
-                    <button
-                      type="button"
-                      onClick={() => handleSortClick(col)}
-                      className={cn(
-                        'inline-flex items-center gap-1 transition-colors hover:text-d-text-primary',
-                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded',
-                        col.align === 'right' && 'flex-row-reverse',
-                        isSorted && 'text-d-text-primary',
-                      )}
-                    >
-                      <span>{col.header}</span>
-                      {isSorted ? (
-                        sort?.direction === 'asc' ? (
-                          <ArrowUp className="h-3 w-3" aria-hidden="true" />
+      {/* sm+ : full table */}
+      <div className="hidden sm:block rounded-md border bg-card overflow-hidden">
+        <Table aria-label={ariaLabel}>
+          <TableHeader
+            className={cn(stickyHeader && 'sticky top-0 z-[2] bg-muted/50')}
+          >
+            <TableRow className="hover:bg-transparent">
+              {columns.map((col) => {
+                const isSorted = sort?.key === col.key
+                const ariaSort: 'ascending' | 'descending' | 'none' = isSorted
+                  ? sort?.direction === 'asc'
+                    ? 'ascending'
+                    : 'descending'
+                  : 'none'
+                return (
+                  <TableHead
+                    key={col.key}
+                    aria-sort={col.sortable ? ariaSort : undefined}
+                    className={cn(
+                      'font-mono text-[11px] font-normal uppercase tracking-[0.08em] text-muted-foreground',
+                      dense ? 'h-9' : 'h-11',
+                      alignClass(col.align),
+                      col.hideOnMobile && 'hidden sm:table-cell',
+                      col.sticky && 'sticky left-0 z-[3] bg-muted/50',
+                    )}
+                    style={col.width ? { width: col.width } : undefined}
+                  >
+                    {col.sortable ? (
+                      <button
+                        type="button"
+                        onClick={() => handleSortClick(col)}
+                        className={cn(
+                          'inline-flex items-center gap-1 transition-colors hover:text-foreground',
+                          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded',
+                          col.align === 'right' && 'flex-row-reverse',
+                          isSorted && 'text-foreground',
+                        )}
+                      >
+                        <span>{col.header}</span>
+                        {isSorted ? (
+                          sort?.direction === 'asc' ? (
+                            <ArrowUp className="size-3" aria-hidden="true" />
+                          ) : (
+                            <ArrowDown className="size-3" aria-hidden="true" />
+                          )
                         ) : (
-                          <ArrowDown className="h-3 w-3" aria-hidden="true" />
-                        )
-                      ) : (
-                        <ChevronsUpDown
-                          className="h-3 w-3 opacity-40"
-                          aria-hidden="true"
-                        />
-                      )}
-                    </button>
-                  ) : (
-                    col.header
-                  )}
-                </th>
-              )
-            })}
-          </tr>
-        </thead>
-        {renderBody()}
-        </table>
+                          <ChevronsUpDown className="size-3 opacity-40" aria-hidden="true" />
+                        )}
+                      </button>
+                    ) : (
+                      col.header
+                    )}
+                  </TableHead>
+                )
+              })}
+            </TableRow>
+          </TableHeader>
+          {renderBody()}
+        </Table>
       </div>
       {/* below sm : stacked cards */}
       <div className="sm:hidden">{renderCards()}</div>
