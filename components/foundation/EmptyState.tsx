@@ -47,6 +47,21 @@ interface Props {
   /** Compact size for inline empty cells; default is centered full-width. */
   size?: 'sm' | 'md'
   className?: string
+  /**
+   * Heading tag for `title`. Defaults to `h3`, which is right when the empty
+   * state sits inside a section that already has an h2 — the common case
+   * across the 37 files using this.
+   *
+   * Pass `h2` when the empty state is the FIRST heading under a page's h1, or
+   * the document jumps h1 -> h3 and screen-reader users lose a level. That is
+   * what /watchlist did: PageHeader renders the h1, and the only other heading
+   * on the page was this component's "Put the AI on watch".
+   *
+   * Opt-in rather than changing the default, because for most of the other 36
+   * call sites h3 is the correct level and a blanket change would just move
+   * the skip somewhere else.
+   */
+  headingLevel?: 'h2' | 'h3' | 'h4'
 }
 
 const TONE_CLASSES: Record<Required<Props>['tone'], string> = {
@@ -64,6 +79,7 @@ export const EmptyState = ({
   tone = 'info',
   size = 'md',
   className,
+  headingLevel: Heading = 'h3',
 }: Props) => (
   <div
     role="status"
@@ -88,7 +104,7 @@ export const EmptyState = ({
       </div>
     )}
     <div className="max-w-sm">
-      <h3 className="text-sm font-normal text-d-text-primary">{title}</h3>
+      <Heading className="text-sm font-normal text-d-text-primary">{title}</Heading>
       {description && (
         <div className="mt-1 text-sm text-d-text-secondary">{description}</div>
       )}

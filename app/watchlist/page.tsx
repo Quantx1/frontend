@@ -450,6 +450,9 @@ export default function WatchlistPage() {
             !data?.items?.length || filter === 'all' ? (
               <EmptyState
                 icon={<Eye className="h-6 w-6" />}
+                // Only other heading on this page besides PageHeader's h1,
+                // so h3 here made the document skip a level.
+                headingLevel="h2"
                 title="Put the AI on watch"
                 description="Add a symbol and the engines watch it every session: live quote, engine consensus, regime warning, and news mood. Or let the Copilot suggest starters from your portfolio and the current regime."
                 action={
