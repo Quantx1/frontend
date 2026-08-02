@@ -419,7 +419,7 @@ select option {
 
 /* ════════════════════════════════════════════════════════════════
    GRADIENT FAMILY — signature / CTA / text (the ONE family)
-   ═══════════������════════════════════════════════════════════════════ */
+   ═══════════�������════════════════════════════════════════════════════ */
 
 /* Display / hero heading gradient — theme-aware text stops. */
 .text-gradient {
@@ -1793,4 +1793,91 @@ html.light .auth-dark {
   .flow-line {
     animation: none;
   }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   PRO-FINANCE CARD LANGUAGE (2026-08) — a tighter, sharper terminal
+   register inspired by LuxAlgo / Intellectia / TradeAlgo desks:
+   smaller radius, hairline borders, denser padding, and metric cards
+   with a coloured left accent. Additive — the rounded `.glass-surface`
+   Card stays for hero/marketing; these classes are opt-in for data
+   surfaces via the MetricCard / ControlTower / InsightRail primitives.
+   ════════════════════════════════════════════════════════════════ */
+
+/* Base data-surface card: sharp 10px radius, hairline border, flat wrap
+   fill (no blur → crisper text + cheaper to paint in dense grids). */
+.pro-card {
+  border-radius: 10px;
+  border: 1px solid var(--color-line);
+  background: var(--color-wrap);
+  transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+}
+.pro-card--hover:hover {
+  border-color: var(--color-wrap-line);
+  background: var(--color-wrap-hover);
+}
+
+/* Metric card: pro-card + a 2px coloured left accent keyed to semantics.
+   The accent is the single strongest "trading terminal" signal. */
+.metric-card {
+  position: relative;
+  border-radius: 10px;
+  border: 1px solid var(--color-line);
+  border-left-width: 2px;
+  border-left-color: var(--accent, var(--color-primary));
+  background: var(--color-wrap);
+  overflow: hidden;
+}
+.metric-card[data-tone='up']      { --accent: var(--color-up); }
+.metric-card[data-tone='down']    { --accent: var(--color-down); }
+.metric-card[data-tone='ai']      { --accent: var(--color-ai); }
+.metric-card[data-tone='warning'] { --accent: var(--color-warning); }
+.metric-card[data-tone='neutral'] { --accent: var(--color-wrap-line); }
+
+/* Control-tower page grid: one decisive primary column + a supporting
+   insight rail. Collapses to a single stack under lg. */
+.control-tower {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+@media (min-width: 1024px) {
+  .control-tower {
+    grid-template-columns: minmax(0, 1fr) 340px;
+    align-items: start;
+  }
+  .control-tower__rail {
+    position: sticky;
+    top: 16px;
+  }
+}
+
+/* AI insight rail surface — a subtly tinted panel so the "why" reads as a
+   distinct, AI-owned region rather than just another data card. */
+.insight-rail {
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--color-ai) 26%, var(--color-line));
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--color-ai) 7%, transparent), transparent 42%),
+    var(--color-wrap);
+}
+
+/* Section label: the mono-caps eyebrow used to title each desk region. */
+.desk-label {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+/* Flash-on-change tint for live telemetry cells. Add/remove the class to
+   pulse a value when it updates. */
+@keyframes flash-up   { 0% { background: color-mix(in srgb, var(--color-up) 26%, transparent); } 100% { background: transparent; } }
+@keyframes flash-down { 0% { background: color-mix(in srgb, var(--color-down) 26%, transparent); } 100% { background: transparent; } }
+.flash-up   { animation: flash-up 0.6s ease-out; }
+.flash-down { animation: flash-down 0.6s ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  .flash-up, .flash-down { animation: none; }
 }

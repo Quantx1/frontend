@@ -27,13 +27,16 @@ import {
   Badge,
   Button,
   Card,
+  ControlTower,
   DataTable,
   DisclaimerFooter,
   EmptyState,
   Input,
+  InsightRail,
+  MetricCard,
+  MetricGrid,
   Reveal,
   Select,
-  StatCard,
 } from '@/components/foundation'
 import type { Column, SelectOption } from '@/components/foundation'
 import { dispatchCopilotOpen } from '@/components/copilot/CopilotProvider'
@@ -152,6 +155,33 @@ export function SignalsOverview() {
   const maxHorizon = Math.max(1, ...Object.values(stats.byHorizon))
   const maxConf = Math.max(1, ...stats.byConf.map((b) => b.n))
 
+  // ── AI read of the open book (drives the InsightRail) ───────────────────────
+  const longPct = stats.total ? Math.round((stats.longCount / stats.total) * 100) : 0
+  const highConf = open.filter((s) => s.confidence >= 90).length
+  const topHorizon = (Object.entries(stats.byHorizon).sort((a, b) => b[1] - a[1])[0]?.[0] ?? 'swing') as CategoryId
+  const bookTone: 'up' | 'down' | 'neutral' = longPct >= 60 ? 'up' : longPct <= 40 ? 'down' : 'neutral'
+  const insightRail = (
+    <InsightRail
+      title="Book read"
+      verdict={{ label: longPct >= 60 ? 'Long-tilted' : longPct <= 40 ? 'Short-tilted' : 'Balanced', tone: bookTone }}
+      summary={
+        stats.total
+          ? `The open book holds ${stats.total} signals at ${stats.avgConf ?? '—'}% average confidence, tilted ${longPct}% long. Mean reward-to-risk is ${stats.avgRR != null ? `1:${stats.avgRR.toFixed(1)}` : '—'} with the best setup at ${stats.bestRR != null ? `1:${stats.bestRR.toFixed(1)}` : '—'}.`
+          : 'No open signals right now — the scans publish the strongest setups through the session.'
+      }
+      drivers={[
+        `${CATEGORIES[topHorizon].label} is the deepest book (${stats.byHorizon[topHorizon]} signals)`,
+        `${stats.longCount} long · ${stats.shortCount} short`,
+        highConf ? `${highConf} high-conviction (90%+) setups` : `Avg confidence ${stats.avgConf ?? '—'}%`,
+      ]}
+      watch={[
+        stats.shortCount ? `${stats.shortCount} short setups — confirm the broader tape` : null,
+        stats.byConf.find((b) => b.label === 'Below 60%')?.n ? `${stats.byConf.find((b) => b.label === 'Below 60%')!.n} low-confidence signals — size down` : null,
+      ].filter(Boolean) as string[]}
+      footer="Delayed EOD research · not investment advice"
+    />
+  )
+
   const columns: Column<DisplaySignal>[] = [
     {
       key: 'symbol',
@@ -255,15 +285,18 @@ export function SignalsOverview() {
         </div>
       </Reveal>
 
-      {/* KPI strip */}
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
-        <Reveal><StatCard label="Open signals" value={loading ? null : String(stats.total)} loading={loading} /></Reveal>
-        <Reveal delay={0.03}><StatCard label="Avg confidence" value={loading ? null : stats.avgConf != null ? `${stats.avgConf}%` : '—'} loading={loading} /></Reveal>
-        <Reveal delay={0.06}><StatCard label="Long / Short" value={loading ? null : `${stats.longCount} / ${stats.shortCount}`} loading={loading} /></Reveal>
-        <Reveal delay={0.09}><StatCard label="Avg R:R" value={loading ? null : stats.avgRR != null ? `1:${stats.avgRR.toFixed(1)}` : '—'} loading={loading} tooltip="Mean reward-to-risk across the open book" /></Reveal>
-        <Reveal delay={0.12}><StatCard label="Best R:R" value={loading ? null : stats.bestRR != null ? `1:${stats.bestRR.toFixed(1)}` : '—'} loading={loading} /></Reveal>
-      </div>
+      {/* KPI strip — pro-finance MetricCards with semantic accent borders */}
+      <Reveal>
+        <MetricGrid min={150}>
+          <MetricCard label="Open signals" value={loading ? '—' : stats.total} tone="ai" hint="across all horizons" />
+          <MetricCard label="Avg confidence" value={loading || stats.avgConf == null ? '—' : stats.avgConf} suffix={stats.avgConf != null ? '%' : ''} tone={stats.avgConf != null && stats.avgConf >= 75 ? 'up' : 'neutral'} />
+          <MetricCard label="Long / Short" value={loading ? '—' : `${stats.longCount} / ${stats.shortCount}`} tone={bookTone} hint={`${longPct}% long`} />
+          <MetricCard label="Avg R:R" value={loading || stats.avgRR == null ? '—' : `1:${stats.avgRR.toFixed(1)}`} tone="neutral" hint="reward-to-risk" />
+          <MetricCard label="Best R:R" value={loading || stats.bestRR == null ? '—' : `1:${stats.bestRR.toFixed(1)}`} tone="up" />
+        </MetricGrid>
+      </Reveal>
 
+      <ControlTower rail={insightRail}>
       {/* automation — trade the books manually (per-signal) or via the bot */}
       <Reveal>
         <AutomationPanel />
@@ -343,6 +376,7 @@ export function SignalsOverview() {
           Public track record <ArrowRight className="h-3.5 w-3.5" />
         </Link>
       </div>
+      </ControlTower>
 
       <DisclaimerFooter />
     </div>

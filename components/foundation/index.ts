@@ -45,6 +45,11 @@ export { DisclaimerFooter } from './DisclaimerFooter'
 // Phase 0 (WP-PRIMITIVES) — compact metric + motion primitives
 export { StatTile } from './StatTile'
 export type { StatTileTone } from './StatTile'
+// Pro-finance data-desk language (2026-08 redesign)
+export { MetricCard } from './MetricCard'
+export type { MetricTone } from './MetricCard'
+export { ControlTower, DeskSection, MetricGrid } from './ControlTower'
+export { InsightRail } from './InsightRail'
 export { WinRateGauge } from './WinRateGauge'
 export { Segmented } from './Segmented'
 export type { SegmentedOption } from './Segmented'
