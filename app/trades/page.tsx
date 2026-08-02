@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { api } from '@/lib/api'
 import Link from 'next/link'
 import {
-  ArrowLeft,
   ArrowUpRight,
   ArrowDownRight,
   TrendingUp,
@@ -26,12 +25,12 @@ import {
   Button,
   Card,
   DisclaimerFooter,
-  EyebrowMono,
   Reveal,
   StatCard,
 } from '@/components/foundation'
 import { dispatchCopilotOpen } from '@/components/copilot/CopilotProvider'
 import { AppShell } from '@/components/shell/AppShell'
+import { DeskTopbar } from '@/components/shell/DeskTopbar'
 import WeeklyReviewCard from '@/components/journal/WeeklyReviewCard'
 import TradePatternsCard from '@/components/journal/TradePatternsCard'
 import TradeReviewCard from '@/components/journal/TradeReviewCard'
@@ -276,26 +275,10 @@ export default function TradesPage() {
 
   return (
     <AppShell>
-      <div className="w-full space-y-5 p-4 md:p-6 xl:px-8">
-        <style>{`
-          @keyframes trade-row-in {
-            from { opacity: 0; transform: translateX(-8px); }
-            to { opacity: 1; transform: translateX(0); }
-          }
-        `}</style>
-
-        {/* ====== Header ====== */}
-        <Reveal className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <EyebrowMono>History</EyebrowMono>
-            <h1 className="flex items-center gap-2 font-display text-[22px] font-normal tracking-tight text-d-text-primary">
-              <Receipt size={18} className="text-primary" />
-              Trade History
-            </h1>
-            <div className="mt-0.5 text-[12px] text-d-text-muted">
-              Complete record of your executed trades
-            </div>
-          </div>
+      <DeskTopbar
+        title="Trade History"
+        eyebrow="History"
+        actions={
           <div className="flex items-center gap-2">
             {trades.length > 0 && (
               <Button variant="secondary" size="sm" onClick={() => exportTradesCSV(trades)}>
@@ -311,14 +294,16 @@ export default function TradesPage() {
               <Sparkles className="h-4 w-4" />
               Ask AI
             </Button>
-            <Link href="/copilot">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="w-4 h-4" />
-                <span className="hidden sm:inline">Dashboard</span>
-              </Button>
-            </Link>
           </div>
-        </Reveal>
+        }
+      />
+      <div className="w-full space-y-5 p-4 md:p-6 xl:px-8">
+        <style>{`
+          @keyframes trade-row-in {
+            from { opacity: 0; transform: translateX(-8px); }
+            to { opacity: 1; transform: translateX(0); }
+          }
+        `}</style>
 
         {/* ====== Journal: weekly review + behavioral patterns ====== */}
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">

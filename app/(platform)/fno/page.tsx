@@ -30,13 +30,13 @@ import {
   Button,
   Card,
   DisclaimerFooter,
-  PageHeader,
   Reveal,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from '@/components/foundation'
+import { DeskTopbar } from '@/components/shell/DeskTopbar'
 import { dispatchCopilotOpen } from '@/components/copilot/CopilotProvider'
 import { api } from '@/lib/api'
 import { AI } from '@/lib/tokens'
@@ -70,29 +70,28 @@ function FnoHubBody() {
   const [tab, setTab] = useState<FnoHubTab>(initialTab)
 
   return (
-    <div className="w-full pb-8">
-      <PageHeader
-        eyebrow="AI Derivatives Desk · F&O"
-        title={
-          <span className="inline-flex items-center gap-2">
-            F&amp;O Desk <Badge tone="warning">Elite</Badge>
-          </span> as unknown as string
-        }
-        description="Agents read the derivatives tape live: index snapshots · per-stock OI scanners · option-chain heatmap · payoff explorer."
+    <>
+      <DeskTopbar
+        title="F&O Desk"
+        eyebrow="AI Derivatives Desk"
         actions={
-          <Button
-            variant="ai"
-            onClick={() =>
-              dispatchCopilotOpen(
-                'Given the current VIX and FII/DII flows, what option strategy fits a neutral-to-bearish Nifty view?',
-              )
-            }
-          >
-            <Sparkles className="mr-1 h-4 w-4" /> Ask AI
-          </Button>
+          <div className="flex items-center gap-2">
+            <Badge tone="warning">Elite</Badge>
+            <Button
+              variant="ai"
+              size="sm"
+              onClick={() =>
+                dispatchCopilotOpen(
+                  'Given the current VIX and FII/DII flows, what option strategy fits a neutral-to-bearish Nifty view?',
+                )
+              }
+            >
+              <Sparkles className="mr-1 h-3.5 w-3.5" /> Ask AI
+            </Button>
+          </div>
         }
       />
-
+    <div className="w-full pb-8">
       <div className="space-y-6 px-4 py-5 md:px-6 xl:px-8">
       {/* No embedded agent hero (chat unification 2026-07-21): the header's
           Ask AI button opens the global dock with derivatives context, and
@@ -168,6 +167,7 @@ function FnoHubBody() {
       <DisclaimerFooter />
       </div>
     </div>
+    </>
   )
 }
 

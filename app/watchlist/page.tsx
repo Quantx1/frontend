@@ -48,6 +48,8 @@ import { dispatchCopilotOpen } from '@/components/copilot/CopilotProvider'
 import { DataBadge } from '@/components/common/DataBadge'
 import { TradeTicketButton } from '@/components/trade/TradeTicketButton'
 import { AppShell } from '@/components/shell/AppShell'
+import { DeskTopbar } from '@/components/shell/DeskTopbar'
+import { Card, CardContent } from '@/components/ui/card'
 import { stockHref } from '@/lib/stock-href'
 import { useBrokerStatus } from '@/lib/hooks/useBrokerStatus'
 import { api, handleApiError, ApiError } from '@/lib/api'
@@ -280,51 +282,49 @@ export default function WatchlistPage() {
 
   return (
     <AppShell>
+      <DeskTopbar
+        title="Watchlist"
+        eyebrow="AI is watching"
+        actions={
+          <>
+            <DataBadge mode={isConnected ? 'live' : 'eod'} />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => refresh(true)}
+              disabled={refreshing || loading}
+              aria-label="Refresh watchlist"
+            >
+              <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+            </Button>
+            <Button
+              variant="ai"
+              size="sm"
+              onClick={() => dispatchCopilotOpen('Suggest 5 symbols for my watchlist based on the current regime.')}
+            >
+              <Sparkles className="mr-1 h-4 w-4" /> Ask AI
+            </Button>
+          </>
+        }
+      />
       <div className="w-full pb-8">
-        <PageHeader
-          eyebrow="AI is watching · Watchlist"
-          title="Watchlist"
-          description={
-            loading
-              ? 'Loading…'
-              : data?.cap !== null && data?.cap != null
-              ? <UsageMeter used={data.count} cap={data.cap} label={`symbols (${data.tier})`} />
-              : data
-              ? `${data.count} symbol${data.count === 1 ? '' : 's'} · unlimited (${data?.tier})`
-              : 'Loading…'
-          }
-          actions={
-            <>
-              <DataBadge mode={isConnected ? 'live' : 'eod'} />
-              <Button
-                variant="ghost"
-                onClick={() => refresh(true)}
-                disabled={refreshing || loading}
-                aria-label="Refresh watchlist"
-              >
-                <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-              </Button>
-              <Button
-                variant="ai"
-                onClick={() => dispatchCopilotOpen('Suggest 5 symbols for my watchlist based on the current regime.')}
-              >
-                <Sparkles className="mr-1 h-4 w-4" /> Ask AI
-              </Button>
-            </>
-          }
-        />
+        {/* Mobile-only page title */}
+        <div className="border-b border-border px-4 py-4 lg:hidden">
+          <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">AI is watching</p>
+          <h1 className="mt-0.5 text-xl font-semibold tracking-tight">Watchlist</h1>
+        </div>
 
-        <div className="space-y-5 px-4 py-5 md:px-6">
+        <div className="space-y-4 px-4 py-4 md:px-6">
           {/* KPI strip */}
           <Reveal>
-            <div className="grid grid-cols-2 gap-2 rounded-[20px] border border-line bg-wrap p-2 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
               {KPIS.map((k) => (
-                <div key={k.label} className="tile-tint p-4">
-                  <div className="text-[11px] text-d-text-secondary">{k.label}</div>
-                  <div className={`mt-1 text-[22px] font-semibold leading-none text-d-text-primary ${MONO}`}>
-                    {k.v}
-                  </div>
-                </div>
+                <Card key={k.label} className="border-border bg-card">
+                  <CardContent className="p-4">
+                    <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground">{k.label}</p>
+                    <p className={`mt-1.5 text-[22px] font-semibold leading-none text-foreground ${MONO}`}>{k.v}</p>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           </Reveal>
@@ -332,33 +332,28 @@ export default function WatchlistPage() {
           {/* Add symbol toolbar */}
           <Reveal delay={0.05}>
             <form
-              onSubmit={(e) => {
-                e.preventDefault()
-                onAdd()
-              }}
-              className="flex items-center gap-2 rounded-full border border-line bg-wrap px-3 py-2"
+              onSubmit={(e) => { e.preventDefault(); onAdd() }}
+              className="flex items-center gap-2"
             >
-              <Search className="ml-1 h-4 w-4 shrink-0 text-d-text-muted" aria-hidden="true" />
-              <input
-                type="text"
-                value={addSymbol}
-                onChange={(e) => setAddSymbol(e.target.value.toUpperCase())}
-                placeholder="Add symbol, e.g. TCS, RELIANCE, HDFCBANK"
-                aria-label="Add a symbol to your watchlist"
-                className="flex-1 bg-transparent text-sm text-d-text-primary outline-none placeholder:text-d-text-muted"
-              />
+              <div className="relative flex-1">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+                <input
+                  type="text"
+                  value={addSymbol}
+                  onChange={(e) => setAddSymbol(e.target.value.toUpperCase())}
+                  placeholder="Add symbol, e.g. TCS, RELIANCE, HDFCBANK"
+                  aria-label="Add a symbol to your watchlist"
+                  className="h-10 w-full rounded-md border border-input bg-background pl-9 pr-3 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                />
+              </div>
               <Button
                 type="submit"
                 size="sm"
                 disabled={adding || !addSymbol.trim() || atCap}
                 title={atCap ? `Free tier limit of ${data?.cap ?? 5} reached. Upgrade to Pro for unlimited.` : undefined}
               >
-                {adding ? (
-                  <RefreshCw className="h-3.5 w-3.5 animate-spin" />
-                ) : (
-                  <Plus className="h-3.5 w-3.5" />
-                )}
-                <span className="hidden sm:inline">{atCap ? 'At cap' : 'Add'}</span>
+                {adding ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Plus className="h-3.5 w-3.5" />}
+                <span className="hidden sm:inline ml-1">{atCap ? 'At cap' : 'Add'}</span>
               </Button>
             </form>
           </Reveal>

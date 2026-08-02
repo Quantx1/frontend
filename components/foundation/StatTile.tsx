@@ -27,9 +27,9 @@ import { MONO } from '@/lib/tokens'
 export type StatTileTone = 'up' | 'down' | 'neutral'
 
 const TONE_CLASS: Record<StatTileTone, string> = {
-  up: 'text-up',
-  down: 'text-down',
-  neutral: 'text-d-text-primary',
+  up:      'text-green-600 dark:text-green-400',
+  down:    'text-red-600 dark:text-red-400',
+  neutral: 'text-foreground',
 }
 
 interface Props {
@@ -63,8 +63,8 @@ export function StatTile({
   className,
 }: Props) {
   return (
-    <div className={cn('rounded-sm border border-line bg-wrap p-2', className)}>
-      <p className="font-mono text-[9px] font-normal uppercase tracking-[0.1em] text-d-text-muted">
+    <div className={cn('rounded-md border bg-card p-2', className)}>
+      <p className="font-mono text-[9px] font-normal uppercase tracking-[0.1em] text-muted-foreground">
         {label}
       </p>
       <p className={cn('mt-0.5 text-xs font-semibold', MONO, TONE_CLASS[tone])}>
@@ -78,7 +78,7 @@ export function StatTile({
           </>
         )}
       </p>
-      {hint != null && <p className="mt-0.5 text-[10px] text-d-text-muted">{hint}</p>}
+      {hint != null && <p className="mt-0.5 text-[10px] text-muted-foreground">{hint}</p>}
     </div>
   )
 }

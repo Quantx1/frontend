@@ -19,7 +19,6 @@ import {
   CardHeader,
   DisclaimerFooter,
   EmptyState,
-  PageHeader,
   Skeleton,
   Tabs,
   TabsContent,
@@ -28,6 +27,7 @@ import {
   toast,
   type Tone,
 } from '@/components/foundation'
+import { DeskTopbar } from '@/components/shell/DeskTopbar'
 import { dispatchCopilotOpen } from '@/components/copilot/CopilotProvider'
 import { api } from '@/lib/api'
 import type { Notification, NotificationType } from '@/types'
@@ -117,20 +117,21 @@ export default function InboxPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl">
-      <PageHeader
+    <>
+      <DeskTopbar
         title="Inbox"
-        description="Signals, alerts, and AI summaries — all in one place."
+        eyebrow="Notifications"
         actions={
           <>
             {unread > 0 && (
-              <Button variant="secondary" onClick={markAllRead}>
+              <Button variant="secondary" size="sm" onClick={markAllRead}>
                 <CheckCheck className="mr-1 h-4 w-4" />
                 Mark all read
               </Button>
             )}
             <Button
               variant="ghost"
+              size="sm"
               onClick={refresh}
               aria-label="Refresh inbox"
               disabled={loading}
@@ -140,7 +141,7 @@ export default function InboxPage() {
           </>
         }
       />
-
+    <div className="mx-auto max-w-4xl">
       <div className="space-y-4 p-4 md:p-6">
         <Tabs value={tab} onValueChange={(v) => setTab(v as FilterTab)}>
           <TabsList>
@@ -200,6 +201,7 @@ export default function InboxPage() {
         <DisclaimerFooter />
       </div>
     </div>
+    </>
   )
 }
 
