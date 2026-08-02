@@ -324,12 +324,25 @@ const SidebarRail = React.forwardRef<
 })
 SidebarRail.displayName = "SidebarRail"
 
+// Renders a <div>, NOT the <main> that stock shadcn ships here.
+//
+// AppShell puts its own <main id="main-content"> inside this inset — that inner
+// one is the correct landmark, because it wraps the page content, while this
+// wrapper also contains the mobile header. Leaving both as <main> gave the
+// document TWO main landmarks, which is invalid HTML and leaves assistive tech
+// with no single "main content" to jump to. Measured on /copilot:
+// document.querySelectorAll('main').length === 2.
+//
+// Changed here rather than in AppShell so the skip link's #main-content target
+// keeps pointing at the element that actually holds the content. SidebarInset
+// has exactly one call site (AppShell.tsx:78), so this does not affect anything
+// else.
 const SidebarInset = React.forwardRef<
   HTMLDivElement,
-  React.ComponentProps<"main">
+  React.ComponentProps<"div">
 >(({ className, ...props }, ref) => {
   return (
-    <main
+    <div
       ref={ref}
       className={cn(
         "relative flex w-full flex-1 flex-col bg-background",
