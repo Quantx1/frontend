@@ -76,11 +76,21 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
 
         {/* MAIN — inset area, right-padded for the right rail on lg */}
         <SidebarInset className={cn('min-h-svh lg:mr-[72px]')}>
-          {/* Mobile topbar — hamburger + brand, hidden on desktop */}
-          <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border bg-sidebar lg:hidden">
+          {/* Mobile topbar — hamburger + brand, hidden on md+ (DeskTopbar takes over) */}
+          <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border bg-sidebar md:hidden">
             <SidebarTrigger className="ml-3 text-muted-foreground" />
             <Separator orientation="vertical" className="h-5" />
-            <span className="text-[15px] font-bold tracking-tight">Quant X</span>
+            <span
+              className="font-display text-[15px] font-bold tracking-tight"
+              style={{
+                background: 'linear-gradient(125deg, #AFC6FF 0%, #7FA3FF 45%, #5290F4 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
+              Quant X
+            </span>
           </header>
 
           {/* Content area */}

@@ -44,13 +44,13 @@ export function DeskTopbar({ title, eyebrow, status = 'none', actions, className
   return (
     <header
       className={cn(
-        'hidden lg:flex sticky top-0 z-20',
+        'hidden md:flex sticky top-0 z-20',
         'h-14 shrink-0 items-center gap-2 px-4',
         'border-b border-border bg-sidebar/80 backdrop-blur-sm',
         className,
       )}
     >
-      {/* Sidebar toggle (hidden on desktop — the sidebar has its own rail) */}
+      {/* Sidebar toggle */}
       <SidebarTrigger className="-ml-1 text-muted-foreground" />
       <Separator orientation="vertical" className="h-5 mr-1" />
 
@@ -59,14 +59,22 @@ export function DeskTopbar({ title, eyebrow, status = 'none', actions, className
         <BreadcrumbList className="flex-nowrap">
           {eyebrow && (
             <>
-              <BreadcrumbItem className="hidden xl:block text-eyebrow text-muted-foreground/60">
+              <BreadcrumbItem className="hidden lg:block text-eyebrow text-muted-foreground/60">
                 {eyebrow}
               </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden xl:block opacity-40" />
+              <BreadcrumbSeparator className="hidden lg:block opacity-40" />
             </>
           )}
           <BreadcrumbItem>
-            <BreadcrumbPage className="font-display text-[15px] font-semibold tracking-tight text-gradient">
+            <BreadcrumbPage
+              className="font-display text-[15px] font-semibold tracking-tight"
+              style={{
+                background: 'linear-gradient(125deg, #AFC6FF 0%, #7FA3FF 45%, #5290F4 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
               {title}
             </BreadcrumbPage>
           </BreadcrumbItem>

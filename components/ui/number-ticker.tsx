@@ -76,7 +76,7 @@ export function NumberTicker({
     <span
       ref={ref}
       className={cn(
-        "inline-block tabular-nums text-d-text-primary",
+        "inline-block tabular-nums",
         className
       )}
       {...props}

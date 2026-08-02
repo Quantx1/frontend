@@ -29,12 +29,12 @@ const ACCENT_BORDER: Record<MetricTone, string> = {
   neutral: 'border-l-border',
 }
 
-const VALUE_TONE: Record<MetricTone, string> = {
-  up:      'text-gradient-up',
-  down:    'text-gradient-down',
-  ai:      'text-gradient-ai',
-  warning: 'text-gradient-gold',
-  neutral: 'text-foreground',
+const VALUE_GRADIENT: Record<MetricTone, React.CSSProperties> = {
+  up:      { background: 'linear-gradient(125deg, #4FFFB0 0%, #16C784 55%, #0EA56A 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' },
+  down:    { background: 'linear-gradient(125deg, #FF7090 0%, #EA3943 55%, #C42B32 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' },
+  ai:      { background: 'linear-gradient(125deg, #C4B5FD 0%, #8FB0FF 50%, #5290F4 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' },
+  warning: { background: 'linear-gradient(125deg, #FFD980 0%, #F0A94F 50%, #E07B20 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' },
+  neutral: {},
 }
 
 interface Props {
@@ -87,10 +87,20 @@ export function MetricCard({
         {icon && <span className="shrink-0 text-muted-foreground/70">{icon}</span>}
       </div>
 
-      <div className={cn('mt-2 text-[24px] leading-none font-semibold tabular-nums font-display tracking-tight', VALUE_TONE[tone])}>
-        {prefix}
-        {typeof value === 'number' ? <NumberTicker value={value} decimalPlaces={decimals} /> : value}
-        {suffix}
+      <div className="mt-2 text-[24px] leading-none font-semibold tabular-nums font-display tracking-tight">
+        <span
+          style={
+            tone !== 'neutral'
+              ? { ...VALUE_GRADIENT[tone], display: 'inline' }
+              : { color: 'hsl(var(--foreground))' }
+          }
+        >
+          {prefix}
+          {typeof value === 'number'
+            ? <NumberTicker value={value} decimalPlaces={decimals} style={tone !== 'neutral' ? VALUE_GRADIENT[tone] : undefined} />
+            : value}
+          {suffix}
+        </span>
       </div>
 
       <div className="mt-2 flex items-center justify-between gap-2">

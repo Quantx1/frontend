@@ -121,7 +121,15 @@ export function AppSidebar({ pathname, onSearch }: AppSidebarProps) {
               <Link href="/copilot" aria-label="Quant X — Trading OS">
                 <QuantXMark className="size-8 shrink-0 drop-shadow-[0_2px_10px_rgba(58,119,229,0.45)]" />
                 <div className="flex flex-col leading-tight">
-                  <span className="font-display text-[15px] font-bold tracking-tight text-gradient">
+                  <span
+                    className="font-display text-[15px] font-bold tracking-tight"
+                    style={{
+                      background: 'linear-gradient(125deg, #AFC6FF 0%, #7FA3FF 45%, #5290F4 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                    }}
+                  >
                     Quant X
                   </span>
                   <span className="flex items-center gap-1 text-eyebrow text-muted-foreground/70">
@@ -204,7 +212,7 @@ export function AppSidebar({ pathname, onSearch }: AppSidebarProps) {
           <>
             <SidebarSeparator />
             <SidebarGroup>
-              <SidebarGroupLabel className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/70">
+              <SidebarGroupLabel className="text-eyebrow text-muted-foreground/60">
                 History
               </SidebarGroupLabel>
               <ScrollArea className="max-h-48">
