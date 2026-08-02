@@ -1,8 +1,18 @@
 'use client'
 
 import { useState } from 'react'
-import { X, Calculator, TrendingUp, Shield, DollarSign, Percent, AlertTriangle } from '@/lib/icons'
+import { Calculator, TrendingUp, Shield, DollarSign, Percent, AlertTriangle } from '@/lib/icons'
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { cn } from '@/lib/utils'
 import TradePlannerCard from '@/components/TradePlannerCard'
 
 interface CalculatorModalProps {
@@ -102,268 +112,215 @@ export default function CalculatorModal({
   const positionResults = type === 'position' ? calculatePositionSize() : null
   const riskResults = type === 'risk' ? calculateRisk() : null
 
-  if (!isOpen) return null
+  const typeLabel =
+    type === 'position'
+      ? 'Position Sizing Calculator'
+      : type === 'risk'
+      ? 'Risk Management Calculator'
+      : 'Trade Planner'
+
+  const typeDesc =
+    type === 'position'
+      ? 'Calculate optimal position size for Indian stocks'
+      : type === 'risk'
+      ? 'Analyze risk and potential returns'
+      : 'Plan entry, size, targets and drawdown before you trade'
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div
-        className="glass-surface w-full max-w-2xl rounded-2xl shadow-2xl"
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-border/60 p-6">
+    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose() }}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
           <div className="flex items-center gap-3">
-            {type === 'risk' ? (
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/15">
-                <Shield className="h-6 w-6 text-accent" />
-              </div>
-            ) : (
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/15">
-                <Calculator className="h-6 w-6 text-primary" />
-              </div>
-            )}
-            <div>
-              <h2 className="text-xl font-bold text-d-text-primary">
-                {type === 'position'
-                  ? 'Position Sizing Calculator'
-                  : type === 'risk'
-                  ? 'Risk Management Calculator'
-                  : 'Trade Planner'}
-              </h2>
-              <p className="text-sm text-d-text-muted">
-                {type === 'position'
-                  ? 'Calculate optimal position size for Indian stocks'
-                  : type === 'risk'
-                  ? 'Analyze risk and potential returns'
-                  : 'Plan entry, size, targets and drawdown before you trade'}
-              </p>
+            <div
+              className={cn(
+                'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg',
+                type === 'risk' ? 'bg-accent/10' : 'bg-primary/10',
+              )}
+            >
+              {type === 'risk' ? (
+                <Shield className="h-5 w-5 text-primary" />
+              ) : (
+                <Calculator className="h-5 w-5 text-primary" />
+              )}
+            </div>
+            <div className="min-w-0">
+              <DialogTitle>{typeLabel}</DialogTitle>
+              <DialogDescription>{typeDesc}</DialogDescription>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="flex h-10 w-10 items-center justify-center rounded-lg border border-border/60 text-d-text-muted transition hover:border-down/60 hover:text-down"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
+        </DialogHeader>
 
-        {/* Content */}
-        <div className="p-6">
-          {type === 'position' ? (
-            <>
-              {/* Position Sizing Form */}
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-d-text-muted">
-                    Total Capital (₹)
-                  </label>
-                  <div className="relative">
-                    <DollarSign className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-d-text-muted" />
-                    <input
-                      type="number"
-                      value={capital}
-                      onChange={(e) => setCapital(e.target.value)}
-                      placeholder="100000"
-                      className="w-full rounded-lg border border-border/60 bg-main/60 py-3 pl-10 pr-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-d-text-muted">
-                    Risk Per Trade (%)
-                  </label>
-                  <div className="relative">
-                    <Percent className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-d-text-muted" />
-                    <input
-                      type="number"
-                      value={riskPercent}
-                      onChange={(e) => setRiskPercent(e.target.value)}
-                      placeholder="2"
-                      step="0.5"
-                      className="w-full rounded-lg border border-border/60 bg-main/60 py-3 pl-10 pr-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-d-text-muted">
-                    Entry Price (₹)
-                  </label>
-                  <input
+        {/* ── Position Sizing ── */}
+        {type === 'position' && (
+          <div className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="calc-capital">Total Capital (₹)</Label>
+                <div className="relative">
+                  <DollarSign className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    id="calc-capital"
                     type="number"
-                    value={entryPrice}
-                    onChange={(e) => setEntryPrice(e.target.value)}
-                    placeholder="2500"
-                    className="w-full rounded-lg border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-d-text-muted">
-                    Stop Loss (₹)
-                  </label>
-                  <input
-                    type="number"
-                    value={stopLoss}
-                    onChange={(e) => setStopLoss(e.target.value)}
-                    placeholder="2400"
-                    className="w-full rounded-lg border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
+                    value={capital}
+                    onChange={(e) => setCapital(e.target.value)}
+                    placeholder="100000"
+                    className="pl-9"
                   />
                 </div>
               </div>
 
-              {/* Results */}
-              {positionResults && (
-                <div
-                  className="mt-6 rounded-xl border border-primary/30 bg-gradient-to-br from-primary/10 to-transparent p-6"
-                >
-                  <h3 className="mb-4 text-lg font-semibold text-d-text-primary">Recommended Position</h3>
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <div className="rounded-lg bg-background-surface/60 p-4">
-                      <div className="text-sm text-d-text-muted">Quantity to Buy</div>
-                      <div className="mt-1 text-2xl font-bold text-primary">{positionResults.quantity}</div>
-                      <div className="mt-1 text-xs text-d-text-muted">shares</div>
-                    </div>
-
-                    <div className="rounded-lg bg-background-surface/60 p-4">
-                      <div className="text-sm text-d-text-muted">Position Size</div>
-                      <div className="mt-1 text-2xl font-bold text-d-text-primary">₹{positionResults.positionSize}</div>
-                    </div>
-
-                    <div className="rounded-lg bg-background-surface/60 p-4">
-                      <div className="text-sm text-d-text-muted">Risk Amount</div>
-                      <div className="mt-1 text-2xl font-bold text-down">₹{positionResults.riskAmount}</div>
-                    </div>
-
-                    <div className="rounded-lg bg-background-surface/60 p-4">
-                      <div className="text-sm text-d-text-muted">Stop Loss %</div>
-                      <div className="mt-1 text-2xl font-bold text-down">{positionResults.stopLossPercent}%</div>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 flex items-start gap-2 rounded-lg bg-warning/10 p-3">
-                    <AlertTriangle className="h-5 w-5 flex-shrink-0 text-warning" />
-                    <p className="text-sm text-d-text-muted">
-                      Maximum loss if stop loss hits: <strong className="text-down">₹{positionResults.maxLoss}</strong>
-                    </p>
-                  </div>
-                </div>
-              )}
-            </>
-          ) : type === 'risk' ? (
-            <>
-              {/* Risk Management Form */}
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-d-text-muted">
-                    Total Capital (₹)
-                  </label>
-                  <input
+              <div className="space-y-1.5">
+                <Label htmlFor="calc-risk-pct">Risk Per Trade (%)</Label>
+                <div className="relative">
+                  <Percent className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    id="calc-risk-pct"
                     type="number"
-                    value={totalCapital}
-                    onChange={(e) => setTotalCapital(e.target.value)}
-                    placeholder="500000"
-                    className="w-full rounded-lg border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-accent/60 focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-d-text-muted">
-                    Position Value (₹)
-                  </label>
-                  <input
-                    type="number"
-                    value={positionValue}
-                    onChange={(e) => setPositionValue(e.target.value)}
-                    placeholder="50000"
-                    className="w-full rounded-lg border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-accent/60 focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-d-text-muted">
-                    Current Price (₹)
-                  </label>
-                  <input
-                    type="number"
-                    value={currentPrice}
-                    onChange={(e) => setCurrentPrice(e.target.value)}
-                    placeholder="2500"
-                    className="w-full rounded-lg border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-accent/60 focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-d-text-muted">
-                    Target Price (₹)
-                  </label>
-                  <input
-                    type="number"
-                    value={targetPrice}
-                    onChange={(e) => setTargetPrice(e.target.value)}
-                    placeholder="2800"
-                    className="w-full rounded-lg border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-accent/60 focus:outline-none"
+                    value={riskPercent}
+                    onChange={(e) => setRiskPercent(e.target.value)}
+                    placeholder="2"
+                    step="0.5"
+                    className="pl-9"
                   />
                 </div>
               </div>
 
-              {/* Results */}
-              {riskResults && (
+              <div className="space-y-1.5">
+                <Label htmlFor="calc-entry">Entry Price (₹)</Label>
+                <Input
+                  id="calc-entry"
+                  type="number"
+                  value={entryPrice}
+                  onChange={(e) => setEntryPrice(e.target.value)}
+                  placeholder="2500"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="calc-stop">Stop Loss (₹)</Label>
+                <Input
+                  id="calc-stop"
+                  type="number"
+                  value={stopLoss}
+                  onChange={(e) => setStopLoss(e.target.value)}
+                  placeholder="2400"
+                />
+              </div>
+            </div>
+
+            {positionResults && (
+              <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 space-y-3">
+                <p className="text-sm font-medium text-foreground">Recommended Position</p>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <ResultTile label="Quantity to Buy" value={String(positionResults.quantity)} suffix="shares" tone="primary" />
+                  <ResultTile label="Position Size" value={`₹${positionResults.positionSize}`} tone="neutral" />
+                  <ResultTile label="Risk Amount" value={`₹${positionResults.riskAmount}`} tone="down" />
+                  <ResultTile label="Stop Loss %" value={`${positionResults.stopLossPercent}%`} tone="down" />
+                </div>
+                <div className="flex items-start gap-2 rounded-md bg-warning/10 border border-warning/20 px-3 py-2">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
+                  <p className="text-xs text-muted-foreground">
+                    Maximum loss if stop loss hits:{' '}
+                    <strong className="text-destructive">₹{positionResults.maxLoss}</strong>
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── Risk Management ── */}
+        {type === 'risk' && (
+          <div className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="rc-capital">Total Capital (₹)</Label>
+                <Input
+                  id="rc-capital"
+                  type="number"
+                  value={totalCapital}
+                  onChange={(e) => setTotalCapital(e.target.value)}
+                  placeholder="500000"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="rc-pos-value">Position Value (₹)</Label>
+                <Input
+                  id="rc-pos-value"
+                  type="number"
+                  value={positionValue}
+                  onChange={(e) => setPositionValue(e.target.value)}
+                  placeholder="50000"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="rc-current">Current Price (₹)</Label>
+                <Input
+                  id="rc-current"
+                  type="number"
+                  value={currentPrice}
+                  onChange={(e) => setCurrentPrice(e.target.value)}
+                  placeholder="2500"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="rc-target">Target Price (₹)</Label>
+                <Input
+                  id="rc-target"
+                  type="number"
+                  value={targetPrice}
+                  onChange={(e) => setTargetPrice(e.target.value)}
+                  placeholder="2800"
+                />
+              </div>
+            </div>
+
+            {riskResults && (
+              <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 space-y-3">
+                <p className="text-sm font-medium text-foreground">Risk Analysis</p>
+                <div className="grid gap-3 md:grid-cols-3">
+                  <ResultTile label="Position %" value={`${riskResults.positionPercent}%`} suffix="of total capital" tone="neutral" />
+                  <ResultTile label="Potential Profit" value={`+${riskResults.potentialProfit}%`} suffix={`₹${riskResults.profitAmount}`} tone="up" />
+                  <ResultTile label="Risk:Reward" value={`${riskResults.riskReward}:1`} tone="primary" />
+                </div>
+
                 <div
-                  className="mt-6 rounded-xl border border-accent/30 bg-gradient-to-br from-accent/10 to-transparent p-6"
+                  className={cn(
+                    'flex items-start gap-2 rounded-md border px-3 py-2',
+                    riskResults.recommendation === 'HIGH RISK'
+                      ? 'bg-destructive/10 border-destructive/20'
+                      : riskResults.recommendation === 'MODERATE'
+                      ? 'bg-warning/10 border-warning/20'
+                      : 'bg-green-500/10 border-green-500/20',
+                  )}
                 >
-                  <h3 className="mb-4 text-lg font-semibold text-d-text-primary">Risk Analysis</h3>
-                  <div className="grid gap-4 md:grid-cols-3">
-                    <div className="rounded-lg bg-background-surface/60 p-4">
-                      <div className="text-sm text-d-text-muted">Position %</div>
-                      <div className="mt-1 text-2xl font-bold text-d-text-primary">{riskResults.positionPercent}%</div>
-                      <div className="mt-1 text-xs text-d-text-muted">of total capital</div>
-                    </div>
-
-                    <div className="rounded-lg bg-background-surface/60 p-4">
-                      <div className="text-sm text-d-text-muted">Potential Profit</div>
-                      <div className="mt-1 text-2xl font-bold text-up">+{riskResults.potentialProfit}%</div>
-                      <div className="mt-1 text-xs text-d-text-muted">₹{riskResults.profitAmount}</div>
-                    </div>
-
-                    <div className="rounded-lg bg-background-surface/60 p-4">
-                      <div className="text-sm text-d-text-muted">Risk:Reward</div>
-                      <div className="mt-1 text-2xl font-bold text-accent">{riskResults.riskReward}:1</div>
-                    </div>
-                  </div>
-
-                  <div
-                    className={`mt-4 rounded-lg p-4 ${
+                  <Shield
+                    className={cn(
+                      'mt-0.5 h-4 w-4 shrink-0',
                       riskResults.recommendation === 'HIGH RISK'
-                        ? 'bg-down/10 border border-down/30'
+                        ? 'text-destructive'
                         : riskResults.recommendation === 'MODERATE'
-                        ? 'bg-warning/10 border border-warning/30'
-                        : 'bg-up/10 border border-up/30'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <Shield
-                        className={`h-5 w-5 ${
-                          riskResults.recommendation === 'HIGH RISK'
-                            ? 'text-down'
-                            : riskResults.recommendation === 'MODERATE'
-                            ? 'text-warning'
-                            : 'text-up'
-                        }`}
-                      />
-                      <span
-                        className={`font-semibold ${
-                          riskResults.recommendation === 'HIGH RISK'
-                            ? 'text-down'
-                            : riskResults.recommendation === 'MODERATE'
-                            ? 'text-warning'
-                            : 'text-up'
-                        }`}
-                      >
-                        {riskResults.recommendation}
-                      </span>
-                    </div>
-                    <p className="mt-2 text-sm text-d-text-muted">
+                        ? 'text-warning'
+                        : 'text-green-500',
+                    )}
+                  />
+                  <div>
+                    <p
+                      className={cn(
+                        'text-xs font-semibold',
+                        riskResults.recommendation === 'HIGH RISK'
+                          ? 'text-destructive'
+                          : riskResults.recommendation === 'MODERATE'
+                          ? 'text-warning'
+                          : 'text-green-500',
+                      )}
+                    >
+                      {riskResults.recommendation}
+                    </p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
                       {riskResults.recommendation === 'HIGH RISK'
                         ? 'Position exceeds recommended 10% of capital. Consider reducing position size.'
                         : riskResults.recommendation === 'MODERATE'
@@ -372,98 +329,119 @@ export default function CalculatorModal({
                     </p>
                   </div>
                 </div>
-              )}
-            </>
-          ) : (
-            <>
-              {/* AI Trade Planner — reuses position-tab state + risk-tab target */}
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-d-text-muted">
-                    Entry Price (₹)
-                  </label>
-                  <input
-                    type="number"
-                    value={entryPrice}
-                    onChange={(e) => setEntryPrice(e.target.value)}
-                    placeholder="2500"
-                    className="w-full rounded-lg border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-d-text-muted">
-                    Stop Loss (₹) — above entry = short
-                  </label>
-                  <input
-                    type="number"
-                    value={stopLoss}
-                    onChange={(e) => setStopLoss(e.target.value)}
-                    placeholder="2400"
-                    className="w-full rounded-lg border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-d-text-muted">
-                    Total Capital (₹)
-                  </label>
-                  <div className="relative">
-                    <DollarSign className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-d-text-muted" />
-                    <input
-                      type="number"
-                      value={capital}
-                      onChange={(e) => setCapital(e.target.value)}
-                      placeholder="100000"
-                      className="w-full rounded-lg border border-border/60 bg-main/60 py-3 pl-10 pr-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-d-text-muted">
-                    Risk Per Trade (%)
-                  </label>
-                  <div className="relative">
-                    <Percent className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-d-text-muted" />
-                    <input
-                      type="number"
-                      value={riskPercent}
-                      onChange={(e) => setRiskPercent(e.target.value)}
-                      placeholder="2"
-                      step="0.5"
-                      className="w-full rounded-lg border border-border/60 bg-main/60 py-3 pl-10 pr-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="mb-2 block text-sm font-medium text-d-text-muted">
-                    Target Price (₹) — optional
-                  </label>
-                  <input
-                    type="number"
-                    value={targetPrice}
-                    onChange={(e) => setTargetPrice(e.target.value)}
-                    placeholder="2800"
-                    className="w-full rounded-lg border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
-                  />
-                </div>
               </div>
+            )}
+          </div>
+        )}
 
-              <div className="mt-6">
-                <TradePlannerCard
-                  entry={parseFloat(entryPrice)}
-                  stop={parseFloat(stopLoss)}
-                  capital={parseFloat(capital)}
-                  riskPct={parseFloat(riskPercent)}
-                  target={targetPrice ? parseFloat(targetPrice) : undefined}
+        {/* ── Trade Planner ── */}
+        {type === 'planner' && (
+          <div className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="tp-entry">Entry Price (₹)</Label>
+                <Input
+                  id="tp-entry"
+                  type="number"
+                  value={entryPrice}
+                  onChange={(e) => setEntryPrice(e.target.value)}
+                  placeholder="2500"
                 />
               </div>
-            </>
-          )}
-        </div>
-      </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="tp-stop">Stop Loss (₹) — above entry = short</Label>
+                <Input
+                  id="tp-stop"
+                  type="number"
+                  value={stopLoss}
+                  onChange={(e) => setStopLoss(e.target.value)}
+                  placeholder="2400"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="tp-capital">Total Capital (₹)</Label>
+                <div className="relative">
+                  <DollarSign className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    id="tp-capital"
+                    type="number"
+                    value={capital}
+                    onChange={(e) => setCapital(e.target.value)}
+                    placeholder="100000"
+                    className="pl-9"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="tp-risk">Risk Per Trade (%)</Label>
+                <div className="relative">
+                  <Percent className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    id="tp-risk"
+                    type="number"
+                    value={riskPercent}
+                    onChange={(e) => setRiskPercent(e.target.value)}
+                    placeholder="2"
+                    step="0.5"
+                    className="pl-9"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1.5 md:col-span-2">
+                <Label htmlFor="tp-target">Target Price (₹) — optional for R:R display</Label>
+                <Input
+                  id="tp-target"
+                  type="number"
+                  value={targetPrice}
+                  onChange={(e) => setTargetPrice(e.target.value)}
+                  placeholder="2700"
+                />
+              </div>
+            </div>
+
+            {entryPrice && stopLoss && capital && (
+              <TradePlannerCard
+                entry={parseFloat(entryPrice)}
+                stop={parseFloat(stopLoss)}
+                capital={parseFloat(capital)}
+                riskPct={parseFloat(riskPercent)}
+                target={targetPrice ? parseFloat(targetPrice) : undefined}
+              />
+            )}
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+/* ── Compact result tile ── */
+interface ResultTileProps {
+  label: string
+  value: string
+  suffix?: string
+  tone: 'up' | 'down' | 'primary' | 'neutral'
+}
+
+function ResultTile({ label, value, suffix, tone }: ResultTileProps) {
+  const valueCls =
+    tone === 'up'
+      ? 'text-green-500'
+      : tone === 'down'
+      ? 'text-destructive'
+      : tone === 'primary'
+      ? 'text-primary'
+      : 'text-foreground'
+
+  return (
+    <div className="rounded-md bg-card border border-border/60 px-3 py-3">
+      <p className="text-[11px] font-mono uppercase tracking-wide text-muted-foreground">{label}</p>
+      <p className={cn('mt-1 text-xl font-semibold tabular-nums', valueCls)}>{value}</p>
+      {suffix && <p className="mt-0.5 text-[11px] text-muted-foreground">{suffix}</p>}
     </div>
   )
 }
