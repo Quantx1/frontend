@@ -1,84 +1,95 @@
 'use client'
 
 /**
- * DeskTopbar — the persistent desktop-only header that all pro trading apps
- * have (LuxAlgo, Intellectia, Tradomate).
+ * DeskTopbar — the persistent desktop page-level header.
  *
- * It lives INSIDE the main pane (not fixed to the viewport), rendering as a
- * sticky top bar below any ConnectBrokerBanner. It shows:
- *   LEFT  — page breadcrumb / title with an optional live-status dot
- *   RIGHT — optional action slot + market clock
+ * Uses shadcn Breadcrumb + SidebarTrigger for proper keyboard accessibility
+ * and alignment with the shadcn sidebar system.
  *
- * Usage in any page:
+ * Usage:
  *   <DeskTopbar title="Markets" status="live" />
- *   <DeskTopbar title="Signals analysis" eyebrow="ML Signal Stack" actions={<Button>...</Button>} />
+ *   <DeskTopbar title="Signals" eyebrow="ML Signal Stack" actions={<Button>...</Button>} />
  */
 
 import * as React from 'react'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
+import { Separator } from '@/components/ui/separator'
+import { SidebarTrigger } from '@/components/ui/sidebar'
 import { cn } from '@/lib/utils'
 
 interface Props {
-  /** Page title shown prominently. */
   title: string
-  /** Small label above the title (mono-caps eyebrow). */
   eyebrow?: string
-  /** Status indicator dot beside the title. */
   status?: 'live' | 'delayed' | 'closed' | 'none'
-  /** Right-side actions (buttons, filters, toggles). */
   actions?: React.ReactNode
-  /** Extra className on the outer bar. */
   className?: string
 }
 
-const STATUS_DOT: Record<NonNullable<Props['status']>, { bg: string; shadow: string; label: string }> = {
-  live:    { bg: 'bg-up',      shadow: 'shadow-[0_0_6px_rgba(22,199,132,0.7)]',  label: 'Live' },
-  delayed: { bg: 'bg-warning', shadow: 'shadow-[0_0_6px_rgba(240,169,79,0.6)]',  label: 'Delayed' },
-  closed:  { bg: 'bg-[color:var(--color-muted)]', shadow: '', label: 'Closed' },
-  none:    { bg: '', shadow: '', label: '' },
+const STATUS: Record<NonNullable<Props['status']>, { color: string; glow: string; label: string }> = {
+  live:    { color: 'bg-green-500',            glow: 'shadow-[0_0_6px_rgba(22,199,132,0.7)]',  label: 'Live' },
+  delayed: { color: 'bg-amber-500',            glow: 'shadow-[0_0_6px_rgba(240,169,79,0.6)]',  label: 'Delayed' },
+  closed:  { color: 'bg-muted-foreground',     glow: '',                                        label: 'Closed' },
+  none:    { color: '',                        glow: '',                                        label: '' },
 }
 
 export function DeskTopbar({ title, eyebrow, status = 'none', actions, className }: Props) {
-  const dot = STATUS_DOT[status]
+  const s = STATUS[status]
 
   return (
-    <div
+    <header
       className={cn(
-        // Sticky inside the main pane — sticks right below ConnectBrokerBanner.
-        // Hidden on mobile (the Topbar handles mobile chrome).
         'hidden lg:flex sticky top-0 z-20',
-        'h-12 shrink-0 items-center gap-4',
-        'border-b border-line bg-wrap px-4 md:px-6',
+        'h-14 shrink-0 items-center gap-2 px-4',
+        'border-b border-border bg-sidebar/80 backdrop-blur-sm',
         className,
       )}
     >
-      {/* LEFT — breadcrumb */}
-      <div className="flex min-w-0 flex-1 items-center gap-2.5">
-        {eyebrow && (
-          <span className="hidden items-center text-[10.5px] font-semibold uppercase tracking-[0.12em] text-d-text-muted/70 xl:flex">
-            {eyebrow}
-            <span className="mx-2 text-d-text-muted/40">/</span>
-          </span>
-        )}
-        <h1 className="truncate text-[14px] font-semibold tracking-tight text-d-text-primary">
-          {title}
-        </h1>
-        {status !== 'none' && (
-          <span className="flex items-center gap-1.5">
-            <span
-              aria-hidden="true"
-              className={cn('inline-block h-1.5 w-1.5 shrink-0 rounded-full', dot.bg, dot.shadow)}
-            />
-            <span className="text-[11px] font-medium text-d-text-muted">{dot.label}</span>
-          </span>
-        )}
-      </div>
+      {/* Sidebar toggle (hidden on desktop — the sidebar has its own rail) */}
+      <SidebarTrigger className="-ml-1 text-muted-foreground" />
+      <Separator orientation="vertical" className="h-5 mr-1" />
 
-      {/* RIGHT — actions */}
+      {/* Breadcrumb */}
+      <Breadcrumb className="flex-1 min-w-0">
+        <BreadcrumbList className="flex-nowrap">
+          {eyebrow && (
+            <>
+              <BreadcrumbItem className="hidden xl:block text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground/70">
+                {eyebrow}
+              </BreadcrumbItem>
+              <BreadcrumbSeparator className="hidden xl:block" />
+            </>
+          )}
+          <BreadcrumbItem>
+            <BreadcrumbPage className="text-[14px] font-semibold tracking-tight text-foreground">
+              {title}
+            </BreadcrumbPage>
+          </BreadcrumbItem>
+          {status !== 'none' && (
+            <BreadcrumbItem>
+              <span className="flex items-center gap-1.5 ml-1">
+                <span
+                  aria-hidden="true"
+                  className={cn('inline-block size-1.5 rounded-full shrink-0', s.color, s.glow)}
+                />
+                <span className="text-[11px] font-medium text-muted-foreground">{s.label}</span>
+              </span>
+            </BreadcrumbItem>
+          )}
+        </BreadcrumbList>
+      </Breadcrumb>
+
+      {/* Right actions */}
       {actions && (
         <div className="flex shrink-0 items-center gap-2">
           {actions}
         </div>
       )}
-    </div>
+    </header>
   )
 }

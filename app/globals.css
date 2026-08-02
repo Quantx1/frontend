@@ -1869,3 +1869,29 @@ html.light .auth-dark {
 @media (prefers-reduced-motion: reduce) {
   .flash-up, .flash-down { animation: none; }
 }
+
+/* ── shadcn Sidebar CSS variables (HSL format — tailwind.config uses hsl()) ──
+   Dark (:root) = near-black trading terminal with blue accent.
+   Light (html.light) = cool blue-grey page with deepened blue.  */
+@layer base {
+  :root {
+    --sidebar-background: 240 5% 8%;       /* near-black #151517 */
+    --sidebar-foreground: 220 6% 85%;      /* #D3D3D7 secondary text */
+    --sidebar-primary: 224 73% 57%;        /* #406AE4 brand blue */
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 4% 12%;          /* #1E1E21 elevated */
+    --sidebar-accent-foreground: 220 6% 97%;
+    --sidebar-border: 240 4% 16%;          /* #29292D hairline */
+    --sidebar-ring: 224 73% 57%;
+  }
+  html.light {
+    --sidebar-background: 0 0% 100%;       /* white */
+    --sidebar-foreground: 222 10% 30%;     /* cool grey text */
+    --sidebar-primary: 225 73% 48%;        /* deepened blue */
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 35% 93%;         /* #E6ECFB */
+    --sidebar-accent-foreground: 222 15% 12%;
+    --sidebar-border: 220 30% 86%;         /* #D5DEF4 hairline */
+    --sidebar-ring: 225 73% 48%;
+  }
+}

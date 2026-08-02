@@ -2,51 +2,35 @@
 
 import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { Sidebar } from './Sidebar'
+import {
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger,
+} from '@/components/ui/sidebar'
+import { Separator } from '@/components/ui/separator'
+import { AppSidebar } from './AppSidebar'
 import { RightRail } from './RightRail'
-import { Topbar } from './Topbar'
 import { CommandPalette } from './CommandPalette'
 import { MobileDrawer } from './MobileDrawer'
 import { appSans, appMono } from './appFont'
 import { ConnectBrokerBanner } from '@/components/broker/ConnectBrokerBanner'
 import { cn } from '@/lib/utils'
 
-// 3-zone reference shell (Wave 1, 2026-06-20).
-//   • LEFT sidebar — fixed 240px (240 expanded / 68 collapsed), bg-wrap.
-//   • MAIN pane — fills between the rails (ml = sidebar width, mr = 72px right
-//     rail), scrolls; inner content capped at max-w-[1440px] with 16/24 gutters.
-//   • RIGHT rail — fixed 72px icon utilities, bg-main.
-// No global top bar on desktop (per-page breadcrumb lives inside the page); the
-// mobile-only Topbar opens the MobileDrawer below `lg`. All providers, the
-// CommandPalette (⌘K) and AutopilotStickyStop are preserved by the layout.
+/**
+ * AppShell — rebuilt on the shadcn SidebarProvider system (2026-08-redesign).
+ *
+ * Layout zones:
+ *   LEFT  — AppSidebar (shadcn Sidebar, 240px expanded / icon-only collapsed)
+ *   MAIN  — SidebarInset fills remaining space, scrolls
+ *   RIGHT — RightRail (72px fixed utility column, desktop only)
+ *
+ * The shadcn SidebarProvider handles collapse state, cookies, and the mobile
+ * Sheet drawer — MobileDrawer is kept for our custom mobile nav.
+ */
 export const AppShell = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname() ?? '/'
   const [paletteOpen, setPaletteOpen] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [collapsed, setCollapsed] = useState(false)
-  const [mounted, setMounted] = useState(false)
-
-  // Restore the user's sidebar collapse preference — defaults to the full
-  // (expanded) rail. `mounted` gates the width/margin transition so a saved
-  // collapsed rail doesn't animate-snap on load.
-  useEffect(() => {
-    setMounted(true)
-    try {
-      setCollapsed(localStorage.getItem('quantx.sidebar.collapsed.v2') === '1')
-    } catch {
-      /* ignore */
-    }
-  }, [])
-  const toggleCollapsed = () =>
-    setCollapsed((v) => {
-      const next = !v
-      try {
-        localStorage.setItem('quantx.sidebar.collapsed.v2', next ? '1' : '0')
-      } catch {
-        /* ignore */
-      }
-      return next
-    })
 
   // ⌘K opens the palette; ESC closes both surfaces.
   useEffect(() => {
@@ -71,11 +55,14 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div
-      className={`${appSans.variable} ${appMono.variable} app-canvas relative min-h-screen min-h-[100dvh]`}
+      className={cn(
+        appSans.variable,
+        appMono.variable,
+        'app-canvas relative flex min-h-svh w-full bg-main',
+      )}
       style={{ fontFamily: 'var(--font-app-sans)' }}
     >
-      {/* Skip-to-content — first focusable element. Becomes visible on focus
-          (WCAG 2.4.1). */}
+      {/* Skip-to-content */}
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded-md focus:bg-primary focus:px-3 focus:py-2 focus:text-sm focus:font-semibold focus:text-primary-foreground focus:outline-none"
@@ -83,28 +70,31 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
         Skip to main content
       </a>
 
-      {/* Zone 1 — left sidebar (fixed) */}
-      <Sidebar pathname={pathname} collapsed={collapsed} onToggle={toggleCollapsed} animate={mounted} />
+      <SidebarProvider>
+        {/* LEFT — shadcn sidebar */}
+        <AppSidebar pathname={pathname} onSearch={() => setPaletteOpen(true)} />
 
-      {/* Zone 3 — right utility rail (fixed, desktop only) */}
-      <RightRail onSearch={() => setPaletteOpen(true)} />
+        {/* MAIN — inset area, right-padded for the right rail on lg */}
+        <SidebarInset className={cn('min-h-svh lg:mr-[72px]')}>
+          {/* Mobile topbar — hamburger + brand, hidden on desktop */}
+          <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border bg-sidebar lg:hidden">
+            <SidebarTrigger className="ml-3 text-muted-foreground" />
+            <Separator orientation="vertical" className="h-5" />
+            <span className="text-[15px] font-bold tracking-tight">Quant X</span>
+          </header>
 
-      {/* Zone 2 — main pane. Margins reserve the fixed rails on desktop; the
-          mobile Topbar + full-width content take over below `lg`. */}
-      <div
-        className={cn(
-          'relative z-10 flex min-h-screen min-h-[100dvh] flex-col lg:mr-[72px]',
-          collapsed ? 'lg:ml-[68px]' : 'lg:ml-60',
-          mounted && 'transition-[margin] duration-200',
-        )}
-      >
-        <Topbar onMenuOpen={() => setDrawerOpen(true)} />
-        <main id="main-content" className="min-h-0 flex-1">
-          <ConnectBrokerBanner />
-          {/* Content gutter + 1440px cap (reference: px-4 md:px-6, max-w-8xl). */}
-          <div className="mx-auto w-full max-w-[1440px] px-4 md:px-6">{children}</div>
-        </main>
-      </div>
+          {/* Content area */}
+          <main id="main-content" className="flex-1">
+            <ConnectBrokerBanner />
+            <div className="mx-auto w-full max-w-[1440px]">
+              {children}
+            </div>
+          </main>
+        </SidebarInset>
+
+        {/* RIGHT — fixed utility rail, desktop only */}
+        <RightRail onSearch={() => setPaletteOpen(true)} />
+      </SidebarProvider>
 
       <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
       <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} pathname={pathname} />
