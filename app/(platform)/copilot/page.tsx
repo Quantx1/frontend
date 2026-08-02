@@ -41,6 +41,7 @@ import { MarkdownMessage } from '@/components/copilot/MarkdownMessage'
 import { ProgressRail } from '@/components/copilot/ProgressRail'
 import { ReferencesRail } from '@/components/copilot/ReferencesRail'
 import { BlurFade } from '@/components/ui/blur-fade'
+import { NumberTicker } from '@/components/motion'
 import { api, handleApiError, ApiError, type CopilotArtifact, type CopilotStep, type CopilotReference } from '@/lib/api'
 import { ChatArtifacts } from '@/components/copilot/ChatArtifacts'
 import { useTier } from '@/lib/hooks/useTier'
@@ -1176,8 +1177,13 @@ function CopilotHub() {
               <div className="grid grid-cols-2 gap-3">
                 <Stat label="Win rate" value={pctFmt(stats!.win_rate)} tone="up" />
                 <Stat label="Avg return / trade" value={pctFmt(stats!.avg_return_pct, true)} tone={(stats!.avg_return_pct ?? 0) >= 0 ? 'up' : 'down'} />
-                <Stat label="Profit factor" value={stats!.profit_factor != null ? stats!.profit_factor.toFixed(2) : '—'} />
-                <Stat label="Signals tracked" value={String(stats!.n)} />
+                <Stat
+                  label="Profit factor"
+                  value={stats!.profit_factor != null ? stats!.profit_factor.toFixed(2) : '—'}
+                  count={stats!.profit_factor != null ? stats!.profit_factor : undefined}
+                  decimalPlaces={2}
+                />
+                <Stat label="Signals tracked" value={String(stats!.n)} count={stats!.n} />
               </div>
               <div className="rounded-[20px] bg-wrap p-4">
                 <div className="flex items-center justify-between">
@@ -1227,12 +1233,33 @@ function SectionHead({ eyebrow, title }: { eyebrow: string; title: string }) {
   )
 }
 
-function Stat({ label, value, tone = 'neutral' }: { label: string; value: string; tone?: 'up' | 'down' | 'neutral' }) {
+function Stat({
+  label,
+  value,
+  tone = 'neutral',
+  count,
+  decimalPlaces = 0,
+}: {
+  label: string
+  value: string
+  tone?: 'up' | 'down' | 'neutral'
+  /** When set, the value springs from 0 → count on view (§39 count-up). The
+   *  `value` string is still used as the static/reduced-motion fallback and for
+   *  any prefix/suffix formatting the ticker can't express. */
+  count?: number
+  decimalPlaces?: number
+}) {
   const color = tone === 'up' ? 'text-up' : tone === 'down' ? 'text-down' : 'text-d-text-primary'
   return (
     <div className="elev-1 rounded-[20px] border border-line bg-wrap p-4">
       <EyebrowMono className="text-[11px]">{label}</EyebrowMono>
-      <div className={`mt-1 text-[26px] font-normal leading-none ${MONO} ${color}`}>{value}</div>
+      <div className={`mt-1 text-[26px] font-normal leading-none ${MONO} ${color}`}>
+        {count != null ? (
+          <NumberTicker value={count} decimalPlaces={decimalPlaces} className={color} />
+        ) : (
+          value
+        )}
+      </div>
     </div>
   )
 }
