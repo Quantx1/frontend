@@ -13,6 +13,7 @@ import {
   Skeleton,
   StatCard,
 } from '@/components/foundation'
+import { DeskTopbar } from '@/components/shell/DeskTopbar'
 import { fmtINR, fmtSignedINR } from '@/components/managed/format'
 import { MONO } from '@/lib/tokens'
 
@@ -67,14 +68,12 @@ export default function RiskCenterPage() {
       : 0
 
   return (
+    <>
+      <DeskTopbar title="Risk & Analytics" eyebrow="Risk Engine" />
     <div className="mx-auto max-w-5xl space-y-6 px-6 py-8">
       <Reveal>
         <header className="space-y-1">
-          <EyebrowMono>Risk engine</EyebrowMono>
-          <h1 className="font-display text-xl font-normal text-d-text-primary">
-            Risk &amp; Analytics
-          </h1>
-          <p className="text-xs text-d-text-muted">
+          <p className="text-xs text-muted-foreground">
             The risk engine watches your book in real time: drawdown-aware limit
             checks, live concentration and performance in one place. Warnings keep
             you informed; they never block your orders.
@@ -242,5 +241,6 @@ export default function RiskCenterPage() {
       </section>
       </Reveal>
     </div>
+    </>
   )
 }
