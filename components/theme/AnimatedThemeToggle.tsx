@@ -10,30 +10,22 @@
  * Reduced-motion collapses the reveal to an instant swap.
  */
 
-import { forwardRef, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTheme } from 'next-themes'
 import { Moon, Sun } from '@/lib/icons'
 import { AnimatedThemeToggler } from '@/components/magicui/animated-theme-toggler'
 import type { TransitionVariant } from '@/components/magicui/animated-theme-toggler'
 import { useThemeMode } from '@/contexts/ThemeModeContext'
 
-// forwardRef because RightRail wraps this in `<TooltipTrigger asChild>`, which
-// clones the child and passes a ref. A plain function component drops it, React
-// logs "Function components cannot be given refs", and the tooltip has no
-// element to anchor to. The ref must reach the real <button>, so it is passed
-// straight through to AnimatedThemeToggler (which forwards it in turn).
-export const AnimatedThemeToggle = forwardRef<
-  HTMLButtonElement,
-  {
-    className?: string
-    variant?: TransitionVariant
-    iconClassName?: string
-  }
->(function AnimatedThemeToggle({
+export function AnimatedThemeToggle({
   className = '',
   variant = 'circle',
   iconClassName = 'h-5 w-5',
-}, ref) {
+}: {
+  className?: string
+  variant?: TransitionVariant
+  iconClassName?: string
+}) {
   const { resolvedTheme } = useTheme()
   const { setMode } = useThemeMode()
   const [mounted, setMounted] = useState(false)
@@ -56,7 +48,6 @@ export const AnimatedThemeToggle = forwardRef<
 
   return (
     <AnimatedThemeToggler
-      ref={ref}
       theme={isDark ? 'dark' : 'light'}
       onThemeChange={(t) => setMode(t)}
       variant={variant}
@@ -68,4 +59,4 @@ export const AnimatedThemeToggle = forwardRef<
       <Icon className={iconClassName} aria-hidden="true" />
     </AnimatedThemeToggler>
   )
-})
+}

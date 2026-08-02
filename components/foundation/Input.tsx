@@ -1,12 +1,4 @@
-/**
- * Foundation Input — wraps the shadcn Input with the app's label/error API.
- *
- * Old API: Input({ label?, error?, className?, ...inputProps })
- * Preserved so all callers work unchanged.
- */
 import * as React from 'react'
-import { Input as ShadcnInput } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 
 interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -21,15 +13,22 @@ export const Input = React.forwardRef<HTMLInputElement, Props>(
     return (
       <div className="flex flex-col gap-1">
         {label && (
-          <Label htmlFor={inputId} className="text-xs font-normal">
+          <label
+            htmlFor={inputId}
+            className="text-xs font-normal text-d-text-secondary"
+          >
             {label}
-          </Label>
+          </label>
         )}
-        <ShadcnInput
+        <input
           ref={ref}
           id={inputId}
           className={cn(
-            error && 'border-destructive focus-visible:ring-destructive',
+            'h-9 w-full rounded-sm border bg-wrap-hover px-3 text-sm text-d-text-primary',
+            'placeholder:text-d-text-muted',
+            'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40 focus-visible:border-white/30',
+            'disabled:opacity-50',
+            error ? 'border-down' : 'border-line',
             className,
           )}
           aria-invalid={!!error}
@@ -37,7 +36,7 @@ export const Input = React.forwardRef<HTMLInputElement, Props>(
           {...rest}
         />
         {error && (
-          <p id={`${inputId}-error`} className="text-xs text-destructive">
+          <p id={`${inputId}-error`} className="text-xs text-down">
             {error}
           </p>
         )}

@@ -66,17 +66,9 @@ export const ChangeBadge = ({
   const tone = toneOverride ?? (value > 0 ? 'up' : value < 0 ? 'down' : 'neutral')
 
   const toneText =
-    tone === 'up'
-      ? 'text-green-600 dark:text-green-400'
-      : tone === 'down'
-        ? 'text-red-600 dark:text-red-400'
-        : 'text-muted-foreground'
+    tone === 'up' ? 'text-up' : tone === 'down' ? 'text-down' : 'text-d-text-muted'
   const toneFill =
-    tone === 'up'
-      ? 'bg-green-500/10'
-      : tone === 'down'
-        ? 'bg-red-500/10'
-        : 'bg-muted'
+    tone === 'up' ? 'bg-up/10' : tone === 'down' ? 'bg-down/10' : 'bg-wrap-hover'
 
   return (
     <span

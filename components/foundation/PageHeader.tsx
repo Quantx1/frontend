@@ -45,24 +45,21 @@ export const PageHeader = ({
 }: Props) => (
   <header
     className={cn(
-      // Pro-finance: compact, borderless, tight — the DeskTopbar carries the
-      // page title on desktop, so PageHeader is a sub-section eyebrow.
-      // On mobile (no DeskTopbar) it keeps the title visible with lighter padding.
-      'flex flex-col gap-3 pt-4 pb-3 md:flex-row md:items-end md:justify-between',
+      'flex flex-col gap-4 border-b border-line px-4 py-5 md:flex-row md:items-end md:justify-between md:px-6',
       className,
     )}
   >
     <div className="min-w-0 flex-1">
       {eyebrow && (
-        <p className="mb-1 font-mono text-[10.5px] font-semibold uppercase tracking-[0.12em] text-d-text-muted">
+        <p className="mb-1.5 font-mono text-[11px] font-normal uppercase tracking-[0.1em] text-d-text-muted">
           {eyebrow}
         </p>
       )}
-      <h2 className="truncate text-[22px] font-semibold tracking-tight text-d-text-primary">
+      <h1 className="truncate text-display-sm font-normal text-d-text-primary">
         {title}
-      </h2>
+      </h1>
       {description && (
-        <div className="mt-0.5 text-[13px] text-d-text-secondary">{description}</div>
+        <div className="mt-1 text-sm text-d-text-secondary">{description}</div>
       )}
     </div>
     {actions && (

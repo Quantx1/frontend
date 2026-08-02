@@ -73,14 +73,14 @@ export const StatCard = ({
 }: Props) => (
   <div
     className={cn(
-      'flex flex-col gap-2 rounded-md p-4',
-      glass ? 'border bg-card/80 backdrop-blur-sm shadow-sm' : 'border bg-card',
+      'flex flex-col gap-2 rounded-sm p-4',
+      glass ? 'lg-surface lift' : 'border border-line bg-wrap',
       className,
     )}
     aria-busy={loading || undefined}
   >
     <div className="flex items-center gap-1.5">
-      <p className="font-mono text-[11px] font-normal uppercase tracking-[0.1em] text-muted-foreground">
+      <p className="font-mono text-[11px] font-normal uppercase tracking-[0.1em] text-d-text-muted">
         {label}
       </p>
       {tooltip && (
@@ -88,7 +88,7 @@ export const StatCard = ({
           <button
             type="button"
             aria-label={`${label} explanation`}
-            className="text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded"
+            className="text-d-text-muted hover:text-d-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded"
           >
             <Info className="h-3 w-3" aria-hidden="true" />
           </button>
@@ -105,7 +105,7 @@ export const StatCard = ({
             <span className="truncate">{error}</span>
           </p>
         ) : (
-          <p className="truncate font-mono text-2xl font-normal text-foreground tabular-nums">
+          <p className="truncate font-mono text-2xl font-normal text-d-text-primary tabular-nums">
             {value}
           </p>
         )}

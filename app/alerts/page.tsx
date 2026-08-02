@@ -36,11 +36,11 @@ import {
 import { useAuth } from '@/contexts/AuthContext'
 import { api, handleApiError } from '@/lib/api'
 import { AppShell } from '@/components/shell/AppShell'
-import { DeskTopbar } from '@/components/shell/DeskTopbar'
 import {
   Button,
   Badge,
   EmptyState,
+  PageHeader,
   StatTile,
   toast,
 } from '@/components/foundation'
@@ -79,7 +79,6 @@ export default function AlertsStudioPage() {
   if (authLoading || (user && tierLoading)) {
     return (
       <AppShell>
-        <DeskTopbar title="Alerts Studio" eyebrow="Notifications" />
         <div className="flex items-center justify-center min-h-[50vh]">
           <Loader2 className="w-6 h-6 text-primary animate-spin" />
         </div>
@@ -90,7 +89,6 @@ export default function AlertsStudioPage() {
   if (!user) {
     return (
       <AppShell>
-        <DeskTopbar title="Alerts Studio" eyebrow="Notifications" />
         <div className="p-4 md:p-6">
           <EmptyState
             icon={<Bell className="h-6 w-6" />}
@@ -111,8 +109,12 @@ export default function AlertsStudioPage() {
   if (!hasStudio) {
     return (
       <AppShell>
-        <DeskTopbar title="Alerts Studio" eyebrow="Notifications" />
         <div className="p-4 md:p-6">
+          <PageHeader
+            eyebrow="Notifications"
+            title="Alerts Studio"
+            description="Per-event routing across every channel."
+          />
           <div className="mt-6">
             <EmptyState
               icon={<Lock className="h-6 w-6" />}
@@ -145,7 +147,6 @@ export default function AlertsStudioPage() {
 
   return (
     <AppShell>
-      <DeskTopbar title="Alerts Studio" eyebrow="Notifications" />
       <AlertsStudio />
     </AppShell>
   )
@@ -220,6 +221,12 @@ function AlertsStudio() {
 
   return (
     <div className="w-full">
+      <PageHeader
+        eyebrow="Notifications · Pro"
+        title="Alerts Studio"
+        description="Route every event to the right channel. Test a channel, tune per-event, or set them all at once."
+      />
+
       <div className="p-4 md:p-6 space-y-6">
         {/* ── Summary tiles ── */}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">

@@ -37,7 +37,6 @@ import { ChevronLeft, ChevronRight, Search, Sparkles, TableProperties } from '@/
 import { api } from '@/lib/api'
 import { stockHref } from '@/lib/stock-href'
 import { AppShell } from '@/components/shell/AppShell'
-import { DeskTopbar } from '@/components/shell/DeskTopbar'
 import {
   ChangeBadge,
   DataTable,
@@ -350,30 +349,28 @@ export default function StocksPage() {
 
   return (
     <AppShell>
-      <DeskTopbar
-        title="Stocks"
-        eyebrow="AI stock discovery"
-        actions={
-          <>
-            <DataBadge mode="eod" />
-            <Link
-              href="/signals"
-              className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2.5 py-1.5 text-[12px] text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <Sparkles className="h-3.5 w-3.5 text-primary" />
-              Today&apos;s signals
-            </Link>
-          </>
-        }
-      />
       <div className="w-full pb-8">
-        {/* Mobile-only page title */}
-        <div className="border-b border-border px-4 py-4 lg:hidden">
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">AI stock discovery</p>
-          <h1 className="mt-0.5 text-xl font-semibold tracking-tight">Stocks</h1>
-        </div>
+        <Reveal>
+          <PageHeader
+            eyebrow="AI stock discovery"
+            title="Stocks"
+            description="The whole NSE board, read by our AI engines. Filter by index or sector, sort on live quotes. Tap any name for the full read: ML signals, news sentiment, technicals, chart."
+            actions={
+              <>
+                <DataBadge mode="eod" />
+                <Link
+                  href="/signals"
+                  className="glass-control inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] text-d-text-secondary transition-colors hover:text-d-text-primary"
+                >
+                  <Sparkles className="h-3.5 w-3.5 text-primary" />
+                  Today&apos;s signals
+                </Link>
+              </>
+            }
+          />
+        </Reveal>
 
-        <div className="space-y-4 px-4 py-4 md:px-6">
+        <div className="space-y-5 px-4 py-5 md:px-6">
           {/* Regime banner */}
           <Reveal delay={0.05}>
             <ErrorBoundary label="Regime">
@@ -405,7 +402,7 @@ export default function StocksPage() {
             </ErrorBoundary>
           </Reveal>
 
-          {/* Filter / toolbar row �� D archetype: search + index + sector + sort */}
+          {/* Filter / toolbar row — D archetype: search + index + sector + sort */}
           <Reveal delay={0.25}>
             <div className="flex flex-col gap-3 border-y border-line py-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="relative w-full max-w-[340px]">

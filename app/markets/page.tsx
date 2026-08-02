@@ -19,8 +19,7 @@ import {
 import { api } from '@/lib/api'
 import { useBrokerStatus } from '@/lib/hooks/useBrokerStatus'
 import { AppShell } from '@/components/shell/AppShell'
-import { DeskTopbar } from '@/components/shell/DeskTopbar'
-import { Reveal, Card, Skeleton, DisclaimerFooter, EyebrowMono, EmptyState, ControlTower, MetricGrid, MetricCard, InsightRail, type MetricTone } from '@/components/foundation'
+import { Reveal, Card, Skeleton, DisclaimerFooter, EyebrowMono } from '@/components/foundation'
 import { MONO } from '@/lib/tokens'
 import MarketPulseCard from '@/components/markets/MarketPulseCard'
 import AiRadarStrip from '@/components/markets/AiRadarStrip'
@@ -148,68 +147,18 @@ export default function MarketsPage() {
   // Per-stock change% is a raw NSE quote → gate the number by emptying the list.
   const moversShown = dataEntitled ? moverItems : []
 
-  // ── Pro-finance telemetry + AI read ────────────────────────────────────────
-  // Derived entirely from the SAFE data already loaded above, so the strip + the
-  // insight rail render for everyone (logged-out included) and never expose raw
-  // gated NSE quotes.
-  const regimeLabel = cur ? cap(cur.regime) : '—'
-  const regimeTone: 'up' | 'down' | 'neutral' = cur?.regime === 'bull' ? 'up' : cur?.regime === 'bear' ? 'down' : 'neutral'
-  const breadthTone: MetricTone = avgBreadth == null ? 'neutral' : avgBreadth >= 55 ? 'up' : avgBreadth <= 45 ? 'down' : 'neutral'
-  const momoTone: MetricTone = momentumPct == null ? 'neutral' : momentumPct >= 0 ? 'up' : 'down'
-  const leadSector = sectorList[0]
-  const lagSector = sectorList[sectorList.length - 1]
-  const topGlobal = globalLive[0]
-
-  const readSummary = cur
-    ? `The market is in a ${regimeLabel.toLowerCase()} regime with ${regimeConf ?? '—'}% model confidence.${
-        avgBreadth != null ? ` Breadth is ${avgBreadth >= 55 ? 'firm' : avgBreadth <= 45 ? 'weak' : 'mixed'} at ${avgBreadth}% of sectors advancing.` : ''
-      }${momentumPct != null ? ` 21-session momentum is ${momentumPct >= 0 ? 'positive' : 'negative'} at ${momentumPct.toFixed(1)}%.` : ''}`
-    : 'Assembling the market read from regime, breadth, momentum and global cues…'
-
-  const readDrivers = [
-    cur ? `Regime ${regimeLabel} at ${regimeConf ?? '—'}% confidence` : null,
-    avgBreadth != null ? `Breadth ${avgBreadth}% sectors advancing` : null,
-    leadSector ? `${leadSector.sector} leading (${pct(leadSector.avg_change_pct)})` : null,
-    topGlobal ? `Global cue ${topGlobal.label} ${pct(topGlobal.change_pct)}` : null,
-  ].filter(Boolean) as string[]
-
-  const readWatch = [
-    lagSector ? `${lagSector.sector} lagging (${pct(lagSector.avg_change_pct)})` : null,
-    hits.some((h) => h.is_big) ? 'High-impact headlines on the tape' : null,
-    momentumPct != null && Math.abs(momentumPct) > 5 ? 'Momentum stretched — watch for mean-reversion' : null,
-  ].filter(Boolean) as string[]
-
-  const insightRail = (
-    <InsightRail
-      verdict={{ label: `${regimeLabel} regime`, tone: regimeTone }}
-      summary={readSummary}
-      drivers={readDrivers}
-      watch={readWatch.length ? readWatch : undefined}
-      footer={mktLabel ? `Market ${mktLabel} · read refreshes through the session` : undefined}
-    />
-  )
-
   return (
     <AppShell>
-      <DeskTopbar
-        title="Markets"
-        eyebrow="Regime-aware desk"
-        status={mktLabel === 'Live' ? 'live' : mktLabel === 'Pre-open' ? 'delayed' : mktLabel === 'Closed' ? 'closed' : 'none'}
-      />
       <div className="w-full space-y-4 p-4 md:p-6 xl:px-8">
-
-        {/* ── Telemetry strip — the pro-finance metric row: regime, breadth,
-             momentum, top global cue. Accent-bordered MetricCards. ── */}
-        <Reveal delay={0.015}>
-          <MetricGrid min={172}>
-            <MetricCard label="Regime" value={regimeLabel} tone={regimeTone} hint={regimeConf != null ? `${regimeConf}% confidence` : 'awaiting model'} />
-            <MetricCard label="Breadth" value={avgBreadth ?? '—'} suffix={avgBreadth != null ? '%' : ''} tone={breadthTone} hint="sectors advancing" spark={niftyHist.slice(-16)} />
-            <MetricCard label="Momentum · 21d" value={momentumPct != null ? +momentumPct.toFixed(1) : '—'} decimals={1} suffix={momentumPct != null ? '%' : ''} tone={momoTone} delta={momentumPct != null ? +momentumPct.toFixed(2) : undefined} />
-            <MetricCard label={topGlobal ? topGlobal.label : 'Global cue'} value={topGlobal ? num(topGlobal.last) : '—'} tone={topGlobal ? (topGlobal.change_pct >= 0 ? 'up' : 'down') : 'neutral'} delta={topGlobal?.change_pct != null ? +topGlobal.change_pct.toFixed(2) : undefined} />
-          </MetricGrid>
+        <Reveal className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <EyebrowMono>Regime-aware desk</EyebrowMono>
+            <h1 className="heading-display mt-1 flex items-center gap-2 text-[clamp(1.6rem,3vw,2.2rem)] font-semibold tracking-tight text-d-text-primary"><LineChart size={22} className="text-primary" /> Markets</h1>
+            <p className="mt-1 text-[12.5px] text-d-text-muted">Your AI market desk — the full read before the bell and the wrap after the close.</p>
+          </div>
+          {mktLabel && <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-wrap px-3 py-1.5 text-[11.5px]"><span className={`h-2 w-2 rounded-full ${mktLabel === 'Live' ? 'bg-up' : mktLabel === 'Pre-open' ? 'bg-warning' : 'bg-d-text-muted'}`} /><span className="font-semibold text-d-text-secondary">Market {mktLabel}</span></span>}
         </Reveal>
 
-        <ControlTower rail={insightRail}>
         {/* ── AI Daily Briefing (the hero) — built from SAFE data (global cues +
              EOD/derived India context + FII/DII EOD + events), so it shows to
              EVERYONE, logged-out included. No live intraday NSE quotes here. ── */}
@@ -273,13 +222,7 @@ export default function MarketsPage() {
                   {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-full min-h-[64px]" rounded="lg" />)}
                 </div>
               ) : (
-                <EmptyState
-                  size="sm"
-                  className="flex-1"
-                  icon={<Grid3x3 size={18} />}
-                  title="Sector heatmap unavailable"
-                  description="We couldn't reach the sector feed just now — it refreshes automatically through the session."
-                />
+                <div className="flex flex-1 items-center justify-center text-[12px] text-d-text-muted">Sector data unavailable right now.</div>
               )}
             </Card>
           </Reveal>
@@ -359,7 +302,6 @@ export default function MarketsPage() {
             <OrderFlowAnalysis entitled={dataEntitled} />
           </Reveal>
         )}
-        </ControlTower>
 
         <DisclaimerFooter />
       </div>

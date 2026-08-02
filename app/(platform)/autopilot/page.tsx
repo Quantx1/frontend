@@ -49,10 +49,10 @@ import {
   Dialog,
   DisclaimerFooter,
   EmptyState,
+  PageHeader,
   Skeleton,
   toast,
 } from '@/components/foundation'
-import { DeskTopbar } from '@/components/shell/DeskTopbar'
 
 // 2026-06-12 — removed the stale AUTOPILOT_LIVE_TRADING=false gate. It dated
 // from the RL era (RL removed 2026-05-23); the supervised AutoPilot stack
@@ -274,19 +274,29 @@ export default function AutoTraderPage() {
   const band = status.vix_band ? VIX_BAND_COPY[status.vix_band] : null
 
   return (
-    <>
-      <DeskTopbar
-        title="AutoPilot"
-        eyebrow="Automated Trading"
+    <div className="w-full">
+      <PageHeader
+        title={
+          <span className="inline-flex items-center gap-2">
+            <Bot className="h-5 w-5 text-primary" aria-hidden="true" />
+            <span>AutoPilot</span>
+            {status.mode === 'paper' ? (
+              <Badge tone="up">Free · Practice</Badge>
+            ) : (
+              <Badge tone="warning">Live · Real money</Badge>
+            )}
+          </span> as unknown as string
+        }
+        description={
+          status.mode === 'paper'
+            ? 'Your fully-automated trading bot — free. It scans, buys, manages and exits on a virtual book with no broker needed. Multiple ML engines must agree before a trade fires; regime-aware sizing, VIX-scaled exposure, one rebalance at 15:45 IST. Go live on your own broker (Pro) whenever you’re ready.'
+            : 'Autonomous execution on your own broker. Multiple ML engines must agree before a trade fires. Regime-aware sizing, VIX-scaled exposure. One rebalance, 15:45 IST.'
+        }
         actions={
           <div className="flex items-center gap-2">
-            {status.mode === 'paper'
-              ? <Badge tone="up">Free · Practice</Badge>
-              : <Badge tone="warning">Live · Real money</Badge>
-            }
             <Link
               href="/autopilot/track-record"
-              className="inline-flex items-center gap-1 rounded-md border border-border px-2.5 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="glass-control inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium text-primary"
             >
               <Activity className="h-3.5 w-3.5" />
               Track record
@@ -296,7 +306,6 @@ export default function AutoTraderPage() {
           </div>
         }
       />
-    <div className="w-full">
 
       <div className="space-y-6 p-4 md:p-6 xl:px-8">
 
@@ -785,7 +794,6 @@ export default function AutoTraderPage() {
         <DisclaimerFooter />
       </div>
     </div>
-    </>
   )
 }
 

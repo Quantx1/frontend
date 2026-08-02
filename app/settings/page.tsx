@@ -31,12 +31,12 @@ import {
   Palette,
 } from '@/lib/icons'
 import { AppShell } from '@/components/shell/AppShell'
-import { DeskTopbar } from '@/components/shell/DeskTopbar'
 import {
   Button,
   ConfirmDialog,
   EmptyState,
   EyebrowMono,
+  PageHeader,
   toast as ftoast,
 } from '@/components/foundation'
 import BrokerConnectTile, { BrokerName, BrokerStatus as BrokerConnStatus, OAUTH_BROKERS, TOKEN_BROKERS } from '@/components/broker/BrokerConnectTile'
@@ -451,17 +451,15 @@ export default function SettingsPage() {
   if (authLoading) {
     return (
       <AppShell>
-        <DeskTopbar title="Settings" eyebrow="Account" />
-        <div className="flex min-h-[70vh] w-full items-center justify-center">
-          <Loader2 className="w-8 h-8 text-primary animate-spin" />
-        </div>
+      <div className="flex min-h-[70vh] w-full items-center justify-center">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      </div>
       </AppShell>
     )
   }
 
   if (!user) return (
     <AppShell>
-      <DeskTopbar title="Settings" eyebrow="Account" />
       <div className="p-4 md:p-6">
         <EmptyState
           icon={<Settings className="h-6 w-6" />}
@@ -499,8 +497,16 @@ export default function SettingsPage() {
 
   return (
     <AppShell>
-      <DeskTopbar title="Settings" eyebrow="Account" />
     <div className="mx-auto max-w-6xl">
+      <PageHeader
+        title={
+          <span className="inline-flex items-center gap-2">
+            <Settings className="h-5 w-5 text-primary" aria-hidden="true" />
+            Settings
+          </span> as unknown as string
+        }
+        description="Account, broker links, risk profile, alerts. Tune it once, trade with it daily."
+      />
       <div className="p-4 md:p-6">
         {/* Message */}
         {message && (
