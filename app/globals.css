@@ -419,7 +419,7 @@ select option {
 
 /* ════════════════════════════════════════════════════════════════
    GRADIENT FAMILY — signature / CTA / text (the ONE family)
-   ═══════════�����════════════════════════════════════════════════════ */
+   ═══════════������════════════════════════════════════════════════════ */
 
 /* Display / hero heading gradient — theme-aware text stops. */
 .text-gradient {
@@ -934,6 +934,10 @@ html.light .glow-signature {
   position: relative;
   z-index: 0;
 }
+/* Ambient depth — calmed 2026-08. Two low-opacity accent pools anchored in the
+   top-left and bottom-right corners give the canvas quiet directional depth
+   (Linear/Vercel register) instead of the old four-corner colour wash that made
+   light-mode data cards look like they floated on a lavender haze. */
 .app-canvas::before {
   content: '';
   position: fixed;
@@ -941,20 +945,16 @@ html.light .glow-signature {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(42% 46% at 14% 10%, color-mix(in srgb, var(--color-primary) 42%, transparent) 0%, transparent 60%),
-    radial-gradient(38% 42% at 90% 4%, color-mix(in srgb, var(--color-ai) 34%, transparent) 0%, transparent 58%),
-    radial-gradient(48% 52% at 84% 90%, color-mix(in srgb, var(--color-cyan) 30%, transparent) 0%, transparent 60%),
-    radial-gradient(42% 48% at 16% 94%, color-mix(in srgb, var(--color-primary) 28%, transparent) 0%, transparent 58%);
-  filter: blur(34px) saturate(1.25);
-  animation: lg-drift 34s ease-in-out infinite alternate;
+    radial-gradient(40% 44% at 12% 6%, color-mix(in srgb, var(--color-primary) 15%, transparent) 0%, transparent 62%),
+    radial-gradient(46% 50% at 92% 96%, color-mix(in srgb, var(--color-cyan) 11%, transparent) 0%, transparent 64%);
+  filter: blur(40px) saturate(1.1);
+  animation: lg-drift 40s ease-in-out infinite alternate;
   will-change: transform;
 }
 html.light .app-canvas::before {
   background:
-    radial-gradient(42% 46% at 14% 10%, color-mix(in srgb, var(--color-primary) 22%, transparent) 0%, transparent 60%),
-    radial-gradient(38% 42% at 90% 4%, color-mix(in srgb, var(--color-ai) 16%, transparent) 0%, transparent 58%),
-    radial-gradient(48% 52% at 84% 90%, color-mix(in srgb, var(--color-cyan) 15%, transparent) 0%, transparent 60%),
-    radial-gradient(42% 48% at 16% 94%, color-mix(in srgb, var(--color-primary) 14%, transparent) 0%, transparent 58%);
+    radial-gradient(40% 44% at 12% 6%, color-mix(in srgb, var(--color-primary) 6%, transparent) 0%, transparent 62%),
+    radial-gradient(46% 50% at 92% 96%, color-mix(in srgb, var(--color-cyan) 5%, transparent) 0%, transparent 64%);
 }
 @keyframes lg-drift {
   0%   { transform: translate3d(-2%, -1.5%, 0) scale(1.05); }

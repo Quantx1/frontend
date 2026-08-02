@@ -19,7 +19,7 @@ import {
 import { api } from '@/lib/api'
 import { useBrokerStatus } from '@/lib/hooks/useBrokerStatus'
 import { AppShell } from '@/components/shell/AppShell'
-import { Reveal, Card, Skeleton, DisclaimerFooter, EyebrowMono } from '@/components/foundation'
+import { Reveal, Card, Skeleton, DisclaimerFooter, EyebrowMono, EmptyState } from '@/components/foundation'
 import { MONO } from '@/lib/tokens'
 import MarketPulseCard from '@/components/markets/MarketPulseCard'
 import AiRadarStrip from '@/components/markets/AiRadarStrip'
@@ -222,7 +222,13 @@ export default function MarketsPage() {
                   {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-full min-h-[64px]" rounded="lg" />)}
                 </div>
               ) : (
-                <div className="flex flex-1 items-center justify-center text-[12px] text-d-text-muted">Sector data unavailable right now.</div>
+                <EmptyState
+                  size="sm"
+                  className="flex-1"
+                  icon={<Grid3x3 size={18} />}
+                  title="Sector heatmap unavailable"
+                  description="We couldn't reach the sector feed just now — it refreshes automatically through the session."
+                />
               )}
             </Card>
           </Reveal>
