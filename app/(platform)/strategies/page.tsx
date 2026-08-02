@@ -36,6 +36,7 @@ import {
   EyebrowMono,
   Input,
   NumericInput,
+  PageHeader,
   Reveal,
   Skeleton,
   Tabs,
@@ -44,7 +45,6 @@ import {
   TabsTrigger,
   toast,
 } from '@/components/foundation'
-import { DeskTopbar } from '@/components/shell/DeskTopbar'
 import { dispatchCopilotOpen } from '@/components/copilot/CopilotProvider'
 import { api } from '@/lib/api'
 import { handleApiError } from '@/lib/api'
@@ -76,14 +76,15 @@ export default function StrategiesPage() {
   const router = useRouter()
   const [tab, setTab] = useState('library')
   return (
-    <>
-      <DeskTopbar
-        title="AI Algos"
+    <div className="w-full pb-8">
+      {/* C-archetype page header — breadcrumb eyebrow + title + description */}
+      <PageHeader
         eyebrow="Build · Backtest · Gate"
+        title="AI Algos"
+        description="Describe a strategy in plain English. The AI compiles it, walk-forward backtests it on out-of-sample data, and gates it before it trades live."
         actions={
           <Button
             variant="ai"
-            size="sm"
             onClick={() =>
               dispatchCopilotOpen('Help me pick a strategy that matches my risk profile and the current regime.')
             }
@@ -92,7 +93,6 @@ export default function StrategiesPage() {
           </Button>
         }
       />
-    <div className="w-full pb-8">
 
       <div className="space-y-6 px-4 py-5 md:px-6 xl:px-8">
         {/* No embedded agent hero (chat unification 2026-07-21): the header's
@@ -139,7 +139,6 @@ export default function StrategiesPage() {
         <DisclaimerFooter />
       </div>
     </div>
-    </>
   )
 }
 

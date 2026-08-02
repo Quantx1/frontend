@@ -41,7 +41,6 @@ import { MarkdownMessage } from '@/components/copilot/MarkdownMessage'
 import { ProgressRail } from '@/components/copilot/ProgressRail'
 import { ReferencesRail } from '@/components/copilot/ReferencesRail'
 import { BlurFade } from '@/components/ui/blur-fade'
-import { NumberTicker } from '@/components/motion'
 import { api, handleApiError, ApiError, type CopilotArtifact, type CopilotStep, type CopilotReference } from '@/lib/api'
 import { ChatArtifacts } from '@/components/copilot/ChatArtifacts'
 import { useTier } from '@/lib/hooks/useTier'
@@ -699,8 +698,8 @@ function CopilotHub() {
         aria-busy={pending}
         className={
           hero
-            ? 'grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground shadow-sm transition-[transform,box-shadow] duration-150 ease-out hover:scale-[1.04] hover:bg-primary/90 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:scale-100'
-            : 'grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground shadow-sm transition-[transform] duration-150 ease-out active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-30'
+            ? 'glass-control-accent grid h-10 w-10 shrink-0 place-items-center rounded-pill transition-[transform,filter] duration-150 ease-out active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-30'
+            : 'glass-control-accent grid h-9 w-9 shrink-0 place-items-center rounded-pill transition-[transform,filter] duration-150 ease-out active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-30'
         }
       >
         {pending ? <Loader2 size={hero ? 18 : 16} className="animate-spin" /> : <ArrowUp size={isz} />}
@@ -710,7 +709,7 @@ function CopilotHub() {
     if (!hero) {
       // Docked pill — unchanged single-row layout.
       return (
-        <div className="group relative flex items-end gap-2 rounded-full border border-border bg-muted/50 p-2 pl-4 transition-colors duration-150 ease-out focus-within:border-primary/50 focus-within:bg-background">
+        <div className="group relative flex items-end gap-2 rounded-pill border border-line bg-wrap-hover p-2 pl-4 transition-colors duration-150 ease-out focus-within:border-white/30">
           <textarea
             ref={inputRef}
             value={input}
@@ -721,7 +720,7 @@ function CopilotHub() {
             rows={1}
             maxLength={2000}
             disabled={pending}
-            className="max-h-40 min-h-[2.25rem] flex-1 resize-none self-center bg-transparent py-2 font-mono text-[14px] text-foreground outline-none focus:outline-none focus-visible:outline-none placeholder:font-mono placeholder:text-muted-foreground disabled:opacity-50"
+            className="max-h-40 min-h-[2.25rem] flex-1 resize-none self-center bg-transparent py-2 font-mono text-[14px] text-d-text-primary outline-none focus:outline-none focus-visible:outline-none placeholder:font-mono placeholder:text-d-text-muted disabled:opacity-50"
           />
           {sendBtn}
         </div>
@@ -735,7 +734,7 @@ function CopilotHub() {
     return (
       <div className="relative">
         <div
-          className="group relative overflow-hidden rounded-[24px] border border-border bg-card shadow-sm transition-[border-color,box-shadow] duration-200 ease-out"
+          className="lg-surface group relative overflow-hidden rounded-[24px] transition-[border-color,box-shadow] duration-200 ease-out"
           style={
             composerFocused
               ? {
@@ -774,12 +773,12 @@ function CopilotHub() {
               rows={1}
               maxLength={2000}
               disabled={pending}
-              className="max-h-44 min-h-[3rem] flex-1 resize-none self-center bg-transparent py-1.5 font-mono text-[15px] text-foreground outline-none focus:outline-none focus-visible:outline-none placeholder:font-mono placeholder:text-muted-foreground disabled:opacity-50"
+              className="max-h-44 min-h-[3rem] flex-1 resize-none self-center bg-transparent py-1.5 font-mono text-[15px] text-d-text-primary outline-none focus:outline-none focus-visible:outline-none placeholder:font-mono placeholder:text-d-text-muted disabled:opacity-50"
             />
           </div>
 
           {/* full-bleed hairline divider (premium chat-box split) */}
-          <div aria-hidden className="relative h-px w-full bg-border" />
+          <div aria-hidden className="relative h-px w-full bg-line" />
 
           {/* ── TOOLBAR region — the 5-lens selector + send ── */}
           <div className="relative flex items-center justify-between gap-2 px-3 py-2.5">
@@ -801,10 +800,10 @@ function CopilotHub() {
                     disabled={pending}
                     aria-pressed={on}
                     title={m.label}
-                    className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12.5px] font-medium transition-all duration-150 disabled:opacity-50 ${
+                    className={`inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-[12.5px] font-medium transition-all duration-150 disabled:opacity-50 ${
                       on
-                        ? 'bg-primary text-primary-foreground shadow-sm'
-                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                        ? 'glass-control-accent'
+                        : 'glass-control text-d-text-secondary hover:text-d-text-primary'
                     }`}
                   >
                     <Icon size={14} />
@@ -827,11 +826,11 @@ function CopilotHub() {
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                className="overflow-hidden border-t border-border"
+                className="overflow-hidden border-t border-line"
               >
                 <div className="flex items-center justify-between px-4 pt-2.5 pb-1">
-                  <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-                    <SugIcon size={12} className="text-muted-foreground" />
+                  <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-d-text-muted">
+                    <SugIcon size={12} className="text-d-text-muted" />
                     {sugKind} · {sugLabel}
                   </span>
                   {!q && !detectedSym && (
@@ -839,7 +838,7 @@ function CopilotHub() {
                       type="button"
                       onMouseDown={(e) => e.preventDefault()}
                       onClick={() => setGridOffset((o) => o + 5)}
-                      className="inline-flex items-center gap-1 font-mono text-[10.5px] text-muted-foreground transition-colors hover:text-foreground"
+                      className="inline-flex items-center gap-1 font-mono text-[10.5px] text-d-text-muted transition-colors hover:text-d-text-primary"
                     >
                       <RefreshCw size={11} /> Shuffle
                     </button>
@@ -857,13 +856,13 @@ function CopilotHub() {
                         type="button"
                         onMouseDown={(e) => e.preventDefault()}
                         onClick={() => fillPrompt(p)}
-                        className="group/row flex w-full items-center gap-2.5 rounded-full px-3 py-2.5 text-left transition-colors hover:bg-muted/60"
-                        >
+                        className="group/row flex w-full items-center gap-2.5 rounded-pill px-3 py-2.5 text-left transition-colors hover:bg-white/[0.05]"
+                      >
                         <Sparkles size={13} className="shrink-0 text-ai" />
-                        <span className="min-w-0 flex-1 truncate text-[13px] text-muted-foreground transition-colors group-hover/row:text-foreground">
+                        <span className="min-w-0 flex-1 truncate text-[13px] text-d-text-secondary transition-colors group-hover/row:text-d-text-primary">
                           {p}
                         </span>
-                        <ArrowUpRight size={13} className="shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover/row:opacity-100" />
+                        <ArrowUpRight size={13} className="shrink-0 text-d-text-muted opacity-0 transition-opacity group-hover/row:opacity-100" />
                       </button>
                     </motion.li>
                   ))}
@@ -883,7 +882,7 @@ function CopilotHub() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
                 transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                className="relative border-t border-border px-4 pb-4 pt-3.5"
+                className="relative border-t border-line px-4 pb-4 pt-3.5"
               >
                 <HomeInlineAnswer
                   turns={turns}
@@ -909,8 +908,8 @@ function CopilotHub() {
       <div className="mx-auto flex max-w-3xl flex-col px-4 [height:calc(100dvh-3.5rem)] lg:[height:100dvh]">
         <div className="flex flex-1 flex-col">
           <div className="flex items-center justify-between py-3">
-            <h1 className="flex items-center gap-2 text-[15px] font-normal text-foreground">
-              <EyebrowMono className="text-foreground">MAIN CHAT</EyebrowMono>
+            <h1 className="flex items-center gap-2 text-[15px] font-normal text-d-text-primary">
+              <EyebrowMono className="text-d-text-primary">MAIN CHAT</EyebrowMono>
             </h1>
             <Button variant="secondary" size="sm" onClick={newConversation}>
               <Plus className="h-3.5 w-3.5" /> New chat
@@ -919,7 +918,7 @@ function CopilotHub() {
           <div className="flex-1 overflow-y-auto py-2" role="log" aria-live="polite" aria-relevant="additions" aria-label="Conversation">
             <div className="flex flex-col space-y-5">
               {loadingThread ? (
-                <div className="flex items-center justify-center py-10"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>
+                <div className="flex items-center justify-center py-10"><Loader2 className="h-5 w-5 animate-spin text-d-text-muted" /></div>
               ) : (
                 turns.map((t, i) => {
                   // The live stream already reveals incrementally via patch();
@@ -931,7 +930,7 @@ function CopilotHub() {
                       <BlurFade key={i} offset={6} duration={0.22}>
                         <div className="flex flex-col items-end gap-1.5">
                           <EyebrowMono>YOU</EyebrowMono>
-                          <div className="max-w-[82%] whitespace-pre-wrap rounded-2xl rounded-br-md border border-primary/25 bg-primary/10 px-3.5 py-2.5 text-[13.5px] leading-relaxed text-d-text-primary">
+                          <div className="max-w-[82%] whitespace-pre-wrap rounded-sm border border-line bg-wrap-hover px-3.5 py-2.5 text-[13.5px] leading-relaxed text-d-text-primary">
                             <span className="sr-only">You: </span>{t.text}
                           </div>
                         </div>
@@ -964,7 +963,7 @@ function CopilotHub() {
                             ) : (
                               <span className="inline">
                                 <MarkdownMessage content={shown} />
-                                {showCursor && <span className="ml-0.5 inline-block h-3.5 w-[2px] translate-y-[3px] animate-pulse bg-ai align-middle" />}
+                                {showCursor && <span className="ml-0.5 inline-block h-3.5 w-[2px] translate-y-[3px] animate-pulse bg-white align-middle" />}
                               </span>
                             )}
                           </div>
@@ -1060,18 +1059,7 @@ function CopilotHub() {
             full-pane-wide input reads terrible); everything BELOW the hero — the
             market tape, news grid, CTAs — spans the full pane. */}
         <div className="relative w-full pt-[clamp(2.5rem,7vw,5.5rem)]">
-          {/* Brand eyebrow — a small AI-status chip that anchors the hero and
-              signals the product is live before the composer draws the eye. */}
-          <div className="mb-5 flex justify-center">
-            <span className={`chip-ai inline-flex items-center gap-2 rounded-pill px-3 py-1 text-[11.5px] font-medium ${MONO}`}>
-              <span aria-hidden className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-ai opacity-60" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-ai" />
-              </span>
-              <span className="uppercase tracking-[0.14em]">AI Trading Desk · Live</span>
-            </span>
-          </div>
-          <p className="mx-auto max-w-2xl text-balance text-center text-[clamp(19px,2.4vw,22px)] font-normal leading-snug text-d-text-secondary">
+          <p className="mx-auto max-w-2xl text-center text-[19px] font-normal leading-snug text-d-text-secondary">
             The AI trading desk for India. Five engines. One gated signal. Every call explained.
           </p>
 
@@ -1123,7 +1111,7 @@ function CopilotHub() {
             <BlurFade key={name} delay={i * 0.04} offset={8} duration={0.3}>
               <Link
                 href={href}
-                className="card-lift elev-1 group relative flex h-full flex-col overflow-hidden rounded-[20px] border border-line bg-wrap focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/50"
+                className="group relative flex h-full flex-col overflow-hidden rounded-[20px] bg-wrap transition-shadow hover:ring-1 hover:ring-primary/25 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40"
               >
                 {image ? (
                   // ── IMAGE-TOPPED media band ── on-brand dark art as the card
@@ -1177,13 +1165,8 @@ function CopilotHub() {
               <div className="grid grid-cols-2 gap-3">
                 <Stat label="Win rate" value={pctFmt(stats!.win_rate)} tone="up" />
                 <Stat label="Avg return / trade" value={pctFmt(stats!.avg_return_pct, true)} tone={(stats!.avg_return_pct ?? 0) >= 0 ? 'up' : 'down'} />
-                <Stat
-                  label="Profit factor"
-                  value={stats!.profit_factor != null ? stats!.profit_factor.toFixed(2) : '—'}
-                  count={stats!.profit_factor != null ? stats!.profit_factor : undefined}
-                  decimalPlaces={2}
-                />
-                <Stat label="Signals tracked" value={String(stats!.n)} count={stats!.n} />
+                <Stat label="Profit factor" value={stats!.profit_factor != null ? stats!.profit_factor.toFixed(2) : '—'} />
+                <Stat label="Signals tracked" value={String(stats!.n)} />
               </div>
               <div className="rounded-[20px] bg-wrap p-4">
                 <div className="flex items-center justify-between">
@@ -1233,33 +1216,12 @@ function SectionHead({ eyebrow, title }: { eyebrow: string; title: string }) {
   )
 }
 
-function Stat({
-  label,
-  value,
-  tone = 'neutral',
-  count,
-  decimalPlaces = 0,
-}: {
-  label: string
-  value: string
-  tone?: 'up' | 'down' | 'neutral'
-  /** When set, the value springs from 0 → count on view (§39 count-up). The
-   *  `value` string is still used as the static/reduced-motion fallback and for
-   *  any prefix/suffix formatting the ticker can't express. */
-  count?: number
-  decimalPlaces?: number
-}) {
+function Stat({ label, value, tone = 'neutral' }: { label: string; value: string; tone?: 'up' | 'down' | 'neutral' }) {
   const color = tone === 'up' ? 'text-up' : tone === 'down' ? 'text-down' : 'text-d-text-primary'
   return (
-    <div className="elev-1 rounded-[20px] border border-line bg-wrap p-4">
+    <div className="rounded-[20px] bg-wrap p-4">
       <EyebrowMono className="text-[11px]">{label}</EyebrowMono>
-      <div className={`mt-1 text-[26px] font-normal leading-none ${MONO} ${color}`}>
-        {count != null ? (
-          <NumberTicker value={count} decimalPlaces={decimalPlaces} className={color} />
-        ) : (
-          value
-        )}
-      </div>
+      <div className={`mt-1 text-[26px] font-normal leading-none ${MONO} ${color}`}>{value}</div>
     </div>
   )
 }

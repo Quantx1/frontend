@@ -6,7 +6,6 @@ import {
   Bell, Instagram, Linkedin, Plus, Send, Settings, Twitter, X, Youtube,
 } from '@/lib/icons'
 import { NavList } from './NavList'
-import { QuantXMark } from '@/components/brand/QuantXMark'
 
 interface Props {
   open: boolean
@@ -50,10 +49,15 @@ export const MobileDrawer = ({ open, onClose, pathname }: Props) => {
           <Link
             href="/copilot"
             onClick={onClose}
-            className="flex items-center gap-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+            className="flex items-center gap-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
           >
-            <QuantXMark className="h-7 w-7 shrink-0 drop-shadow-[0_2px_10px_rgba(58,119,229,0.45)]" />
-            <span className="text-[15px] font-bold tracking-tight text-d-text-primary">Quant X</span>
+            <span
+              className="grid h-7 w-7 shrink-0 place-items-center rounded-2xl bg-primary text-primary-foreground"
+              aria-hidden="true"
+            >
+              <span className="text-[15px] font-black leading-none">Q</span>
+            </span>
+            <span className="text-sm font-bold tracking-tight text-d-text-primary">Quant X</span>
           </Link>
           <button
             ref={closeBtnRef}

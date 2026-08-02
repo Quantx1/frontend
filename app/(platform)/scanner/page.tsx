@@ -22,10 +22,10 @@ import { Sparkles, Plus, ArrowRight } from '@/lib/icons'
 import {
   Badge,
   DisclaimerFooter,
+  PageHeader,
   Reveal,
   Skeleton,
 } from '@/components/foundation'
-import { DeskTopbar } from '@/components/shell/DeskTopbar'
 import { api } from '@/lib/api'
 import { DataBadge } from '@/components/common/DataBadge'
 import { PrebuiltScreeners } from '@/components/scanner/PrebuiltScreeners'
@@ -67,41 +67,42 @@ function ScannerContent() {
   }, [])
 
   return (
-    <>
-      <DeskTopbar
-        title="Screener"
-        eyebrow="Find the setup"
+    <div className="w-full pb-8">
+      <PageHeader
+        eyebrow="Screener"
+        title="Find the setup. Skip the noise."
+        description="The screens Indian traders run most — grouped by style, with each screen's real historical record. Open one for live matches, or ask the Copilot for anything custom."
         actions={
           <>
             <DataBadge mode="eod" />
             {tier ? <Badge tone="primary">{isAdmin ? 'Admin' : tier.toUpperCase()}</Badge> : null}
             <Link
               href="/scanner/new"
-              className="inline-flex h-8 items-center gap-1.5 rounded-md bg-primary px-3 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+              className="glass-control-accent inline-flex h-9 items-center gap-1.5 rounded-pill px-4 text-[13px] font-semibold transition-transform active:scale-[0.97]"
             >
-              <Sparkles className="h-3.5 w-3.5" /> Create with AI
+              <Sparkles className="h-4 w-4" /> Create with AI
             </Link>
           </>
         }
       />
-      <div className="w-full pb-8">
+
       <div className="space-y-8 px-4 py-5 md:px-6">
         {/* Create-with-AI banner — the generator entry point. */}
         <Reveal delay={0.03}>
           <Link
             href="/scanner/new"
-            className="group flex items-center gap-4 rounded-lg border border-border bg-card p-4 transition-colors hover:border-border/80 hover:bg-accent/5"
+            className="group flex items-center gap-4 rounded-xl border border-line bg-wrap p-4 transition-colors hover:border-wrap-line hover:bg-wrap-hover"
           >
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
               <Plus className="h-5 w-5" />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-[14px] font-semibold text-foreground">Create a screen with AI</p>
-              <p className="text-[12.5px] text-muted-foreground">
+              <p className="text-[14px] font-semibold text-d-text-primary">Create a screen with AI</p>
+              <p className="text-[12.5px] text-d-text-muted">
                 Describe any setup in plain English — QuantX builds editable rule blocks, previews the matches, and saves it to run for you.
               </p>
             </div>
-            <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+            <ArrowRight className="h-4 w-4 shrink-0 text-d-text-muted transition-transform group-hover:translate-x-0.5" />
           </Link>
         </Reveal>
 
@@ -118,7 +119,6 @@ function ScannerContent() {
         </Reveal>
         <DisclaimerFooter />
       </div>
-      </div>
-    </>
+    </div>
   )
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { Moon, Sun } from "lucide-react"
 import { flushSync } from "react-dom"
 
@@ -163,20 +163,7 @@ function getThemeTransitionClipPaths(
   }
 }
 
-// forwardRef, because Radix `<TooltipTrigger asChild>` clones its child and
-// hands it a ref. Without this React logs "Function components cannot be given
-// refs... Attempts to access this ref will fail" and the trigger has no element
-// to anchor or measure — the tooltip cannot position against it.
-//
-// The ref is MERGED with the internal buttonRef rather than replacing it:
-// toggleTheme() calls buttonRef.current.getBoundingClientRect() to find the
-// origin the view-transition reveal expands from. Handing the caller's ref
-// straight to the <button> would leave that null and collapse the animation to
-// the top-left corner.
-export const AnimatedThemeToggler = forwardRef<
-  HTMLButtonElement,
-  AnimatedThemeTogglerProps
->(({
+export const AnimatedThemeToggler = ({
   className,
   duration = 400,
   variant,
@@ -185,16 +172,13 @@ export const AnimatedThemeToggler = forwardRef<
   onThemeChange,
   children,
   ...props
-}, forwardedRef) => {
+}: AnimatedThemeTogglerProps) => {
   const shape = variant ?? "circle"
   const isControlled = theme !== undefined
   const [internalIsDark, setInternalIsDark] = useState(false)
   const isDark = isControlled ? theme === "dark" : internalIsDark
   const buttonRef = useRef<HTMLButtonElement>(null)
   const isTransitioningRef = useRef(false)
-
-  // Expose the same node upward without giving up our own handle on it.
-  useImperativeHandle(forwardedRef, () => buttonRef.current as HTMLButtonElement, [])
 
   useEffect(() => {
     if (isControlled) return
@@ -330,6 +314,4 @@ export const AnimatedThemeToggler = forwardRef<
       <span className="sr-only">Toggle theme</span>
     </button>
   )
-})
-
-AnimatedThemeToggler.displayName = "AnimatedThemeToggler"
+}

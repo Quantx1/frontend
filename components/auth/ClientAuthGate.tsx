@@ -3,7 +3,6 @@
 import { useEffect, useRef } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
-import { isDemoEnabled } from '@/lib/demo/interceptor'
 
 /**
  * Client-side auth gate. Mounted globally; redirects to /login when
@@ -75,7 +74,6 @@ export function ClientAuthGate() {
 
   useEffect(() => {
     if (AUTH_DISABLED) return // dev-only: browse the full app without login
-    if (isDemoEnabled()) return // dev-only: demo-data review browses gated pages
     if (loading) return
     if (user) return
     if (!isProtected(pathname)) return
