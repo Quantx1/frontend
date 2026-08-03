@@ -571,7 +571,7 @@ Not mechanical. 658 sub-11px sites; `text-[9px]` → `micro` vs `text-[10px]` �
 | ✅ 2.1 `copilot_messages` migration + writer + reader | **SHIPPED** `5dbe7ba` | Today the schema is `role, content, tools_used, trace, intent, refused`. Artifacts/steps/references are forwarded to the client and **discarded**. Without this, the one-card reply is invisible on reload. |
 | ✅ 2.2 `entity` artifact type | **SHIPPED** `8f84071` | Verdict word, indicator count and vote shares exist in **no** artifact payload. Needs a `get_verdict` tool (the copilot toolset had **18** tools — the plan said 20 — none of them verdict), a `build_artifacts` branch, pytest, and `verify-copilot-protocol.mts` (which replays frames through the AI SDK schema). |
 | ✅ 2.3 **Template renderer** | **SHIPPED** `4d4c703` | **§R1 — the keystone.** Deterministic prose + card from REST, zero tokens. Everything in §4.4/§4.5 depends on it. |
-| 2.4 Order preview endpoint | 3d | Real domain work: STT/stamp/GST/exchange-txn per segment. Until it lands the ticket omits Charges/Net (§4.6). |
+| ⚠️ 2.4 Order preview endpoint | **ENGINE SHIPPED** `6e9c617` — rates unsourced, so `RATES_VERIFIED=False` and the rows decline rather than estimate | Real domain work: STT/stamp/GST/exchange-txn per segment. Until it lands the ticket omits Charges/Net (§4.6). |
 | ✅ 2.5 **Metering redesign** | **SHIPPED** `6db3a2a` — eng done; the pricing call remains the owner's | Separate deterministic renders from `chat`. Free must complete J1+J2+J3 without a 402. |
 | 2.6 Monitors (table + NL compiler + evaluator + scheduler + CRUD + `create_alert` action) | 8–12d | §R5. A **feature**, not a merge. `saved_scans` also needs `source_prompt` and `next_run_at` columns before a Tasks row can render 3 of its 5 fields. A real APScheduler exists, so the pattern is proven. |
 
@@ -619,7 +619,7 @@ Riskiest for three compounding reasons:
 | **2.1** persistence | Send a turn with an artifact + steps; reload; diff live vs resumed DOM | Byte-identical reply |
 | **2.2** entity artifact | `pytest` on `build_artifacts`; `verify-copilot-protocol.mts` | Frames validate against `uiMessageChunkSchema`; verdict/count/shares present |
 | **2.3 + 2.5** 🔴 metering | **Non-admin free account.** Walk J1+J2+J3. Assert `chat` counter before/after | **Counter unchanged by navigation.** Zero 402. Automated as an e2e gate on a seeded free user |
-| **2.4** charges | Compare preview vs broker contract note on 5 real fills | Within ₹1, or the rows do not render |
+| **2.4** charges | Compare preview vs broker contract note on 5 real fills | Within ₹1, or the rows do not render — **currently they do not render**: the rate table is empty and gated behind `RATES_VERIFIED`, because two sources gave two different NSE transaction charges and neither was a circular |
 | **2.6** monitors | Create via NL; assert row renders trigger sentence + **source prompt** + **next run**; fire it | All 5 Tasks fields populated from real columns |
 | **3** reply shape | DOM assert per assistant turn | Exactly 1 card; prose precedes it; exactly 1 disclosure; 0 `ReferencesRail`; 0 `CONSULTED`; 2 footnote rows per card |
 | **3** honesty | Force a tool failure | Collapsed line reads `⚠ … 1 failed`; substitution stated in the row, not a tooltip |

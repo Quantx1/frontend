@@ -239,9 +239,21 @@ in `ui/sheet.tsx` and `ui/dropdown-menu.tsx`.
 ### Phase 2 — backend · **2.1, 2.2, 2.3, 2.5 SHIPPED**
 
 ~~`copilot_messages` migration~~ · ~~`entity` artifact type~~ · ~~**the template
-renderer**~~ · ~~**the metering redesign**~~ · **still open:** order-preview
-endpoint (2.4) · monitors (table + NL compiler + evaluator + scheduler +
-`create_alert`).
+renderer**~~ · ~~**the metering redesign**~~ · **2.4 engine shipped**,
+rates withheld · **still open:** monitors (2.6 — table + NL compiler +
+evaluator + scheduler + `create_alert`).
+
+**2.4 is finished except for five numbers.** The composition is done and
+mutation-tested — GST rides on the services and never on STT or stamp duty,
+stamp duty is buy-side only, the DP charge is flat rather than a rate, a sell
+subtracts charges where a buy adds them. What is missing is the rates
+themselves: two sources gave two different NSE equity transaction charges
+(0.0030699% vs 0.00322%) and neither was an exchange circular. Since the bar
+for these rows is ±₹1 against a real contract note, an unverified rate is
+treated as a missing one — `RATES_VERIFIED` is False, the endpoint returns
+Order value and declines to itemise, and the ticket omits Charges/Net exactly
+as §4.6 specifies. Filling the table from primary circulars and flipping one
+boolean is the whole remaining task.
 
 **The Phase 4c gate is mechanically satisfied.** `/ai/copilot/render` cannot
 reach the credit limiter — asserted by parsing the AST, not grepping the source,
