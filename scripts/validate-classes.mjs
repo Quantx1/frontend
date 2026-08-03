@@ -1,0 +1,114 @@
+#!/usr/bin/env node
+/**
+ * validate-classes — fail the build on Tailwind classes that compile to NOTHING.
+ *
+ * ── Why this exists ────────────────────────────────────────────────────────
+ * Tailwind does not error on an unknown utility. It emits no rule and no
+ * warning, so the class sits in the DOM doing nothing and the bug is invisible
+ * until someone notices the UI is subtly wrong. We shipped two instances:
+ *
+ *   · `ui/sheet.tsx` + `ui/dropdown-menu.tsx` carried 21 `animate-in` /
+ *     `fade-in-0` / `slide-in-from-*` / `zoom-in-*` classes from the shadcn
+ *     CLI. They require `tailwindcss-animate`, which this repo deliberately
+ *     does NOT install — tailwind.config.ts:192 replaced it with dep-free
+ *     keyframes. Every overlay animation was silently inert.
+ *
+ *   · `AlertPreferencesGrid.tsx` renders `text-white` on a near-white surface.
+ *     That one DOES compile, which is why it needs its own rule below.
+ *
+ * The class list here is not guesswork: each entry was verified by compiling a
+ * probe through this repo's own tailwind.config.ts and checking whether a rule
+ * was produced. Re-run that probe before adding to it.
+ *
+ * Usage:  node scripts/validate-classes.mjs
+ * Exit 1 on any violation.
+ */
+
+import { readFileSync, readdirSync, statSync } from 'node:fs'
+import { join, relative } from 'node:path'
+
+const ROOT = process.cwd()
+const SCAN = ['components', 'app', 'lib']
+// Operator tooling is exempt from the product design rules (REDESIGN.md §3).
+const SKIP = ['node_modules', '.next', 'app/admin']
+
+/** Utilities that emit NOTHING on this stack. Each verified by probe. */
+const DEAD = [
+  // tailwindcss-animate — not installed (tailwind.config.ts:192)
+  [/\banimate-in\b/, 'animate-in', 'use animate-overlay-in / animate-pop-in / animate-sheet-in-*'],
+  [/\banimate-out\b/, 'animate-out', 'use animate-overlay-out / animate-pop-out / animate-sheet-out-*'],
+  [/\bfade-in-0\b/, 'fade-in-0', 'covered by animate-overlay-in'],
+  [/\bfade-out-0\b/, 'fade-out-0', 'covered by animate-overlay-out'],
+  [/\bslide-in-from-(?:top|bottom|left|right)\b/, 'slide-in-from-*', 'use animate-sheet-in-<side>'],
+  [/\bslide-out-to-(?:top|bottom|left|right)\b/, 'slide-out-to-*', 'use animate-sheet-out-<side>'],
+  // digits required — `solar:magnifer-zoom-in-linear` is an ICON NAME, not a class
+  [/\bzoom-in-\d/, 'zoom-in-<n>', 'covered by animate-pop-in'],
+  [/\bzoom-out-\d/, 'zoom-out-<n>', 'covered by animate-pop-out'],
+  // Tailwind v4-only utilities. This repo is v3.4.
+  [/\bshadow-xs\b/, 'shadow-xs', 'v4 only — use shadow-sm or shadow-elev-1'],
+  [/\boutline-hidden\b/, 'outline-hidden', 'v4 only — use outline-none'],
+  [/\bfield-sizing-/, 'field-sizing-*', 'v4 only — size the textarea explicitly'],
+  [/\bbg-linear-to-/, 'bg-linear-to-*', 'v4 only — use bg-gradient-to-'],
+  [/\bring-3\b/, 'ring-3', 'v4 only — use ring-2'],
+  [/\bnot-last:/, 'not-last:', 'v4 only — use [&:not(:last-child)]:'],
+]
+
+/**
+ * Raw palette colours that bypass the AA-validated semantic tokens.
+ * `--color-up` / `--color-down` are contrast-checked; `text-green-600` is not,
+ * and it silently opts a surface out of both themes.
+ */
+const RAW_COLOUR = /\b(?:text|bg|border)-(?:green|red|emerald|rose)-\d{2,3}\b/
+
+const files = []
+;(function walk(dir) {
+  for (const e of readdirSync(dir)) {
+    const p = join(dir, e)
+    const rel = relative(ROOT, p)
+    if (SKIP.some((s) => rel.startsWith(s))) continue
+    if (statSync(p).isDirectory()) walk(p)
+    else if (/\.tsx?$/.test(p)) files.push(p)
+  }
+})(join(ROOT, SCAN[0]))
+for (const d of SCAN.slice(1)) {
+  try {
+    ;(function walk(dir) {
+      for (const e of readdirSync(dir)) {
+        const p = join(dir, e)
+        const rel = relative(ROOT, p)
+        if (SKIP.some((s) => rel.startsWith(s))) continue
+        if (statSync(p).isDirectory()) walk(p)
+        else if (/\.tsx?$/.test(p)) files.push(p)
+      }
+    })(join(ROOT, d))
+  } catch {
+    /* optional dir */
+  }
+}
+
+let violations = 0
+for (const file of files) {
+  const src = readFileSync(file, 'utf8')
+  const rel = relative(ROOT, file)
+  src.split('\n').forEach((line, i) => {
+    for (const [re, needle, hint] of DEAD) {
+      if (re.test(line)) {
+        console.error(`  ✗ ${rel}:${i + 1}  "${needle}" compiles to NOTHING — ${hint}`)
+        violations++
+      }
+    }
+    const raw = line.match(RAW_COLOUR)
+    if (raw) {
+      console.error(
+        `  ✗ ${rel}:${i + 1}  "${raw[0]}" bypasses --color-up/--color-down (AA-validated)`,
+      )
+      violations++
+    }
+  })
+}
+
+if (violations) {
+  console.error(`\n${violations} dead/unsafe class${violations === 1 ? '' : 'es'}. These render silently wrong.\n`)
+  process.exit(1)
+}
+console.log(`validate-classes: ${files.length} files scanned, 0 violations`)
