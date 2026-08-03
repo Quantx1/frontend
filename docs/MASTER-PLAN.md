@@ -16,8 +16,9 @@ Detail lives in four companion documents. This one is the map.
 
 ## 1. WHERE WE ARE
 
-Eight commits on two branches. Working trees clean, tsc clean, lint at the 6-warning
-baseline, 22 Python tests passing. Nothing pushed.
+**21 frontend + 2 backend commits, all pushed.** Working trees clean. Gates green:
+`tsc` clean · lint 6 warnings / 0 errors (baseline) · `validate-classes` 296 files 0
+violations · `validate-theme` ALL PASS · 13 format + 22 Python tests.
 
 **`frontend` → `feat/terminal-redesign-and-ai-sdk`**
 
@@ -28,17 +29,34 @@ baseline, 22 Python tests passing. Nothing pushed.
 | `2e4d321` | `lib/format` — 91 inline sites swept, 5 crore helpers unified, 13 tests |
 | `55eac98` | AI SDK v1 client layer (types, transport, selectors) |
 | `f56d88c` | Copilot dock migrated to `useChat`, browser-verified |
-| `99875bc` | The 55-route audit |
-| `6750a9c` | The UI ecosystem research |
+| `99875bc` `6750a9c` `d05c096` | The 55-route audit, the UI ecosystem research, this plan |
+| `a0c81f1` `e331c93` | `StickToBottom` on both chat surfaces — the main-chat effect fired on a **14ms** typewriter counter |
+| `83403a6` | EntityCard + the v6 type scale, and the `cn()` fix (tailwind-merge was silently dropping every custom font-size role) |
+| `0828810` | 21 inert overlay animations revived + `validate-classes` guard (mutation-tested) |
+| `38b5d23` | Bounded the Supabase session lookup — a stalled refresh froze **every** authed call |
+| `5b04bf6` | Deleted 2,183 lines of unreachable code |
+| `83987e9` | AlertPreferencesGrid light-mode invisibility ⚠️ **not visually verified** |
+| `c3dff00` | Radius codemod — 1,283 sites, pixel distribution proved identical |
+| `47ccf6f` | The "not SEBI-registered" statement now reaches all ~50 authed routes, was on 1 |
+| `9248186` | Dropped 5 always-on ping rings; kept the one that means something |
+| `6ce05ab` | 38 ad-hoc pulsing placeholders routed through `<Skeleton>` (66 → 28) |
 
 **`backend` → `feat/ai-sdk-protocol-and-autonomy`**
 
 | Commit | What |
 |---|---|
-| `ae3f44b` | `trading_mode` enforcement on the AutoPilot rebalance path + 9 mutation-verified tests |
+| `ae3f44b` | `trading_mode` enforcement + 9 mutation-verified tests |
 | `592a242` | AI SDK v1 UI-message stream behind a `protocol` flag + 13 golden tests |
 
----
+### Still open
+
+- **`AlertPreferencesGrid` light-mode fix is unverified** — `/alerts` would not render its
+  content during the session that made it. Needs an eyeball before merge.
+- **16 `pr/*` branches unpushed** — bulk branch creation was blocked. Convenience only;
+  every commit is on the remote via the working branch.
+- **Phase 0 remainder** — 28 `animate-pulse` (content-wrapping, need per-site judgement),
+  125 `animate-spin` (102 already gated on a loading condition and legitimate), 3 bare
+  `<div>` border-spinners, and switching on the ESLint ban.
 
 ## 2. WHAT WE GOT WRONG, AND CORRECTED
 
