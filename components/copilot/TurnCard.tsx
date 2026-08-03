@@ -51,10 +51,17 @@ export function TurnCard({ artifacts, onOpen, className }: TurnCardProps) {
           changePct={picked.artifact.changePct}
           verdict={picked.artifact.label}
           votes={picked.artifact.votes}
+          votesNoun={picked.artifact.votesNoun}
           series={picked.artifact.series}
+          // Follows `votesNoun`, because the sentence has to describe what was
+          // actually counted. An index card says breadth; a stock card says
+          // indicator votes. Reusing one string for both would attach a
+          // computation to numbers that did not come from it.
           provenance={
             picked.artifact.asOf
-              ? `Indicator votes on settled closes to ${picked.artifact.asOf}.`
+              ? picked.artifact.votesNoun === 'constituents'
+                ? `Index breadth on settled closes to ${picked.artifact.asOf}.`
+                : `Indicator votes on settled closes to ${picked.artifact.asOf}.`
               : undefined
           }
           onDetails={() => onOpen?.(picked.artifact)}

@@ -636,6 +636,8 @@ export type CopilotArtifact =
       // Sentiment language, NOT a call. See EntityVerdict for why.
       label?: EntityVerdict | null
       votes?: { bull: number; neutral: number; bear: number } | null
+      /** What the votes count — "indicators" (a stock) or "constituents" (an index). */
+      votesNoun?: string
       // Null rather than [] when there are fewer than 2 points — the card
       // omits the sparkline instead of drawing a flat line.
       series?: number[] | null

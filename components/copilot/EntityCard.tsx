@@ -68,6 +68,13 @@ export interface EntityCardProps {
    * count is worse than no count.
    */
   votes?: { bull: number; neutral: number; bear: number } | null
+  /**
+   * What the votes COUNT. "indicators" for a stock, "constituents" for an
+   * index. Not cosmetic: a stock's bar counts technical indicators reading
+   * bullish, an index's counts advancing names. Labelling breadth as
+   * "indicators" would claim a computation that never ran.
+   */
+  votesNoun?: string
   /** Close series for the sparkline. Needs ≥2 points to draw. */
   series?: number[] | null
   /**
@@ -95,6 +102,7 @@ export function EntityCard({
   changePct,
   verdict,
   votes,
+  votesNoun = 'indicators',
   series,
   provenance,
   onDetails,
@@ -151,7 +159,7 @@ export function EntityCard({
       {/* ── rows 2-4 — the signal read ───────────────────────────────────── */}
       {/* The indicator clause is OMITTED when the count is unknown, never faked. */}
       <p className="text-micro uppercase text-d-text-muted">
-        Overall signal{total > 0 ? ` · ${total} indicators` : ''}
+        Overall signal{total > 0 ? ` · ${total} ${votesNoun}` : ''}
       </p>
 
       {votes && total > 0 && (
