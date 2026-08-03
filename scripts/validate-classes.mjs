@@ -83,6 +83,12 @@ const RATCHET = [
     count: (src, rel) => rel === 'components/foundation/Skeleton.tsx' ? 0 : (src.match(/\banimate-pulse\b/g) || []).length },
   { label: 'animate-spin', max: 107,
     count: (src) => (src.match(/\banimate-spin\b/g) || []).length },
+  // Sub-11px type. REDESIGN-VISUAL.md §2.2 sets the floor at 11px, and 11px is
+  // `micro` only. The audit measured 658 of these and called that single number
+  // "the user's 'congested, not designed properly' verdict, quantified".
+  // The sweep onto the v6 roles is Phase 1; until then the count may not grow.
+  { label: 'type below the 11px floor', max: 565,
+    count: (src) => (src.match(/text-\[(?:8|8\.5|9|9\.5|10|10\.5)px\]/g) || []).length },
 ]
 
 const files = []
