@@ -41,7 +41,7 @@ export default function AuthLayout({
             </p>
 
             {/* security illustration — tinted tile, flat card register */}
-            <div aria-hidden className="mt-8 max-w-[340px] rounded-2xl bg-main p-2.5">
+            <div aria-hidden className="mt-8 max-w-[340px] rounded-lg bg-main p-2.5">
               <Image
                 src="/v4/illus/security.png"
                 alt=""
@@ -50,7 +50,7 @@ export default function AuthLayout({
                 height={1024}
                 priority
                 sizes="(min-width: 1024px) 320px, 0px"
-                className="w-full rounded-2xl"
+                className="w-full rounded-lg"
               />
             </div>
 
@@ -77,7 +77,7 @@ export default function AuthLayout({
 
       {/* Right form panel — light glass card floating on the sky wash */}
       <div className="flex flex-1 items-center justify-center p-6 sm:p-8">
-        <div className="lg-surface w-full max-w-md rounded-2xl p-6 sm:p-8">
+        <div className="lg-surface w-full max-w-md rounded-lg p-6 sm:p-8">
           {/* Mobile logo */}
           <div className="mb-8 flex items-center justify-center gap-2.5 lg:hidden">
             <QuantXMark className="h-10 w-10 drop-shadow-[0_2px_8px_rgba(58,119,229,0.35)]" />

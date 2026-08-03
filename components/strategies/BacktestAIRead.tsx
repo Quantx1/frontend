@@ -57,7 +57,7 @@ export default function BacktestAIRead({ strategyId }: { strategyId: string }) {
   }
 
   return (
-    <div className="rounded-lg border border-line bg-wrap overflow-hidden">
+    <div className="rounded-sm border border-line bg-wrap overflow-hidden">
       <button
         onClick={expand}
         disabled={state === 'loading'}
@@ -97,7 +97,7 @@ export default function BacktestAIRead({ strategyId }: { strategyId: string }) {
           )}
 
           {data.suggestions.length > 0 && (
-            <div className="rounded-md border border-line bg-main/40 px-3 py-2 space-y-1">
+            <div className="rounded-xs border border-line bg-main/40 px-3 py-2 space-y-1">
               <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-d-text-muted">
                 <Wrench className="w-3 h-3 text-primary" /> Improve it
               </p>

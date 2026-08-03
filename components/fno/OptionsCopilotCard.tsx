@@ -73,7 +73,7 @@ export default function OptionsCopilotCard() {
   }
 
   return (
-    <section className="rounded-xl border border-line bg-wrap p-4">
+    <section className="rounded-md border border-line bg-wrap p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Sparkles className="h-3.5 w-3.5 text-primary" />
@@ -98,7 +98,7 @@ export default function OptionsCopilotCard() {
               key={s}
               type="button"
               onClick={() => selectSymbol(s)}
-              className={`rounded-md px-3 py-1 text-[11px] font-medium transition-colors ${
+              className={`rounded-xs px-3 py-1 text-[11px] font-medium transition-colors ${
                 active
                   ? 'glass-control-accent'
                   : 'glass-control text-d-text-secondary hover:text-d-text-primary'
@@ -134,27 +134,27 @@ export default function OptionsCopilotCard() {
           {data.facts && (
             <div className="flex flex-wrap items-center gap-2 text-[10px] text-d-text-muted">
               {data.facts.india_vix != null && (
-                <span className="rounded-md border border-line bg-main px-2 py-0.5">
+                <span className="rounded-xs border border-line bg-main px-2 py-0.5">
                   VIX · {data.facts.india_vix.toFixed(2)}
                 </span>
               )}
               {data.facts.vix_regime && (
-                <span className="rounded-md border border-line bg-main px-2 py-0.5 capitalize">
+                <span className="rounded-xs border border-line bg-main px-2 py-0.5 capitalize">
                   {data.facts.vix_regime}
                 </span>
               )}
               {data.facts.pcr_oi != null && (
-                <span className="rounded-md border border-line bg-main px-2 py-0.5">
+                <span className="rounded-xs border border-line bg-main px-2 py-0.5">
                   PCR · {data.facts.pcr_oi.toFixed(2)}
                 </span>
               )}
               {data.facts.max_pain != null && (
-                <span className="rounded-md border border-line bg-main px-2 py-0.5">
+                <span className="rounded-xs border border-line bg-main px-2 py-0.5">
                   Max Pain · {numMax(data.facts.max_pain, 0)}
                 </span>
               )}
               {data.facts.days_to_expiry != null && (
-                <span className="rounded-md border border-line bg-main px-2 py-0.5">
+                <span className="rounded-xs border border-line bg-main px-2 py-0.5">
                   {data.facts.days_to_expiry} DTE
                 </span>
               )}
@@ -192,7 +192,7 @@ function CopilotStrategyRow({ s, best }: { s: FnoStrategy; best: boolean }) {
         : 'border-line bg-main text-d-text-muted'
   return (
     <li
-      className={`rounded-md border p-3 ${
+      className={`rounded-xs border p-3 ${
         best ? 'border-primary/60 bg-primary/5' : 'border-line bg-wrap'
       }`}
     >

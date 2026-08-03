@@ -111,7 +111,7 @@ export const Button = React.forwardRef<HTMLButtonElement, Props>(
         aria-busy={busy || undefined}
         style={pinnedWidth ? { minWidth: pinnedWidth } : undefined}
         className={cn(
-          'inline-flex select-none items-center justify-center rounded-lg font-semibold',
+          'inline-flex select-none items-center justify-center rounded-sm font-semibold',
           // Level 1 motion: colour + a 0.98 press. Nothing that moves layout.
           'transition-[transform,background-color,border-color,color] duration-instant ease-out',
           'active:scale-[0.98]',

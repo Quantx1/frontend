@@ -97,7 +97,7 @@ export default function AiTopPicks({ limit = PER_BOOK }: { limit?: number }) {
     ) : null
 
   return (
-    <div className="overflow-hidden rounded-lg border border-line bg-wrap">
+    <div className="overflow-hidden rounded-sm border border-line bg-wrap">
       <div className="flex items-center justify-between border-b border-line px-4 py-2.5">
         <div className="flex items-center gap-2">
           <Sparkles className="h-3.5 w-3.5 text-ai" />

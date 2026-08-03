@@ -99,7 +99,7 @@ export default function PayoffCalculator() {
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
       <aside className="lg:col-span-2 space-y-3">
         {/* Symbol + spot */}
-        <div className="rounded-xl border border-line bg-wrap p-3">
+        <div className="rounded-md border border-line bg-wrap p-3">
           <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-d-text-muted">Underlying</p>
           <div className="flex flex-wrap gap-1.5">
             {Object.keys(SYMBOL_DEFAULTS).map((s) => (
@@ -107,7 +107,7 @@ export default function PayoffCalculator() {
                 key={s}
                 type="button"
                 onClick={() => onSymbolChange(s as keyof typeof SYMBOL_DEFAULTS)}
-                className={`rounded-md px-2 py-1 text-[11px] ${
+                className={`rounded-xs px-2 py-1 text-[11px] ${
                   symbol === s
                     ? 'glass-control-accent'
                     : 'glass-control text-d-text-secondary hover:text-d-text-primary'
@@ -124,7 +124,7 @@ export default function PayoffCalculator() {
                 type="number"
                 value={spotPrice}
                 onChange={(e) => setSpotPrice(Number(e.target.value) || 0)}
-                className="mt-1 w-full rounded-md border border-line bg-main px-2 py-1 text-sm font-mono tabular-nums text-d-text-primary outline-none focus:border-primary"
+                className="mt-1 w-full rounded-xs border border-line bg-main px-2 py-1 text-sm font-mono tabular-nums text-d-text-primary outline-none focus:border-primary"
               />
             </div>
             <div>
@@ -133,14 +133,14 @@ export default function PayoffCalculator() {
                 type="number"
                 value={lotSize}
                 disabled
-                className="mt-1 w-full rounded-md border border-line bg-wrap-hover px-2 py-1 text-sm font-mono tabular-nums text-d-text-muted"
+                className="mt-1 w-full rounded-xs border border-line bg-wrap-hover px-2 py-1 text-sm font-mono tabular-nums text-d-text-muted"
               />
             </div>
           </div>
         </div>
 
         {/* Leg builder */}
-        <div className="rounded-xl border border-line bg-wrap">
+        <div className="rounded-md border border-line bg-wrap">
           <header className="flex items-center justify-between border-b border-line px-3 py-2">
             <p className="text-[10px] font-semibold uppercase tracking-wider text-d-text-muted">Legs ({legs.length}/4)</p>
             <Button size="sm" variant="ghost" onClick={addLeg} disabled={legs.length >= 4}>
@@ -211,7 +211,7 @@ export default function PayoffCalculator() {
             Adjust spot ±N% to see how the payoff diagram shifts under
             various market moves. Premium slider scales each leg's premium
             (proxy for IV-change since leg premiums move with IV). */}
-        <div className="rounded-xl border border-line bg-wrap">
+        <div className="rounded-md border border-line bg-wrap">
           <header className="border-b border-line px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-d-text-muted">
             Scenario analyzer
           </header>
@@ -250,7 +250,7 @@ export default function PayoffCalculator() {
               <button
                 type="button"
                 onClick={() => { setSpotShiftPct(0); setIvMult(1.0) }}
-                className="glass-control rounded-md px-2 py-1 text-[10px] text-d-text-secondary hover:text-d-text-primary"
+                className="glass-control rounded-xs px-2 py-1 text-[10px] text-d-text-secondary hover:text-d-text-primary"
               >
                 Reset scenario
               </button>
@@ -264,7 +264,7 @@ export default function PayoffCalculator() {
         </Badge>
       </aside>
 
-      <section className="lg:col-span-3 rounded-xl border border-line bg-wrap p-3">
+      <section className="lg:col-span-3 rounded-md border border-line bg-wrap p-3">
         {legs.length === 0 ? (
           <div className="flex h-64 items-center justify-center text-sm text-d-text-muted">
             Add at least one leg to see payoff.

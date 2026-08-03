@@ -63,7 +63,7 @@ function InfoDot({ text }: { text: string }) {
         <HelpCircle className="h-2.5 w-2.5" />
       </button>
       {open && (
-        <span className="absolute right-0 top-5 z-20 w-56 rounded-lg border border-d-border bg-wrap p-2.5 text-[10.5px] leading-snug text-d-text-secondary shadow-lg">
+        <span className="absolute right-0 top-5 z-20 w-56 rounded-sm border border-d-border bg-wrap p-2.5 text-[10.5px] leading-snug text-d-text-secondary shadow-lg">
           {text}
         </span>
       )}
@@ -85,7 +85,7 @@ function CardShell({
   children: React.ReactNode
 }) {
   return (
-    <div className={`lg-surface rounded-2xl p-4 ${className}`}>
+    <div className={`lg-surface rounded-lg p-4 ${className}`}>
       <div className="mb-3 flex items-center justify-between gap-2">
         <h3 className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-d-text-muted">
           <Icon className="h-3.5 w-3.5" /> {title}
@@ -201,7 +201,7 @@ export default function OrderFlowAnalysis({ entitled = true }: { entitled?: bool
   return (
     <div className="space-y-4">
       {/* ── HEADER ROW ─────────────────────────────────────────── */}
-      <div className="lg-surface rounded-2xl p-4 md:p-5">
+      <div className="lg-surface rounded-lg p-4 md:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="min-w-0">
             <h2 className="flex items-center gap-2 text-[18px] font-bold tracking-tight text-d-text-primary">
@@ -259,14 +259,14 @@ export default function OrderFlowAnalysis({ entitled = true }: { entitled?: bool
         }
       >
         {!flow && !flowErr ? (
-          <div className="h-28 animate-pulse rounded-lg bg-surface-2" />
+          <div className="h-28 animate-pulse rounded-sm bg-surface-2" />
         ) : flowErr || !hasFlow ? (
           <p className="py-6 text-center text-[11.5px] text-d-text-muted">No FII/DII flow data yet.</p>
         ) : (
           <>
             {/* two big stat blocks */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-lg border border-line bg-surface-2/50 p-3">
+              <div className="rounded-sm border border-line bg-surface-2/50 p-3">
                 <div className="flex items-center justify-between text-[10.5px] uppercase tracking-wider text-d-text-muted">
                   <span>FII</span>
                   <span className={fiiNet >= 0 ? 'text-up' : 'text-down'}>{fiiNet >= 0 ? 'BOUGHT' : 'SOLD'}</span>
@@ -280,7 +280,7 @@ export default function OrderFlowAnalysis({ entitled = true }: { entitled?: bool
                   <span className="numeric text-d-text-secondary">{fmtCr(flow?.fii.sell)}</span>
                 </div>
               </div>
-              <div className="rounded-lg border border-line bg-surface-2/50 p-3">
+              <div className="rounded-sm border border-line bg-surface-2/50 p-3">
                 <div className="flex items-center justify-between text-[10.5px] uppercase tracking-wider text-d-text-muted">
                   <span>DII</span>
                   <span className={diiNet >= 0 ? 'text-up' : 'text-down'}>{diiNet >= 0 ? 'BOUGHT' : 'SOLD'}</span>

@@ -24,7 +24,7 @@ export default function StockMoodLookup() {
     <div className="space-y-3">
       <form
         onSubmit={submit}
-        className="flex items-center gap-2 rounded-xl border border-line bg-main px-2.5 py-2"
+        className="flex items-center gap-2 rounded-md border border-line bg-main px-2.5 py-2"
       >
         <Search className="h-4 w-4 shrink-0 text-d-text-muted" />
         <input

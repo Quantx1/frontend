@@ -184,7 +184,7 @@ export default function NewScreenPage() {
                 rows={2}
                 placeholder="e.g. Oversold large caps bouncing on above-average volume"
                 aria-label="Describe your screen"
-                className="min-h-[64px] flex-1 resize-none rounded-lg border border-line bg-main px-3 py-2.5 text-[13.5px] text-d-text-primary placeholder:text-d-text-muted/60 focus:border-wrap-line focus:outline-none"
+                className="min-h-[64px] flex-1 resize-none rounded-sm border border-line bg-main px-3 py-2.5 text-[13.5px] text-d-text-primary placeholder:text-d-text-muted/60 focus:border-wrap-line focus:outline-none"
               />
               <Button onClick={() => void compile()} disabled={compiling || !prompt.trim()} className="self-end">
                 <Sparkles className="mr-1 h-3.5 w-3.5" />
@@ -196,7 +196,7 @@ export default function NewScreenPage() {
                 <button
                   key={ex}
                   onClick={() => setPrompt(ex)}
-                  className="glass-control rounded-pill px-3 py-1 text-[11.5px] text-d-text-secondary transition-colors"
+                  className="glass-control rounded-full px-3 py-1 text-[11.5px] text-d-text-secondary transition-colors"
                 >
                   {ex}
                 </button>
@@ -226,7 +226,7 @@ export default function NewScreenPage() {
                   {blocks.map((b) => (
                     <span
                       key={b.id}
-                      className={`inline-flex items-center gap-1.5 rounded-pill border border-line bg-main px-3 py-1.5 text-[12px] ${MONO} text-d-text-primary`}
+                      className={`inline-flex items-center gap-1.5 rounded-full border border-line bg-main px-3 py-1.5 text-[12px] ${MONO} text-d-text-primary`}
                     >
                       {b.name}
                       <button
@@ -265,7 +265,7 @@ export default function NewScreenPage() {
                             key={s.id}
                             disabled={added}
                             onClick={() => addBlock(s.id, s.name)}
-                            className="block w-full rounded-md px-2 py-1.5 text-left text-[12px] text-d-text-primary transition-colors hover:bg-wrap-hover disabled:opacity-40"
+                            className="block w-full rounded-xs px-2 py-1.5 text-left text-[12px] text-d-text-primary transition-colors hover:bg-wrap-hover disabled:opacity-40"
                           >
                             {s.name}
                             <span className="ml-1.5 text-[10px] text-d-text-muted">{s.direction}</span>
@@ -284,7 +284,7 @@ export default function NewScreenPage() {
                         key={n}
                         onClick={() => setMinHits(n)}
                         aria-pressed={minHits === n}
-                        className={`h-7 w-7 rounded-pill text-[12px] ${MONO} transition-colors ${
+                        className={`h-7 w-7 rounded-full text-[12px] ${MONO} transition-colors ${
                           minHits === n
                             ? 'glass-control-accent'
                             : 'glass-control text-d-text-secondary'

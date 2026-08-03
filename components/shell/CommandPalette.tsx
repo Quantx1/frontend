@@ -315,7 +315,7 @@ export const CommandPalette = ({ open, onClose }: Props) => {
               className="h-3 w-3 shrink-0 animate-spin rounded-full border-2 border-d-text-muted border-r-transparent"
             />
           )}
-          <kbd className={cn('shrink-0 rounded-md border border-line px-1.5 py-0.5 text-[10px] text-d-text-muted', MONO)}>
+          <kbd className={cn('shrink-0 rounded-xs border border-line px-1.5 py-0.5 text-[10px] text-d-text-muted', MONO)}>
             esc
           </kbd>
         </div>
@@ -401,7 +401,7 @@ export const CommandPalette = ({ open, onClose }: Props) => {
                     <Icon size={15} className="shrink-0 text-d-text-muted" aria-hidden="true" />
                     <span className="min-w-0 flex-1 truncate text-[13px]">{r.label}</span>
                     {r.tier && (
-                      <span className="shrink-0 rounded-md bg-highlight/12 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-highlight">
+                      <span className="shrink-0 rounded-xs bg-highlight/12 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-highlight">
                         {r.tier}
                       </span>
                     )}

@@ -77,7 +77,7 @@ export function Day1WelcomeBanner({ isDay1 }: Props) {
             type="button"
             onClick={dismiss}
             aria-label="Dismiss welcome banner"
-            className="rounded-md p-1 text-d-text-muted transition-colors hover:bg-wrap-hover hover:text-d-text-primary"
+            className="rounded-xs p-1 text-d-text-muted transition-colors hover:bg-wrap-hover hover:text-d-text-primary"
           >
             <X className="h-4 w-4" />
           </button>
@@ -127,7 +127,7 @@ function CtaCard({
   return (
     <Link
       href={href}
-      className="group block rounded-md border border-line bg-main p-3 transition-colors hover:border-primary/40 hover:bg-wrap-hover"
+      className="group block rounded-xs border border-line bg-main p-3 transition-colors hover:border-primary/40 hover:bg-wrap-hover"
     >
       <div className="flex items-center gap-2">
         {icon}

@@ -115,7 +115,7 @@ export default function LoginPage() {
                 type="email"
                 id="email"
                 placeholder="you@example.com"
-                className="w-full rounded-xl border border-line bg-main py-3 pl-11 pr-4 text-sm text-d-text-primary placeholder:text-d-text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                className="w-full rounded-md border border-line bg-main py-3 pl-11 pr-4 text-sm text-d-text-primary placeholder:text-d-text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
               />
             </div>
             {errors.email && (
@@ -135,7 +135,7 @@ export default function LoginPage() {
                 type={showPassword ? 'text' : 'password'}
                 id="password"
                 placeholder="Enter your password"
-                className="w-full rounded-xl border border-line bg-main py-3 pl-11 pr-12 text-sm text-d-text-primary placeholder:text-d-text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                className="w-full rounded-md border border-line bg-main py-3 pl-11 pr-12 text-sm text-d-text-primary placeholder:text-d-text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
               />
               <button
                 type="button"

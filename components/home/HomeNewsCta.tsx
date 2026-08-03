@@ -52,7 +52,7 @@ function NewsCard({ n }: { n: NewsItem }) {
       href={n.link || '#'}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-wrap transition-all duration-200 hover:-translate-y-0.5 hover:border-d-text-muted/30 hover:shadow-lg"
+      className="group flex flex-col overflow-hidden rounded-lg border border-line bg-wrap transition-all duration-200 hover:-translate-y-0.5 hover:border-d-text-muted/30 hover:shadow-lg"
     >
       <div className="relative aspect-[16/9] w-full overflow-hidden">
         {/* branded placeholder — always present; the image sits on top of it */}
@@ -74,7 +74,7 @@ function NewsCard({ n }: { n: NewsItem }) {
             className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]"
           />
         )}
-        <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-md bg-black/55 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white backdrop-blur-sm">
+        <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-xs bg-black/55 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white backdrop-blur-sm">
           <span aria-hidden>{n.region === 'India' ? '🇮🇳' : '🌐'}</span>
           {n.source}
         </span>
@@ -83,7 +83,7 @@ function NewsCard({ n }: { n: NewsItem }) {
             wears the accent: white ink clears AA on the violet fill in both
             modes; the dark-mode red can't carry white. */}
         {n.is_big && (
-          <span className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-md bg-primary px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground backdrop-blur-sm">
+          <span className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-xs bg-primary px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground backdrop-blur-sm">
             <Zap className="h-2.5 w-2.5" /> Market mover
           </span>
         )}
@@ -109,7 +109,7 @@ function NewsCard({ n }: { n: NewsItem }) {
 
 function NewsSkeleton() {
   return (
-    <div className="overflow-hidden rounded-2xl border border-line bg-wrap">
+    <div className="overflow-hidden rounded-lg border border-line bg-wrap">
       <div className="aspect-[16/9] w-full animate-pulse bg-wrap-hover" />
       <div className="space-y-2 p-3.5">
         <div className="h-2.5 w-16 animate-pulse rounded bg-wrap-hover/70" />
@@ -152,12 +152,12 @@ export function MarketNewsFeed() {
           </span>
           <span className="hidden text-[11px] text-d-text-muted sm:inline">Live · Indian &amp; global</span>
         </div>
-        <div className="flex items-center gap-0.5 rounded-pill border border-line bg-wrap p-0.5">
+        <div className="flex items-center gap-0.5 rounded-full border border-line bg-wrap p-0.5">
           {(['all', 'India', 'Global'] as Filter[]).map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`rounded-pill px-2.5 py-1 text-[11px] font-medium transition-colors ${
+              className={`rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors ${
                 filter === f ? 'glass-control-accent' : 'text-d-text-muted hover:text-d-text-secondary'
               }`}
             >
@@ -172,7 +172,7 @@ export function MarketNewsFeed() {
           {Array.from({ length: 8 }).map((_, i) => <NewsSkeleton key={i} />)}
         </div>
       ) : items.length === 0 ? (
-        <div className="rounded-2xl border border-line bg-wrap p-12 text-center text-[12px] text-d-text-muted">
+        <div className="rounded-lg border border-line bg-wrap p-12 text-center text-[12px] text-d-text-muted">
           News tape is quiet — market headlines will stream in here as they break.
         </div>
       ) : (
@@ -202,9 +202,9 @@ function FeatureCard({ icon: Icon, title, desc, href }: (typeof FEATURE_LINKS)[n
   return (
     <Link
       href={href}
-      className="group flex items-center gap-3 rounded-2xl bg-wrap px-3.5 py-3 transition-all duration-200 hover:-translate-y-0.5 hover:ring-1 hover:ring-primary/25"
+      className="group flex items-center gap-3 rounded-lg bg-wrap px-3.5 py-3 transition-all duration-200 hover:-translate-y-0.5 hover:ring-1 hover:ring-primary/25"
     >
-      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white/[0.05] text-d-text-secondary transition-colors group-hover:text-d-text-primary">
+      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-sm bg-white/[0.05] text-d-text-secondary transition-colors group-hover:text-d-text-primary">
         <Icon className="h-4 w-4" />
       </span>
       <span className="min-w-0 flex-1">
@@ -220,15 +220,15 @@ export function HomeCtaBand() {
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-5">
       {/* product upsell */}
-      <div className="relative overflow-hidden rounded-2xl bg-wrap p-4 lg:col-span-5">
+      <div className="relative overflow-hidden rounded-lg bg-wrap p-4 lg:col-span-5">
         <div
           aria-hidden
           className="pointer-events-none absolute -right-8 -top-10 h-32 w-32 rounded-full opacity-30 blur-2xl"
           style={{ background: 'radial-gradient(circle, var(--color-primary), transparent 70%)' }}
         />
         {/* decorative upsell illustration — flat-vector on its tinted tile */}
-        <div aria-hidden className="tile-tint pointer-events-none absolute right-3 top-3 hidden overflow-hidden rounded-2xl p-1 sm:block">
-          <Image src="/v4/illus/copilot.png" alt="" width={76} height={76} sizes="76px" className="rounded-2xl" />
+        <div aria-hidden className="tile-tint pointer-events-none absolute right-3 top-3 hidden overflow-hidden rounded-lg p-1 sm:block">
+          <Image src="/v4/illus/copilot.png" alt="" width={76} height={76} sizes="76px" className="rounded-lg" />
         </div>
         <div className="relative">
           <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-[color-mix(in_srgb,var(--color-primary)_12%,transparent)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
@@ -239,7 +239,7 @@ export function HomeCtaBand() {
           <ul className="mt-3 space-y-1.5">
             {CTA_FEATURES.map((f) => (
               <li key={f.text} className="flex items-center gap-2 text-[11.5px] text-d-text-secondary">
-                <span className="grid h-5 w-5 shrink-0 place-items-center rounded-md bg-[color-mix(in_srgb,var(--color-primary)_12%,transparent)] text-primary">
+                <span className="grid h-5 w-5 shrink-0 place-items-center rounded-xs bg-[color-mix(in_srgb,var(--color-primary)_12%,transparent)] text-primary">
                   <f.icon className="h-3 w-3" />
                 </span>
                 {f.text}
@@ -248,7 +248,7 @@ export function HomeCtaBand() {
           </ul>
           <Link
             href="/pricing"
-            className="bg-gradient-cta cta-gloss mt-3.5 inline-flex w-full items-center justify-center gap-1.5 rounded-pill px-3 py-2 text-[12px] font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+            className="bg-gradient-cta cta-gloss mt-3.5 inline-flex w-full items-center justify-center gap-1.5 rounded-full px-3 py-2 text-[12px] font-semibold text-primary-foreground transition-opacity hover:opacity-90"
           >
             Explore Pro <ArrowRight className="h-3.5 w-3.5" />
           </Link>

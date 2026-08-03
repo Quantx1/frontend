@@ -80,7 +80,7 @@ function DefaultWidgetFallback({
   return (
     <div
       role="alert"
-      className="rounded-lg border border-d-border bg-wrap p-4 flex flex-col items-start gap-2"
+      className="rounded-sm border border-d-border bg-wrap p-4 flex flex-col items-start gap-2"
     >
       <div className="flex items-center gap-2 text-warning text-[12px] font-medium">
         <AlertTriangle className="w-3.5 h-3.5" />

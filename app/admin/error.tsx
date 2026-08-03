@@ -32,7 +32,7 @@ export default function Error({
         <p className="mb-6 text-sm text-d-text-muted">An unexpected error occurred.</p>
         <button
           onClick={reset}
-          className="rounded-xl bg-primary px-5 py-2 text-sm font-medium text-d-text-primary transition hover:bg-primary-hover"
+          className="rounded-md bg-primary px-5 py-2 text-sm font-medium text-d-text-primary transition hover:bg-primary-hover"
         >
           Try again
         </button>

@@ -73,7 +73,7 @@ function StatCard({
             )}
           </div>
           <div
-            className={`p-3 rounded-xl border ${iconBg[color]}`}
+            className={`p-3 rounded-md border ${iconBg[color]}`}
           >
             <Icon className={`w-6 h-6 ${colors[color].split(' ').pop()}`} />
           </div>
@@ -180,7 +180,7 @@ export default function AdminDashboard() {
           </div>
           <button
             onClick={fetchDashboardData}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-warning/10 border border-warning/20 text-warning text-sm font-medium transition-all hover:bg-warning/20"
+            className="flex items-center gap-2 px-4 py-2 rounded-md bg-warning/10 border border-warning/20 text-warning text-sm font-medium transition-all hover:bg-warning/20"
           >
             <RefreshCw className="w-4 h-4" />
             Refresh
@@ -189,7 +189,7 @@ export default function AdminDashboard() {
       </div>
 
       {error && (
-        <div className="bg-down/10 border border-down/20 rounded-xl p-4 flex items-center gap-3">
+        <div className="bg-down/10 border border-down/20 rounded-md p-4 flex items-center gap-3">
           <AlertCircle className="w-5 h-5 text-down" />
           <p className="text-down">{error}</p>
         </div>
@@ -201,7 +201,7 @@ export default function AdminDashboard() {
           <h2 className="text-lg font-semibold text-white mb-4">System Status</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
+              <div className="p-2 rounded-sm bg-primary/10 border border-primary/20">
                 <Database className="w-5 h-5 text-primary" />
               </div>
               <div>
@@ -226,7 +226,7 @@ export default function AdminDashboard() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-ai/10 border border-ai/20">
+              <div className="p-2 rounded-sm bg-ai/10 border border-ai/20">
                 <Server className="w-5 h-5 text-ai" />
               </div>
               <div>
@@ -248,7 +248,7 @@ export default function AdminDashboard() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-warning/10 border border-warning/20">
+              <div className="p-2 rounded-sm bg-warning/10 border border-warning/20">
                 <Clock className="w-5 h-5 text-warning" />
               </div>
               <div>
@@ -257,7 +257,7 @@ export default function AdminDashboard() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-up/10 border border-up/20">
+              <div className="p-2 rounded-sm bg-up/10 border border-up/20">
                 <Wifi className="w-5 h-5 text-up" />
               </div>
               <div>
@@ -406,25 +406,25 @@ export default function AdminDashboard() {
           <div className="flex flex-wrap gap-3">
             <a
               href="/admin/users"
-              className="px-4 py-2 bg-primary/10 hover:bg-primary/20 border border-primary/20 rounded-lg text-primary text-sm font-medium transition-all"
+              className="px-4 py-2 bg-primary/10 hover:bg-primary/20 border border-primary/20 rounded-sm text-primary text-sm font-medium transition-all"
             >
               View All Users
             </a>
             <a
               href="/admin/payments"
-              className="px-4 py-2 bg-up/10 hover:bg-up/20 border border-up/20 rounded-lg text-up text-sm font-medium transition-all"
+              className="px-4 py-2 bg-up/10 hover:bg-up/20 border border-up/20 rounded-sm text-up text-sm font-medium transition-all"
             >
               Payment History
             </a>
             <a
               href="/admin/signals"
-              className="px-4 py-2 bg-ai/10 hover:bg-ai/20 border border-ai/20 rounded-lg text-ai text-sm font-medium transition-all"
+              className="px-4 py-2 bg-ai/10 hover:bg-ai/20 border border-ai/20 rounded-sm text-ai text-sm font-medium transition-all"
             >
               Signal Analytics
             </a>
             <a
               href="/admin/system"
-              className="px-4 py-2 bg-warning/10 hover:bg-warning/20 border border-warning/20 rounded-lg text-warning text-sm font-medium transition-all"
+              className="px-4 py-2 bg-warning/10 hover:bg-warning/20 border border-warning/20 rounded-sm text-warning text-sm font-medium transition-all"
             >
               System Health
             </a>

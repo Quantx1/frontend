@@ -68,7 +68,7 @@ const TradingViewWidget = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="flex h-[520px] w-full items-center justify-center rounded-2xl border border-line bg-wrap text-d-text-muted">
+      <div className="flex h-[520px] w-full items-center justify-center rounded-lg border border-line bg-wrap text-d-text-muted">
         <div className="flex flex-col items-center gap-3">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
           <p className="font-mono text-[11px] uppercase tracking-wider">Loading chart…</p>

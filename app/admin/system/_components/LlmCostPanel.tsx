@@ -65,7 +65,7 @@ export default function LlmCostPanel() {
               key={w.hours}
               type="button"
               onClick={() => setHours(w.hours)}
-              className={`px-2 py-1 text-[11px] rounded-md transition-colors ${
+              className={`px-2 py-1 text-[11px] rounded-xs transition-colors ${
                 hours === w.hours
                   ? 'bg-primary text-black font-semibold'
                   : 'border border-d-border text-d-text-secondary hover:text-white'
@@ -78,7 +78,7 @@ export default function LlmCostPanel() {
             type="button"
             onClick={refresh}
             disabled={loading}
-            className="ml-2 p-1.5 border border-d-border rounded-md text-d-text-secondary hover:text-white disabled:opacity-50"
+            className="ml-2 p-1.5 border border-d-border rounded-xs text-d-text-secondary hover:text-white disabled:opacity-50"
             aria-label="Refresh LLM cost"
           >
             {loading ? (
@@ -91,7 +91,7 @@ export default function LlmCostPanel() {
       </div>
 
       {err && (
-        <p className="rounded-md border border-down/40 bg-down/10 px-3 py-2 text-xs text-down mb-3">
+        <p className="rounded-xs border border-down/40 bg-down/10 px-3 py-2 text-xs text-down mb-3">
           {err}
         </p>
       )}
@@ -206,7 +206,7 @@ function Metric({
   primary?: boolean
 }) {
   return (
-    <div className="rounded-md border border-d-border bg-main p-3">
+    <div className="rounded-xs border border-d-border bg-main p-3">
       <p className="text-[10px] font-medium uppercase tracking-wider text-d-text-muted">
         {label}
       </p>

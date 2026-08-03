@@ -52,11 +52,11 @@ export default function WeeklyReviewCard() {
   }
 
   if (state === 'loading') {
-    return <div className="rounded-lg border border-line bg-wrap h-[120px] animate-pulse" />
+    return <div className="rounded-sm border border-line bg-wrap h-[120px] animate-pulse" />
   }
   if (state === 'empty') {
     return (
-      <div className="rounded-lg border border-line bg-wrap p-4">
+      <div className="rounded-sm border border-line bg-wrap p-4">
         <div className="flex items-center gap-2 text-[12px] text-d-text-muted">
           <CalendarRange className="w-3.5 h-3.5" />
           No weekly review yet — it&apos;s generated automatically every Sunday.
@@ -71,7 +71,7 @@ export default function WeeklyReviewCard() {
   const beat = out != null && bench != null ? out - bench : null
 
   return (
-    <div className="rounded-lg border border-line bg-wrap overflow-hidden">
+    <div className="rounded-sm border border-line bg-wrap overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-line">
         <div className="flex items-center gap-2">
           <CalendarRange className="w-3.5 h-3.5 text-primary" />

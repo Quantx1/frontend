@@ -61,7 +61,7 @@ export function AutopilotStickyStop() {
         className="fixed bottom-20 right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full border-2 border-down bg-down/20 text-down shadow-xl backdrop-blur-md transition-all hover:bg-down/30 active:scale-95 md:hidden"
       >
         <PauseCircle className="h-7 w-7" />
-        <span className="absolute -bottom-5 right-0 whitespace-nowrap rounded-md bg-down px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-white">
+        <span className="absolute -bottom-5 right-0 whitespace-nowrap rounded-xs bg-down px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-white">
           STOP
         </span>
       </button>
@@ -72,7 +72,7 @@ export function AutopilotStickyStop() {
           onClick={() => !submitting && setOpen(false)}
         >
           <div
-            className="w-full max-w-md rounded-2xl border border-line bg-main p-5 shadow-2xl"
+            className="w-full max-w-md rounded-lg border border-line bg-main p-5 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center gap-3">

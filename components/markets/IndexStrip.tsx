@@ -84,7 +84,7 @@ export function IndexStrip({
   if (!entitled) return null
 
   return (
-    <div className="overflow-hidden rounded-2xl bg-wrap p-2" aria-label="Index ticker">
+    <div className="overflow-hidden rounded-lg bg-wrap p-2" aria-label="Index ticker">
       <div className="flex gap-2 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
         {all.map((c) => <QuoteChip key={c.key} c={c} />)}
       </div>

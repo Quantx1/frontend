@@ -43,7 +43,7 @@ function VerifyEmailContent() {
     >
       <div className="animate-fade-in-up text-center">
         {/* Envelope icon */}
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-line bg-primary/5">
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-lg border border-line bg-primary/5">
           <Mail className="h-8 w-8 text-primary" />
         </div>
 
@@ -60,7 +60,7 @@ function VerifyEmailContent() {
 
         <Link
           href="/login"
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-8 py-3 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary-hover hover:shadow-glow-primary"
+          className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-8 py-3 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary-hover hover:shadow-glow-primary"
         >
           Back to Sign In
           <ArrowRight className="h-4 w-4" />

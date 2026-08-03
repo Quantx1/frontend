@@ -30,7 +30,7 @@ export function FundamentalScreeners() {
           <Link
             key={p.key}
             href={`/scanner/fundamental/${p.key}`}
-            className="group grid min-h-[92px] grid-cols-[1fr_auto] items-center gap-3 rounded-lg border border-line bg-wrap p-4 transition-colors hover:border-d-text-muted/40 hover:bg-wrap-hover"
+            className="group grid min-h-[92px] grid-cols-[1fr_auto] items-center gap-3 rounded-sm border border-line bg-wrap p-4 transition-colors hover:border-d-text-muted/40 hover:bg-wrap-hover"
           >
             <div className="min-w-0 space-y-1">
               <div className="flex items-center gap-1.5">

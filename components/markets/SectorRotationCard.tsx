@@ -34,11 +34,11 @@ export default function SectorRotationCard() {
   )
   const rows = data ?? []
 
-  if (isLoading && !data) return <Skeleton h="160px" rounded="lg" className="rounded-2xl" />
+  if (isLoading && !data) return <Skeleton h="160px" rounded="lg" className="rounded-lg" />
   if (!rows.length) return null
 
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-2xl bg-wrap">
+    <div className="flex h-full flex-col overflow-hidden rounded-lg bg-wrap">
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-line">
         <span className="flex items-center gap-2 text-[12px] font-semibold text-d-text-primary">
           <RefreshCw className="w-3.5 h-3.5 text-primary" /> Sector Rotation

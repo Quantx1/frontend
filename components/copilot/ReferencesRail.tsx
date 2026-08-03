@@ -67,7 +67,7 @@ export function ReferencesRail({ refs }: { refs: CopilotReference[] }) {
                 <span
                   aria-label="Cited in the answer"
                   title="Cited in the answer"
-                  className="ml-0.5 h-1 w-1 shrink-0 rounded-pill bg-up"
+                  className="ml-0.5 h-1 w-1 shrink-0 rounded-full bg-up"
                 />
               )}
             </>

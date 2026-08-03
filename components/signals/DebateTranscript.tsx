@@ -55,7 +55,7 @@ const AGENT_CARDS = [
 export default function DebateTranscript({ data, loading, onRun }: Props) {
   if (loading) {
     return (
-      <div className="trading-surface !rounded-2xl text-[12px] text-d-text-muted">
+      <div className="trading-surface !rounded-lg text-[12px] text-d-text-muted">
         Running 8-agent debate… <span className="numeric">~15s</span>
       </div>
     )
@@ -63,7 +63,7 @@ export default function DebateTranscript({ data, loading, onRun }: Props) {
 
   if (!data) {
     return (
-      <div className="trading-surface !rounded-2xl flex items-center justify-between gap-4">
+      <div className="trading-surface !rounded-lg flex items-center justify-between gap-4">
         <div>
           <p className="text-d-text-primary text-[13px] font-medium">Elite debate not run yet</p>
           <p className="text-[11px] text-d-text-muted mt-0.5">
@@ -131,7 +131,7 @@ function TraderCard({
   const color = DECISION_COLOR[decision] || 'var(--color-muted)'
   return (
     <div
-      className="trading-surface !rounded-2xl flex flex-col gap-2"
+      className="trading-surface !rounded-lg flex flex-col gap-2"
       style={{ borderLeft: `3px solid ${color}` }}
     >
       <div className="flex items-center justify-between gap-3">
@@ -177,7 +177,7 @@ function AgentCard({
 
   return (
     <div
-      className="trading-surface !rounded-2xl !p-0 overflow-hidden"
+      className="trading-surface !rounded-lg !p-0 overflow-hidden"
       style={{ borderLeft: `3px solid ${color}` }}
     >
       <button

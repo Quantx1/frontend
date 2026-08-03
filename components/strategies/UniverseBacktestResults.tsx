@@ -177,7 +177,7 @@ export function UniverseBacktestResults({
                   key={k}
                   type="button"
                   onClick={() => setSort(k)}
-                  className={`rounded-md px-2 py-0.5 text-[10px] uppercase tracking-wider ${
+                  className={`rounded-xs px-2 py-0.5 text-[10px] uppercase tracking-wider ${
                     sort === k
                       ? 'glass-control-accent'
                       : 'glass-control text-d-text-muted hover:text-d-text-primary'
@@ -328,7 +328,7 @@ function Metric({
         ? 'text-down'
         : 'text-d-text-primary'
   return (
-    <div className="rounded-md border border-line bg-wrap p-3">
+    <div className="rounded-xs border border-line bg-wrap p-3">
       <p className="text-[10px] font-medium uppercase tracking-wider text-d-text-muted">
         {label}
       </p>

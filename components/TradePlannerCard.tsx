@@ -36,7 +36,7 @@ export default function TradePlannerCard({ entry, stop, capital, riskPct, target
 
   if (!plan) {
     return (
-      <div className="rounded-lg border border-line bg-wrap px-4 py-3">
+      <div className="rounded-sm border border-line bg-wrap px-4 py-3">
         <span className="flex items-center gap-2 text-[12px] font-semibold text-d-text-primary">
           <ClipboardList className="w-3.5 h-3.5 text-primary" /> Trade Plan
         </span>
@@ -66,7 +66,7 @@ export default function TradePlannerCard({ entry, stop, capital, riskPct, target
   }
 
   return (
-    <div className="rounded-lg border border-line bg-wrap overflow-hidden">
+    <div className="rounded-sm border border-line bg-wrap overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-line">
         <span className="flex items-center gap-2 text-[12px] font-semibold text-d-text-primary">
           <ClipboardList className="w-3.5 h-3.5 text-primary" /> Trade Plan

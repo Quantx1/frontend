@@ -56,7 +56,7 @@ export default function AuditLogPanel() {
           <select
             value={actionFilter}
             onChange={(e) => setActionFilter(e.target.value)}
-            className="bg-main border border-d-border rounded-md px-2 py-1 text-[11px] text-white focus:outline-none focus:border-primary/50"
+            className="bg-main border border-d-border rounded-xs px-2 py-1 text-[11px] text-white focus:outline-none focus:border-primary/50"
           >
             <option value="">All actions</option>
             {(data?.actions || []).map((a) => (
@@ -66,7 +66,7 @@ export default function AuditLogPanel() {
           <select
             value={targetTypeFilter}
             onChange={(e) => setTargetTypeFilter(e.target.value)}
-            className="bg-main border border-d-border rounded-md px-2 py-1 text-[11px] text-white focus:outline-none focus:border-primary/50"
+            className="bg-main border border-d-border rounded-xs px-2 py-1 text-[11px] text-white focus:outline-none focus:border-primary/50"
           >
             <option value="">All targets</option>
             <option value="user">user</option>
@@ -81,7 +81,7 @@ export default function AuditLogPanel() {
           <button
             onClick={refresh}
             disabled={loading}
-            className="inline-flex items-center gap-1 px-3 py-1 rounded-md border border-d-border text-[11px] text-white hover:bg-white/[0.03] disabled:opacity-60"
+            className="inline-flex items-center gap-1 px-3 py-1 rounded-xs border border-d-border text-[11px] text-white hover:bg-white/[0.03] disabled:opacity-60"
           >
             <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
             Refresh

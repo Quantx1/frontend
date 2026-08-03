@@ -325,7 +325,7 @@ export default function AutoTraderPage() {
           paper→live direction always goes through an explicit confirm;
           live→paper is one click (the safe direction). */}
       {status.mode === 'paper' ? (
-        <div className="rounded-2xl border border-primary/40 bg-primary/[0.06] p-4">
+        <div className="rounded-lg border border-primary/40 bg-primary/[0.06] p-4">
           <div className="flex flex-wrap items-start gap-3">
             <div aria-hidden className="tile-tint hidden shrink-0 self-center overflow-hidden p-1 sm:block">
               <Image
@@ -334,7 +334,7 @@ export default function AutoTraderPage() {
                 width={72}
                 height={72}
                 sizes="72px"
-                className="h-[72px] w-[72px] rounded-2xl object-cover"
+                className="h-[72px] w-[72px] rounded-lg object-cover"
               />
             </div>
             <div className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-primary/[0.12] sm:hidden">
@@ -376,7 +376,7 @@ export default function AutoTraderPage() {
           </div>
         </div>
       ) : (
-        <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-d-border bg-wrap px-4 py-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-d-border bg-wrap px-4 py-3">
           <p className="text-[12px] text-d-text-muted">
             <span className="font-medium text-d-text-primary">Live mode.</span> Orders
             fire on your connected broker account, inside your plan limits.
@@ -392,7 +392,7 @@ export default function AutoTraderPage() {
       )}
 
       {/* ── 1. Status strip ── */}
-      <section className="grid grid-cols-2 gap-2 rounded-2xl border border-d-border bg-wrap p-2 md:grid-cols-5">
+      <section className="grid grid-cols-2 gap-2 rounded-lg border border-d-border bg-wrap p-2 md:grid-cols-5">
         <Cell label="Broker" value={status.broker_connected ? (status.broker_name || '-') : 'Not connected'}
               accentClass={status.broker_connected ? 'text-up' : 'text-down'}
               sub={status.broker_connected ? 'Live' : 'Connect to trade'} />
@@ -416,7 +416,7 @@ export default function AutoTraderPage() {
           {status.regime ? (
             <div className="flex items-center gap-4">
               <div
-                className="w-10 h-10 rounded-md flex items-center justify-center"
+                className="w-10 h-10 rounded-xs flex items-center justify-center"
                 style={{
                   background: `color-mix(in srgb, ${REGIME_COLORS[status.regime.name] || 'var(--color-primary)'} 9%, transparent)`,
                   border: `1px solid color-mix(in srgb, ${REGIME_COLORS[status.regime.name] || 'var(--color-primary)'} 21%, transparent)`,
@@ -467,7 +467,7 @@ export default function AutoTraderPage() {
 
       {/* ── 2. Config card ── */}
       {draftCfg && (
-        <section className="rounded-2xl border border-d-border bg-wrap p-5">
+        <section className="rounded-lg border border-d-border bg-wrap p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-[14px] font-semibold text-d-text-primary flex items-center gap-2">
               <Settings2 className="w-4 h-4 text-primary" />
@@ -553,7 +553,7 @@ export default function AutoTraderPage() {
 
       {/* ── Weekly summary ── */}
       {weekly && weekly.trades_closed > 0 && (
-        <section className="rounded-2xl border border-d-border bg-wrap p-5">
+        <section className="rounded-lg border border-d-border bg-wrap p-5">
           <h2 className="text-[14px] font-semibold text-d-text-primary mb-3 flex items-center gap-2">
             <Zap className="w-4 h-4 text-primary" />
             Last 7 days
@@ -583,7 +583,7 @@ export default function AutoTraderPage() {
       {/* ── PR 69 — Rebalance log: every tick the engine fires, even
               when no trade results. Empty by default until the F4
               FinRL-X scheduler job lands. ── */}
-      <section className="rounded-2xl border border-d-border bg-wrap overflow-hidden">
+      <section className="rounded-lg border border-d-border bg-wrap overflow-hidden">
         <div className="px-5 py-3 border-b border-d-border flex items-center justify-between">
           <h2 className="text-[14px] font-semibold text-d-text-primary">Rebalance log · last 10 ticks</h2>
           <span className="text-[10px] uppercase tracking-wider text-d-text-muted">
@@ -607,7 +607,7 @@ export default function AutoTraderPage() {
 
       {/* ── PR 133 — Today's plan + overlay diagnostics ── */}
       {todayPlan && todayPlan.ran_at && (
-        <section className="rounded-2xl border border-d-border bg-wrap overflow-hidden">
+        <section className="rounded-lg border border-d-border bg-wrap overflow-hidden">
           <div className="px-5 py-3 border-b border-d-border flex items-center justify-between">
             <h2 className="text-[14px] font-semibold text-d-text-primary">
               Today&rsquo;s plan
@@ -666,7 +666,7 @@ export default function AutoTraderPage() {
       )}
 
       {/* ── 3. Recent trades ── */}
-      <section className="rounded-2xl border border-d-border bg-wrap overflow-hidden">
+      <section className="rounded-lg border border-d-border bg-wrap overflow-hidden">
         <div className="px-5 py-3 border-b border-d-border flex items-center justify-between">
           <h2 className="text-[14px] font-semibold text-d-text-primary">What AutoPilot did · last 7 days</h2>
           <Link href="/trades" className="text-[11px] text-primary hover:underline">Full journal →</Link>
@@ -691,9 +691,9 @@ export default function AutoTraderPage() {
       </section>
 
       {/* ── 4. Emergency controls ── */}
-      <section className="rounded-2xl border border-down/35 bg-down/[0.06] p-5">
+      <section className="rounded-lg border border-down/35 bg-down/[0.06] p-5">
         <div className="flex items-start gap-4">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-down/35 bg-down/15">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xs border border-down/35 bg-down/15">
             <AlertTriangle className="w-5 h-5 text-down" />
           </div>
           <div className="flex-1 min-w-0">
@@ -877,7 +877,7 @@ function Panel({
   children: React.ReactNode
 }) {
   return (
-    <div className="rounded-2xl border border-d-border bg-wrap p-5">
+    <div className="rounded-lg border border-d-border bg-wrap p-5">
       <p className="text-[10px] uppercase tracking-wider text-d-text-muted mb-3 flex items-center gap-1.5">
         <Icon className="w-3 h-3" />
         {title}

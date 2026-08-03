@@ -132,7 +132,7 @@ export default function AdminSystemPage() {
             <button
               onClick={fetchHealth}
               disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 bg-white/[0.04] hover:bg-white/[0.06] rounded-lg transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2 bg-white/[0.04] hover:bg-white/[0.06] rounded-sm transition-colors disabled:opacity-50"
             >
               <RefreshCw className={`w-4 h-4 text-d-text-muted ${loading ? 'animate-spin' : ''}`} />
               <span className="text-d-text-muted">Refresh</span>
@@ -151,7 +151,7 @@ export default function AdminSystemPage() {
       {/* Overall Status */}
       <div>
         <div
-          className={`rounded-2xl border p-6 ${getStatusColor(health?.status || 'error')}`}
+          className={`rounded-lg border p-6 ${getStatusColor(health?.status || 'error')}`}
         >
           <div className="flex items-center gap-4">
             {getStatusIcon(health?.status || 'error')}
@@ -229,7 +229,7 @@ export default function AdminSystemPage() {
           <h2 className="text-lg font-semibold text-white mb-6">System Metrics</h2>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
             <div className="text-center">
-              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-3">
+              <div className="w-12 h-12 bg-primary/10 rounded-md flex items-center justify-center mx-auto mb-3">
                 <Users className="w-6 h-6 text-primary" />
               </div>
               <p className="text-2xl font-bold text-white">
@@ -239,7 +239,7 @@ export default function AdminSystemPage() {
             </div>
 
             <div className="text-center">
-              <div className="w-12 h-12 bg-up/10 rounded-xl flex items-center justify-center mx-auto mb-3">
+              <div className="w-12 h-12 bg-up/10 rounded-md flex items-center justify-center mx-auto mb-3">
                 <TrendingUp className="w-6 h-6 text-up" />
               </div>
               <p className="text-2xl font-bold text-white">
@@ -249,7 +249,7 @@ export default function AdminSystemPage() {
             </div>
 
             <div className="text-center">
-              <div className="w-12 h-12 bg-ai/10 rounded-xl flex items-center justify-center mx-auto mb-3">
+              <div className="w-12 h-12 bg-ai/10 rounded-md flex items-center justify-center mx-auto mb-3">
                 <Target className="w-6 h-6 text-ai" />
               </div>
               <p className="text-2xl font-bold text-white">
@@ -259,7 +259,7 @@ export default function AdminSystemPage() {
             </div>
 
             <div className="text-center">
-              <div className="w-12 h-12 bg-warning/10 rounded-xl flex items-center justify-center mx-auto mb-3">
+              <div className="w-12 h-12 bg-warning/10 rounded-md flex items-center justify-center mx-auto mb-3">
                 <Activity className="w-6 h-6 text-warning" />
               </div>
               <p className="text-2xl font-bold text-white">
@@ -269,7 +269,7 @@ export default function AdminSystemPage() {
             </div>
 
             <div className="text-center">
-              <div className="w-12 h-12 bg-down/10 rounded-xl flex items-center justify-center mx-auto mb-3">
+              <div className="w-12 h-12 bg-down/10 rounded-md flex items-center justify-center mx-auto mb-3">
                 <Globe className="w-6 h-6 text-down" />
               </div>
               <p className="text-2xl font-bold text-white">
@@ -286,13 +286,13 @@ export default function AdminSystemPage() {
         <div className="glass-card hover:border-primary transition-colors p-6">
           <h2 className="text-lg font-semibold text-white mb-4">Environment</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 bg-white/[0.02] rounded-lg">
+            <div className="p-4 bg-white/[0.02] rounded-sm">
               <p className="text-sm text-d-text-muted">API URL</p>
               <code className="text-white text-sm">
                 {process.env.NEXT_PUBLIC_API_URL || 'Not configured'}
               </code>
             </div>
-            <div className="p-4 bg-white/[0.02] rounded-lg">
+            <div className="p-4 bg-white/[0.02] rounded-sm">
               <p className="text-sm text-d-text-muted">Environment</p>
               <code className="text-white text-sm">
                 {process.env.NODE_ENV || 'development'}
@@ -309,19 +309,19 @@ export default function AdminSystemPage() {
           <div className="flex flex-wrap gap-3">
             <button
               onClick={() => window.open('/api/docs', '_blank')}
-              className="px-4 py-2 bg-primary/10 hover:bg-primary/20 border border-primary/20 rounded-lg text-primary text-sm font-medium transition-colors"
+              className="px-4 py-2 bg-primary/10 hover:bg-primary/20 border border-primary/20 rounded-sm text-primary text-sm font-medium transition-colors"
             >
               API Documentation
             </button>
             <button
               onClick={() => window.open('/api/health', '_blank')}
-              className="px-4 py-2 bg-up/10 hover:bg-up/20 border border-up/20 rounded-lg text-up text-sm font-medium transition-colors"
+              className="px-4 py-2 bg-up/10 hover:bg-up/20 border border-up/20 rounded-sm text-up text-sm font-medium transition-colors"
             >
               Health Endpoint
             </button>
             <button
               onClick={fetchHealth}
-              className="px-4 py-2 bg-white/[0.04] hover:bg-white/[0.06] rounded-lg text-d-text-muted text-sm font-medium transition-colors"
+              className="px-4 py-2 bg-white/[0.04] hover:bg-white/[0.06] rounded-sm text-d-text-muted text-sm font-medium transition-colors"
             >
               Force Refresh
             </button>

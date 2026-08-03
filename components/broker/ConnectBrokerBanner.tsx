@@ -14,7 +14,7 @@ export function ConnectBrokerBanner() {
       <span className="min-w-0 flex-1">
         Connect your broker to unlock <span className="text-d-text-primary">live data</span> and live trading. Until then you&apos;re on the virtual ₹10L portfolio.
       </span>
-      <Link href="/settings#broker" className="shrink-0 rounded-md bg-primary px-3 py-1 font-medium text-primary-foreground hover:bg-primary-hover">
+      <Link href="/settings#broker" className="shrink-0 rounded-xs bg-primary px-3 py-1 font-medium text-primary-foreground hover:bg-primary-hover">
         Connect
       </Link>
       <button onClick={() => setDismissed(true)} aria-label="Dismiss" className="shrink-0 text-d-text-muted hover:text-d-text-primary">

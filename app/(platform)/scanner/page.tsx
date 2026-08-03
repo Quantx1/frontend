@@ -78,7 +78,7 @@ function ScannerContent() {
             {tier ? <Badge tone="primary">{isAdmin ? 'Admin' : tier.toUpperCase()}</Badge> : null}
             <Link
               href="/scanner/new"
-              className="glass-control-accent inline-flex h-9 items-center gap-1.5 rounded-pill px-4 text-[13px] font-semibold transition-transform active:scale-[0.97]"
+              className="glass-control-accent inline-flex h-9 items-center gap-1.5 rounded-full px-4 text-[13px] font-semibold transition-transform active:scale-[0.97]"
             >
               <Sparkles className="h-4 w-4" /> Create with AI
             </Link>
@@ -91,9 +91,9 @@ function ScannerContent() {
         <Reveal delay={0.03}>
           <Link
             href="/scanner/new"
-            className="group flex items-center gap-4 rounded-xl border border-line bg-wrap p-4 transition-colors hover:border-wrap-line hover:bg-wrap-hover"
+            className="group flex items-center gap-4 rounded-md border border-line bg-wrap p-4 transition-colors hover:border-wrap-line hover:bg-wrap-hover"
           >
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-sm bg-primary/10 text-primary">
               <Plus className="h-5 w-5" />
             </span>
             <div className="min-w-0 flex-1">

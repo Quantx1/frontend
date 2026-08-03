@@ -57,7 +57,7 @@ export function HomeCockpit() {
           <EyebrowMono>{greetingFor(new Date().getHours())}{firstName ? `, ${firstName}` : ''}</EyebrowMono>
           <h1 className="heading-display mt-1 text-[clamp(1.6rem,3vw,2.2rem)] font-semibold tracking-tight text-d-text-primary">Your <span className="text-silver">AI trading desk</span></h1>
         </div>
-        <span className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-wrap px-2.5 py-1.5 text-[11.5px]">
+        <span className="inline-flex items-center gap-1.5 rounded-sm border border-line bg-wrap px-2.5 py-1.5 text-[11.5px]">
           <span className="relative flex h-2 w-2">
             <span className={`absolute inline-flex h-full w-full rounded-full ${mkt.tone === 'up' ? 'animate-ping bg-up opacity-60' : ''}`} />
             <span className={`relative inline-flex h-2 w-2 rounded-full ${mktDot}`} />

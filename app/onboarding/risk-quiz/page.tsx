@@ -207,14 +207,14 @@ export default function RiskQuizPage() {
         </header>
 
         {error && (
-          <div className="mb-5 rounded-md border border-down/40 bg-down/10 px-3 py-2 text-[12px] text-down">
+          <div className="mb-5 rounded-xs border border-down/40 bg-down/10 px-3 py-2 text-[12px] text-down">
             {error}
           </div>
         )}
 
         {/* Active question */}
         {current && (
-          <section className="rounded-xl border border-d-border bg-wrap p-5 md:p-6">
+          <section className="rounded-md border border-d-border bg-wrap p-5 md:p-6">
             <h2 className="text-[15px] md:text-[17px] font-semibold text-d-text-primary">
               {current.question}
             </h2>
@@ -225,7 +225,7 @@ export default function RiskQuizPage() {
                   <button
                     key={opt.value}
                     onClick={() => pick(opt.value)}
-                    className={`w-full text-left px-4 py-3 rounded-md transition-all ${
+                    className={`w-full text-left px-4 py-3 rounded-xs transition-all ${
                       picked
                         ? 'glass-control-accent'
                         : 'glass-control text-d-text-secondary hover:text-d-text-primary'
@@ -301,7 +301,7 @@ function ResultScreen({ result, onDone }: { result: QuizResult; onDone: () => vo
     <div className="min-h-screen bg-main text-d-text-primary">
       <main className="max-w-2xl mx-auto px-4 md:px-6 py-10 md:py-16">
         <div
-          className="rounded-2xl border p-6 md:p-8"
+          className="rounded-lg border p-6 md:p-8"
           style={{
             borderColor: `color-mix(in srgb, ${profileColor} 33%, transparent)`,
             background: `color-mix(in srgb, ${profileColor} 3%, transparent)`,
@@ -326,7 +326,7 @@ function ResultScreen({ result, onDone }: { result: QuizResult; onDone: () => vo
         </div>
 
         {/* Recommended tier card */}
-        <section className="mt-4 rounded-xl border border-d-border bg-wrap p-5">
+        <section className="mt-4 rounded-md border border-d-border bg-wrap p-5">
           <div className="flex items-center justify-between gap-3">
             <div>
               <p className="text-[10px] uppercase tracking-wider text-d-text-muted">
@@ -349,7 +349,7 @@ function ResultScreen({ result, onDone }: { result: QuizResult; onDone: () => vo
         </section>
 
         {/* Presets applied */}
-        <section className="mt-4 rounded-xl border border-d-border bg-wrap p-5">
+        <section className="mt-4 rounded-md border border-d-border bg-wrap p-5">
           <p className="text-[10px] uppercase tracking-wider text-d-text-muted mb-3">
             How the engines are sized for you
           </p>
@@ -472,7 +472,7 @@ function ModeChoiceScreen({
                 key={o.mode}
                 onClick={() => choose(o.mode)}
                 disabled={busy !== null}
-                className="glass-control relative rounded-2xl p-6 text-left transition-colors disabled:opacity-60"
+                className="glass-control relative rounded-lg p-6 text-left transition-colors disabled:opacity-60"
               >
                 {isRec && (
                   <span className="absolute right-4 top-4 rounded bg-primary/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">

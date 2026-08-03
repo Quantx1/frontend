@@ -73,7 +73,7 @@ function Chevron({ open }: { open: boolean }) {
 function FooterAccordion({ title, links }: { title: string; links: Links }) {
   const [open, setOpen] = useState(false)
   return (
-    <div className="rounded-lg border border-line bg-wrap">
+    <div className="rounded-sm border border-line bg-wrap">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}

@@ -79,7 +79,7 @@ export default function MarketExplainerCard({ entitled = false }: { entitled?: b
 
   // Visible loading card (header + shimmer lines) — never a blank white box.
   if (state === 'loading') return (
-    <div className="rounded-2xl bg-wrap overflow-hidden">
+    <div className="rounded-lg bg-wrap overflow-hidden">
       <div className="flex items-center gap-2 px-4 py-2.5 border-b border-line">
         <Sparkles className="w-3.5 h-3.5 text-primary" />
         <span className="text-[12px] font-semibold text-d-text-primary">What&rsquo;s happening in the market</span>
@@ -94,7 +94,7 @@ export default function MarketExplainerCard({ entitled = false }: { entitled?: b
   if (state === 'empty') return null
 
   return (
-    <div className="rounded-2xl bg-wrap overflow-hidden">
+    <div className="rounded-lg bg-wrap overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-line">
         <span className="flex items-center gap-2 text-[12px] font-semibold text-d-text-primary">
           <Sparkles className="w-3.5 h-3.5 text-primary" /> What&rsquo;s happening in the market

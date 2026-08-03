@@ -257,14 +257,14 @@ export default function PaperTradingPage() {
             <div className="flex items-center gap-2">
               <Link
                 href="/settings?tab=broker"
-                className="glass-control-accent inline-flex items-center gap-1.5 px-4 py-2 text-[12px] font-normal rounded-pill hover:opacity-90 active:scale-[0.97] transition-[transform,opacity] duration-150 ease-out"
+                className="glass-control-accent inline-flex items-center gap-1.5 px-4 py-2 text-[12px] font-normal rounded-full hover:opacity-90 active:scale-[0.97] transition-[transform,opacity] duration-150 ease-out"
               >
                 <Zap className="w-3.5 h-3.5" />
                 Connect broker
               </Link>
               <Link
                 href="/pricing"
-                className="glass-control inline-flex items-center gap-1.5 px-4 py-2 text-[12px] font-normal text-d-text-primary rounded-pill transition-colors"
+                className="glass-control inline-flex items-center gap-1.5 px-4 py-2 text-[12px] font-normal text-d-text-primary rounded-full transition-colors"
               >
                 Upgrade to Elite
                 <ArrowUpRight className="w-3 h-3" />
@@ -329,14 +329,14 @@ export default function PaperTradingPage() {
               <button
                 onClick={() => setResetOpen(false)}
                 disabled={resetting}
-                className="glass-control px-3 py-1.5 text-[12px] rounded-pill text-d-text-secondary hover:text-d-text-primary transition-colors disabled:opacity-50"
+                className="glass-control px-3 py-1.5 text-[12px] rounded-full text-d-text-secondary hover:text-d-text-primary transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmReset}
                 disabled={resetting}
-                className="glass-control-danger text-down inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-normal rounded-pill transition-colors disabled:opacity-50"
+                className="glass-control-danger text-down inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-normal rounded-full transition-colors disabled:opacity-50"
               >
                 {resetting ? <Loader2 className="h-3 w-3 animate-spin" /> : <RotateCcw className="h-3 w-3" />}
                 {resetting ? 'Resetting…' : 'Reset account'}

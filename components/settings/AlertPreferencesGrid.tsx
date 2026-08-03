@@ -53,14 +53,14 @@ export function AlertPreferencesGrid() {
 
   if (error) {
     return (
-      <div className="rounded-lg border border-down/30 bg-down/5 p-4 text-sm text-down">
+      <div className="rounded-sm border border-down/30 bg-down/5 p-4 text-sm text-down">
         Failed to load preferences: {handleApiError(error)}
       </div>
     )
   }
   if (isLoading || !data) {
     return (
-      <div className="rounded-lg border border-d-border bg-d-bg-card p-4 text-sm text-d-text-muted">
+      <div className="rounded-sm border border-d-border bg-d-bg-card p-4 text-sm text-d-text-muted">
         Loading event-level preferences…
       </div>
     )
@@ -71,7 +71,7 @@ export function AlertPreferencesGrid() {
   const channels = data.channels ?? []
 
   return (
-    <div className="rounded-lg border border-d-border bg-d-bg-card p-4">
+    <div className="rounded-sm border border-d-border bg-d-bg-card p-4">
       <div className="mb-3">
         <h3 className="font-medium text-d-text-primary">Event-level preferences</h3>
         <p className="mt-1 text-xs text-d-text-muted">
@@ -86,7 +86,7 @@ export function AlertPreferencesGrid() {
       </div>
 
       {errMsg && (
-        <div className="mb-3 rounded-md border border-down/30 bg-down/5 px-3 py-2 text-xs text-down">
+        <div className="mb-3 rounded-xs border border-down/30 bg-down/5 px-3 py-2 text-xs text-down">
           {errMsg}
         </div>
       )}

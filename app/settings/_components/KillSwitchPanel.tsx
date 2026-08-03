@@ -108,7 +108,7 @@ export default function KillSwitchPanel({
       </div>
 
       <div
-        className={`rounded-xl border border-l-2 bg-wrap p-5 ${
+        className={`rounded-md border border-l-2 bg-wrap p-5 ${
           active ? 'border-down/30 border-l-down bg-down/[0.05]' : 'border-line border-l-up'
         }`}
       >
@@ -152,7 +152,7 @@ export default function KillSwitchPanel({
         <div
           role="status"
           aria-live="polite"
-          className={`rounded-xl border p-5 ${
+          className={`rounded-md border p-5 ${
             result.success ? 'border-line bg-wrap' : 'border-warning/40 bg-warning/[0.06]'
           }`}
         >
@@ -180,7 +180,7 @@ export default function KillSwitchPanel({
                     {failed.map((sym) => (
                       <span
                         key={sym}
-                        className="rounded-md border border-warning/40 bg-warning/10 px-2 py-0.5 font-mono text-[11px] text-warning"
+                        className="rounded-xs border border-warning/40 bg-warning/10 px-2 py-0.5 font-mono text-[11px] text-warning"
                       >
                         {sym}
                       </span>
@@ -197,7 +197,7 @@ export default function KillSwitchPanel({
         </div>
       )}
 
-      <div className="rounded-xl border border-line bg-wrap p-5">
+      <div className="rounded-md border border-line bg-wrap p-5">
         <EyebrowMono className="mb-3">Auto-resume timer</EyebrowMono>
         <p className="mb-3 text-[12px] text-d-text-muted">
           Optional: auto-clear the kill switch after N hours so you don&apos;t forget to re-arm.
@@ -208,7 +208,7 @@ export default function KillSwitchPanel({
             <button
               key={h}
               onClick={() => setPauseHours(h)}
-              className={`rounded-lg px-3 py-1.5 text-[11px] transition-colors ${
+              className={`rounded-sm px-3 py-1.5 text-[11px] transition-colors ${
                 pauseHours === h
                   ? 'glass-control-accent'
                   : 'glass-control text-d-text-muted hover:text-d-text-primary'

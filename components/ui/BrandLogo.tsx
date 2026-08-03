@@ -13,7 +13,7 @@ import { logoUrl, tickerLogoUrl, SYMBOL_DOMAIN } from '@/lib/logo'
 export function Monogram({
   text,
   size = 28,
-  shape = 'rounded-md',
+  shape = 'rounded-xs',
   className,
 }: {
   text: string
@@ -42,7 +42,7 @@ export function BrandLogo({
   srcUrl,
   alt,
   size = 28,
-  shape = 'rounded-md',
+  shape = 'rounded-xs',
   className,
   fallback,
 }: {

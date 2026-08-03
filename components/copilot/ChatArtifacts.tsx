@@ -53,7 +53,7 @@ function ArtifactCtaChip({ cta }: { cta?: ArtifactCta }) {
     <div className="border-t border-line px-3 py-2">
       <Link
         href={cta.href}
-        className="inline-flex items-center gap-1 rounded-pill glass-control px-2.5 py-1 text-[11px] text-d-text-secondary transition-colors hover:text-d-text-primary"
+        className="inline-flex items-center gap-1 rounded-full glass-control px-2.5 py-1 text-[11px] text-d-text-secondary transition-colors hover:text-d-text-primary"
       >
         {cta.label}
         <ArrowRight size={11} />
@@ -158,8 +158,8 @@ export function ArtifactCard({ a }: { a: CopilotArtifact }) {
           {a.items.map((it) => (
             <div key={it.label} className="flex items-center gap-2">
               <span className="w-16 shrink-0 text-[11px] text-d-text-secondary">{it.label}</span>
-              <div className="h-2 flex-1 overflow-hidden rounded-pill bg-wrap-hover">
-                <div className="h-full rounded-pill" style={{ width: `${Math.max(0, Math.min(100, it.value))}%`, background: artBarBg(it.tone) }} />
+              <div className="h-2 flex-1 overflow-hidden rounded-full bg-wrap-hover">
+                <div className="h-full rounded-full" style={{ width: `${Math.max(0, Math.min(100, it.value))}%`, background: artBarBg(it.tone) }} />
               </div>
               <span className={`w-12 shrink-0 text-right text-[11px] tabular-nums ${MONO} ${artTone(it.tone)}`}>{it.value}{a.unit ?? ''}</span>
             </div>

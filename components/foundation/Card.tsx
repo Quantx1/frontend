@@ -78,7 +78,7 @@ export const Card = ({
     <div
       style={{ ...PAD_VARS[density], ...style }}
       className={cn(
-        'relative rounded-xl border border-line bg-wrap',
+        'relative rounded-md border border-line bg-wrap',
         ELEVATION[resolvedElevation],
         resolvedInteractive && [
           'cursor-pointer',
@@ -107,7 +107,7 @@ export const Panel = ({
   children,
   ...rest
 }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn('rounded-lg bg-surface-2 p-4', className)} {...rest}>
+  <div className={cn('rounded-sm bg-surface-2 p-4', className)} {...rest}>
     {children}
   </div>
 )

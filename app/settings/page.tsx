@@ -543,7 +543,7 @@ export default function SettingsPage() {
         {/* Section nav — the reference archetype H: a left sub-nav tab rail,
             hash-anchored (#profile, #appearance, …) so sections deep-link. */}
         <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-6">
-          <aside className="h-fit rounded-2xl border border-line bg-wrap p-2">
+          <aside className="h-fit rounded-lg border border-line bg-wrap p-2">
             <EyebrowMono className="px-3 pt-1 pb-2">Settings</EyebrowMono>
             <nav className="flex lg:flex-col gap-0.5 overflow-x-auto lg:overflow-visible">
               {tabs.map((tab) => {
@@ -574,7 +574,7 @@ export default function SettingsPage() {
             </nav>
           </aside>
 
-          <div className="rounded-2xl border border-line bg-wrap p-6 md:p-8 min-h-[500px]">
+          <div className="rounded-lg border border-line bg-wrap p-6 md:p-8 min-h-[500px]">
             {/* Profile Tab */}
             {activeTab === 'profile' && (
               <div className="space-y-6">

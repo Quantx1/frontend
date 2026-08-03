@@ -79,7 +79,7 @@ export function AutomationPanel() {
   const streamState = (name: string) => st?.streams.find((x) => x.stream === name && !x.user_strategy_id)
 
   return (
-    <div className="lg-surface rounded-2xl p-4">
+    <div className="lg-surface rounded-lg p-4">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Bot className="h-4 w-4 text-ai" />
@@ -105,7 +105,7 @@ export function AutomationPanel() {
 
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
         {/* Master toggle */}
-        <div className="rounded-xl border border-line bg-surface-2/40 p-3">
+        <div className="rounded-md border border-line bg-surface-2/40 p-3">
           <div className="mb-1 font-mono text-[9px] uppercase tracking-wider text-d-text-muted">Trading bot</div>
           <Button
             variant={enabled ? 'secondary' : 'ai'}
@@ -123,7 +123,7 @@ export function AutomationPanel() {
           const cur = streamState(name)
           const on = Boolean(cur?.enabled)
           return (
-            <div key={name} className="rounded-xl border border-line bg-surface-2/40 p-3">
+            <div key={name} className="rounded-md border border-line bg-surface-2/40 p-3">
               <div className="mb-1 flex items-center justify-between font-mono text-[9px] uppercase tracking-wider text-d-text-muted">
                 <span>{label}</span>
                 {on && (

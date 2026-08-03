@@ -59,7 +59,7 @@ export default function TrackRecordPage() {
 
       <div className="space-y-5 p-4 md:p-6 xl:px-8">
         {/* Filter strip — window + source */}
-        <div className="flex flex-wrap items-center gap-3 rounded-md border border-line bg-wrap/60 px-3 py-2">
+        <div className="flex flex-wrap items-center gap-3 rounded-xs border border-line bg-wrap/60 px-3 py-2">
           <div className="flex items-center gap-1.5">
             <span className="text-[10px] font-semibold uppercase tracking-wider text-d-text-muted">Window</span>
             {WINDOWS.map((w) => (
@@ -67,7 +67,7 @@ export default function TrackRecordPage() {
                 key={w}
                 type="button"
                 onClick={() => setWindowDays(w)}
-                className={`rounded-md px-2 py-1 text-[11px] ${
+                className={`rounded-xs px-2 py-1 text-[11px] ${
                   windowDays === w
                     ? 'glass-control-accent'
                     : 'glass-control text-d-text-secondary'
@@ -84,7 +84,7 @@ export default function TrackRecordPage() {
                 key={s}
                 type="button"
                 onClick={() => setSource(s)}
-                className={`rounded-md px-2 py-1 text-[11px] capitalize ${
+                className={`rounded-xs px-2 py-1 text-[11px] capitalize ${
                   source === s
                     ? 'glass-control-accent'
                     : 'glass-control text-d-text-secondary'
@@ -205,7 +205,7 @@ export default function TrackRecordPage() {
             </div>
 
             {/* Date range card */}
-            <div className="rounded-xl border border-line bg-wrap p-4 text-xs text-d-text-secondary">
+            <div className="rounded-md border border-line bg-wrap p-4 text-xs text-d-text-secondary">
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 <Stat label="First trade" value={data.first_trade_at?.slice(0, 10) ?? '—'} />
                 <Stat label="Last trade" value={data.last_trade_at?.slice(0, 10) ?? '—'} />
@@ -229,7 +229,7 @@ export default function TrackRecordPage() {
 
         {/* HIGH #6 — SEBI disclaimer footer */}
         {compliance && (
-          <div className="rounded-md border border-warning/20 bg-warning/5 px-3 py-2 text-[10px] text-d-text-secondary">
+          <div className="rounded-xs border border-warning/20 bg-warning/5 px-3 py-2 text-[10px] text-d-text-secondary">
             <p className="font-semibold text-warning/90">
               SEBI Research Analyst Reg #: {compliance.sebi_ra_reg_number}
               {compliance.sebi_ra_valid_until && ` · Valid until ${compliance.sebi_ra_valid_until}`}
@@ -254,7 +254,7 @@ function MetricCard({ label, value, sub, tone }: {
       : tone === 'down' ? 'text-down'
         : 'text-d-text-primary'
   return (
-    <div className="rounded-xl border border-line bg-wrap p-3">
+    <div className="rounded-md border border-line bg-wrap p-3">
       <p className="text-[10px] font-semibold uppercase tracking-wider text-d-text-muted">{label}</p>
       <p className={`mt-1 font-mono text-2xl font-medium tabular-nums ${toneClass}`}>{value}</p>
       <p className="mt-0.5 text-[10px] text-d-text-muted">{sub}</p>

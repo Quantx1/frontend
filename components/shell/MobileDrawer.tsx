@@ -49,7 +49,7 @@ export const MobileDrawer = ({ open, onClose, pathname }: Props) => {
             className="flex items-center gap-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
           >
             <span
-              className="grid h-7 w-7 shrink-0 place-items-center rounded-2xl bg-primary text-primary-foreground"
+              className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground"
               aria-hidden="true"
             >
               <span className="text-[15px] font-black leading-none">Q</span>

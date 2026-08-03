@@ -501,7 +501,7 @@ export default function StocksPage() {
 
 function RegimeBanner({ regime, loading }: { regime: CurrentRegime | null; loading: boolean }) {
   if (loading && !regime) {
-    return <div className="h-[64px] animate-pulse rounded-lg border border-line bg-wrap" />
+    return <div className="h-[64px] animate-pulse rounded-sm border border-line bg-wrap" />
   }
   if (!regime) return null
 
@@ -517,7 +517,7 @@ function RegimeBanner({ regime, loading }: { regime: CurrentRegime | null; loadi
   ]
 
   return (
-    <div className="rounded-lg border px-4 py-3" style={{ background: `color-mix(in srgb, ${tone.fg} 6%, transparent)`, borderColor: `color-mix(in srgb, ${tone.fg} 24%, transparent)` }}>
+    <div className="rounded-sm border px-4 py-3" style={{ background: `color-mix(in srgb, ${tone.fg} 6%, transparent)`, borderColor: `color-mix(in srgb, ${tone.fg} 24%, transparent)` }}>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex items-center gap-3">
           <ModelBadge modelKey="regime_detector" size="xs" variant="soft" />
@@ -551,7 +551,7 @@ function MoversCard({ title, items, loading }: {
   title: string; items: StockRow[]; loading: boolean
 }) {
   return (
-    <div className="overflow-hidden rounded-lg border border-line bg-wrap">
+    <div className="overflow-hidden rounded-sm border border-line bg-wrap">
       <div className="border-b border-line px-4 py-2.5">
         <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-d-text-muted">{title}</p>
       </div>

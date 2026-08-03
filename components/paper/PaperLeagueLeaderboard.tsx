@@ -28,14 +28,14 @@ interface Props {
 export default function PaperLeagueLeaderboard({ rows, currentUserHandle }: Props) {
   if (!rows.length) {
     return (
-      <div className="rounded-2xl border border-line bg-wrap text-[12px] text-d-text-muted text-center py-6">
+      <div className="rounded-lg border border-line bg-wrap text-[12px] text-d-text-muted text-center py-6">
         League opens at the end of the first week. Keep paper-trading.
       </div>
     )
   }
 
   return (
-    <div className="rounded-2xl border border-line bg-wrap overflow-hidden">
+    <div className="rounded-lg border border-line bg-wrap overflow-hidden">
       <div className="px-5 py-3 border-b border-line flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Crown className="w-3.5 h-3.5 text-primary" />

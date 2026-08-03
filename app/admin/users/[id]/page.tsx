@@ -109,7 +109,7 @@ export default function UserDetailPage() {
       <div className="flex items-center gap-4">
         <Link
           href="/admin/users"
-          className="p-2 bg-d-bg-elevated hover:bg-white/[0.06] rounded-lg transition-colors"
+          className="p-2 bg-d-bg-elevated hover:bg-white/[0.06] rounded-sm transition-colors"
         >
           <ArrowLeft className="w-5 h-5 text-d-text-muted" />
         </Link>
@@ -119,7 +119,7 @@ export default function UserDetailPage() {
         </div>
         <button
           onClick={fetchUserDetail}
-          className="p-2 bg-d-bg-elevated hover:bg-white/[0.06] rounded-lg transition-colors"
+          className="p-2 bg-d-bg-elevated hover:bg-white/[0.06] rounded-sm transition-colors"
         >
           <RefreshCw className="w-5 h-5 text-d-text-muted" />
         </button>
@@ -128,7 +128,7 @@ export default function UserDetailPage() {
       {/* Status Banner */}
       {(user.is_suspended || user.is_banned) && (
         <div
-          className={`p-4 rounded-xl flex items-center gap-3 ${
+          className={`p-4 rounded-md flex items-center gap-3 ${
             user.is_banned ? 'bg-down/10 border border-down/20' : 'bg-warning/10 border border-warning/20'
           }`}
         >
@@ -146,7 +146,7 @@ export default function UserDetailPage() {
       {/* User Info Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Basic Info */}
-        <div className="bg-d-bg-card rounded-2xl border border-d-border p-6">
+        <div className="bg-d-bg-card rounded-lg border border-d-border p-6">
           <h3 className="text-lg font-semibold text-white mb-4">Basic Info</h3>
           <div className="space-y-3">
             <div className="flex items-center gap-3">
@@ -175,7 +175,7 @@ export default function UserDetailPage() {
         </div>
 
         {/* Trading Stats */}
-        <div className="bg-d-bg-card rounded-2xl border border-d-border p-6">
+        <div className="bg-d-bg-card rounded-lg border border-d-border p-6">
           <h3 className="text-lg font-semibold text-white mb-4">Trading Stats</h3>
           <div className="space-y-3">
             <div className="flex justify-between">
@@ -204,7 +204,7 @@ export default function UserDetailPage() {
         </div>
 
         {/* Trading Settings */}
-        <div className="bg-d-bg-card rounded-2xl border border-d-border p-6">
+        <div className="bg-d-bg-card rounded-lg border border-d-border p-6">
           <h3 className="text-lg font-semibold text-white mb-4">Trading Settings</h3>
           <div className="space-y-3 text-sm">
             <div className="flex justify-between">
@@ -236,27 +236,27 @@ export default function UserDetailPage() {
       </div>
 
       {/* Admin Actions */}
-      <div className="bg-d-bg-card rounded-2xl border border-d-border p-6">
+      <div className="bg-d-bg-card rounded-lg border border-d-border p-6">
         <h3 className="text-lg font-semibold text-white mb-4">Admin Actions</h3>
         <div className="flex flex-wrap gap-3">
           <button
             onClick={handleResetSubscription}
-            className="px-4 py-2 bg-primary/10 hover:bg-primary/20 border border-primary/20 rounded-lg text-primary text-sm font-medium transition-colors"
+            className="px-4 py-2 bg-primary/10 hover:bg-primary/20 border border-primary/20 rounded-sm text-primary text-sm font-medium transition-colors"
           >
             Reset Subscription
           </button>
           {!user.is_banned && (
             <>
               {user.is_suspended ? (
-                <button className="px-4 py-2 bg-up/10 hover:bg-up/20 border border-up/20 rounded-lg text-up text-sm font-medium transition-colors">
+                <button className="px-4 py-2 bg-up/10 hover:bg-up/20 border border-up/20 rounded-sm text-up text-sm font-medium transition-colors">
                   Unsuspend User
                 </button>
               ) : (
-                <button className="px-4 py-2 bg-warning/10 hover:bg-warning/20 border border-warning/20 rounded-lg text-warning text-sm font-medium transition-colors">
+                <button className="px-4 py-2 bg-warning/10 hover:bg-warning/20 border border-warning/20 rounded-sm text-warning text-sm font-medium transition-colors">
                   Suspend User
                 </button>
               )}
-              <button className="px-4 py-2 bg-down/10 hover:bg-down/20 border border-down/20 rounded-lg text-down text-sm font-medium transition-colors">
+              <button className="px-4 py-2 bg-down/10 hover:bg-down/20 border border-down/20 rounded-sm text-down text-sm font-medium transition-colors">
                 Ban User
               </button>
             </>
@@ -284,7 +284,7 @@ export default function UserDetailPage() {
       </div>
 
       {/* Tab Content */}
-      <div className="bg-d-bg-card rounded-2xl border border-d-border p-6">
+      <div className="bg-d-bg-card rounded-lg border border-d-border p-6">
         {activeTab === 'overview' && (
           <div>
             <h3 className="text-lg font-semibold text-white mb-4">Active Positions</h3>
@@ -375,7 +375,7 @@ export default function UserDetailPage() {
             {payment_history.length > 0 ? (
               <div className="space-y-3">
                 {payment_history.map((payment: any) => (
-                  <div key={payment.id} className="flex justify-between items-center p-4 bg-white/[0.04] rounded-lg">
+                  <div key={payment.id} className="flex justify-between items-center p-4 bg-white/[0.04] rounded-sm">
                     <div>
                       <p className="text-white font-medium">
                         {payment.subscription_plans?.display_name || 'Payment'}
@@ -405,7 +405,7 @@ export default function UserDetailPage() {
             {recent_activity.length > 0 ? (
               <div className="space-y-3">
                 {recent_activity.map((activity: any, i: number) => (
-                  <div key={i} className="flex items-start gap-4 p-4 bg-white/[0.04] rounded-lg">
+                  <div key={i} className="flex items-start gap-4 p-4 bg-white/[0.04] rounded-sm">
                     <div className="w-10 h-10 bg-d-bg-elevated rounded-full flex items-center justify-center">
                       <History className="w-5 h-5 text-d-text-muted" />
                     </div>

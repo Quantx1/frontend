@@ -12,8 +12,8 @@ interface Props {
 
 const ROUNDED: Record<Rounded, string> = {
   sm: 'rounded-sm',
-  md: 'rounded-md',
-  lg: 'rounded-lg',
+  md: 'rounded-xs',
+  lg: 'rounded-sm',
   full: 'rounded-full',
 }
 

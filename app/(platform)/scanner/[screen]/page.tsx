@@ -56,7 +56,7 @@ export default function ScreenDetailPage() {
           action={
             <Link
               href="/scanner"
-              className="glass-control inline-flex h-9 items-center rounded-pill px-4 text-[13px] text-d-text-primary transition-colors"
+              className="glass-control inline-flex h-9 items-center rounded-full px-4 text-[13px] text-d-text-primary transition-colors"
             >
               Back to Screener
             </Link>

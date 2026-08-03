@@ -136,14 +136,14 @@ export default function AdminTrainingPage() {
       </div>
 
       {error && (
-        <div className="rounded-lg border border-down/30 bg-down/[0.08] p-3 text-[13px] text-down flex items-center gap-2">
+        <div className="rounded-sm border border-down/30 bg-down/[0.08] p-3 text-[13px] text-down flex items-center gap-2">
           <AlertCircle className="w-4 h-4" />
           {error}
         </div>
       )}
 
       {/* Run config */}
-      <div className="rounded-xl border border-d-border bg-d-bg-card p-5 space-y-4">
+      <div className="rounded-md border border-d-border bg-d-bg-card p-5 space-y-4">
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <h2 className="text-sm font-semibold text-white">Run config</h2>
           <button
@@ -173,7 +173,7 @@ export default function AdminTrainingPage() {
             type="button"
             onClick={() => trigger()}
             disabled={busy}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-black text-[12px] font-semibold hover:bg-primary-hover disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xs bg-primary text-black text-[12px] font-semibold hover:bg-primary-hover disabled:opacity-50"
           >
             {busy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5" />}
             Run all ({trainers.length})
@@ -182,7 +182,7 @@ export default function AdminTrainingPage() {
             type="button"
             onClick={() => trigger(Array.from(selected))}
             disabled={busy || selected.size === 0}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-primary/40 text-primary text-[12px] font-semibold hover:bg-primary/[0.10] disabled:opacity-40"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xs border border-primary/40 text-primary text-[12px] font-semibold hover:bg-primary/[0.10] disabled:opacity-40"
           >
             <Play className="w-3.5 h-3.5" />
             Run selected ({selected.size})
@@ -191,7 +191,7 @@ export default function AdminTrainingPage() {
       </div>
 
       {/* Discovered trainers */}
-      <div className="rounded-xl border border-d-border bg-d-bg-card overflow-hidden">
+      <div className="rounded-md border border-d-border bg-d-bg-card overflow-hidden">
         <div className="px-5 py-3 border-b border-d-border">
           <h2 className="text-sm font-semibold text-white">Discovered trainers</h2>
         </div>
@@ -259,7 +259,7 @@ export default function AdminTrainingPage() {
       </div>
 
       {/* Recent runs */}
-      <div className="rounded-xl border border-d-border bg-d-bg-card overflow-hidden">
+      <div className="rounded-md border border-d-border bg-d-bg-card overflow-hidden">
         <div className="px-5 py-3 border-b border-d-border flex items-center justify-between">
           <h2 className="text-sm font-semibold text-white">Recent runs</h2>
           <span className="text-[10px] text-d-text-muted">last 50</span>

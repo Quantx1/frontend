@@ -82,7 +82,7 @@ export default function ChartVisionCard({ symbol, anywhere = false }: Props) {
   }
 
   return (
-    <section className="rounded-2xl border border-d-border bg-wrap overflow-hidden">
+    <section className="rounded-lg border border-d-border bg-wrap overflow-hidden">
       <header className="px-5 py-3 border-b border-d-border flex items-center justify-between gap-3">
         <h3 className="text-[13px] font-semibold text-d-text-primary flex items-center gap-2">
           <Eye className="w-4 h-4 text-primary" />
@@ -122,7 +122,7 @@ export default function ChartVisionCard({ symbol, anywhere = false }: Props) {
         )}
 
         {error && !loading && (
-          <div className="rounded-xl border border-down/40 bg-down/10 px-3 py-2 flex items-start gap-2">
+          <div className="rounded-md border border-down/40 bg-down/10 px-3 py-2 flex items-start gap-2">
             <AlertTriangle className="w-3.5 h-3.5 text-down mt-0.5 shrink-0" />
             <div className="flex-1 min-w-0">
               <p className="text-[12px] text-down">{error}</p>
@@ -205,7 +205,7 @@ export function AnalysisView({ a }: { a: Analysis }) {
       {/* Setup banner */}
       {a.setup && (
         <div
-          className="rounded-xl border px-3 py-2"
+          className="rounded-md border px-3 py-2"
           style={{ borderColor: `color-mix(in srgb, ${setupColor} 33%, transparent)`, background: `color-mix(in srgb, ${setupColor} 6%, transparent)` }}
         >
           <p className="text-[10px] uppercase tracking-wider text-d-text-muted mb-0.5">Setup</p>
@@ -223,7 +223,7 @@ export function AnalysisView({ a }: { a: Analysis }) {
 
       {/* Narrative */}
       {a.narrative && (
-        <div className="rounded-xl bg-main border border-d-border px-3 py-2.5">
+        <div className="rounded-md bg-main border border-d-border px-3 py-2.5">
           <p className="text-[10px] uppercase tracking-wider text-d-text-muted mb-1">Read</p>
           <p className="text-[12px] text-d-text-primary leading-relaxed">{a.narrative}</p>
         </div>
@@ -247,7 +247,7 @@ function LevelBox({
   color: string
 }) {
   return (
-    <div className="rounded-xl bg-main border border-d-border px-3 py-2">
+    <div className="rounded-md bg-main border border-d-border px-3 py-2">
       <p className="text-[9px] uppercase tracking-wider text-d-text-muted">{label}</p>
       {values.length === 0 ? (
         <p className="text-[12px] text-d-text-muted mt-0.5">—</p>

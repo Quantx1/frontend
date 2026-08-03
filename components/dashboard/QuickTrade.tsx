@@ -231,11 +231,11 @@ export default function QuickTrade({
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
-            <div className="bg-background-surface border border-d-border rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
+            <div className="bg-background-surface border border-d-border rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-d-border">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
+                  <div className="p-2 rounded-sm bg-primary/10 border border-primary/20">
                     <Zap className="w-5 h-5 text-primary" />
                   </div>
                   <div>
@@ -249,7 +249,7 @@ export default function QuickTrade({
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-2 rounded-lg hover:bg-background-elevated transition-colors"
+                  className="p-2 rounded-sm hover:bg-background-elevated transition-colors"
                 >
                   <X className="w-5 h-5 text-d-text-muted" />
                 </button>
@@ -276,13 +276,13 @@ export default function QuickTrade({
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="Search by symbol or name..."
-                        className="w-full pl-12 pr-4 py-3 bg-background-elevated border border-d-border rounded-xl text-d-text-primary placeholder:text-d-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                        className="w-full pl-12 pr-4 py-3 bg-background-elevated border border-d-border rounded-md text-d-text-primary placeholder:text-d-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                       />
                     </div>
 
                     {/* Search Results */}
                     {searchQuery && searchResults.length > 0 && (
-                      <div className="mt-2 max-h-40 overflow-y-auto bg-background-elevated border border-d-border rounded-xl divide-y divide-d-border">
+                      <div className="mt-2 max-h-40 overflow-y-auto bg-background-elevated border border-d-border rounded-md divide-y divide-d-border">
                         {searchResults.map((stock) => (
                           <button
                             key={stock.symbol}
@@ -320,7 +320,7 @@ export default function QuickTrade({
                         <button
                           type="button"
                           onClick={() => setValue('direction', 'BUY')}
-                          className={`p-3 rounded-xl border font-medium transition-all ${
+                          className={`p-3 rounded-md border font-medium transition-all ${
                             direction === 'BUY'
                               ? 'bg-up/20 border-up text-up'
                               : 'bg-background-elevated border-d-border text-d-text-secondary hover:border-white/20'
@@ -332,7 +332,7 @@ export default function QuickTrade({
                         <button
                           type="button"
                           onClick={() => setValue('direction', 'SELL')}
-                          className={`p-3 rounded-xl border font-medium transition-all ${
+                          className={`p-3 rounded-md border font-medium transition-all ${
                             direction === 'SELL'
                               ? 'bg-down/20 border-down text-down'
                               : 'bg-background-elevated border-d-border text-d-text-secondary hover:border-white/20'
@@ -350,7 +350,7 @@ export default function QuickTrade({
                       </label>
                       <select
                         {...register('orderType')}
-                        className="w-full px-4 py-3 bg-background-elevated border border-d-border rounded-xl text-d-text-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                        className="w-full px-4 py-3 bg-background-elevated border border-d-border rounded-md text-d-text-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                       >
                         <option value="MARKET">Market</option>
                         <option value="LIMIT">Limit</option>
@@ -369,7 +369,7 @@ export default function QuickTrade({
                         type="number"
                         step="0.05"
                         placeholder="₹ 0.00"
-                        className="w-full px-4 py-3 bg-background-elevated border border-d-border rounded-xl text-d-text-primary font-mono placeholder:text-d-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                        className="w-full px-4 py-3 bg-background-elevated border border-d-border rounded-md text-d-text-primary font-mono placeholder:text-d-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                       />
                     </div>
 
@@ -389,7 +389,7 @@ export default function QuickTrade({
                         {...register('quantity', { valueAsNumber: true })}
                         type="number"
                         placeholder="0"
-                        className="w-full px-4 py-3 bg-background-elevated border border-d-border rounded-xl text-d-text-primary font-mono placeholder:text-d-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                        className="w-full px-4 py-3 bg-background-elevated border border-d-border rounded-md text-d-text-primary font-mono placeholder:text-d-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                       />
                     </div>
                   </div>
@@ -422,7 +422,7 @@ export default function QuickTrade({
                         type="number"
                         step="0.05"
                         placeholder="₹ 0.00"
-                        className="w-full px-4 py-3 bg-background-elevated border border-d-border rounded-xl text-d-text-primary font-mono placeholder:text-d-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                        className="w-full px-4 py-3 bg-background-elevated border border-d-border rounded-md text-d-text-primary font-mono placeholder:text-d-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                       />
                     </div>
 
@@ -436,14 +436,14 @@ export default function QuickTrade({
                         type="number"
                         step="0.05"
                         placeholder="₹ 0.00"
-                        className="w-full px-4 py-3 bg-background-elevated border border-d-border rounded-xl text-d-text-primary font-mono placeholder:text-d-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                        className="w-full px-4 py-3 bg-background-elevated border border-d-border rounded-md text-d-text-primary font-mono placeholder:text-d-text-muted focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                       />
                     </div>
                   </div>
 
                   {/* P&L Preview */}
                   {pnl && (
-                    <div className="bg-background-elevated rounded-xl p-4 border border-d-border">
+                    <div className="bg-background-elevated rounded-md p-4 border border-d-border">
                       <div className="grid grid-cols-3 gap-4 text-center">
                         <div>
                           <p className="text-xs text-d-text-muted mb-1">Potential Profit</p>
@@ -478,7 +478,7 @@ export default function QuickTrade({
                           key={product}
                           type="button"
                           onClick={() => setValue('product', product as any)}
-                          className={`p-3 rounded-xl font-medium transition-all ${
+                          className={`p-3 rounded-md font-medium transition-all ${
                             watch('product') === product
                               ? 'glass-control-accent'
                               : 'glass-control text-d-text-secondary'

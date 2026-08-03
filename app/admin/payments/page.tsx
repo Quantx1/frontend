@@ -138,7 +138,7 @@ export default function AdminPaymentsPage() {
                 </p>
                 <p className="text-xs text-d-text-muted mt-1">Last {statsPeriod} days</p>
               </div>
-              <div className="p-3 rounded-xl bg-up/10">
+              <div className="p-3 rounded-md bg-up/10">
                 <DollarSign className="w-6 h-6 text-up" />
               </div>
             </div>
@@ -153,7 +153,7 @@ export default function AdminPaymentsPage() {
                 </p>
                 <p className="text-xs text-d-text-muted mt-1">Successful payments</p>
               </div>
-              <div className="p-3 rounded-xl bg-primary/10">
+              <div className="p-3 rounded-md bg-primary/10">
                 <CheckCircle className="w-6 h-6 text-primary" />
               </div>
             </div>
@@ -168,7 +168,7 @@ export default function AdminPaymentsPage() {
                 </p>
                 <p className="text-xs text-d-text-muted mt-1">Failed attempts</p>
               </div>
-              <div className="p-3 rounded-xl bg-down/10">
+              <div className="p-3 rounded-md bg-down/10">
                 <XCircle className="w-6 h-6 text-down" />
               </div>
             </div>
@@ -183,7 +183,7 @@ export default function AdminPaymentsPage() {
                 </p>
                 <p className="text-xs text-d-text-muted mt-1">{stats?.refunds_count || 0} refunds</p>
               </div>
-              <div className="p-3 rounded-xl bg-warning/10">
+              <div className="p-3 rounded-md bg-warning/10">
                 <RotateCcw className="w-6 h-6 text-warning" />
               </div>
             </div>
@@ -197,7 +197,7 @@ export default function AdminPaymentsPage() {
           <button
             key={days}
             onClick={() => setStatsPeriod(days)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-4 py-2 rounded-sm text-sm font-medium transition-colors ${
               statsPeriod === days
                 ? 'bg-warning text-black'
                 : 'bg-white/[0.04] text-d-text-muted hover:bg-white/[0.06]'
@@ -218,7 +218,7 @@ export default function AdminPaymentsPage() {
                 setStatusFilter(e.target.value)
                 setPage(1)
               }}
-              className="px-4 py-2.5 bg-white/[0.04] border border-d-border rounded-lg text-white focus:outline-none focus:border-warning/60"
+              className="px-4 py-2.5 bg-white/[0.04] border border-d-border rounded-sm text-white focus:outline-none focus:border-warning/60"
             >
               <option value="">All Status</option>
               <option value="pending">Pending</option>
@@ -231,7 +231,7 @@ export default function AdminPaymentsPage() {
                 fetchPayments()
                 fetchStats()
               }}
-              className="px-4 py-2.5 bg-white/[0.04] hover:bg-white/[0.06] rounded-lg text-d-text-muted transition-colors flex items-center gap-2"
+              className="px-4 py-2.5 bg-white/[0.04] hover:bg-white/[0.06] rounded-sm text-d-text-muted transition-colors flex items-center gap-2"
             >
               <RefreshCw className="w-4 h-4" />
               Refresh
@@ -325,7 +325,7 @@ export default function AdminPaymentsPage() {
               <button
                 onClick={() => setPage(Math.max(1, page - 1))}
                 disabled={page === 1}
-                className="p-2 bg-white/[0.04] hover:bg-white/[0.06] rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="p-2 bg-white/[0.04] hover:bg-white/[0.06] rounded-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronLeft className="w-4 h-4 text-d-text-muted" />
               </button>
@@ -333,7 +333,7 @@ export default function AdminPaymentsPage() {
               <button
                 onClick={() => setPage(page + 1)}
                 disabled={payments.length < pageSize}
-                className="p-2 bg-white/[0.04] hover:bg-white/[0.06] rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="p-2 bg-white/[0.04] hover:bg-white/[0.06] rounded-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronRight className="w-4 h-4 text-d-text-muted" />
               </button>

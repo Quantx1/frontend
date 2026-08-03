@@ -227,7 +227,7 @@ export default function TradesPage() {
     return (
       <AppShell>
         <div className="w-full space-y-5 p-4 md:p-6 xl:px-8">
-          <div className="h-8 w-44 rounded-lg bg-wrap animate-pulse" />
+          <div className="h-8 w-44 rounded-sm bg-wrap animate-pulse" />
           <div className="h-4 w-64 rounded bg-wrap animate-pulse" />
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             {Array.from({ length: 4 }).map((_, i) => (

@@ -8,7 +8,7 @@
    provisional + events — so it renders for logged-out users too. No live
    intraday NSE quotes flow through here (those stay Path-A gated on the live
    board below). EOD/provisional data is always labelled as such.
-   FintechX design: .tile-tint flat cards, rounded-2xl, token classes only.
+   FintechX design: .tile-tint flat cards, rounded-lg, token classes only.
    ============================================================================ */
 
 import useSWR from 'swr'
@@ -137,13 +137,13 @@ function EventList({ items, expiry }: { items: Array<{ type: string; label: stri
       {hasExpiry && (
         <div className="grid grid-cols-2 gap-2">
           {expiry?.weekly && (
-            <div className="rounded-lg bg-wrap px-3 py-2.5">
+            <div className="rounded-sm bg-wrap px-3 py-2.5">
               <div className="text-[9.5px] uppercase tracking-wide text-d-text-muted">Weekly expiry</div>
               <div className={`mt-0.5 text-[14px] font-semibold text-d-text-primary ${MONO}`}>{shortDate(expiry.weekly)}</div>
             </div>
           )}
           {expiry?.monthly && (
-            <div className="rounded-lg bg-wrap px-3 py-2.5">
+            <div className="rounded-sm bg-wrap px-3 py-2.5">
               <div className="text-[9.5px] uppercase tracking-wide text-d-text-muted">Monthly expiry</div>
               <div className={`mt-0.5 text-[14px] font-semibold text-d-text-primary ${MONO}`}>{shortDate(expiry.monthly)}</div>
             </div>
@@ -222,14 +222,14 @@ export default function DailyBriefingCard() {
   // ── loading skeleton (first load / retrying with nothing cached yet) ──
   if (!data && (isLoading || isValidating)) {
     return (
-      <div className="rounded-2xl bg-wrap p-5 md:p-6">
+      <div className="rounded-lg bg-wrap p-5 md:p-6">
         <div className="flex items-center gap-3">
-          <Skeleton className="h-9 w-9 rounded-xl" />
+          <Skeleton className="h-9 w-9 rounded-md" />
           <div className="space-y-1.5"><Skeleton className="h-3 w-24" /><Skeleton className="h-2.5 w-32" /></div>
         </div>
         <Skeleton className="mt-4 h-7 w-3/4" />
         <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
-          {[0, 1, 2].map((i) => <Skeleton key={i} className="h-32 w-full rounded-2xl" />)}
+          {[0, 1, 2].map((i) => <Skeleton key={i} className="h-32 w-full rounded-lg" />)}
         </div>
       </div>
     )
@@ -238,7 +238,7 @@ export default function DailyBriefingCard() {
   // ── total honest-empty (endpoint unavailable) ──
   if (!data || !data.headline) {
     return (
-      <div className="rounded-2xl bg-wrap p-5 md:p-6">
+      <div className="rounded-lg bg-wrap p-5 md:p-6">
         <div className="flex items-center gap-2.5 text-[13px] font-semibold text-d-text-primary">
           <Sparkles size={16} className="text-primary" /> AI Daily Briefing
         </div>
@@ -270,12 +270,12 @@ export default function DailyBriefingCard() {
       variants={container}
       initial="hidden"
       animate="show"
-      className="rounded-2xl bg-wrap p-5 md:p-6"
+      className="rounded-lg bg-wrap p-5 md:p-6"
     >
       {/* ── header ── */}
       <motion.div variants={item} className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/12 text-primary"><SessIcon size={19} /></span>
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-primary/12 text-primary"><SessIcon size={19} /></span>
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <span className="text-[13px] font-semibold text-d-text-primary">{sessLabel} briefing</span>
@@ -317,7 +317,7 @@ export default function DailyBriefingCard() {
                 which is the entire point of a "global setup" read. */}
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               {gift?.last != null && (
-                <div className="flex flex-col rounded-lg border border-primary/40 bg-primary/10 px-3 py-2">
+                <div className="flex flex-col rounded-sm border border-primary/40 bg-primary/10 px-3 py-2">
                   <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-primary">
                     {(gift.change_pct ?? 0) >= 0 ? <ArrowUpRight size={11} /> : <ArrowDownRight size={11} />} {gift.label}
                   </span>
@@ -327,7 +327,7 @@ export default function DailyBriefingCard() {
                 </div>
               )}
               {globalItems.map((g) => (
-                <div key={g.key} className="flex min-w-0 flex-col rounded-lg bg-wrap px-3 py-2">
+                <div key={g.key} className="flex min-w-0 flex-col rounded-sm bg-wrap px-3 py-2">
                   <span className="truncate text-[10px] uppercase tracking-wide text-d-text-muted">{g.label}</span>
                   <span className={`text-[13px] font-semibold text-d-text-primary ${MONO}`}>{num(g.last)}</span>
                   <span className={`text-[11px] ${MONO} ${(g.change_pct ?? 0) >= 0 ? 'text-up' : 'text-down'}`}>{pct(g.change_pct)}</span>

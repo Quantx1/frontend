@@ -356,7 +356,7 @@ export default function PatternsV2Tab() {
   return (
     <div className="space-y-4">
       {/* Filter strip — universe + direction */}
-      <div className="flex flex-wrap items-center gap-3 rounded-md border border-line bg-wrap/60 px-3 py-2">
+      <div className="flex flex-wrap items-center gap-3 rounded-xs border border-line bg-wrap/60 px-3 py-2">
         <div className="flex items-center gap-1.5">
           <span className="text-[10px] font-semibold uppercase tracking-wider text-d-text-muted">
             Universe
@@ -366,7 +366,7 @@ export default function PatternsV2Tab() {
               key={u.value}
               type="button"
               onClick={() => setUniverse(u.value)}
-              className={`rounded-md px-2 py-1 text-[11px] ${
+              className={`rounded-xs px-2 py-1 text-[11px] ${
                 universe === u.value
                   ? 'glass-control-accent'
                   : 'glass-control text-d-text-secondary hover:text-d-text-primary'
@@ -385,7 +385,7 @@ export default function PatternsV2Tab() {
               key={t.value}
               type="button"
               onClick={() => setTimeframe(t.value)}
-              className={`rounded-md px-2 py-1 text-[11px] ${
+              className={`rounded-xs px-2 py-1 text-[11px] ${
                 timeframe === t.value
                   ? 'glass-control-accent'
                   : 'glass-control text-d-text-secondary hover:text-d-text-primary'
@@ -404,7 +404,7 @@ export default function PatternsV2Tab() {
               key={d.label}
               type="button"
               onClick={() => setDirection(d.value)}
-              className={`rounded-md px-2 py-1 text-[11px] ${
+              className={`rounded-xs px-2 py-1 text-[11px] ${
                 direction === d.value
                   ? 'glass-control-accent'
                   : 'glass-control text-d-text-secondary hover:text-d-text-primary'
@@ -433,7 +433,7 @@ export default function PatternsV2Tab() {
 
       {/* Sector chips — PR-S2 pre-filter */}
       {sectorsData && (
-        <div className="flex flex-wrap items-center gap-1.5 rounded-md border border-line bg-wrap/40 px-3 py-2">
+        <div className="flex flex-wrap items-center gap-1.5 rounded-xs border border-line bg-wrap/40 px-3 py-2">
           <span className="text-[10px] font-semibold uppercase tracking-wider text-d-text-muted">
             Sector
           </span>
@@ -601,7 +601,7 @@ function ExplainDrawer({ match, onClose }: { match: Match; onClose: () => void }
               Suggested levels
             </p>
             {explain ? (
-              <div className="rounded-md border border-line bg-wrap p-3 text-xs">
+              <div className="rounded-xs border border-line bg-wrap p-3 text-xs">
                 <div className="grid grid-cols-3 gap-2">
                   <Stat label="Entry" value={`₹${explain.suggested.entry}`} />
                   <Stat label={`Stop · ${explain.suggested.stop_basis}`}
@@ -629,7 +629,7 @@ function ExplainDrawer({ match, onClose }: { match: Match; onClose: () => void }
                 {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} w="100%" h="36px" />)}
               </div>
             ) : explain?.why_matched && explain.why_matched.length > 0 ? (
-              <ul className="space-y-1.5 rounded-md border border-line bg-wrap p-3 text-xs">
+              <ul className="space-y-1.5 rounded-xs border border-line bg-wrap p-3 text-xs">
                 {explain.why_matched.map((w, i) => (
                   <li key={i} className="flex items-start gap-2">
                     <span className={`mt-0.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full ${
@@ -658,7 +658,7 @@ function ExplainDrawer({ match, onClose }: { match: Match; onClose: () => void }
               <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-d-text-muted">
                 AI thesis
               </p>
-              <p className="rounded-md border border-line bg-wrap p-3 text-xs leading-relaxed text-d-text-secondary">
+              <p className="rounded-xs border border-line bg-wrap p-3 text-xs leading-relaxed text-d-text-secondary">
                 {explain.ai_thesis}
               </p>
               <p className="mt-1 text-[10px] text-d-text-muted">
@@ -673,7 +673,7 @@ function ExplainDrawer({ match, onClose }: { match: Match; onClose: () => void }
               <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-d-text-muted">
                 Pattern context
               </p>
-              <div className="grid grid-cols-2 gap-2 rounded-md border border-line bg-wrap p-3 text-xs">
+              <div className="grid grid-cols-2 gap-2 rounded-xs border border-line bg-wrap p-3 text-xs">
                 <Stat label="Height" value={`${explain.pattern_height_pct}%`} />
                 <Stat label="Duration" value={`${explain.duration_bars} bars`} />
                 <Stat label="Touches" value={String(explain.candle_confirmed_touches)} />
@@ -683,7 +683,7 @@ function ExplainDrawer({ match, onClose }: { match: Match; onClose: () => void }
           )}
 
           {error && (
-            <p className="rounded-md border border-down/30 bg-down/10 px-3 py-2 text-xs text-down">
+            <p className="rounded-xs border border-down/30 bg-down/10 px-3 py-2 text-xs text-down">
               {error}
             </p>
           )}
@@ -715,7 +715,7 @@ function ScoreChip({ label, value, hue }: {
         : value >= 0.5 ? 'primary'
           : 'muted'
   return (
-    <div className="rounded-md border border-line bg-wrap p-2 text-center">
+    <div className="rounded-xs border border-line bg-wrap p-2 text-center">
       <p className="text-[9px] font-medium uppercase tracking-wider text-d-text-muted">
         {label}
       </p>

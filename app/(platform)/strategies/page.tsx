@@ -309,7 +309,7 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 function SkelCard() {
   return (
-    <div className="space-y-3 rounded-lg border border-line bg-wrap p-4">
+    <div className="space-y-3 rounded-sm border border-line bg-wrap p-4">
       <Skeleton w="60%" h="16px" />
       <Skeleton w="100%" h="32px" />
       <div className="grid grid-cols-3 gap-2">
@@ -647,7 +647,7 @@ function BuilderTab() {
             Describe it · AI compiles your entry and exit logic
           </EyebrowMono>
           <div
-            className="rounded-2xl border bg-wrap p-1 transition-colors focus-within:border-ai/60"
+            className="rounded-lg border bg-wrap p-1 transition-colors focus-within:border-ai/60"
             style={{ borderColor: `color-mix(in srgb, ${AI} 28%, transparent)` }}
           >
             <textarea
@@ -655,7 +655,7 @@ function BuilderTab() {
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="e.g. Buy Nifty 50 stocks when 20EMA crosses above 50EMA and RSI is between 50 and 70. Exit when 20EMA crosses back below 50EMA, or stop-loss at -3%."
-              className="w-full resize-none rounded-xl bg-transparent p-3 text-sm text-d-text-primary outline-none placeholder:text-d-text-muted"
+              className="w-full resize-none rounded-md bg-transparent p-3 text-sm text-d-text-primary outline-none placeholder:text-d-text-muted"
               aria-label="Strategy description"
               disabled={phase === 'compiling'}
             />
@@ -668,7 +668,7 @@ function BuilderTab() {
                 type="button"
                 onClick={() => onCompile()}
                 disabled={phase === 'compiling' || !prompt.trim()}
-                className="glass-control-accent inline-flex h-9 items-center gap-1.5 rounded-pill px-4 text-[13px] font-semibold transition-transform active:scale-[0.97] disabled:opacity-50"
+                className="glass-control-accent inline-flex h-9 items-center gap-1.5 rounded-full px-4 text-[13px] font-semibold transition-transform active:scale-[0.97] disabled:opacity-50"
               >
                 {phase === 'compiling' ? 'Compiling…' : 'Compile to DSL'}
                 <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -677,14 +677,14 @@ function BuilderTab() {
           </div>
 
           {compileError && (
-            <p className="mt-3 rounded-lg border border-down/40 bg-down/10 px-3 py-2 text-xs text-down">
+            <p className="mt-3 rounded-sm border border-down/40 bg-down/10 px-3 py-2 text-xs text-down">
               {compileError}
             </p>
           )}
 
           {clarify && (
             <div
-              className="mt-3 rounded-2xl border bg-wrap p-4"
+              className="mt-3 rounded-lg border bg-wrap p-4"
               style={{ borderColor: `color-mix(in srgb, ${AI} 34%, transparent)` }}
             >
               <p className="text-sm text-d-text-primary">{clarify.question}</p>
@@ -693,7 +693,7 @@ function BuilderTab() {
                   {clarify.missing.map((m) => (
                     <span
                       key={m}
-                      className="rounded-pill border border-line px-2 py-0.5 text-[11px] capitalize text-d-text-secondary"
+                      className="rounded-full border border-line px-2 py-0.5 text-[11px] capitalize text-d-text-secondary"
                     >
                       {m}
                     </span>
@@ -710,7 +710,7 @@ function BuilderTab() {
                 value={clarifyAnswer}
                 onChange={(e) => setClarifyAnswer(e.target.value)}
                 placeholder="Add the missing details…"
-                className="mt-3 w-full resize-none rounded-xl border border-line bg-transparent p-3 text-sm text-d-text-primary outline-none placeholder:text-d-text-muted focus:border-ai/60"
+                className="mt-3 w-full resize-none rounded-md border border-line bg-transparent p-3 text-sm text-d-text-primary outline-none placeholder:text-d-text-muted focus:border-ai/60"
                 aria-label="Clarification answer"
               />
               <div className="mt-2 flex justify-end">
@@ -718,7 +718,7 @@ function BuilderTab() {
                   type="button"
                   onClick={onAnswerClarify}
                   disabled={!clarifyAnswer.trim() || phase === 'compiling'}
-                  className="glass-control-accent inline-flex h-9 items-center gap-1.5 rounded-pill px-4 text-[13px] font-semibold transition-transform active:scale-[0.97] disabled:opacity-50"
+                  className="glass-control-accent inline-flex h-9 items-center gap-1.5 rounded-full px-4 text-[13px] font-semibold transition-transform active:scale-[0.97] disabled:opacity-50"
                 >
                   Refine &amp; compile
                   <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -737,7 +737,7 @@ function BuilderTab() {
                 key={p}
                 type="button"
                 onClick={() => setPrompt(p)}
-                className="glass-control rounded-lg px-3 py-2.5 text-left text-xs text-d-text-secondary transition-colors hover:text-d-text-primary"
+                className="glass-control rounded-sm px-3 py-2.5 text-left text-xs text-d-text-secondary transition-colors hover:text-d-text-primary"
               >
                 {p}
               </button>
@@ -799,7 +799,7 @@ function BuilderTab() {
           </div>
 
           {btError && (
-            <p className="rounded-lg border border-down/40 bg-down/10 px-3 py-2 text-xs text-down">
+            <p className="rounded-sm border border-down/40 bg-down/10 px-3 py-2 text-xs text-down">
               {btError}
             </p>
           )}

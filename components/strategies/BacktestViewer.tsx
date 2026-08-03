@@ -292,7 +292,7 @@ function FoldStrip({ oos }: { oos: DSLOutOfSample }) {
             <div
               key={f.index ?? i}
               title={`${f.start_date} → ${f.end_date} · ${f.trades} trades · Sharpe ${f.sharpe?.toFixed(2) ?? '—'}`}
-              className={`rounded-lg border p-2 ${
+              className={`rounded-sm border p-2 ${
                 f.profitable ? 'border-up/30 bg-up/[0.07]' : 'border-down/30 bg-down/[0.07]'
               } ${isHoldout ? 'ring-1 ring-inset ring-wrap-line' : ''}`}
             >
@@ -333,7 +333,7 @@ function Metric({
   const color =
     tone === 'up' ? 'text-up' : tone === 'down' ? 'text-down' : 'text-d-text-primary'
   return (
-    <div className="rounded-md border border-line bg-wrap p-3">
+    <div className="rounded-xs border border-line bg-wrap p-3">
       <p className="text-[10px] font-medium uppercase tracking-wider text-d-text-muted">
         {label}
       </p>

@@ -612,7 +612,7 @@ function NewRunModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-      <div className="w-full max-w-md rounded-lg border border-line bg-main shadow-xl">
+      <div className="w-full max-w-md rounded-sm border border-line bg-main shadow-xl">
         <div className="flex items-center justify-between border-b border-line px-4 py-3">
           <h3 className="flex items-center gap-2 text-sm font-semibold text-d-text-primary">
             <Sparkles className="h-4 w-4 text-primary" />
@@ -636,7 +636,7 @@ function NewRunModal({
                   key={k}
                   type="button"
                   onClick={() => setKind(k)}
-                  className={`flex items-center justify-between rounded-md px-3 py-2 text-left text-xs transition-colors ${
+                  className={`flex items-center justify-between rounded-xs px-3 py-2 text-left text-xs transition-colors ${
                     k === kind
                       ? 'glass-control-accent'
                       : 'glass-control text-d-text-secondary hover:text-d-text-primary'
@@ -660,7 +660,7 @@ function NewRunModal({
                   key={u}
                   type="button"
                   onClick={() => setUniverse(u)}
-                  className={`rounded-md px-2.5 py-1 text-xs ${
+                  className={`rounded-xs px-2.5 py-1 text-xs ${
                     u === universe
                       ? 'glass-control-accent'
                       : 'glass-control text-d-text-secondary hover:text-d-text-primary'
@@ -681,7 +681,7 @@ function NewRunModal({
               <button
                 type="button"
                 onClick={() => setMode('random')}
-                className={`rounded-md px-3 py-2 text-left text-xs ${
+                className={`rounded-xs px-3 py-2 text-left text-xs ${
                   mode === 'random'
                     ? 'glass-control-accent'
                     : 'glass-control text-d-text-secondary hover:text-d-text-primary'
@@ -693,7 +693,7 @@ function NewRunModal({
               <button
                 type="button"
                 onClick={() => setMode('ga')}
-                className={`rounded-md px-3 py-2 text-left text-xs ${
+                className={`rounded-xs px-3 py-2 text-left text-xs ${
                   mode === 'ga'
                     ? 'glass-control-accent'
                     : 'glass-control text-d-text-secondary hover:text-d-text-primary'
@@ -798,7 +798,7 @@ function NewRunModal({
                     key={n}
                     type="button"
                     onClick={() => setWalkForwardFolds(n)}
-                    className={`flex-1 rounded-md px-2 py-1.5 text-xs ${
+                    className={`flex-1 rounded-xs px-2 py-1.5 text-xs ${
                       walkForwardFolds === n
                         ? 'glass-control-accent'
                         : 'glass-control text-d-text-secondary hover:text-d-text-primary'
@@ -823,7 +823,7 @@ function NewRunModal({
             )}
           </div>
 
-          <p className="rounded-md border border-line bg-wrap p-2.5 text-[11px] text-d-text-muted">
+          <p className="rounded-xs border border-line bg-wrap p-2.5 text-[11px] text-d-text-muted">
             {mode === 'random' ? (
               <>
                 Random sample: {sampleSize} candidates × {kind.startsWith('fo_') ? 1 : symbolsPerCandidate} symbols.

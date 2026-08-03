@@ -15,7 +15,7 @@ export const Topbar = ({ onMenuOpen }: Props) => (
       type="button"
       onClick={onMenuOpen}
       aria-label="Open menu"
-      className="inline-flex h-9 w-9 items-center justify-center rounded-md text-d-text-secondary transition-colors hover:bg-wrap-hover hover:text-d-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+      className="inline-flex h-9 w-9 items-center justify-center rounded-xs text-d-text-secondary transition-colors hover:bg-wrap-hover hover:text-d-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
     >
       <Menu className="h-[22px] w-[22px]" aria-hidden="true" />
     </button>
@@ -25,7 +25,7 @@ export const Topbar = ({ onMenuOpen }: Props) => (
       aria-label="Quant X — Trading OS, go to home"
     >
       <span
-        className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground"
+        className="grid h-7 w-7 shrink-0 place-items-center rounded-sm bg-primary text-primary-foreground"
         aria-hidden="true"
       >
         <span className="text-[15px] font-black leading-none">Q</span>

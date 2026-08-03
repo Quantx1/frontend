@@ -248,7 +248,7 @@ function Metric({
 }) {
   const color = tone === 'down' ? 'text-down' : 'text-d-text-primary'
   return (
-    <div className="rounded-md border border-line bg-wrap p-3">
+    <div className="rounded-xs border border-line bg-wrap p-3">
       <p className="text-[10px] font-medium uppercase tracking-wider text-d-text-muted">
         {label}
       </p>

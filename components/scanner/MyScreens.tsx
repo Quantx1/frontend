@@ -31,7 +31,7 @@ export function MyScreens() {
           <Link
             key={s.id}
             href={`/scanner/my/${s.id}`}
-            className="group grid min-h-[92px] grid-cols-[1fr_auto] items-center gap-3 rounded-lg border border-line bg-wrap p-4 transition-colors hover:border-d-text-muted/40 hover:bg-wrap-hover"
+            className="group grid min-h-[92px] grid-cols-[1fr_auto] items-center gap-3 rounded-sm border border-line bg-wrap p-4 transition-colors hover:border-d-text-muted/40 hover:bg-wrap-hover"
           >
             <div className="min-w-0 space-y-1">
               <div className="flex items-center gap-1.5">
@@ -44,7 +44,7 @@ export function MyScreens() {
               </p>
             </div>
             <span
-              className={`inline-flex items-center gap-1 rounded-pill px-2 py-1 text-[10px] ${
+              className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] ${
                 s.enabled ? 'bg-up/10 text-up' : 'bg-line text-d-text-muted'
               }`}
               title={s.enabled ? 'Alerts on' : 'Alerts paused'}

@@ -81,7 +81,7 @@ export default function AITradeDeskCard({ symbol }: { symbol: string }) {
       </CardHeader>
       <CardBody>
         {isLoading ? (
-          <div className="h-24 w-full animate-pulse rounded-lg bg-d-text-muted/10" />
+          <div className="h-24 w-full animate-pulse rounded-sm bg-d-text-muted/10" />
         ) : !data ? (
           <p className="text-sm text-d-text-muted">
             Trade Desk evidence unavailable for {symbol} right now.
@@ -94,7 +94,7 @@ export default function AITradeDeskCard({ symbol }: { symbol: string }) {
                 {data.drivers.map((d) => (
                   <span
                     key={d}
-                    className="rounded-pill border border-d-border bg-d-bg-subtle px-2 py-0.5 font-mono text-[11px] text-d-text-secondary"
+                    className="rounded-full border border-d-border bg-d-bg-subtle px-2 py-0.5 font-mono text-[11px] text-d-text-secondary"
                   >
                     {d}
                   </span>

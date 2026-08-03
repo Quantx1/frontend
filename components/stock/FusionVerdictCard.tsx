@@ -65,7 +65,7 @@ export default function FusionVerdictCard({ symbol }: { symbol: string }) {
       </CardHeader>
       <CardBody>
         {isLoading ? (
-          <Skeleton className="h-40 w-full rounded-lg" />
+          <Skeleton className="h-40 w-full rounded-sm" />
         ) : !data || data.verdict === 'Insufficient data' ? (
           <p className="text-sm text-d-text-muted">
             Not enough live signals to fuse a verdict for {symbol} right now.
@@ -112,7 +112,7 @@ export default function FusionVerdictCard({ symbol }: { symbol: string }) {
             </ul>
 
             {data.gated && (
-              <p className="rounded-xl bg-warning/10 px-3 py-2 text-xs text-warning">
+              <p className="rounded-md bg-warning/10 px-3 py-2 text-xs text-warning">
                 Earnings inside the blackout window — new entries are suppressed even though the signals may look constructive.
               </p>
             )}

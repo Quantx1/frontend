@@ -259,7 +259,7 @@ export default function BrokerConnectPage() {
                   disabled={pending !== null}
                   aria-label={`Connect ${b.name}`}
                   aria-expanded={inline ? expanded : undefined}
-                  className="glass-control flex w-full items-center justify-between rounded-md p-3 text-left transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="glass-control flex w-full items-center justify-between rounded-xs p-3 text-left transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <div>
                     <p className="flex items-center gap-1.5 text-sm font-medium text-d-text-primary">
@@ -292,7 +292,7 @@ export default function BrokerConnectPage() {
                 )}
 
                 {isAngel && angelOpen && (
-                  <div className="space-y-3 rounded-md border border-line bg-main p-3">
+                  <div className="space-y-3 rounded-xs border border-line bg-main p-3">
                     <div className="space-y-0.5 text-[11px] leading-relaxed text-d-text-muted">
                       <p>
                         1) Go to{' '}
@@ -415,7 +415,7 @@ export default function BrokerConnectPage() {
                 )}
 
                 {isDhan && dhanOpen && (
-                  <div className="space-y-3 rounded-md border border-line bg-main p-3">
+                  <div className="space-y-3 rounded-xs border border-line bg-main p-3">
                     <div className="space-y-0.5 text-[11px] leading-relaxed text-d-text-muted">
                       <p>
                         1) Open{' '}
@@ -507,7 +507,7 @@ export default function BrokerConnectPage() {
                 )}
 
                 {isKotak && kotakOpen && (
-                  <div className="space-y-3 rounded-md border border-line bg-main p-3">
+                  <div className="space-y-3 rounded-xs border border-line bg-main p-3">
                     <div className="space-y-0.5 text-[11px] leading-relaxed text-d-text-muted">
                       <p>
                         1) Log in to the Kotak Neo API portal (
@@ -632,7 +632,7 @@ export default function BrokerConnectPage() {
                 )}
 
                 {isAlice && aliceOpen && (
-                  <div className="space-y-3 rounded-md border border-line bg-main p-3">
+                  <div className="space-y-3 rounded-xs border border-line bg-main p-3">
                     <div className="space-y-0.5 text-[11px] leading-relaxed text-d-text-muted">
                       <p>
                         1) Log in to{' '}

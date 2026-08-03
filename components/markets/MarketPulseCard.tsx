@@ -31,7 +31,7 @@ export default function MarketPulseCard() {
     { revalidateOnFocus: false, dedupingInterval: 120_000, keepPreviousData: true, errorRetryCount: 4 },
   )
 
-  if (isLoading && !data) return <Skeleton h="210px" rounded="lg" className="rounded-2xl" />
+  if (isLoading && !data) return <Skeleton h="210px" rounded="lg" className="rounded-lg" />
   const b = data?.breadth
   if (!b) return null
   const vol = data?.vol
@@ -48,7 +48,7 @@ export default function MarketPulseCard() {
     : DOWN
 
   return (
-    <section aria-label="Market pulse" className="rounded-2xl bg-wrap px-4 py-3.5 sm:px-5">
+    <section aria-label="Market pulse" className="rounded-lg bg-wrap px-4 py-3.5 sm:px-5">
       {/* header */}
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <span className="flex items-center gap-2 text-[13px] font-semibold text-d-text-primary">
@@ -84,7 +84,7 @@ export default function MarketPulseCard() {
       {/* internals grid */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {/* breadth score */}
-        <div className="rounded-xl border border-line bg-surface-2/60 p-3">
+        <div className="rounded-md border border-line bg-surface-2/60 p-3">
           <p className="text-[10px] uppercase tracking-wider text-d-text-muted">Breadth score</p>
           <p className="numeric mt-1 text-2xl font-bold" style={{ color: scoreColor }}>
             {b.score ?? '—'}
@@ -97,7 +97,7 @@ export default function MarketPulseCard() {
         </div>
 
         {/* % above DMAs */}
-        <div className="rounded-xl border border-line bg-surface-2/60 p-3">
+        <div className="rounded-md border border-line bg-surface-2/60 p-3">
           <p className="text-[10px] uppercase tracking-wider text-d-text-muted">Above DMA</p>
           <div className="mt-1.5 space-y-1.5">
             {([['20D', b.pct_above_20dma], ['50D', b.pct_above_50dma], ['200D', b.pct_above_200dma]] as const).map(([k, v]) => (
@@ -113,7 +113,7 @@ export default function MarketPulseCard() {
         </div>
 
         {/* 52w highs/lows + A/D */}
-        <div className="rounded-xl border border-line bg-surface-2/60 p-3">
+        <div className="rounded-md border border-line bg-surface-2/60 p-3">
           <p className="text-[10px] uppercase tracking-wider text-d-text-muted">52-week · today</p>
           <div className="mt-1.5 grid grid-cols-2 gap-x-2 gap-y-1 text-[11.5px]">
             <span className="text-d-text-muted">New highs</span>
@@ -128,7 +128,7 @@ export default function MarketPulseCard() {
         </div>
 
         {/* vol read */}
-        <div className="rounded-xl border border-line bg-surface-2/60 p-3">
+        <div className="rounded-md border border-line bg-surface-2/60 p-3">
           <p className="text-[10px] uppercase tracking-wider text-d-text-muted">Volatility</p>
           <div className="mt-1.5 grid grid-cols-2 gap-x-2 gap-y-1 text-[11.5px]">
             <span className="text-d-text-muted">India VIX</span>

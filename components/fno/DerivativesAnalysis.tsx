@@ -65,7 +65,7 @@ function InfoDot({ text }: { text: string }) {
         <HelpCircle className="h-2.5 w-2.5" />
       </button>
       {open && (
-        <span className="absolute right-0 top-5 z-20 w-56 rounded-lg border border-d-border bg-wrap p-2.5 text-[10.5px] leading-snug text-d-text-secondary shadow-lg">
+        <span className="absolute right-0 top-5 z-20 w-56 rounded-sm border border-d-border bg-wrap p-2.5 text-[10.5px] leading-snug text-d-text-secondary shadow-lg">
           {text}
         </span>
       )}
@@ -87,7 +87,7 @@ function CardShell({
   children: React.ReactNode
 }) {
   return (
-    <div className={`lg-surface rounded-xl p-4 ${className}`}>
+    <div className={`lg-surface rounded-md p-4 ${className}`}>
       <div className="mb-3 flex items-center justify-between gap-2">
         <h3 className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-d-text-muted">
           <Icon className="h-3.5 w-3.5" /> {title}
@@ -189,7 +189,7 @@ export default function DerivativesAnalysis() {
   return (
     <div className="space-y-4">
       {/* ── HEADER ROW ─────────────────────────────────────────── */}
-      <div className="lg-surface rounded-xl p-4 md:p-5">
+      <div className="lg-surface rounded-md p-4 md:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="min-w-0">
             <h2 className="flex items-center gap-2 text-[18px] font-bold tracking-tight text-d-text-primary">
@@ -208,11 +208,11 @@ export default function DerivativesAnalysis() {
 
           <div className="flex items-center gap-2">
             {/* Beginner ⟷ Pro toggle */}
-            <div className="flex items-center rounded-lg border border-line bg-surface-2 p-0.5 text-[10.5px] font-medium">
+            <div className="flex items-center rounded-sm border border-line bg-surface-2 p-0.5 text-[10.5px] font-medium">
               <button
                 type="button"
                 onClick={() => setBeginner(true)}
-                className={`rounded-md px-2.5 py-1 transition-colors ${
+                className={`rounded-xs px-2.5 py-1 transition-colors ${
                   beginner ? 'glass-control-accent' : 'text-d-text-muted hover:text-d-text-primary'
                 }`}
               >
@@ -221,7 +221,7 @@ export default function DerivativesAnalysis() {
               <button
                 type="button"
                 onClick={() => setBeginner(false)}
-                className={`rounded-md px-2.5 py-1 transition-colors ${
+                className={`rounded-xs px-2.5 py-1 transition-colors ${
                   !beginner ? 'glass-control-accent' : 'text-d-text-muted hover:text-d-text-primary'
                 }`}
               >
@@ -242,7 +242,7 @@ export default function DerivativesAnalysis() {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="NIFTY"
                 spellCheck={false}
-                className="w-28 rounded-lg border border-line bg-surface-2 px-2.5 py-1.5 text-[12px] uppercase text-d-text-primary outline-none transition-colors placeholder:normal-case placeholder:text-d-text-muted focus:border-primary"
+                className="w-28 rounded-sm border border-line bg-surface-2 px-2.5 py-1.5 text-[12px] uppercase text-d-text-primary outline-none transition-colors placeholder:normal-case placeholder:text-d-text-muted focus:border-primary"
               />
               <button
                 type="submit"
@@ -277,11 +277,11 @@ export default function DerivativesAnalysis() {
           <OptionChainPreview />
         </BrokerLock>
       ) : error ? (
-        <div className="lg-surface rounded-xl p-6 text-center text-[12px] text-down">
+        <div className="lg-surface rounded-md p-6 text-center text-[12px] text-down">
           Couldn&rsquo;t load F&amp;O data for {symbol} — try again.
         </div>
       ) : !loading && !hasData ? (
-        <div className="lg-surface rounded-xl p-6 text-center text-[12px] text-d-text-muted">
+        <div className="lg-surface rounded-md p-6 text-center text-[12px] text-d-text-muted">
           No EOD F&amp;O data yet for {symbol}. Try an index (NIFTY, BANKNIFTY) or an F&amp;O stock.
         </div>
       ) : (
@@ -297,7 +297,7 @@ export default function DerivativesAnalysis() {
               }
             >
               {loading || !m ? (
-                <div className="h-20 animate-pulse rounded-lg bg-surface-2" />
+                <div className="h-20 animate-pulse rounded-sm bg-surface-2" />
               ) : (
                 <>
                   <div className="flex items-end justify-between gap-3">
@@ -345,7 +345,7 @@ export default function DerivativesAnalysis() {
               right={<InfoDot text="Max pain is the strike where the largest number of option BUYERS lose money at expiry. Price often drifts toward it as expiry nears (the 'pinning' effect)." />}
             >
               {loading || !m ? (
-                <div className="h-20 animate-pulse rounded-lg bg-surface-2" />
+                <div className="h-20 animate-pulse rounded-sm bg-surface-2" />
               ) : (
                 <>
                   <div className="flex items-end justify-between gap-3">
@@ -461,12 +461,12 @@ export default function DerivativesAnalysis() {
                 {/* support / resistance badges */}
                 <div className="mt-3 flex flex-wrap gap-2 border-t border-d-border pt-2.5 text-[10.5px]">
                   {topPe && (
-                    <span className="inline-flex items-center gap-1 rounded-md bg-up/10 px-2 py-0.5 font-medium text-up">
+                    <span className="inline-flex items-center gap-1 rounded-xs bg-up/10 px-2 py-0.5 font-medium text-up">
                       Support {num(topPe.strike)}
                     </span>
                   )}
                   {topCe && (
-                    <span className="inline-flex items-center gap-1 rounded-md bg-down/10 px-2 py-0.5 font-medium text-down">
+                    <span className="inline-flex items-center gap-1 rounded-xs bg-down/10 px-2 py-0.5 font-medium text-down">
                       Resistance {num(topCe.strike)}
                     </span>
                   )}
@@ -514,7 +514,7 @@ export default function DerivativesAnalysis() {
                     <li
                       key={p.participant}
                       className={`grid grid-cols-[auto_1fr_auto] items-center gap-x-3 py-1.5 ${
-                        isFii ? 'rounded-md bg-primary/5 px-1.5' : ''
+                        isFii ? 'rounded-xs bg-primary/5 px-1.5' : ''
                       }`}
                     >
                       <span
@@ -562,7 +562,7 @@ export default function DerivativesAnalysis() {
           {!ban ? (
             <div className="flex flex-wrap gap-1.5">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-6 w-16 animate-pulse rounded-md bg-surface-2" />
+                <div key={i} className="h-6 w-16 animate-pulse rounded-xs bg-surface-2" />
               ))}
             </div>
           ) : ban.symbols.length === 0 ? (
@@ -572,7 +572,7 @@ export default function DerivativesAnalysis() {
               {ban.symbols.map((s) => (
                 <span
                   key={s}
-                  className="inline-flex items-center gap-1 rounded-md border border-down/30 bg-down/10 px-2 py-1 text-[11px] font-medium text-down"
+                  className="inline-flex items-center gap-1 rounded-xs border border-down/30 bg-down/10 px-2 py-1 text-[11px] font-medium text-down"
                 >
                   <AlertOctagon className="h-3 w-3" /> {s}
                 </span>

@@ -107,17 +107,17 @@ export default function CalculatorModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div
-        className="glass-surface w-full max-w-2xl rounded-2xl shadow-2xl"
+        className="glass-surface w-full max-w-2xl rounded-lg shadow-2xl"
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border/60 p-6">
           <div className="flex items-center gap-3">
             {type === 'risk' ? (
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/15">
+              <div className="flex h-12 w-12 items-center justify-center rounded-md bg-accent/15">
                 <Shield className="h-6 w-6 text-accent" />
               </div>
             ) : (
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/15">
+              <div className="flex h-12 w-12 items-center justify-center rounded-md bg-primary/15">
                 <Calculator className="h-6 w-6 text-primary" />
               </div>
             )}
@@ -140,7 +140,7 @@ export default function CalculatorModal({
           </div>
           <button
             onClick={onClose}
-            className="flex h-10 w-10 items-center justify-center rounded-lg border border-border/60 text-d-text-muted transition hover:border-down/60 hover:text-down"
+            className="flex h-10 w-10 items-center justify-center rounded-sm border border-border/60 text-d-text-muted transition hover:border-down/60 hover:text-down"
           >
             <X className="h-5 w-5" />
           </button>
@@ -163,7 +163,7 @@ export default function CalculatorModal({
                       value={capital}
                       onChange={(e) => setCapital(e.target.value)}
                       placeholder="100000"
-                      className="w-full rounded-lg border border-border/60 bg-main/60 py-3 pl-10 pr-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
+                      className="w-full rounded-sm border border-border/60 bg-main/60 py-3 pl-10 pr-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -180,7 +180,7 @@ export default function CalculatorModal({
                       onChange={(e) => setRiskPercent(e.target.value)}
                       placeholder="2"
                       step="0.5"
-                      className="w-full rounded-lg border border-border/60 bg-main/60 py-3 pl-10 pr-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
+                      className="w-full rounded-sm border border-border/60 bg-main/60 py-3 pl-10 pr-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -194,7 +194,7 @@ export default function CalculatorModal({
                     value={entryPrice}
                     onChange={(e) => setEntryPrice(e.target.value)}
                     placeholder="2500"
-                    className="w-full rounded-lg border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
+                    className="w-full rounded-sm border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
                   />
                 </div>
 
@@ -207,7 +207,7 @@ export default function CalculatorModal({
                     value={stopLoss}
                     onChange={(e) => setStopLoss(e.target.value)}
                     placeholder="2400"
-                    className="w-full rounded-lg border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
+                    className="w-full rounded-sm border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
                   />
                 </div>
               </div>
@@ -215,33 +215,33 @@ export default function CalculatorModal({
               {/* Results */}
               {positionResults && (
                 <div
-                  className="mt-6 rounded-xl border border-primary/30 bg-gradient-to-br from-primary/10 to-transparent p-6"
+                  className="mt-6 rounded-md border border-primary/30 bg-gradient-to-br from-primary/10 to-transparent p-6"
                 >
                   <h3 className="mb-4 text-lg font-semibold text-d-text-primary">Recommended Position</h3>
                   <div className="grid gap-4 md:grid-cols-2">
-                    <div className="rounded-lg bg-background-surface/60 p-4">
+                    <div className="rounded-sm bg-background-surface/60 p-4">
                       <div className="text-sm text-d-text-muted">Quantity to Buy</div>
                       <div className="mt-1 text-2xl font-bold text-primary">{positionResults.quantity}</div>
                       <div className="mt-1 text-xs text-d-text-muted">shares</div>
                     </div>
 
-                    <div className="rounded-lg bg-background-surface/60 p-4">
+                    <div className="rounded-sm bg-background-surface/60 p-4">
                       <div className="text-sm text-d-text-muted">Position Size</div>
                       <div className="mt-1 text-2xl font-bold text-d-text-primary">₹{positionResults.positionSize}</div>
                     </div>
 
-                    <div className="rounded-lg bg-background-surface/60 p-4">
+                    <div className="rounded-sm bg-background-surface/60 p-4">
                       <div className="text-sm text-d-text-muted">Risk Amount</div>
                       <div className="mt-1 text-2xl font-bold text-down">₹{positionResults.riskAmount}</div>
                     </div>
 
-                    <div className="rounded-lg bg-background-surface/60 p-4">
+                    <div className="rounded-sm bg-background-surface/60 p-4">
                       <div className="text-sm text-d-text-muted">Stop Loss %</div>
                       <div className="mt-1 text-2xl font-bold text-down">{positionResults.stopLossPercent}%</div>
                     </div>
                   </div>
 
-                  <div className="mt-4 flex items-start gap-2 rounded-lg bg-warning/10 p-3">
+                  <div className="mt-4 flex items-start gap-2 rounded-sm bg-warning/10 p-3">
                     <AlertTriangle className="h-5 w-5 flex-shrink-0 text-warning" />
                     <p className="text-sm text-d-text-muted">
                       Maximum loss if stop loss hits: <strong className="text-down">₹{positionResults.maxLoss}</strong>
@@ -263,7 +263,7 @@ export default function CalculatorModal({
                     value={totalCapital}
                     onChange={(e) => setTotalCapital(e.target.value)}
                     placeholder="500000"
-                    className="w-full rounded-lg border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-accent/60 focus:outline-none"
+                    className="w-full rounded-sm border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-accent/60 focus:outline-none"
                   />
                 </div>
 
@@ -276,7 +276,7 @@ export default function CalculatorModal({
                     value={positionValue}
                     onChange={(e) => setPositionValue(e.target.value)}
                     placeholder="50000"
-                    className="w-full rounded-lg border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-accent/60 focus:outline-none"
+                    className="w-full rounded-sm border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-accent/60 focus:outline-none"
                   />
                 </div>
 
@@ -289,7 +289,7 @@ export default function CalculatorModal({
                     value={currentPrice}
                     onChange={(e) => setCurrentPrice(e.target.value)}
                     placeholder="2500"
-                    className="w-full rounded-lg border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-accent/60 focus:outline-none"
+                    className="w-full rounded-sm border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-accent/60 focus:outline-none"
                   />
                 </div>
 
@@ -302,7 +302,7 @@ export default function CalculatorModal({
                     value={targetPrice}
                     onChange={(e) => setTargetPrice(e.target.value)}
                     placeholder="2800"
-                    className="w-full rounded-lg border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-accent/60 focus:outline-none"
+                    className="w-full rounded-sm border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-accent/60 focus:outline-none"
                   />
                 </div>
               </div>
@@ -310,30 +310,30 @@ export default function CalculatorModal({
               {/* Results */}
               {riskResults && (
                 <div
-                  className="mt-6 rounded-xl border border-accent/30 bg-gradient-to-br from-accent/10 to-transparent p-6"
+                  className="mt-6 rounded-md border border-accent/30 bg-gradient-to-br from-accent/10 to-transparent p-6"
                 >
                   <h3 className="mb-4 text-lg font-semibold text-d-text-primary">Risk Analysis</h3>
                   <div className="grid gap-4 md:grid-cols-3">
-                    <div className="rounded-lg bg-background-surface/60 p-4">
+                    <div className="rounded-sm bg-background-surface/60 p-4">
                       <div className="text-sm text-d-text-muted">Position %</div>
                       <div className="mt-1 text-2xl font-bold text-d-text-primary">{riskResults.positionPercent}%</div>
                       <div className="mt-1 text-xs text-d-text-muted">of total capital</div>
                     </div>
 
-                    <div className="rounded-lg bg-background-surface/60 p-4">
+                    <div className="rounded-sm bg-background-surface/60 p-4">
                       <div className="text-sm text-d-text-muted">Potential Profit</div>
                       <div className="mt-1 text-2xl font-bold text-up">+{riskResults.potentialProfit}%</div>
                       <div className="mt-1 text-xs text-d-text-muted">₹{riskResults.profitAmount}</div>
                     </div>
 
-                    <div className="rounded-lg bg-background-surface/60 p-4">
+                    <div className="rounded-sm bg-background-surface/60 p-4">
                       <div className="text-sm text-d-text-muted">Risk:Reward</div>
                       <div className="mt-1 text-2xl font-bold text-accent">{riskResults.riskReward}:1</div>
                     </div>
                   </div>
 
                   <div
-                    className={`mt-4 rounded-lg p-4 ${
+                    className={`mt-4 rounded-sm p-4 ${
                       riskResults.recommendation === 'HIGH RISK'
                         ? 'bg-down/10 border border-down/30'
                         : riskResults.recommendation === 'MODERATE'
@@ -387,7 +387,7 @@ export default function CalculatorModal({
                     value={entryPrice}
                     onChange={(e) => setEntryPrice(e.target.value)}
                     placeholder="2500"
-                    className="w-full rounded-lg border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
+                    className="w-full rounded-sm border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
                   />
                 </div>
 
@@ -400,7 +400,7 @@ export default function CalculatorModal({
                     value={stopLoss}
                     onChange={(e) => setStopLoss(e.target.value)}
                     placeholder="2400"
-                    className="w-full rounded-lg border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
+                    className="w-full rounded-sm border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
                   />
                 </div>
 
@@ -415,7 +415,7 @@ export default function CalculatorModal({
                       value={capital}
                       onChange={(e) => setCapital(e.target.value)}
                       placeholder="100000"
-                      className="w-full rounded-lg border border-border/60 bg-main/60 py-3 pl-10 pr-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
+                      className="w-full rounded-sm border border-border/60 bg-main/60 py-3 pl-10 pr-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -432,7 +432,7 @@ export default function CalculatorModal({
                       onChange={(e) => setRiskPercent(e.target.value)}
                       placeholder="2"
                       step="0.5"
-                      className="w-full rounded-lg border border-border/60 bg-main/60 py-3 pl-10 pr-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
+                      className="w-full rounded-sm border border-border/60 bg-main/60 py-3 pl-10 pr-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -446,7 +446,7 @@ export default function CalculatorModal({
                     value={targetPrice}
                     onChange={(e) => setTargetPrice(e.target.value)}
                     placeholder="2800"
-                    className="w-full rounded-lg border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
+                    className="w-full rounded-sm border border-border/60 bg-main/60 py-3 px-4 text-d-text-primary placeholder-text-secondary transition focus:border-primary/60 focus:outline-none"
                   />
                 </div>
               </div>

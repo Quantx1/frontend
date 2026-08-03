@@ -140,7 +140,7 @@ function BrokerCallbackContent() {
             <p className="text-[12px] text-d-text-muted mt-2">{message}</p>
             <button
               onClick={() => router.push('/settings')}
-              className="mt-6 px-5 py-2 bg-primary text-primary-foreground rounded-md text-[13px] font-medium hover:bg-primary-hover transition-colors"
+              className="mt-6 px-5 py-2 bg-primary text-primary-foreground rounded-xs text-[13px] font-medium hover:bg-primary-hover transition-colors"
             >
               Back to settings
             </button>

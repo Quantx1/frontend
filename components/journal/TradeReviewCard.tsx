@@ -58,11 +58,11 @@ export default function TradeReviewCard({ tradeId }: { tradeId: string }) {
     }
   }
 
-  if (state === 'loading') return <div className="rounded-lg border border-line bg-wrap h-[96px] animate-pulse" />
+  if (state === 'loading') return <div className="rounded-sm border border-line bg-wrap h-[96px] animate-pulse" />
   if (state === 'empty' || points.length === 0) return null
 
   return (
-    <div className="rounded-lg border border-line bg-wrap overflow-hidden">
+    <div className="rounded-sm border border-line bg-wrap overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-line">
         <span className="flex items-center gap-2 text-[12px] font-semibold text-d-text-primary">
           <ClipboardCheck className="w-3.5 h-3.5 text-primary" /> Trade Review

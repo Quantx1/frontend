@@ -101,7 +101,7 @@ export function DSLPreview({ dsl, compact }: Props) {
               Advanced — view the raw rule definition
             </button>
             {showJson && (
-              <pre className="mt-2 max-h-[360px] overflow-auto rounded-md border border-line bg-main p-3 font-mono text-[11px] leading-relaxed text-d-text-secondary">
+              <pre className="mt-2 max-h-[360px] overflow-auto rounded-xs border border-line bg-main p-3 font-mono text-[11px] leading-relaxed text-d-text-secondary">
                 {JSON.stringify(dsl, null, 2)}
               </pre>
             )}
@@ -127,7 +127,7 @@ function RuleLine({
   return (
     <div className="flex items-start gap-3">
       <span
-        className={`mt-0.5 inline-flex shrink-0 items-center gap-1 rounded-pill px-2.5 py-1 text-[11px] font-semibold ${
+        className={`mt-0.5 inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold ${
           isEnter ? 'bg-up/10 text-up' : 'bg-down/10 text-down'
         }`}
       >

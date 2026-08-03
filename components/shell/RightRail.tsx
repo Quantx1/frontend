@@ -129,7 +129,7 @@ function RailProfile() {
       {open && (
         <div
           role="menu"
-          className="absolute bottom-0 right-full z-50 mr-2 w-56 overflow-hidden rounded-2xl border border-line bg-wrap"
+          className="absolute bottom-0 right-full z-50 mr-2 w-56 overflow-hidden rounded-lg border border-line bg-wrap"
         >
           <div className="flex items-center gap-2.5 border-b border-line px-3 py-2.5">
             <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary text-[13px] font-bold text-primary-foreground">

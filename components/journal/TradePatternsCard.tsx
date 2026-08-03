@@ -64,12 +64,12 @@ export default function TradePatternsCard() {
     } catch { /* keep */ } finally { setCoachBusy(false) }
   }
 
-  if (state === 'loading') return <div className="rounded-lg border border-line bg-wrap h-[120px] animate-pulse" />
+  if (state === 'loading') return <div className="rounded-sm border border-line bg-wrap h-[120px] animate-pulse" />
   if (state === 'empty' || !stats) return null
 
   const topSession = stats.by_session?.[0]
   return (
-    <div className="rounded-lg border border-line bg-wrap overflow-hidden">
+    <div className="rounded-sm border border-line bg-wrap overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-line">
         <span className="flex items-center gap-2 text-[12px] font-semibold text-d-text-primary">
           <LineChart className="w-3.5 h-3.5 text-primary" /> Your Trading Patterns

@@ -114,7 +114,7 @@ export function RichScreenResults({ rows }: { rows: ScreenMatch[] }) {
       {/* A chart: matches-by-sector when we have sectors (single-hue magnitude),
           else top movers (diverging around a zero baseline, duotone). */}
       {stats.sectors.length > 1 ? (
-        <div className="rounded-2xl border border-line bg-wrap p-4">
+        <div className="rounded-lg border border-line bg-wrap p-4">
           <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-d-text-muted">Matches by sector</p>
           <ResponsiveContainer width="100%" height={Math.max(120, stats.sectors.length * 26)}>
             <BarChart data={stats.sectors} layout="vertical" margin={{ top: 2, right: 28, bottom: 2, left: 2 }}>
@@ -134,7 +134,7 @@ export function RichScreenResults({ rows }: { rows: ScreenMatch[] }) {
           </ResponsiveContainer>
         </div>
       ) : stats.movers.length > 1 ? (
-        <div className="rounded-2xl border border-line bg-wrap p-4">
+        <div className="rounded-lg border border-line bg-wrap p-4">
           <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-d-text-muted">Top movers · change %</p>
           <ResponsiveContainer width="100%" height={Math.max(120, stats.movers.length * 26)}>
             <BarChart data={stats.movers} layout="vertical" margin={{ top: 2, right: 34, bottom: 2, left: 2 }}>
@@ -157,7 +157,7 @@ export function RichScreenResults({ rows }: { rows: ScreenMatch[] }) {
       ) : null}
 
       {/* Sortable data table */}
-      <div className="overflow-x-auto rounded-lg border border-line">
+      <div className="overflow-x-auto rounded-sm border border-line">
         <table className="w-full text-[13px]">
           <thead>
             <tr className="border-b border-line text-[10px] uppercase tracking-wide text-d-text-muted">
@@ -202,7 +202,7 @@ export function RichScreenResults({ rows }: { rows: ScreenMatch[] }) {
 
 function Tile({ label, value, tone, small }: { label: string; value: string; tone?: 'up' | 'down'; small?: boolean }) {
   return (
-    <div className="rounded-2xl border border-line bg-wrap p-4">
+    <div className="rounded-lg border border-line bg-wrap p-4">
       <p className="text-[9px] font-medium uppercase tracking-wider text-d-text-muted">{label}</p>
       <p
         className={`mt-0.5 ${small ? 'text-[13px]' : 'text-[18px]'} font-semibold tabular-nums ${MONO} ${

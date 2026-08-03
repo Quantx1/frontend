@@ -106,11 +106,11 @@ export default function TechnicalsPanelCard({ symbol }: { symbol: string }) {
     { revalidateOnFocus: false, dedupingInterval: 300_000 },
   )
 
-  if (isLoading) return <div className="h-72 animate-pulse rounded-2xl border border-line bg-wrap" />
+  if (isLoading) return <div className="h-72 animate-pulse rounded-lg border border-line bg-wrap" />
 
   if (!data || !data.available) {
     return (
-      <div className="rounded-2xl border border-line bg-wrap px-4 py-3">
+      <div className="rounded-lg border border-line bg-wrap px-4 py-3">
         <span className="text-[12px] font-semibold text-d-text-primary">Technicals &amp; Levels</span>
         <p className="mt-1 text-[11px] text-d-text-muted">
           Not enough price history to compute the technical panel for {symbol}.
@@ -122,7 +122,7 @@ export default function TechnicalsPanelCard({ symbol }: { symbol: string }) {
   const { summary, oscillators = [], moving_averages: mas = [], pivots, supports = [], resistances = [], week52, atr, candle_patterns: patterns = [] } = data
 
   return (
-    <div className="rounded-2xl border border-line bg-wrap px-4 py-4">
+    <div className="rounded-lg border border-line bg-wrap px-4 py-4">
       {/* Header — title + overall technical sentiment */}
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
@@ -257,7 +257,7 @@ export default function TechnicalsPanelCard({ symbol }: { symbol: string }) {
             <>
               <span className="font-mono text-[9px] uppercase tracking-wider text-d-text-muted">Candles:</span>
               {patterns.map((p) => (
-                <span key={p} className="rounded-pill border border-d-border bg-d-bg-subtle px-2 py-0.5 text-[10px] capitalize text-d-text-secondary">
+                <span key={p} className="rounded-full border border-d-border bg-d-bg-subtle px-2 py-0.5 text-[10px] capitalize text-d-text-secondary">
                   {p}
                 </span>
               ))}

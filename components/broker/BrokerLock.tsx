@@ -43,7 +43,7 @@ export default function BrokerLock({
       </p>
       <Link
         href="/settings?tab=broker"
-        className="mt-4 inline-flex items-center gap-1.5 rounded-md bg-primary px-3.5 py-1.5 text-[12.5px] font-medium text-primary-foreground transition-opacity hover:opacity-90"
+        className="mt-4 inline-flex items-center gap-1.5 rounded-xs bg-primary px-3.5 py-1.5 text-[12.5px] font-medium text-primary-foreground transition-opacity hover:opacity-90"
       >
         <Plug className="h-3.5 w-3.5" /> Connect your broker
       </Link>
@@ -53,7 +53,7 @@ export default function BrokerLock({
   // Frosted-glass mode: decorative preview blurred behind the lock overlay.
   if (children) {
     return (
-      <div className={`relative overflow-hidden rounded-xl border border-line ${className}`}>
+      <div className={`relative overflow-hidden rounded-md border border-line ${className}`}>
         {/* Repeated so the blurred "data behind glass" fills the whole card. */}
         <div aria-hidden className="pointer-events-none absolute inset-0 select-none opacity-70 blur-[6px] saturate-[0.5]">
           {children}
@@ -67,7 +67,7 @@ export default function BrokerLock({
   }
 
   return (
-    <div className={`lg-surface flex flex-col items-center rounded-xl p-6 text-center ${className}`}>
+    <div className={`lg-surface flex flex-col items-center rounded-md p-6 text-center ${className}`}>
       {body}
     </div>
   )
@@ -91,10 +91,10 @@ export function OptionChainPreview() {
         {rows.map((w, i) => (
           <div key={i} className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
             <div className="flex justify-end">
-              <div className="h-2 rounded-pill bg-up/40" style={{ width: `${w * 100}%` }} />
+              <div className="h-2 rounded-full bg-up/40" style={{ width: `${w * 100}%` }} />
             </div>
             <div className="w-12 text-center font-mono text-[11px] text-d-text-muted">•••••</div>
-            <div className="h-2 rounded-pill bg-down/40" style={{ width: `${(rows[rows.length - 1 - i]) * 100}%` }} />
+            <div className="h-2 rounded-full bg-down/40" style={{ width: `${(rows[rows.length - 1 - i]) * 100}%` }} />
           </div>
         ))}
       </div>

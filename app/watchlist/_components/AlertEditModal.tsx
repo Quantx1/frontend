@@ -206,7 +206,7 @@ export default function AlertEditModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-sm rounded-2xl border border-d-border bg-main p-5 space-y-4"
+        className="w-full max-w-sm rounded-lg border border-d-border bg-main p-5 space-y-4"
         onClick={(e) => e.stopPropagation()}
       >
         <header className="flex items-start justify-between gap-3">
@@ -355,7 +355,7 @@ export default function AlertEditModal({
                 value={above}
                 onChange={(e) => { setAbove(e.target.value); setActivePreset(null) }}
                 placeholder={mode === 'pct' ? 'e.g. 5 = +5% above' : 'leave blank to disable'}
-                className="numeric flex-1 bg-main border border-d-border rounded-xl px-3 py-1.5 text-[13px] text-d-text-primary placeholder:text-d-text-muted focus:outline-none focus:border-primary/50"
+                className="numeric flex-1 bg-main border border-d-border rounded-md px-3 py-1.5 text-[13px] text-d-text-primary placeholder:text-d-text-muted focus:outline-none focus:border-primary/50"
               />
               {mode === 'pct' && <span className="text-[12px] text-d-text-muted">%</span>}
             </div>
@@ -385,7 +385,7 @@ export default function AlertEditModal({
                 value={below}
                 onChange={(e) => { setBelow(e.target.value); setActivePreset(null) }}
                 placeholder={mode === 'pct' ? 'e.g. 5 = −5% below' : 'leave blank to disable'}
-                className="numeric flex-1 bg-main border border-d-border rounded-xl px-3 py-1.5 text-[13px] text-d-text-primary placeholder:text-d-text-muted focus:outline-none focus:border-primary/50"
+                className="numeric flex-1 bg-main border border-d-border rounded-md px-3 py-1.5 text-[13px] text-d-text-primary placeholder:text-d-text-muted focus:outline-none focus:border-primary/50"
               />
               {mode === 'pct' && <span className="text-[12px] text-d-text-muted">%</span>}
             </div>

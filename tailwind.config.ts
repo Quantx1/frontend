@@ -302,17 +302,27 @@ const config: Config = {
       // data-viz marks (volume bars, candles) need micro-geometry that
       // would look broken at 6px. Chart marks only — never chrome.
       borderRadius: {
+        // ── v6 radius scale (docs/REDESIGN-VISUAL.md §2.1) ──────────────────
+        // Names now match values. The previous scale had `md` (6px) SMALLER
+        // than `sm` (8px) and four aliases all resolving to 16px, so the name
+        // carried no information and nobody could pick a radius on purpose.
+        //
+        // Landed together with a 1,283-site rename that preserves every
+        // rendered pixel: md→xs, lg→sm, xl→md, 2xl/3xl/4xl/5xl→lg, pill→full.
+        // Verified by comparing the px distribution before and after — both
+        // sides identical (2px×2, 4px×124, 6px×163, 8px×286, 12px×136,
+        // 16px×141, 9999px×431).
+        //
+        // Usage budget: md=card/panel/dropdown · sm=input/button/list row ·
+        // full=badge/pill/avatar/icon button · lg=modal/sheet/one hero card.
+        // xs is for table-cell backgrounds only. mark is data-viz ONLY —
+        // candle bodies and volume bars, never chrome.
         'mark': '2px',
-        'xs': '6px',
-        'sm': '8px',
-        'md': '6px',
-        'lg': '8px',
-        'xl': '12px',
-        '2xl': '16px',
-        '3xl': '16px',
-        '4xl': '16px',
-        '5xl': '16px',
-        'pill': '9999px',
+        'xs':   '6px',
+        'sm':   '8px',
+        'md':  '12px',
+        'lg':  '16px',
+        'full': '9999px',
       },
       transitionTimingFunction: {
         // Two easings, both from globals.css so CSS and Tailwind agree.

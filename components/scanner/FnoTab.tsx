@@ -156,7 +156,7 @@ export default function FnoTab() {
 
       {/* Options Teacher — deterministic plain-English read (0 LLM tokens) */}
       {detail?.teach?.length ? (
-        <section className="rounded-2xl border border-line bg-wrap p-4">
+        <section className="rounded-lg border border-line bg-wrap p-4">
           <div className="mb-2 flex items-center gap-2">
             <Sparkles className="h-3.5 w-3.5 text-primary" />
             <h3 className="text-[12px] font-semibold text-d-text-primary">
@@ -213,7 +213,7 @@ export default function FnoTab() {
               width={220}
               height={220}
               sizes="220px"
-              className="mx-auto mb-2 w-full max-w-[220px] rounded-2xl"
+              className="mx-auto mb-2 w-full max-w-[220px] rounded-lg"
             />
             <EmptyState
               icon={<Sparkles className="h-6 w-6" />}
@@ -240,14 +240,14 @@ function SnapshotCard({
 }) {
   if (loading) {
     return (
-      <div className="rounded-2xl border border-line bg-wrap p-4">
+      <div className="rounded-lg border border-line bg-wrap p-4">
         <Skeleton w="100%" h="120px" />
       </div>
     )
   }
   if (!snap) {
     return (
-      <div className="rounded-2xl border border-line bg-wrap p-4 opacity-60">
+      <div className="rounded-lg border border-line bg-wrap p-4 opacity-60">
         <p className="text-xs font-medium text-d-text-primary">{symbol}</p>
         <p className="mt-1 text-[10px] text-d-text-muted">Snapshot unavailable.</p>
       </div>
@@ -258,7 +258,7 @@ function SnapshotCard({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-2xl border bg-wrap p-4 text-left transition-colors ${
+      className={`rounded-lg border bg-wrap p-4 text-left transition-colors ${
         isSelected ? 'border-primary bg-primary/5' : 'border-line hover:border-wrap-line'
       }`}
     >
@@ -338,7 +338,7 @@ function StrategyRow({ s }: { s: FnoStrategy }) {
       : s.confidence === 'medium' ? 'border-primary/60 bg-primary/5 text-primary'
         : 'border-line bg-main text-d-text-muted'
   return (
-    <li className="rounded-2xl border border-line bg-wrap p-4">
+    <li className="rounded-lg border border-line bg-wrap p-4">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <div className="flex items-center gap-2">
           {biasIcon}

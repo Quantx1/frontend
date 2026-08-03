@@ -63,7 +63,7 @@ export default function GlobalKillSwitchPanel() {
 
   return (
     <div
-      className="rounded-xl border p-5"
+      className="rounded-md border p-5"
       style={{
         borderColor: `color-mix(in srgb, ${color} 33%, transparent)`,
         background: `color-mix(in srgb, ${color} 4%, transparent)`,
@@ -100,7 +100,7 @@ export default function GlobalKillSwitchPanel() {
       </div>
 
       {error && (
-        <div className="mb-3 rounded-md border border-down/40 bg-down/10 px-3 py-2 text-[12px] text-down">
+        <div className="mb-3 rounded-xs border border-down/40 bg-down/10 px-3 py-2 text-[12px] text-down">
           {error}
         </div>
       )}
@@ -119,13 +119,13 @@ export default function GlobalKillSwitchPanel() {
           onChange={(e) => setReason(e.target.value)}
           placeholder={active ? 'Current reason (edit before clearing if needed)' : 'Why are you activating? (required)'}
           disabled={saving}
-          className="flex-1 bg-main border border-d-border rounded-md px-3 py-2 text-[12px] text-white focus:outline-none focus:border-primary/50 disabled:opacity-60"
+          className="flex-1 bg-main border border-d-border rounded-xs px-3 py-2 text-[12px] text-white focus:outline-none focus:border-primary/50 disabled:opacity-60"
         />
         {active ? (
           <button
             onClick={() => flip(false)}
             disabled={saving}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-primary text-black text-[12px] font-semibold hover:bg-primary-hover disabled:opacity-60"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xs bg-primary text-black text-[12px] font-semibold hover:bg-primary-hover disabled:opacity-60"
           >
             {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle className="w-3.5 h-3.5" />}
             Clear kill switch
@@ -135,7 +135,7 @@ export default function GlobalKillSwitchPanel() {
             type="button"
             onClick={() => setConfirmActivate(true)}
             disabled={saving || !reason.trim()}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-down/15 border border-down/40 text-down text-[12px] font-semibold hover:bg-down/25 disabled:opacity-40"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xs bg-down/15 border border-down/40 text-down text-[12px] font-semibold hover:bg-down/25 disabled:opacity-40"
           >
             {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Power className="w-3.5 h-3.5" />}
             Activate kill switch

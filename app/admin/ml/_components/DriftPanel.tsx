@@ -81,12 +81,12 @@ export default function DriftPanel({
             Threshold: win rate &lt; {(threshold * 100).toFixed(0)}% with ≥30 signals flags drift.
           </p>
         </div>
-        <div className="flex items-center gap-1 rounded-lg bg-white/[0.04] border border-d-border p-1">
+        <div className="flex items-center gap-1 rounded-sm bg-white/[0.04] border border-d-border p-1">
           {[7, 30, 90].map((w) => (
             <button
               key={w}
               onClick={() => setWindow(w as 7 | 30 | 90)}
-              className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
+              className={`px-3 py-1 rounded-xs text-xs font-medium transition-colors ${
                 window === w
                   ? 'bg-primary/15 text-primary'
                   : 'text-d-text-muted hover:text-white'
@@ -99,7 +99,7 @@ export default function DriftPanel({
       </div>
 
       {hasDrift && (
-        <div className="mb-4 rounded-xl bg-down/10 border border-down/30 px-4 py-3 flex items-start gap-3">
+        <div className="mb-4 rounded-md bg-down/10 border border-down/30 px-4 py-3 flex items-start gap-3">
           <AlertCircle className="w-4 h-4 text-down mt-0.5 shrink-0" />
           <div>
             <p className="text-sm font-medium text-down">
@@ -191,7 +191,7 @@ export default function DriftPanel({
                       <button
                         onClick={() => onRetrain(internal)}
                         disabled={retrainLoading !== null}
-                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-medium transition-colors ${
+                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xs text-[10px] font-medium transition-colors ${
                           isDrifted
                             ? 'bg-down/10 text-down border border-down/30 hover:bg-down/20'
                             : 'bg-white/[0.04] text-d-text-secondary border border-d-border hover:text-white'

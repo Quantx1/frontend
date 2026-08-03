@@ -311,11 +311,11 @@ export default function UserStrategyDetailPage() {
           <CardHeader>
             <span className="flex items-center justify-between gap-3">
               <span>Run a backtest</span>
-              <div className="inline-flex rounded-md border border-line p-0.5">
+              <div className="inline-flex rounded-xs border border-line p-0.5">
                 <button
                   type="button"
                   onClick={() => setBtMode('single')}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1 text-[11px] rounded-md transition-colors ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 text-[11px] rounded-xs transition-colors ${
                     btMode === 'single'
                       ? 'glass-control-accent font-semibold'
                       : 'text-d-text-secondary hover:text-d-text-primary'
@@ -327,7 +327,7 @@ export default function UserStrategyDetailPage() {
                 <button
                   type="button"
                   onClick={() => setBtMode('universe')}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1 text-[11px] rounded-md transition-colors ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 text-[11px] rounded-xs transition-colors ${
                     btMode === 'universe'
                       ? 'glass-control-accent font-semibold'
                       : 'text-d-text-secondary hover:text-d-text-primary'
@@ -389,7 +389,7 @@ export default function UserStrategyDetailPage() {
                   <select
                     value={btUniverse}
                     onChange={(e) => setBtUniverse(e.target.value as UniverseValue)}
-                    className="w-full rounded-md border border-line bg-main px-3 py-2 text-sm text-d-text-primary focus:border-primary focus:outline-none"
+                    className="w-full rounded-xs border border-line bg-main px-3 py-2 text-sm text-d-text-primary focus:border-primary focus:outline-none"
                     aria-label="Backtest universe"
                   >
                     {UNIVERSE_OPTIONS.filter((o) => o.value !== 'single').map((o) => (
@@ -450,7 +450,7 @@ export default function UserStrategyDetailPage() {
             )}
 
             {btError && (
-              <p className="rounded-md border border-down/40 bg-down/10 px-3 py-2 text-xs text-down">
+              <p className="rounded-xs border border-down/40 bg-down/10 px-3 py-2 text-xs text-down">
                 {btError}
               </p>
             )}
@@ -508,7 +508,7 @@ export default function UserStrategyDetailPage() {
         className="!max-w-lg"
       >
         <div className="space-y-4">
-          <div className="flex gap-3 rounded-md border border-down/30 bg-down/5 p-3">
+          <div className="flex gap-3 rounded-xs border border-down/30 bg-down/5 p-3">
             <AlertTriangle className="h-5 w-5 shrink-0 text-down" aria-hidden="true" />
             <div className="space-y-1 text-xs text-d-text-secondary">
               <p className="font-semibold text-d-text-primary">
@@ -631,7 +631,7 @@ export default function UserStrategyDetailPage() {
 
 function SummaryLine({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-md border border-line bg-wrap/60 p-2">
+    <div className="rounded-xs border border-line bg-wrap/60 p-2">
       <p className="font-mono text-[9px] uppercase tracking-wider text-d-text-muted">
         {label}
       </p>
@@ -683,7 +683,7 @@ function OptionsRiskSummary({ dsl, name }: { dsl: any; name: string }) {
         />
       </div>
 
-      <div className="rounded-md border border-line bg-wrap/60">
+      <div className="rounded-xs border border-line bg-wrap/60">
         <div className="grid grid-cols-12 gap-2 border-b border-line bg-wrap/80 px-3 py-1.5 font-mono text-[9px] uppercase tracking-wider text-d-text-muted">
           <span className="col-span-2">Side</span>
           <span className="col-span-2">Type</span>
@@ -714,7 +714,7 @@ function OptionsRiskSummary({ dsl, name }: { dsl: any; name: string }) {
       </div>
 
       {hasUnboundedRisk && (
-        <div className="flex gap-2 rounded-md border border-down/40 bg-down/10 p-2 text-[11px] text-down">
+        <div className="flex gap-2 rounded-xs border border-down/40 bg-down/10 p-2 text-[11px] text-down">
           <AlertTriangle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
           <span>
             <b>Naked short leg detected.</b> Loss is unbounded if the underlying

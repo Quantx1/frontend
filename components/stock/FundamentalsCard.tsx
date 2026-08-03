@@ -73,7 +73,7 @@ function InfoDot({ text }: { text: string }) {
         <HelpCircle className="h-2.5 w-2.5" />
       </button>
       {open && (
-        <span className="absolute right-0 top-5 z-20 w-56 rounded-lg border border-d-border bg-wrap p-2.5 text-[10.5px] leading-snug text-d-text-secondary shadow-lg">
+        <span className="absolute right-0 top-5 z-20 w-56 rounded-sm border border-d-border bg-wrap p-2.5 text-[10.5px] leading-snug text-d-text-secondary shadow-lg">
           {text}
         </span>
       )}
@@ -95,7 +95,7 @@ function CardShell({
   children: React.ReactNode
 }) {
   return (
-    <div className={`lg-surface rounded-2xl p-4 ${className}`}>
+    <div className={`lg-surface rounded-lg p-4 ${className}`}>
       <div className="mb-3 flex items-center justify-between gap-2">
         <h3 className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-d-text-muted">
           <Icon className="h-3.5 w-3.5" /> {title}
@@ -137,7 +137,7 @@ function MetricTile({
   children?: React.ReactNode
 }) {
   return (
-    <div className="rounded-lg border border-line bg-surface-2/40 p-3">
+    <div className="rounded-sm border border-line bg-surface-2/40 p-3">
       <div className="flex items-center justify-between gap-2">
         <span className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-d-text-muted">
           <Icon className="h-3 w-3" /> {label}
@@ -229,7 +229,7 @@ export default function FundamentalsCard({ symbol }: { symbol: string }) {
   return (
     <div className="space-y-4">
       {/* ── HEADER ROW ─────────────────────────────────────────── */}
-      <div className="lg-surface rounded-2xl p-4 md:p-5">
+      <div className="lg-surface rounded-lg p-4 md:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="min-w-0">
             <h2 className="flex items-center gap-2 text-[18px] font-bold tracking-tight text-d-text-primary">
@@ -270,11 +270,11 @@ export default function FundamentalsCard({ symbol }: { symbol: string }) {
       {loading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-24 animate-pulse rounded-xl bg-surface-2" />
+            <div key={i} className="h-24 animate-pulse rounded-md bg-surface-2" />
           ))}
         </div>
       ) : !hasData || !f ? (
-        <div className="lg-surface rounded-2xl p-6 text-center text-[12px] text-d-text-muted">
+        <div className="lg-surface rounded-lg p-6 text-center text-[12px] text-d-text-muted">
           Fundamentals not available for {symbol} yet.
         </div>
       ) : (
@@ -399,7 +399,7 @@ export default function FundamentalsCard({ symbol }: { symbol: string }) {
           {/* ── CONTEXT ROW: market cap · book value · price ───────── */}
           <CardShell icon={ScrollText} title="Context · size & price">
             <div className="grid grid-cols-3 gap-3">
-              <div className="rounded-lg border border-line bg-surface-2/40 p-3">
+              <div className="rounded-sm border border-line bg-surface-2/40 p-3">
                 <span className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-d-text-muted">
                   <Landmark className="h-3 w-3" /> Market cap
                 </span>
@@ -407,7 +407,7 @@ export default function FundamentalsCard({ symbol }: { symbol: string }) {
                   {fmtCr(f.market_cap_cr)}
                 </div>
               </div>
-              <div className="rounded-lg border border-line bg-surface-2/40 p-3">
+              <div className="rounded-sm border border-line bg-surface-2/40 p-3">
                 <span className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-d-text-muted">
                   <Banknote className="h-3 w-3" /> Book value
                 </span>
@@ -415,7 +415,7 @@ export default function FundamentalsCard({ symbol }: { symbol: string }) {
                   {fmtInr(f.book_value)}
                 </div>
               </div>
-              <div className="rounded-lg border border-line bg-surface-2/40 p-3">
+              <div className="rounded-sm border border-line bg-surface-2/40 p-3">
                 <span className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-d-text-muted">
                   <Coins className="h-3 w-3" /> Price
                 </span>

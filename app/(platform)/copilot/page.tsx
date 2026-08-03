@@ -221,7 +221,7 @@ function HomeInlineAnswer({
             type="button"
             onClick={onOpenThread}
             aria-label="Open in full chat"
-            className="glass-control inline-flex items-center gap-1 rounded-pill px-2 py-1 font-mono text-[10.5px] text-d-text-muted transition-colors hover:text-d-text-primary"
+            className="glass-control inline-flex items-center gap-1 rounded-full px-2 py-1 font-mono text-[10.5px] text-d-text-muted transition-colors hover:text-d-text-primary"
           >
             Open in chat <ArrowUpRight size={11} />
           </button>
@@ -229,7 +229,7 @@ function HomeInlineAnswer({
             type="button"
             onClick={onDismiss}
             aria-label="Dismiss answer"
-            className="grid h-6 w-6 place-items-center rounded-md text-d-text-muted transition-colors hover:bg-wrap-hover hover:text-d-text-primary"
+            className="grid h-6 w-6 place-items-center rounded-xs text-d-text-muted transition-colors hover:bg-wrap-hover hover:text-d-text-primary"
           >
             <X size={12} />
           </button>
@@ -686,7 +686,7 @@ function CopilotHub() {
   const sugKind = detectedSym ? 'About' : q ? 'Matching' : 'Suggested'
   const showSuggest = composerFocused && !pending && turns.length === 0 && suggestions.length > 0
 
-  // ── Composer ── hero = a rounded-2xl hairline card with a leading AI glyph,
+  // ── Composer ── hero = a rounded-lg hairline card with a leading AI glyph,
   // an in-box mode toolbar (the 5-lens selector) and a circular signature send
   // button; an animated suggestion sheet drops down from the box on focus.
   // Docked (non-hero) keeps the slim xAI pill. Enter sends · Shift+Enter newline
@@ -701,8 +701,8 @@ function CopilotHub() {
         aria-busy={pending}
         className={
           hero
-            ? 'glass-control-accent grid h-10 w-10 shrink-0 place-items-center rounded-pill transition-[transform,filter] duration-150 ease-out active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-30'
-            : 'glass-control-accent grid h-9 w-9 shrink-0 place-items-center rounded-pill transition-[transform,filter] duration-150 ease-out active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-30'
+            ? 'glass-control-accent grid h-10 w-10 shrink-0 place-items-center rounded-full transition-[transform,filter] duration-150 ease-out active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-30'
+            : 'glass-control-accent grid h-9 w-9 shrink-0 place-items-center rounded-full transition-[transform,filter] duration-150 ease-out active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-30'
         }
       >
         {pending ? <Loader2 size={hero ? 18 : 16} className="animate-spin" /> : <ArrowUp size={isz} />}
@@ -712,7 +712,7 @@ function CopilotHub() {
     if (!hero) {
       // Docked pill — unchanged single-row layout.
       return (
-        <div className="group relative flex items-end gap-2 rounded-pill border border-line bg-wrap-hover p-2 pl-4 transition-colors duration-150 ease-out focus-within:border-white/30">
+        <div className="group relative flex items-end gap-2 rounded-full border border-line bg-wrap-hover p-2 pl-4 transition-colors duration-150 ease-out focus-within:border-white/30">
           <textarea
             ref={inputRef}
             value={input}
@@ -737,7 +737,7 @@ function CopilotHub() {
     return (
       <div className="relative">
         <div
-          className="lg-surface group relative overflow-hidden rounded-2xl transition-[border-color,box-shadow] duration-200 ease-out"
+          className="lg-surface group relative overflow-hidden rounded-lg transition-[border-color,box-shadow] duration-200 ease-out"
           style={
             composerFocused
               ? {
@@ -803,7 +803,7 @@ function CopilotHub() {
                     disabled={pending}
                     aria-pressed={on}
                     title={m.label}
-                    className={`inline-flex items-center gap-1.5 rounded-pill px-3 py-1.5 text-[12.5px] font-medium transition-all duration-150 disabled:opacity-50 ${
+                    className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12.5px] font-medium transition-all duration-150 disabled:opacity-50 ${
                       on
                         ? 'glass-control-accent'
                         : 'glass-control text-d-text-secondary hover:text-d-text-primary'
@@ -859,7 +859,7 @@ function CopilotHub() {
                         type="button"
                         onMouseDown={(e) => e.preventDefault()}
                         onClick={() => fillPrompt(p)}
-                        className="group/row flex w-full items-center gap-2.5 rounded-pill px-3 py-2.5 text-left transition-colors hover:bg-white/[0.05]"
+                        className="group/row flex w-full items-center gap-2.5 rounded-full px-3 py-2.5 text-left transition-colors hover:bg-white/[0.05]"
                       >
                         <Sparkles size={13} className="shrink-0 text-ai" />
                         <span className="min-w-0 flex-1 truncate text-[13px] text-d-text-secondary transition-colors group-hover/row:text-d-text-primary">
@@ -1128,7 +1128,7 @@ function CopilotHub() {
             <BlurFade key={name} delay={i * 0.04} offset={8} duration={0.3}>
               <Link
                 href={href}
-                className="group relative flex h-full flex-col overflow-hidden rounded-2xl bg-wrap transition-shadow hover:ring-1 hover:ring-primary/25 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40"
+                className="group relative flex h-full flex-col overflow-hidden rounded-lg bg-wrap transition-shadow hover:ring-1 hover:ring-primary/25 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40"
               >
                 {image ? (
                   // ── IMAGE-TOPPED media band ── on-brand dark art as the card
@@ -1185,7 +1185,7 @@ function CopilotHub() {
                 <Stat label="Profit factor" value={stats!.profit_factor != null ? stats!.profit_factor.toFixed(2) : '—'} />
                 <Stat label="Signals tracked" value={String(stats!.n)} />
               </div>
-              <div className="rounded-2xl bg-wrap p-4">
+              <div className="rounded-lg bg-wrap p-4">
                 <div className="flex items-center justify-between">
                   <EyebrowMono className="text-[11px]">Cumulative return · 90d</EyebrowMono>
                   {track?.current_regime?.regime && <Badge tone="primary">{track.current_regime.regime} regime</Badge>}
@@ -1203,7 +1203,7 @@ function CopilotHub() {
             <p className="mt-3 text-[11px] text-d-text-secondary">Live, outcome-tracked signal performance over the last 90 days. Past performance does not guarantee future results.</p>
           </>
         ) : (
-          <div className="mt-5 flex flex-col gap-3 rounded-2xl bg-wrap p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-5 flex flex-col gap-3 rounded-lg bg-wrap p-5 sm:flex-row sm:items-center sm:justify-between">
             <p className="max-w-2xl text-[13.5px] leading-relaxed text-d-text-secondary">
               Every signal we publish gets tracked to its outcome: win, loss or expiry. Audited, unedited, no cherry-picking. The live record builds right here as trades resolve.
               {(stats?.n ?? 0) > 0 && <span className="font-normal text-d-text-primary"> {stats!.n} signals tracked so far.</span>}
@@ -1236,7 +1236,7 @@ function SectionHead({ eyebrow, title }: { eyebrow: string; title: string }) {
 function Stat({ label, value, tone = 'neutral' }: { label: string; value: string; tone?: 'up' | 'down' | 'neutral' }) {
   const color = tone === 'up' ? 'text-up' : tone === 'down' ? 'text-down' : 'text-d-text-primary'
   return (
-    <div className="rounded-2xl bg-wrap p-4">
+    <div className="rounded-lg bg-wrap p-4">
       <EyebrowMono className="text-[11px]">{label}</EyebrowMono>
       <div className={`mt-1 text-[26px] font-normal leading-none ${MONO} ${color}`}>{value}</div>
     </div>

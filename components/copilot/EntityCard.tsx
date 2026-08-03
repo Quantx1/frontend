@@ -87,10 +87,8 @@ export function EntityCard({
     changePct == null ? 'auto' : changePct > 0 ? 'up' : changePct < 0 ? 'down' : 'auto'
 
   return (
-    // `rounded-xl` is 12px TODAY. The spec calls this radius `md`, but the
-    // rename is the Phase 0.3 codemod (rounded-xl → rounded-md), which has not
-    // run. Writing `rounded-md` here would render 6px now and 6px after.
-    <Card elevation="raised" density="default" className={cn('rounded-xl', className)}>
+    // `md` = 12px — the card radius in the usage budget (REDESIGN-VISUAL §2.1).
+    <Card elevation="raised" density="default" className={cn('rounded-md', className)}>
       {/* Card publishes --card-px/--card-py; CardBody is what consumes them. */}
       <CardBody>
       {/* ── row 1 — identity + price ─────────────────────────────────────── */}

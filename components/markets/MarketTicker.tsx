@@ -66,12 +66,12 @@ function TickerCell({ item, animate }: { item: TickerItem; animate: boolean }) {
   const up = item.invert ? !rawUp : rawUp
 
   return (
-    <li className="relative inline-flex shrink-0 items-center gap-2 overflow-hidden rounded-md px-1">
+    <li className="relative inline-flex shrink-0 items-center gap-2 overflow-hidden rounded-xs px-1">
       {flash && (
         <span
           key={flash.key}
           aria-hidden
-          className={`pointer-events-none absolute inset-0 rounded-md ${flash.dir === 'up' ? 'price-flash-up' : 'price-flash-down'}`}
+          className={`pointer-events-none absolute inset-0 rounded-xs ${flash.dir === 'up' ? 'price-flash-up' : 'price-flash-down'}`}
         />
       )}
 
@@ -80,7 +80,7 @@ function TickerCell({ item, animate }: { item: TickerItem; animate: boolean }) {
       ) : (
         <span
           aria-hidden
-          className={`h-1.5 w-1.5 shrink-0 rounded-pill ${loading ? 'bg-d-text-muted/40' : up ? 'bg-up' : 'bg-down'}`}
+          className={`h-1.5 w-1.5 shrink-0 rounded-full ${loading ? 'bg-d-text-muted/40' : up ? 'bg-up' : 'bg-down'}`}
         />
       )}
 

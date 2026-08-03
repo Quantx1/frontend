@@ -38,7 +38,7 @@ export default function AiRadarStrip() {
   if (!alertItems.length && !setupItems.length) return null
 
   return (
-    <section aria-label="AI radar" className="flex h-full flex-col rounded-2xl bg-wrap px-4 py-3.5 sm:px-5">
+    <section aria-label="AI radar" className="flex h-full flex-col rounded-lg bg-wrap px-4 py-3.5 sm:px-5">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <span className="flex items-center gap-2 text-[13px] font-semibold text-d-text-primary">
           <Radar className="h-4 w-4 text-primary" /> AI Radar
@@ -53,14 +53,14 @@ export default function AiRadarStrip() {
         {/* setup counts — 2-col mini-grid so four setups fill the panel's
             height and sit level with the taller alerts panel beside it */}
         {setupItems.length > 0 && (
-          <div className="flex h-full flex-col rounded-xl border border-line bg-surface-2/60 p-3">
+          <div className="flex h-full flex-col rounded-md border border-line bg-surface-2/60 p-3">
             <p className="text-[10px] uppercase tracking-wider text-d-text-muted">Setups on the tape</p>
             <div className="mt-2 grid flex-1 grid-cols-2 content-start gap-1.5">
               {setupItems.map((s) => (
                 <Link
                   key={s.key}
                   href="/scanner"
-                  className="flex items-center justify-between gap-1.5 rounded-lg border border-line bg-wrap px-2.5 py-1.5 text-[11.5px] text-d-text-secondary transition-colors hover:text-primary"
+                  className="flex items-center justify-between gap-1.5 rounded-sm border border-line bg-wrap px-2.5 py-1.5 text-[11.5px] text-d-text-secondary transition-colors hover:text-primary"
                 >
                   <span className="truncate">{s.label}</span>
                   <span className="numeric font-semibold text-d-text-primary">{s.count}</span>
@@ -72,7 +72,7 @@ export default function AiRadarStrip() {
 
         {/* alerts firing now */}
         {alertItems.length > 0 && (
-          <div className="flex h-full flex-col rounded-xl border border-line bg-surface-2/60 p-3">
+          <div className="flex h-full flex-col rounded-md border border-line bg-surface-2/60 p-3">
             <p className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-d-text-muted">
               <Zap className="h-3 w-3" /> Firing now
             </p>

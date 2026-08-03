@@ -80,7 +80,7 @@ export const EmptyState = ({
     className={cn(
       // L2 recessed well, no border: an empty state is a hole in the page, so
       // it reads as recessed rather than as one more card competing for weight.
-      'flex flex-col items-center justify-center rounded-xl bg-surface-2 text-center',
+      'flex flex-col items-center justify-center rounded-md bg-surface-2 text-center',
       size === 'sm' ? 'gap-2.5 p-6' : 'gap-3 p-10',
       className,
     )}

@@ -67,7 +67,7 @@ export default function ModelPerformancePage() {
       )}
 
       {data?.errors && data.errors.length > 0 && (
-        <div className="mt-4 rounded-md border border-down/30 bg-down/5 p-3 text-xs text-down">
+        <div className="mt-4 rounded-xs border border-down/30 bg-down/5 p-3 text-xs text-down">
           <p className="font-semibold">Errors</p>
           <ul className="mt-1 space-y-0.5">
             {data.errors.map((e, i) => <li key={i}>{e}</li>)}
@@ -91,7 +91,7 @@ function ModelRow({ m }: { m: any }) {
       : `${(drift * 100).toFixed(0)}% of backtest`
 
   return (
-    <div className="rounded-xl border border-line bg-wrap p-4">
+    <div className="rounded-md border border-line bg-wrap p-4">
       <header className="flex flex-wrap items-baseline justify-between gap-2">
         <div className="flex items-center gap-2">
           <h3 className="text-lg font-semibold text-d-text-primary">{m.model_name}</h3>
@@ -100,7 +100,7 @@ function ModelRow({ m }: { m: any }) {
             trained {m.trained_at?.slice(0, 10) ?? '—'}
           </span>
         </div>
-        <span className={`rounded-md border px-2 py-0.5 text-[11px] capitalize ${driftTone}`}>
+        <span className={`rounded-xs border px-2 py-0.5 text-[11px] capitalize ${driftTone}`}>
           drift: {driftLabel}
         </span>
       </header>

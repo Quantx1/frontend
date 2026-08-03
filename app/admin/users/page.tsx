@@ -168,7 +168,7 @@ export default function AdminUsersPage() {
           </div>
           <button
             onClick={handleExport}
-            className="flex items-center gap-2 px-4 py-2 bg-white/[0.04] hover:bg-white/[0.06] rounded-lg text-white text-sm font-medium transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-white/[0.04] hover:bg-white/[0.06] rounded-sm text-white text-sm font-medium transition-colors"
           >
             <Download className="w-4 h-4" />
             Export CSV
@@ -177,7 +177,7 @@ export default function AdminUsersPage() {
       </div>
 
       {error && (
-        <div className="bg-down/10 border border-down/20 rounded-xl p-4 flex items-center gap-3">
+        <div className="bg-down/10 border border-down/20 rounded-md p-4 flex items-center gap-3">
           <AlertCircle className="w-5 h-5 text-down" />
           <p className="text-down">{error}</p>
         </div>
@@ -194,7 +194,7 @@ export default function AdminUsersPage() {
                 placeholder="Search by email, name, or phone..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-white/[0.04] border border-d-border rounded-lg text-white placeholder:text-white/30 focus:outline-none focus:border-warning/60"
+                className="w-full pl-10 pr-4 py-2.5 bg-white/[0.04] border border-d-border rounded-sm text-white placeholder:text-white/30 focus:outline-none focus:border-warning/60"
               />
             </div>
             <select
@@ -203,7 +203,7 @@ export default function AdminUsersPage() {
                 setSubscriptionFilter(e.target.value)
                 setPage(1)
               }}
-              className="px-4 py-2.5 bg-white/[0.04] border border-d-border rounded-lg text-white focus:outline-none focus:border-warning/60"
+              className="px-4 py-2.5 bg-white/[0.04] border border-d-border rounded-sm text-white focus:outline-none focus:border-warning/60"
             >
               {subscriptionOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -213,14 +213,14 @@ export default function AdminUsersPage() {
             </select>
             <button
               type="submit"
-              className="px-6 py-2.5 bg-warning hover:bg-warning/90 rounded-lg text-black font-medium transition-colors"
+              className="px-6 py-2.5 bg-warning hover:bg-warning/90 rounded-sm text-black font-medium transition-colors"
             >
               Search
             </button>
             <button
               type="button"
               onClick={fetchUsers}
-              className="p-2.5 bg-white/[0.04] hover:bg-white/[0.06] rounded-lg text-d-text-muted transition-colors"
+              className="p-2.5 bg-white/[0.04] hover:bg-white/[0.06] rounded-sm text-d-text-muted transition-colors"
             >
               <RefreshCw className="w-5 h-5" />
             </button>
@@ -337,12 +337,12 @@ export default function AdminUsersPage() {
                             onClick={() =>
                               setActionMenuOpen(actionMenuOpen === user.id ? null : user.id)
                             }
-                            className="p-2 hover:bg-white/[0.06] rounded-lg transition-colors"
+                            className="p-2 hover:bg-white/[0.06] rounded-sm transition-colors"
                           >
                             <MoreVertical className="w-4 h-4 text-d-text-muted" />
                           </button>
                           {actionMenuOpen === user.id && (
-                            <div className="absolute right-0 mt-2 w-48 bg-white/[0.04] border border-d-border rounded-lg shadow-lg z-10">
+                            <div className="absolute right-0 mt-2 w-48 bg-white/[0.04] border border-d-border rounded-sm shadow-lg z-10">
                               <a
                                 href={`/admin/users/${user.id}`}
                                 className="flex items-center gap-2 px-4 py-2 text-sm text-d-text-muted hover:bg-white/[0.06] transition-colors"
@@ -394,7 +394,7 @@ export default function AdminUsersPage() {
               <button
                 onClick={() => setPage(Math.max(1, page - 1))}
                 disabled={page === 1}
-                className="p-2 bg-white/[0.04] hover:bg-white/[0.06] rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="p-2 bg-white/[0.04] hover:bg-white/[0.06] rounded-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronLeft className="w-4 h-4 text-d-text-muted" />
               </button>
@@ -404,7 +404,7 @@ export default function AdminUsersPage() {
               <button
                 onClick={() => setPage(Math.min(totalPages, page + 1))}
                 disabled={page === totalPages}
-                className="p-2 bg-white/[0.04] hover:bg-white/[0.06] rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="p-2 bg-white/[0.04] hover:bg-white/[0.06] rounded-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronRight className="w-4 h-4 text-d-text-muted" />
               </button>

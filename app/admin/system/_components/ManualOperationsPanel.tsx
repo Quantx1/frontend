@@ -48,7 +48,7 @@ export default function ManualOperationsPanel() {
         <button
           onClick={triggerScan}
           disabled={running}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-warning/10 border border-warning/30 text-warning rounded-lg text-sm font-medium hover:bg-warning/20 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-warning/10 border border-warning/30 text-warning rounded-sm text-sm font-medium hover:bg-warning/20 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <RefreshCw className={`w-4 h-4 ${running ? 'animate-spin' : ''}`} />
           {running ? 'Scanning…' : 'Trigger signal scan now'}
@@ -57,7 +57,7 @@ export default function ManualOperationsPanel() {
 
       {lastResult && (
         <div
-          className="mt-4 px-4 py-3 rounded-lg border text-sm"
+          className="mt-4 px-4 py-3 rounded-sm border text-sm"
           style={{
             borderColor: lastResult.ok ? 'color-mix(in srgb, var(--color-up) 30%, transparent)' : 'color-mix(in srgb, var(--color-down) 30%, transparent)',
             background: lastResult.ok ? 'color-mix(in srgb, var(--color-up) 6%, transparent)' : 'color-mix(in srgb, var(--color-down) 6%, transparent)',

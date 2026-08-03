@@ -83,7 +83,7 @@ export default function VisionUpload({ onPromptReady }: Props) {
   }
 
   return (
-    <div className="rounded-2xl border border-line bg-wrap p-4">
+    <div className="rounded-lg border border-line bg-wrap p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
         <label className="flex-1">
           <span className="mb-1 block text-[11px] text-d-text-muted">Symbol</span>
@@ -92,7 +92,7 @@ export default function VisionUpload({ onPromptReady }: Props) {
             onChange={(e) => setSymbol(e.target.value.toUpperCase())}
             placeholder="RELIANCE"
             aria-label="Symbol for the uploaded chart"
-            className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-d-text-primary outline-none placeholder:text-d-text-muted focus:border-d-text-muted"
+            className="w-full rounded-sm border border-line bg-transparent px-3 py-2 text-sm text-d-text-primary outline-none placeholder:text-d-text-muted focus:border-d-text-muted"
           />
         </label>
 
@@ -102,7 +102,7 @@ export default function VisionUpload({ onPromptReady }: Props) {
             value={timeframe}
             onChange={(e) => setTimeframe(e.target.value as Timeframe)}
             aria-label="Chart timeframe"
-            className="w-full rounded-lg border border-line bg-transparent px-3 py-2 text-sm text-d-text-primary outline-none focus:border-d-text-muted"
+            className="w-full rounded-sm border border-line bg-transparent px-3 py-2 text-sm text-d-text-primary outline-none focus:border-d-text-muted"
           >
             {TIMEFRAMES.map((t) => (
               <option key={t.value} value={t.value}>
@@ -138,7 +138,7 @@ export default function VisionUpload({ onPromptReady }: Props) {
           type="button"
           onClick={onRead}
           disabled={!canRead}
-          className="glass-control-accent ml-auto inline-flex h-9 items-center gap-1.5 rounded-pill px-4 text-[13px] font-semibold transition-transform active:scale-[0.97] disabled:opacity-50"
+          className="glass-control-accent ml-auto inline-flex h-9 items-center gap-1.5 rounded-full px-4 text-[13px] font-semibold transition-transform active:scale-[0.97] disabled:opacity-50"
         >
           {loading ? (
             <>
@@ -155,7 +155,7 @@ export default function VisionUpload({ onPromptReady }: Props) {
       </div>
 
       {error && (
-        <div className="mt-3 flex items-start gap-2 rounded-lg border border-down/40 bg-down/10 px-3 py-2">
+        <div className="mt-3 flex items-start gap-2 rounded-sm border border-down/40 bg-down/10 px-3 py-2">
           <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-down" aria-hidden="true" />
           <p className="text-xs text-down">{error}</p>
         </div>
@@ -172,7 +172,7 @@ export default function VisionUpload({ onPromptReady }: Props) {
             </p>
           ) : (
             result.note && (
-              <div className="flex items-start gap-2 rounded-lg border border-line bg-wrap px-3 py-2">
+              <div className="flex items-start gap-2 rounded-sm border border-line bg-wrap px-3 py-2">
                 <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-d-text-muted" aria-hidden="true" />
                 <p className="text-xs text-d-text-secondary">{result.note}</p>
               </div>

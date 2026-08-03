@@ -78,7 +78,7 @@ export function SignalCard({ s, series }: { s: DisplaySignal; series?: number[] 
     <button
       type="button"
       onClick={() => router.push(`/signals/${s.id}`)}
-      className="lg-surface lift group w-full rounded-xl p-4 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+      className="lg-surface lift group w-full rounded-md p-4 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
     >
       {/* header — ticker + direction pill */}
       <div className="flex items-start justify-between gap-2">
@@ -223,7 +223,7 @@ function LevelTile({
 }) {
   const color = tone === 'up' ? 'text-up' : tone === 'down' ? 'text-down' : 'text-d-text-primary'
   return (
-    <div className="rounded-lg border border-line bg-main px-2 py-1.5">
+    <div className="rounded-sm border border-line bg-main px-2 py-1.5">
       <div className="text-[9px] font-medium uppercase tracking-wide text-d-text-muted">{label}</div>
       <div className={`mt-0.5 truncate font-mono text-[12.5px] font-semibold tabular-nums ${color}`}>
         ₹{value.toFixed(2)}

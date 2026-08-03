@@ -66,7 +66,7 @@ export default function NewsIntelligenceCard({
       <CardBody>
         {isLoading ? (
           <div>
-            <Skeleton className="h-44 w-full rounded-lg" />
+            <Skeleton className="h-44 w-full rounded-sm" />
             {/* The first uncached read fans out to every news source and
                 scores each story — honest about the wait so a slow cold
                 call doesn't read as broken. Cached reads are instant. */}
@@ -81,7 +81,7 @@ export default function NewsIntelligenceCard({
           <div className="space-y-4">
             {/* thesis-change alert */}
             {data.thesis?.at_risk && (
-              <div className={`flex items-start gap-2 rounded-xl px-3 py-2 text-xs ${data.thesis.severity === 'high' ? 'bg-danger/10 text-danger' : 'bg-warning/10 text-warning'}`}>
+              <div className={`flex items-start gap-2 rounded-md px-3 py-2 text-xs ${data.thesis.severity === 'high' ? 'bg-danger/10 text-danger' : 'bg-warning/10 text-warning'}`}>
                 <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                 <span>{data.thesis.reason} Review your {data.thesis.position}.</span>
               </div>

@@ -288,7 +288,7 @@ export function StrategyActionRow({
           </Button>
         ) : (
           <span
-            className="inline-flex h-8 items-center gap-1 rounded-pill border border-line px-3 text-xs text-d-text-muted"
+            className="inline-flex h-8 items-center gap-1 rounded-full border border-line px-3 text-xs text-d-text-muted"
             title="Payoff diagrams apply to options strategies only"
           >
             <LineChart className="h-3.5 w-3.5" />

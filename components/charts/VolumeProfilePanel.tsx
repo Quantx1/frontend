@@ -153,7 +153,7 @@ export function VolumeProfilePanel({
 
         {/* Horizontal bar volume-at-price. Bars grow from the LEFT — that
             way the price axis is visible on the right where the user reads. */}
-        <div className="rounded-md border border-line bg-main p-2">
+        <div className="rounded-xs border border-line bg-main p-2">
           <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-d-text-muted">
             Volume at price
           </p>
@@ -186,7 +186,7 @@ export function VolumeProfilePanel({
 
         {/* Last close + day range — context for the profile. */}
         <div className="grid grid-cols-2 gap-2 text-[11px]">
-          <div className="rounded-md border border-line bg-wrap p-2">
+          <div className="rounded-xs border border-line bg-wrap p-2">
             <p className="text-[9px] uppercase tracking-wider text-d-text-muted">
               Last close
             </p>
@@ -194,7 +194,7 @@ export function VolumeProfilePanel({
               ₹{profile.lastClose.toFixed(2)}
             </p>
           </div>
-          <div className="rounded-md border border-line bg-wrap p-2">
+          <div className="rounded-xs border border-line bg-wrap p-2">
             <p className="text-[9px] uppercase tracking-wider text-d-text-muted">
               {lookbackDays}d range
             </p>
@@ -223,7 +223,7 @@ function KeyLevel({
   hint: string
 }) {
   return (
-    <div className="rounded-md border border-line bg-wrap p-2">
+    <div className="rounded-xs border border-line bg-wrap p-2">
       <p className="text-[9px] font-semibold uppercase tracking-wider text-d-text-muted">
         {label}
       </p>

@@ -67,7 +67,7 @@ export default function FnoStockScanners() {
   return (
     <div className="space-y-4">
       {/* FII/DII header strip */}
-      <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-wrap/60 px-3 py-2 text-xs">
+      <div className="flex flex-wrap items-center gap-3 rounded-lg border border-line bg-wrap/60 px-3 py-2 text-xs">
         <span className="text-[10px] font-semibold uppercase tracking-wider text-d-text-muted">Institutional flow</span>
         {data ? (
           <>
@@ -91,7 +91,7 @@ export default function FnoStockScanners() {
 
       {/* OI-feed warning when data unavailable */}
       {data && !data.oi_source?.startsWith('bhavcopy') && data.oi_last_error && (
-        <div className="rounded-xl border border-warning/30 bg-warning/5 px-3 py-2 text-[11px] text-warning">
+        <div className="rounded-md border border-warning/30 bg-warning/5 px-3 py-2 text-[11px] text-warning">
           <strong>NSE OI feed unavailable today:</strong> {data.oi_last_error}.
           OI buildup buckets degrade to empty until the NSE bhavcopy publishes
           (usually post 5 PM IST). FII/DII flow still works via the live API.
@@ -105,7 +105,7 @@ export default function FnoStockScanners() {
           const rows: OiRow[] = (data?.buckets?.[b.key] ?? []) as OiRow[]
           const count = data?.counts?.[b.key] ?? 0
           return (
-            <div key={b.key} className="rounded-2xl border border-line bg-wrap">
+            <div key={b.key} className="rounded-lg border border-line bg-wrap">
               <header className="flex items-center justify-between border-b border-line px-3 py-2">
                 <div className="flex items-center gap-2">
                   <Icon className={`h-4 w-4 ${b.tone}`} />

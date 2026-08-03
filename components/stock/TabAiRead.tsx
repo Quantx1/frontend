@@ -48,7 +48,7 @@ export default function TabAiRead({
   if (state === 'empty') return null // the deterministic cards below carry the tab
 
   return (
-    <div className="rounded-2xl border border-ai/25 bg-wrap px-4 py-3">
+    <div className="rounded-lg border border-ai/25 bg-wrap px-4 py-3">
       <div className="mb-1 flex items-center gap-1.5">
         <Sparkles className="h-3.5 w-3.5 text-ai" />
         <span className="font-mono text-[10px] font-semibold uppercase tracking-wider text-ai">{title}</span>

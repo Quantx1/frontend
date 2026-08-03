@@ -53,7 +53,7 @@ export default function EarningsPreviewCard({ symbol }: { symbol: string }) {
   }
 
   return (
-    <div className="rounded-2xl border border-line bg-wrap overflow-hidden">
+    <div className="rounded-lg border border-line bg-wrap overflow-hidden">
       <button
         onClick={ask}
         disabled={state === 'loading'}

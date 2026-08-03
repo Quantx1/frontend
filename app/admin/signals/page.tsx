@@ -106,7 +106,7 @@ export default function AdminSignalsPage() {
           </div>
           <button
             onClick={fetchData}
-            className="p-2 bg-white/[0.04] hover:bg-white/[0.06] rounded-lg transition-colors"
+            className="p-2 bg-white/[0.04] hover:bg-white/[0.06] rounded-sm transition-colors"
           >
             <RefreshCw className="w-5 h-5 text-d-text-muted" />
           </button>
@@ -120,7 +120,7 @@ export default function AdminSignalsPage() {
             <button
               key={days}
               onClick={() => setPeriod(days)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-sm text-sm font-medium transition-colors ${
                 period === days
                   ? 'bg-warning text-black'
                   : 'bg-white/[0.04] text-d-text-muted hover:bg-white/[0.06]'

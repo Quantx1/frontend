@@ -40,7 +40,7 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
     <div
       role="radiogroup"
       aria-label="Appearance"
-      className={`inline-flex flex-wrap items-center gap-1 rounded-lg border border-d-border bg-wrap p-1 ${className}`}
+      className={`inline-flex flex-wrap items-center gap-1 rounded-sm border border-d-border bg-wrap p-1 ${className}`}
     >
       {OPTIONS.map(({ value, label, icon: Icon, hint }) => {
         const selected = active === value
@@ -52,7 +52,7 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
             title={hint}
             onClick={() => setMode(value)}
             className={[
-              'inline-flex items-center gap-2 px-3 py-2 rounded-md text-[12px] font-medium',
+              'inline-flex items-center gap-2 px-3 py-2 rounded-xs text-[12px] font-medium',
               'transition-all min-h-[40px] spring-press',
               selected
                 ? 'bg-primary/10 text-primary border border-primary/30 shadow-[inset_0_0_0_1px_rgba(11,163,127,0.10)]'
@@ -80,7 +80,7 @@ export function ThemeToggleCompact({ className = '' }: { className?: string }) {
     <AnimatedThemeToggle
       iconClassName="w-4 h-4"
       className={[
-        'inline-flex h-8 w-8 items-center justify-center rounded-md',
+        'inline-flex h-8 w-8 items-center justify-center rounded-xs',
         'border border-d-border text-d-text-muted',
         'transition-colors hover:border-primary/30 hover:text-primary',
         className,

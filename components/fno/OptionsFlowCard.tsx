@@ -54,7 +54,7 @@ export default function OptionsFlowCard() {
   const leanTone = LEAN_TONE[data?.lean ?? 'neutral'] || LEAN_TONE.neutral
 
   return (
-    <section className="rounded-xl border border-line bg-wrap p-4">
+    <section className="rounded-md border border-line bg-wrap p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Layers className="h-3.5 w-3.5 text-primary" />
@@ -75,7 +75,7 @@ export default function OptionsFlowCard() {
               key={idx}
               type="button"
               onClick={() => setSymbol(idx)}
-              className={`rounded-md px-3 py-1 text-[11px] font-medium transition-colors ${
+              className={`rounded-xs px-3 py-1 text-[11px] font-medium transition-colors ${
                 active
                   ? 'glass-control-accent'
                   : 'glass-control text-d-text-secondary hover:text-d-text-primary'
@@ -89,7 +89,7 @@ export default function OptionsFlowCard() {
           type="button"
           onClick={() => mutate()}
           aria-label="Refresh"
-          className="glass-control ml-auto rounded-md p-1.5 text-d-text-muted transition-colors hover:text-d-text-primary"
+          className="glass-control ml-auto rounded-xs p-1.5 text-d-text-muted transition-colors hover:text-d-text-primary"
         >
           <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`} />
         </button>
@@ -100,7 +100,7 @@ export default function OptionsFlowCard() {
       ) : (
         <div className="mt-3 space-y-3">
           {/* Lean banner */}
-          <div className={`flex items-center justify-between rounded-md border px-3 py-2 ${leanTone}`}>
+          <div className={`flex items-center justify-between rounded-xs border px-3 py-2 ${leanTone}`}>
             <span className="flex items-center gap-2 text-[12px] font-semibold capitalize">
               <LeanIcon className="h-4 w-4" />
               {data.lean} lean
@@ -132,7 +132,7 @@ export default function OptionsFlowCard() {
 
           {/* Biggest OI buildup */}
           {data.biggest_buildup && (
-            <div className="rounded-md border border-line bg-main px-3 py-2 text-[11px] text-d-text-secondary">
+            <div className="rounded-xs border border-line bg-main px-3 py-2 text-[11px] text-d-text-secondary">
               <span className="text-[9px] uppercase tracking-wider text-d-text-muted">Biggest OI move</span>
               <p className="mt-0.5 font-mono">
                 <span className={data.biggest_buildup.side === 'PE' ? 'text-up' : 'text-down'}>
@@ -164,7 +164,7 @@ function Stat({
 }) {
   const valueTone = tone === 'up' ? 'text-up' : tone === 'down' ? 'text-down' : 'text-d-text-primary'
   return (
-    <div className="rounded-md border border-line bg-main px-3 py-2">
+    <div className="rounded-xs border border-line bg-main px-3 py-2">
       <p className="text-[9px] uppercase tracking-wider text-d-text-muted">{label}</p>
       <p className={`mt-0.5 font-mono text-sm font-medium tabular-nums ${valueTone}`}>{value}</p>
       {hint && <p className="mt-0.5 text-[9px] text-d-text-muted">{hint}</p>}

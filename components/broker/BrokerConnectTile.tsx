@@ -106,7 +106,7 @@ export default function BrokerConnectTile({
     >
       <div>
         <div className="flex items-start justify-between gap-2">
-          <div className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-lg bg-white p-1.5 ring-1 ring-line">
+          <div className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-sm bg-white p-1.5 ring-1 ring-line">
             <BrandLogo domain={BROKER_DOMAIN[broker]} alt={m.name} size={28} fallback={m.logo} />
           </div>
           <StatusPill status={status} />
@@ -161,7 +161,7 @@ export default function BrokerConnectTile({
           <button
             onClick={onDisconnect}
             disabled={busy}
-            className="flex items-center gap-1.5 text-[12px] text-down/80 border border-down/30 rounded-md px-3 py-1.5 hover:bg-down/10 hover:text-down transition-colors disabled:opacity-40"
+            className="flex items-center gap-1.5 text-[12px] text-down/80 border border-down/30 rounded-xs px-3 py-1.5 hover:bg-down/10 hover:text-down transition-colors disabled:opacity-40"
           >
             <Unlink className="w-3.5 h-3.5" />
             Disconnect
@@ -173,7 +173,7 @@ export default function BrokerConnectTile({
         <button
           onClick={onConnect}
           disabled={busy}
-          className={`flex items-center gap-1.5 text-[12px] font-medium rounded-md px-4 py-1.5 transition-colors disabled:opacity-40 ${
+          className={`flex items-center gap-1.5 text-[12px] font-medium rounded-xs px-4 py-1.5 transition-colors disabled:opacity-40 ${
             isConnected
               ? 'border border-d-border text-d-text-secondary hover:bg-hover'
               : 'bg-primary text-primary-foreground hover:bg-primary-hover'

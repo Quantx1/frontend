@@ -49,7 +49,7 @@ export default function ForgotPasswordPage() {
         </p>
 
         {submitted ? (
-          <div className="rounded-xl border border-up/20 bg-up/5 p-6 text-center">
+          <div className="rounded-md border border-up/20 bg-up/5 p-6 text-center">
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-up/10">
               <CheckCircle className="h-7 w-7 text-up" />
             </div>
@@ -72,14 +72,14 @@ export default function ForgotPasswordPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
                   required
-                  className="w-full rounded-xl border border-line bg-wrap py-3 pl-11 pr-4 text-sm text-d-text-primary placeholder:text-d-text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                  className="w-full rounded-md border border-line bg-wrap py-3 pl-11 pr-4 text-sm text-d-text-primary placeholder:text-d-text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                 />
               </div>
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="flex w-full items-center justify-center rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary-hover hover:shadow-glow-primary disabled:opacity-50"
+              className="flex w-full items-center justify-center rounded-md bg-primary py-3 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary-hover hover:shadow-glow-primary disabled:opacity-50"
             >
               {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Send Reset Link'}
             </button>

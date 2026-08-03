@@ -99,7 +99,7 @@ export default function ReferralsPage() {
   if (error && !data) {
     return (
       <div className="max-w-5xl mx-auto px-4 md:px-6 py-10">
-        <div className="rounded-md border border-down/40 bg-down/10 px-3 py-2 text-[12px] text-down">
+        <div className="rounded-xs border border-down/40 bg-down/10 px-3 py-2 text-[12px] text-down">
           {error}
         </div>
       </div>
@@ -132,7 +132,7 @@ export default function ReferralsPage() {
       </Reveal>
 
       {error && (
-        <div className="rounded-md border border-down/40 bg-down/10 px-3 py-2 text-[12px] text-down">
+        <div className="rounded-xs border border-down/40 bg-down/10 px-3 py-2 text-[12px] text-down">
           {error}
         </div>
       )}
@@ -157,7 +157,7 @@ export default function ReferralsPage() {
             <button
               onClick={rotate}
               disabled={rotating}
-              className="glass-control inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[11px] text-d-text-secondary hover:text-d-text-primary disabled:opacity-60"
+              className="glass-control inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xs text-[11px] text-d-text-secondary hover:text-d-text-primary disabled:opacity-60"
             >
               <RefreshCw className={`w-3 h-3 ${rotating ? 'animate-spin' : ''}`} />
               Rotate code
@@ -166,7 +166,7 @@ export default function ReferralsPage() {
         </div>
 
         {/* Link + copy */}
-        <div className="mt-4 flex items-center gap-2 rounded-md bg-main border border-d-border px-3 py-2.5">
+        <div className="mt-4 flex items-center gap-2 rounded-xs bg-main border border-d-border px-3 py-2.5">
           <Share2 className="w-4 h-4 text-primary shrink-0" />
           <input
             readOnly

@@ -65,9 +65,9 @@ const timeAgo = (iso?: string | null) => {
  */
 function MarketDataGate() {
   return (
-    <div className="lg-surface lg-ring flex flex-col gap-4 rounded-2xl p-5 sm:flex-row sm:items-center sm:justify-between md:p-6">
+    <div className="lg-surface lg-ring flex flex-col gap-4 rounded-lg p-5 sm:flex-row sm:items-center sm:justify-between md:p-6">
       <div className="flex min-w-0 items-start gap-3.5">
-        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary/15 text-primary"><Zap size={20} /></span>
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-md bg-primary/15 text-primary"><Zap size={20} /></span>
         <div className="min-w-0">
           <h2 className="text-[15px] font-semibold text-d-text-primary">Live NSE prices &amp; flows — from your broker</h2>
           <p className="mt-1 max-w-xl text-[12.5px] leading-relaxed text-d-text-muted">
@@ -172,7 +172,7 @@ export default function MarketsPage() {
             {globalLive.length > 0 && (
               <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
                 {globalLive.map((g: any) => (
-                  <span key={g.key || g.label} className="tile-tint inline-flex shrink-0 items-baseline gap-2 rounded-xl px-3 py-1.5 text-[11.5px]">
+                  <span key={g.key || g.label} className="tile-tint inline-flex shrink-0 items-baseline gap-2 rounded-md px-3 py-1.5 text-[11.5px]">
                     <span className="text-d-text-muted">{g.label}</span>
                     <span className={`${MONO} text-d-text-primary`}>{num(g.last)}</span>
                     <span className={`${MONO} ${(g.change_pct ?? 0) >= 0 ? 'text-up' : 'text-down'}`}>{pct(g.change_pct)}</span>
@@ -201,7 +201,7 @@ export default function MarketsPage() {
              stat tiles or global strip. ── */}
         <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-12">
           <Reveal delay={0.03} className="h-full lg:col-span-4">
-            <Card className="flex h-full min-h-[240px] flex-col rounded-2xl border-0 p-4">
+            <Card className="flex h-full min-h-[240px] flex-col rounded-lg border-0 p-4">
               <div className="flex items-center gap-2 text-[13px] font-semibold text-d-text-primary"><LineChart size={14} className="text-primary" /> Regime gauge</div>
               <div className="flex flex-1 flex-col items-center justify-center py-4">
                 <RegimeGauge score={gaugeScore} caption={cur ? `Regime ${cap(cur.regime)} · ${regimeConf}% confidence` : undefined} size="lg" />
@@ -210,7 +210,7 @@ export default function MarketsPage() {
           </Reveal>
 
           <Reveal delay={0.05} className="h-full lg:col-span-8">
-            <Card className="flex h-full min-h-[240px] flex-col rounded-2xl border-0 p-4">
+            <Card className="flex h-full min-h-[240px] flex-col rounded-lg border-0 p-4">
               <div className="mb-3 flex items-center gap-2 text-[12px] font-semibold text-d-text-primary"><Grid3x3 size={14} className="text-primary" /> Sector heatmap<span className="text-[10.5px] font-normal text-d-text-muted">every NSE sector, ranked by avg change</span></div>
               {sectorList.length ? (
                 <SectorHeatmap sectors={sectorList as any} max={12} />
@@ -255,7 +255,7 @@ export default function MarketsPage() {
           <Reveal delay={0.12} className="h-full lg:col-span-4"><SectorRotationCard /></Reveal>
 
           <Reveal delay={0.14} className="h-full lg:col-span-4">
-            <Card id="top-headlines" className="flex h-full scroll-mt-24 flex-col rounded-2xl border-0 p-4">
+            <Card id="top-headlines" className="flex h-full scroll-mt-24 flex-col rounded-lg border-0 p-4">
               <div className="flex items-center justify-between gap-2 text-[12px] font-semibold text-d-text-primary">
                 <span className="flex items-center gap-2"><Newspaper size={14} className="text-highlight" /> Top headlines</span>
                 <span className="text-[10px] font-normal text-d-text-muted">live · RSS · impact-ranked</span>
@@ -268,7 +268,7 @@ export default function MarketsPage() {
                     <a key={h.link || i} href={h.link} target="_blank" rel="noopener noreferrer" className="group flex gap-2.5">
                       {h.image ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={h.image} alt="" loading="lazy" className="dark-media mt-0.5 h-10 w-14 shrink-0 rounded-md border object-cover" />
+                        <img src={h.image} alt="" loading="lazy" className="dark-media mt-0.5 h-10 w-14 shrink-0 rounded-xs border object-cover" />
                       ) : (
                         <span className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${h.is_big ? 'bg-highlight' : 'bg-d-text-muted/60'}`} />
                       )}

@@ -31,7 +31,7 @@ export default function BreadthCard() {
   )
   const b = data
 
-  if (isLoading && !b) return <Skeleton h="120px" rounded="lg" className="rounded-2xl" />
+  if (isLoading && !b) return <Skeleton h="120px" rounded="lg" className="rounded-lg" />
   if (!b?.today) return null
 
   const { adv, dec } = b.today
@@ -40,7 +40,7 @@ export default function BreadthCard() {
   const line = b.ad_line.map((p) => p.ad_line)
 
   return (
-    <div className="flex h-full flex-col rounded-2xl bg-wrap px-4 py-3">
+    <div className="flex h-full flex-col rounded-lg bg-wrap px-4 py-3">
       <div className="flex items-center justify-between mb-2">
         <span className="flex items-center gap-2 text-[12px] font-semibold text-d-text-primary">
           <Scale className="w-3.5 h-3.5 text-primary" /> Market Breadth

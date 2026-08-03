@@ -40,14 +40,14 @@ export default function OiHeatmap() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-2 rounded-md border border-line bg-wrap/60 px-3 py-2">
+      <div className="flex flex-wrap items-center gap-2 rounded-xs border border-line bg-wrap/60 px-3 py-2">
         <span className="text-[10px] font-semibold uppercase tracking-wider text-d-text-muted">Index</span>
         {INDICES.map((idx) => (
           <button
             key={idx}
             type="button"
             onClick={() => setSymbol(idx)}
-            className={`rounded-md px-3 py-1 text-[11px] font-medium transition-colors ${
+            className={`rounded-xs px-3 py-1 text-[11px] font-medium transition-colors ${
               symbol === idx
                 ? 'glass-control-accent'
                 : 'glass-control text-d-text-secondary hover:text-d-text-primary'
@@ -90,7 +90,7 @@ export default function OiHeatmap() {
       ) : isLoading || !data ? (
         <Skeleton w="100%" h="400px" />
       ) : (
-        <div className="rounded-xl border border-line bg-wrap">
+        <div className="rounded-md border border-line bg-wrap">
           <header className="flex items-center justify-between border-b border-line px-3 py-2 text-[10px] uppercase tracking-wider text-d-text-muted">
             <span>Put OI · support</span>
             <span>Strike</span>

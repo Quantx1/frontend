@@ -224,7 +224,7 @@ export default function SignalDetailPage() {
     return (
       <AppShell>
         <div className="max-w-3xl mx-auto px-4 py-10">
-          <div className="lg-surface rounded-xl p-4 text-center">
+          <div className="lg-surface rounded-md p-4 text-center">
             <p className="text-d-text-primary font-medium">Signal unavailable</p>
             <p className="text-[12px] text-d-text-muted mt-1">{error || 'Not found'}</p>
             <button
@@ -293,7 +293,7 @@ export default function SignalDetailPage() {
               </span>
             </div>
             <div
-              className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-md border ${statusMeta.cls}`}
+              className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-xs border ${statusMeta.cls}`}
             >
               {statusMeta.pulse && (
                 <span className="relative flex h-1.5 w-1.5">
@@ -304,7 +304,7 @@ export default function SignalDetailPage() {
               {statusMeta.label}
             </div>
             <div
-              className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-md border ${
+              className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-xs border ${
                 isLong ? 'border-up/30 bg-up/10 text-up' : 'border-down/30 bg-down/10 text-down'
               }`}
             >
@@ -324,7 +324,7 @@ export default function SignalDetailPage() {
 
         {/* ── Regime warning (bear) ── */}
         {regime === 'bear' && (
-          <div className="mt-3 p-3 rounded-md border border-warning/30 bg-warning/5 flex items-start gap-2">
+          <div className="mt-3 p-3 rounded-xs border border-warning/30 bg-warning/5 flex items-start gap-2">
             <Info className="w-4 h-4 text-warning shrink-0 mt-0.5" />
             <p className="text-[12px] text-warning/90 flex items-center gap-2 flex-wrap">
               Bear regime active — AI reduced signal size to{' '}
@@ -347,7 +347,7 @@ export default function SignalDetailPage() {
                 drawing tools. NSE-prefixed symbol so Indian market data
                 loads. Compact details panel so the signal page stays
                 focused on the AI thesis. */}
-            <div className="overflow-hidden rounded-lg border border-line bg-main">
+            <div className="overflow-hidden rounded-sm border border-line bg-main">
               <TradingViewWidget
                 symbol={signal.symbol}
                 height={520}
@@ -419,7 +419,7 @@ export default function SignalDetailPage() {
           {/* Right column */}
           <div className="lg:col-span-4 space-y-5">
             {/* Execute panel */}
-            <div className="lg-surface rounded-xl p-4 space-y-3">
+            <div className="lg-surface rounded-md p-4 space-y-3">
               <h3 className="text-[11px] uppercase tracking-wider text-d-text-muted">Levels</h3>
 
               <KV label="Entry" value={entry} color="var(--color-light)" />
@@ -466,7 +466,7 @@ export default function SignalDetailPage() {
             </div>
 
             {/* Metadata */}
-            <div className="lg-surface rounded-xl p-4 space-y-2">
+            <div className="lg-surface rounded-md p-4 space-y-2">
               <h3 className="text-[11px] uppercase tracking-wider text-d-text-muted">Signal meta</h3>
               <MetaRow icon={Clock} label="Generated" value={formatTimeAgo(signal.generated_at ?? signal.created_at)} />
               <MetaRow icon={Shield} label="Strategy" value={strategy} />
@@ -480,7 +480,7 @@ export default function SignalDetailPage() {
             </div>
 
             {/* Alerts — wires to global push prefs (PR 82) */}
-            <div className="lg-surface rounded-xl p-4 space-y-2">
+            <div className="lg-surface rounded-md p-4 space-y-2">
               <h3 className="text-[11px] uppercase tracking-wider text-d-text-muted flex items-center gap-1.5">
                 <Bell className="w-3 h-3" />
                 Push alerts
@@ -518,7 +518,7 @@ export default function SignalDetailPage() {
 
             {/* Reasons / decisions */}
             {reasons.length > 0 && (
-              <div className="lg-surface rounded-xl p-4 space-y-2">
+              <div className="lg-surface rounded-md p-4 space-y-2">
                 <h3 className="text-[11px] uppercase tracking-wider text-d-text-muted">
                   Decision factors
                 </h3>
@@ -736,7 +736,7 @@ function PriorSignalRow({ s }: { s: Signal & Record<string, any> }) {
   return (
     <Link
       href={`/signals/${s.id}`}
-      className="flex items-center gap-3 px-3 py-2 rounded-md bg-main border border-d-border hover:border-d-border-hover transition-colors"
+      className="flex items-center gap-3 px-3 py-2 rounded-xs bg-main border border-d-border hover:border-d-border-hover transition-colors"
     >
       <span className="text-[10px] uppercase tracking-wider text-d-text-muted w-20">
         {s.direction}

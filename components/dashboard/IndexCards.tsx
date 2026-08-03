@@ -47,7 +47,7 @@ function IndexCard({ row }: { row: IndexRow }) {
     : up ? 'text-up' : down ? 'text-down' : 'text-d-text-muted'
   const Arrow = up ? ArrowUp : down ? ArrowDown : null
   return (
-    <div className="lg-surface rounded-xl px-3 py-2.5">
+    <div className="lg-surface rounded-md px-3 py-2.5">
       <div className="truncate text-[10px] font-semibold uppercase tracking-wider text-d-text-muted">{row.label}</div>
       <div className="mt-1.5 flex items-baseline justify-between gap-1.5">
         <span className="numeric text-[15px] font-bold leading-none text-d-text-primary">{fmt(row.last)}</span>

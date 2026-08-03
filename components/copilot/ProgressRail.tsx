@@ -211,7 +211,7 @@ export function ProgressRail({ steps, live = false }: { steps: CopilotStep[]; li
         type="button"
         onClick={() => setExpanded(true)}
         aria-expanded={false}
-        className="group -ml-1 inline-flex items-center gap-1.5 rounded-md px-1 py-0.5 text-[11.5px] text-d-text-muted transition-colors duration-instant ease-out hover:text-d-text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+        className="group -ml-1 inline-flex items-center gap-1.5 rounded-xs px-1 py-0.5 text-[11.5px] text-d-text-muted transition-colors duration-instant ease-out hover:text-d-text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
       >
         <ChevronRight size={12} className="transition-transform duration-fast ease-out group-hover:translate-x-px" />
         <span>
@@ -230,7 +230,7 @@ export function ProgressRail({ steps, live = false }: { steps: CopilotStep[]; li
           type="button"
           onClick={() => setExpanded(false)}
           aria-expanded
-          className="mb-1.5 -ml-1 inline-flex items-center gap-1.5 rounded-md px-1 py-0.5 text-[11.5px] text-d-text-muted transition-colors duration-instant ease-out hover:text-d-text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+          className="mb-1.5 -ml-1 inline-flex items-center gap-1.5 rounded-xs px-1 py-0.5 text-[11.5px] text-d-text-muted transition-colors duration-instant ease-out hover:text-d-text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
         >
           <ChevronRight size={12} className="rotate-90" />
           <span>How this was worked out</span>

@@ -356,7 +356,7 @@ function StrategyCard({
 
         {/* Open positions */}
         {s.open_positions.length > 0 ? (
-          <div className="mx-4 mt-2 overflow-hidden rounded-md border border-line">
+          <div className="mx-4 mt-2 overflow-hidden rounded-xs border border-line">
             <div className="grid grid-cols-12 gap-2 border-b border-line bg-wrap/60 px-3 py-1.5 font-mono text-[9px] uppercase tracking-wider text-d-text-muted">
               <span className="col-span-3">Symbol</span>
               <span className="col-span-2 text-right">Qty</span>
@@ -396,7 +396,7 @@ function StrategyCard({
             })}
           </div>
         ) : (
-          <div className="mx-4 rounded-md border border-line bg-wrap/40 px-3 py-3 text-center text-xs text-d-text-muted">
+          <div className="mx-4 rounded-xs border border-line bg-wrap/40 px-3 py-3 text-center text-xs text-d-text-muted">
             No open positions
           </div>
         )}

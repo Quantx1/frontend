@@ -317,7 +317,7 @@ export default function WatchlistPage() {
         <div className="space-y-5 px-4 py-5 md:px-6">
           {/* KPI strip */}
           <Reveal>
-            <div className="grid grid-cols-2 gap-2 rounded-2xl border border-line bg-wrap p-2 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-2 rounded-lg border border-line bg-wrap p-2 lg:grid-cols-4">
               {KPIS.map((k) => (
                 <div key={k.label} className="tile-tint p-4">
                   <div className="text-[11px] text-d-text-secondary">{k.label}</div>
@@ -367,7 +367,7 @@ export default function WatchlistPage() {
           {data?.capped && data.cap !== null && (
             <section
               role="status"
-              className="flex items-center justify-between gap-3 rounded-2xl border border-highlight/40 bg-highlight/10 px-4 py-3"
+              className="flex items-center justify-between gap-3 rounded-lg border border-highlight/40 bg-highlight/10 px-4 py-3"
             >
               <p className="text-xs text-highlight">
                 The engines are watching the first {data.cap} of your {data.count} symbols. Upgrade to Pro to
@@ -510,7 +510,7 @@ function Grid({ children }: { children: React.ReactNode }) {
 
 function SkelCard() {
   return (
-    <div className="space-y-3 rounded-2xl border border-line bg-wrap p-4">
+    <div className="space-y-3 rounded-lg border border-line bg-wrap p-4">
       <div className="flex items-center justify-between">
         <div className="h-4 w-20 animate-pulse rounded bg-wrap-hover" />
         <div className="h-3 w-12 animate-pulse rounded bg-wrap-hover/70" />

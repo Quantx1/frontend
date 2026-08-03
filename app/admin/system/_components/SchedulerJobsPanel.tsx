@@ -52,7 +52,7 @@ export default function SchedulerJobsPanel() {
           <select
             value={jobFilter}
             onChange={(e) => setJobFilter(e.target.value)}
-            className="bg-main border border-d-border rounded-md px-2 py-1 text-[11px] text-white focus:outline-none focus:border-primary/50"
+            className="bg-main border border-d-border rounded-xs px-2 py-1 text-[11px] text-white focus:outline-none focus:border-primary/50"
           >
             <option value="">All jobs</option>
             {jobIds.map((id) => (
@@ -62,7 +62,7 @@ export default function SchedulerJobsPanel() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as any)}
-            className="bg-main border border-d-border rounded-md px-2 py-1 text-[11px] text-white focus:outline-none focus:border-primary/50"
+            className="bg-main border border-d-border rounded-xs px-2 py-1 text-[11px] text-white focus:outline-none focus:border-primary/50"
           >
             <option value="">All statuses</option>
             <option value="ok">ok</option>
@@ -72,7 +72,7 @@ export default function SchedulerJobsPanel() {
           <button
             onClick={refresh}
             disabled={loading}
-            className="inline-flex items-center gap-1 px-3 py-1 rounded-md border border-d-border text-[11px] text-white hover:bg-white/[0.03] disabled:opacity-60"
+            className="inline-flex items-center gap-1 px-3 py-1 rounded-xs border border-d-border text-[11px] text-white hover:bg-white/[0.03] disabled:opacity-60"
           >
             <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
             Refresh
@@ -91,7 +91,7 @@ export default function SchedulerJobsPanel() {
             return (
               <div
                 key={j.job_id}
-                className="px-3 py-2 rounded-md border"
+                className="px-3 py-2 rounded-xs border"
                 style={{ borderColor: `color-mix(in srgb, ${color} 25%, transparent)`, background: `color-mix(in srgb, ${color} 4%, transparent)` }}
               >
                 <p className="text-[11px] font-medium text-white truncate">{j.job_id}</p>

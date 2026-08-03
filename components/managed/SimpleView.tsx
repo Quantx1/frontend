@@ -203,7 +203,7 @@ export default function SimpleView({
       {isLoading ? (
         <div className="grid gap-4 md:grid-cols-2">
           {Array.from({ length: variant === 'portfolio' ? 3 : 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-44 w-full rounded-xl" />
+            <Skeleton key={i} className="h-44 w-full rounded-md" />
           ))}
         </div>
       ) : !data ? (

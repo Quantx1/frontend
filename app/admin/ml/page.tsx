@@ -199,7 +199,7 @@ export default function AdminMLPage() {
         <button
           onClick={fetchData}
           disabled={loading}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-warning/10 border border-warning/20 text-warning text-sm font-medium transition-all hover:bg-warning/20 disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-2 rounded-md bg-warning/10 border border-warning/20 text-warning text-sm font-medium transition-all hover:bg-warning/20 disabled:opacity-50"
         >
           <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           Refresh
@@ -207,7 +207,7 @@ export default function AdminMLPage() {
       </div>
 
       {error && (
-        <div className="bg-down/10 border border-down/20 rounded-xl p-4 flex items-center gap-3">
+        <div className="bg-down/10 border border-down/20 rounded-md p-4 flex items-center gap-3">
           <AlertCircle className="w-5 h-5 text-down" />
           <p className="text-down">{error}</p>
         </div>
@@ -215,11 +215,11 @@ export default function AdminMLPage() {
 
       {/* ── Regime Indicator ── */}
       {currentRegime && (
-        <div className={`rounded-2xl border p-6 ${rc.bgColor} ${rc.borderColor}`}>
+        <div className={`rounded-lg border p-6 ${rc.bgColor} ${rc.borderColor}`}>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             {/* Left: Regime state */}
             <div className="flex items-center gap-4">
-              <div className={`w-14 h-14 rounded-2xl ${rc.bgColor} flex items-center justify-center`}>
+              <div className={`w-14 h-14 rounded-lg ${rc.bgColor} flex items-center justify-center`}>
                 <RegimeIcon className={`w-7 h-7 ${rc.color}`} />
               </div>
               <div>
@@ -263,7 +263,7 @@ export default function AdminMLPage() {
                 {Object.entries(regime.strategy_weights).map(([strategy, weight]) => (
                   <div
                     key={strategy}
-                    className="bg-white/[0.04] rounded-lg px-3 py-2 text-center"
+                    className="bg-white/[0.04] rounded-sm px-3 py-2 text-center"
                   >
                     <p className="text-xs text-d-text-muted truncate" title={strategy}>
                       {strategy.replace(/_/g, ' ')}
@@ -476,7 +476,7 @@ export default function AdminMLPage() {
           </p>
 
           {retrainMsg && (
-            <div className="mb-4 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary/10 border border-primary/20">
+            <div className="mb-4 flex items-center gap-2 px-4 py-2.5 rounded-md bg-primary/10 border border-primary/20">
               <AlertCircle className="w-4 h-4 text-primary" />
               <p className="text-sm text-primary">{retrainMsg}</p>
             </div>
@@ -486,7 +486,7 @@ export default function AdminMLPage() {
             <button
               onClick={() => handleRetrain('all')}
               disabled={retrainLoading !== null}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-warning/10 border border-warning/20 text-warning text-sm font-medium transition-all hover:bg-warning/20 disabled:opacity-50"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-md bg-warning/10 border border-warning/20 text-warning text-sm font-medium transition-all hover:bg-warning/20 disabled:opacity-50"
             >
               <Play className="w-4 h-4" />
               {retrainLoading === 'all' ? 'Starting...' : 'Retrain All Models'}
@@ -496,7 +496,7 @@ export default function AdminMLPage() {
                 key={model.name}
                 onClick={() => handleRetrain(model.name)}
                 disabled={retrainLoading !== null}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.04] border border-d-border text-d-text-muted text-sm font-medium transition-all hover:bg-white/[0.06] hover:text-white disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2 rounded-md bg-white/[0.04] border border-d-border text-d-text-muted text-sm font-medium transition-all hover:bg-white/[0.06] hover:text-white disabled:opacity-50"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${retrainLoading === model.name ? 'animate-spin' : ''}`} />
                 {model.name}

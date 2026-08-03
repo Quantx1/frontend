@@ -518,7 +518,7 @@ export function FoStrategiesWorkspace() {
               <button
                 onClick={handleDeploy}
                 disabled={deploying || lots < 1}
-                className="glass-control-accent inline-flex h-9 items-center gap-1.5 rounded-pill px-4 text-[13px] font-semibold transition-transform active:scale-[0.97] disabled:opacity-50"
+                className="glass-control-accent inline-flex h-9 items-center gap-1.5 rounded-full px-4 text-[13px] font-semibold transition-transform active:scale-[0.97] disabled:opacity-50"
               >
                 {deploying ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -564,7 +564,7 @@ export function FoStrategiesWorkspace() {
                 </p>
               </div>
             ) : backtestError ? (
-              <div className="rounded-xl border border-down/30 bg-down/5 p-3 text-xs text-down">
+              <div className="rounded-md border border-down/30 bg-down/5 p-3 text-xs text-down">
                 {backtestError}
               </div>
             ) : backtestResult ? (
@@ -653,7 +653,7 @@ export function FoStrategiesWorkspace() {
               Your view
             </label>
             <div
-              className="mt-1 rounded-2xl border bg-wrap p-1 transition-colors focus-within:border-ai/60"
+              className="mt-1 rounded-lg border bg-wrap p-1 transition-colors focus-within:border-ai/60"
               style={{ borderColor: `color-mix(in srgb, ${AI} 28%, transparent)` }}
             >
               <textarea
@@ -663,7 +663,7 @@ export function FoStrategiesWorkspace() {
                 placeholder="e.g. 'I think Nifty will stay range-bound between 23800-24300 this week. Want defined risk, prefer collecting premium.'"
                 rows={3}
                 maxLength={600}
-                className="w-full resize-none rounded-xl bg-transparent px-3 py-2 text-sm text-d-text-primary outline-none placeholder:text-d-text-muted"
+                className="w-full resize-none rounded-md bg-transparent px-3 py-2 text-sm text-d-text-primary outline-none placeholder:text-d-text-muted"
               />
             </div>
             <p className="mt-1 text-[10px] text-d-text-muted">
@@ -672,7 +672,7 @@ export function FoStrategiesWorkspace() {
           </div>
 
           {/* PR-BE — Portfolio-aware toggle */}
-          <label className="flex items-start gap-2 rounded-xl border border-line bg-wrap/60 px-3 py-2 text-xs text-d-text-secondary">
+          <label className="flex items-start gap-2 rounded-md border border-line bg-wrap/60 px-3 py-2 text-xs text-d-text-secondary">
             <input
               type="checkbox"
               checked={aiIncludePortfolio}
@@ -705,7 +705,7 @@ export function FoStrategiesWorkspace() {
                 onChange={(e) => setAiFocusSymbol(e.target.value)}
                 placeholder="e.g. RELIANCE — leave empty to hedge whole book"
                 maxLength={20}
-                className="mt-1 w-full rounded-xl border border-line bg-main px-3 py-1.5 font-mono text-xs uppercase text-d-text-primary outline-none placeholder:normal-case placeholder:text-d-text-muted focus:border-primary"
+                className="mt-1 w-full rounded-md border border-line bg-main px-3 py-1.5 font-mono text-xs uppercase text-d-text-primary outline-none placeholder:normal-case placeholder:text-d-text-muted focus:border-primary"
               />
               <p className="mt-1 text-[10px] text-d-text-muted">
                 Narrows the hedge to a single underlying&apos;s exposure
@@ -740,7 +740,7 @@ export function FoStrategiesWorkspace() {
           )}
 
           {aiError && (
-            <div className="rounded-xl border border-down/30 bg-down/5 p-3 text-xs text-down">
+            <div className="rounded-md border border-down/30 bg-down/5 p-3 text-xs text-down">
               {aiError}
             </div>
           )}
@@ -748,7 +748,7 @@ export function FoStrategiesWorkspace() {
           {/* Result */}
           {aiResult && (
             <div className="space-y-3 border-t border-line pt-3">
-              <div className="rounded-xl border border-primary/30 bg-primary/[0.04] p-3">
+              <div className="rounded-md border border-primary/30 bg-primary/[0.04] p-3">
                 <div className="flex items-start gap-2">
                   <Brain className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
                   <div className="min-w-0 flex-1">
@@ -783,7 +783,7 @@ export function FoStrategiesWorkspace() {
 
               {/* PR-BE — Portfolio context tile when hedge mode was on */}
               {aiResult.portfolio_context && aiResult.portfolio_context.has_positions && (
-                <div className="space-y-2 rounded-xl border border-primary/20 bg-primary/[0.04] p-2">
+                <div className="space-y-2 rounded-md border border-primary/20 bg-primary/[0.04] p-2">
                   <p className="font-mono text-[9px] uppercase tracking-wider text-primary">
                     Your book context (factored into the suggestion)
                   </p>
@@ -809,7 +809,7 @@ export function FoStrategiesWorkspace() {
 
                   {/* PR-BF.1 — Per-underlying breakdown */}
                   {Object.keys(aiResult.portfolio_context.by_symbol ?? {}).length > 0 && (
-                    <div className="rounded-lg border border-line bg-wrap/40 p-2">
+                    <div className="rounded-sm border border-line bg-wrap/40 p-2">
                       <p className="mb-1 font-mono text-[9px] uppercase tracking-wider text-d-text-muted">
                         Top exposures · click to focus next ask
                       </p>
@@ -849,7 +849,7 @@ export function FoStrategiesWorkspace() {
               )}
 
               {aiResult.proposal && (
-                <div className="rounded-xl border border-line bg-wrap/60 p-2">
+                <div className="rounded-md border border-line bg-wrap/60 p-2">
                   <p className="mb-1 font-mono text-[9px] uppercase tracking-wider text-d-text-muted">
                     Pre-priced legs
                   </p>
@@ -907,7 +907,7 @@ export function FoStrategiesWorkspace() {
                 <button
                   onClick={deployAISuggestion}
                   disabled={aiSuggesting}
-                  className="glass-control-accent inline-flex h-9 items-center gap-1.5 rounded-pill px-4 text-[13px] font-semibold transition-transform active:scale-[0.97] disabled:opacity-50"
+                  className="glass-control-accent inline-flex h-9 items-center gap-1.5 rounded-full px-4 text-[13px] font-semibold transition-transform active:scale-[0.97] disabled:opacity-50"
                 >
                   {aiSuggesting ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -987,7 +987,7 @@ function BacktestResultPanel({ result }: { result: Record<string, any> }) {
           value={<span className="text-down">{losers}</span>}
         />
       </div>
-      <div className="rounded-xl border border-line bg-wrap/40 p-3">
+      <div className="rounded-md border border-line bg-wrap/40 p-3">
         <p className="font-mono text-[9px] uppercase tracking-wider text-d-text-muted">
           Win rate
         </p>
@@ -1004,7 +1004,7 @@ function BacktestResultPanel({ result }: { result: Record<string, any> }) {
         </div>
       </div>
       {Array.isArray(result.trades) && result.trades.length > 0 && (
-        <details className="rounded-xl border border-line bg-wrap/40 p-2">
+        <details className="rounded-md border border-line bg-wrap/40 p-2">
           <summary className="cursor-pointer text-xs text-d-text-secondary">
             Last {Math.min(10, result.trades.length)} trade outcomes
           </summary>
@@ -1029,7 +1029,7 @@ function BacktestResultPanel({ result }: { result: Record<string, any> }) {
 
 function Kpi({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-line bg-wrap/60 p-2">
+    <div className="rounded-md border border-line bg-wrap/60 p-2">
       <p className="font-mono text-[9px] uppercase tracking-wider text-d-text-muted">
         {label}
       </p>
@@ -1086,7 +1086,7 @@ function RecommendationCard({
           />
         </div>
 
-        <div className="rounded-xl border border-line bg-wrap/60 p-2">
+        <div className="rounded-md border border-line bg-wrap/60 p-2">
           <p className="mb-1 font-mono text-[9px] uppercase tracking-wider text-d-text-muted">
             Legs
           </p>
@@ -1190,7 +1190,7 @@ function OpenPositionCard({
             tone="down"
           />
         </div>
-        <div className="mx-4 mb-3 overflow-hidden rounded-xl border border-line">
+        <div className="mx-4 mb-3 overflow-hidden rounded-md border border-line">
           <div className="grid grid-cols-12 gap-2 border-b border-line bg-wrap/60 px-3 py-1.5 font-mono text-[9px] uppercase tracking-wider text-d-text-muted">
             <span className="col-span-2">Side</span>
             <span className="col-span-2">Type</span>
@@ -1226,7 +1226,7 @@ function ClosedPositionRow({ position: p }: { position: any }) {
   const realized = Number(p.realized_pnl) || 0
   const tone = realized > 0 ? 'text-up' : realized < 0 ? 'text-down' : 'text-d-text-primary'
   return (
-    <div className="grid grid-cols-12 items-center gap-2 rounded-xl border border-line bg-wrap/40 px-3 py-2 text-xs">
+    <div className="grid grid-cols-12 items-center gap-2 rounded-md border border-line bg-wrap/40 px-3 py-2 text-xs">
       <span className="col-span-3 font-mono text-d-text-primary">
         {p.underlying} · {STRATEGY_LABEL[p.template_slug ?? ''] ?? p.template_slug}
       </span>
@@ -1257,7 +1257,7 @@ function KPI({
 }) {
   const cls = tone === 'up' ? 'text-up' : tone === 'down' ? 'text-down' : 'text-d-text-primary'
   return (
-    <div className="rounded-xl border border-line bg-wrap/60 p-2 text-center">
+    <div className="rounded-md border border-line bg-wrap/60 p-2 text-center">
       <p className="font-mono text-[9px] uppercase tracking-wider text-d-text-muted">{label}</p>
       <p className={`mt-0.5 font-mono text-xs font-semibold tabular-nums ${cls}`}>{value}</p>
     </div>
@@ -1289,7 +1289,7 @@ function Meta({ label, value }: { label: string; value: string }) {
 
 function SmallMeta({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-line bg-wrap/60 p-2">
+    <div className="rounded-md border border-line bg-wrap/60 p-2">
       <p className="font-mono text-[9px] uppercase tracking-wider text-d-text-muted">{label}</p>
       <p className="mt-0.5 font-mono text-xs font-medium text-d-text-primary tabular-nums">
         {value}
@@ -1558,7 +1558,7 @@ function ChainTradingTable({
   }
 
   return (
-    <div className="overflow-x-auto rounded-md border border-line">
+    <div className="overflow-x-auto rounded-xs border border-line">
       <div className="grid min-w-[560px] grid-cols-9 gap-2 border-b border-line bg-wrap/80 px-2 py-1.5 font-mono text-[9px] uppercase tracking-wider text-d-text-muted">
         <span className="col-span-1 text-right">CE OI</span>
         <span className="col-span-1 text-right">CE Vol</span>
@@ -1742,7 +1742,7 @@ function BuilderPanel({
             return (
               <div
                 key={`${l.strike}-${l.option_type}`}
-                className="flex items-center justify-between rounded-lg border border-line bg-wrap/60 px-2 py-1 font-mono text-xs"
+                className="flex items-center justify-between rounded-sm border border-line bg-wrap/60 px-2 py-1 font-mono text-xs"
               >
                 <span className="flex items-center gap-2">
                   <span className={`font-semibold ${sideTone}`}>{l.side}</span>
@@ -1909,7 +1909,7 @@ function ChainSmileChart({
       </div>
 
       {/* Smile chart */}
-      <div className="rounded-md border border-line bg-wrap/40 p-3">
+      <div className="rounded-xs border border-line bg-wrap/40 p-3">
         <ResponsiveContainer width="100%" height={360}>
           <ComposedChart data={data} margin={{ top: 10, right: 20, left: 10, bottom: 10 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(28,30,41,0.4)" />
@@ -2070,7 +2070,7 @@ function TermStructureChart({ symbol }: { symbol: string }) {
         />
       </div>
 
-      <div className="rounded-md border border-line bg-wrap/40 p-3">
+      <div className="rounded-xs border border-line bg-wrap/40 p-3">
         <ResponsiveContainer width="100%" height={340}>
           <ComposedChart data={rows} margin={{ top: 10, right: 20, left: 10, bottom: 10 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(28,30,41,0.4)" />
@@ -2248,7 +2248,7 @@ function VolConeChart({ symbol }: { symbol: string }) {
         />
       </div>
 
-      <div className="rounded-md border border-line bg-wrap/40 p-3">
+      <div className="rounded-xs border border-line bg-wrap/40 p-3">
         <ResponsiveContainer width="100%" height={360}>
           <ComposedChart data={rows} margin={{ top: 10, right: 20, left: 10, bottom: 10 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(28,30,41,0.4)" />
@@ -2343,7 +2343,7 @@ function ChainGreeksTable({
   const fmt = (x: number | null | undefined, d = 4) =>
     x == null ? '—' : x.toFixed(d)
   return (
-    <div className="overflow-x-auto rounded-md border border-line">
+    <div className="overflow-x-auto rounded-xs border border-line">
       <div className="grid min-w-[640px] grid-cols-11 gap-2 border-b border-line bg-wrap/80 px-2 py-1.5 font-mono text-[9px] uppercase tracking-wider text-d-text-muted">
         <span className="col-span-1 text-right">CE IV</span>
         <span className="col-span-1 text-right">CE Δ</span>
@@ -2468,7 +2468,7 @@ function AdjustmentButton({ position }: { position: any }) {
           onClick={() => !loading && setOpen(false)}
         >
           <div
-            className="w-full max-w-2xl max-h-[80vh] overflow-y-auto rounded-2xl border border-line bg-main p-5 shadow-2xl"
+            className="w-full max-w-2xl max-h-[80vh] overflow-y-auto rounded-lg border border-line bg-main p-5 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-line pb-3">
@@ -2493,7 +2493,7 @@ function AdjustmentButton({ position }: { position: any }) {
                 {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} w="100%" h="60px" />)}
               </div>
             ) : error ? (
-              <p className="rounded-xl border border-down/30 bg-down/10 px-3 py-2 text-sm text-down">
+              <p className="rounded-md border border-down/30 bg-down/10 px-3 py-2 text-sm text-down">
                 {error}
               </p>
             ) : adjustments.length === 0 ? (
@@ -2504,7 +2504,7 @@ function AdjustmentButton({ position }: { position: any }) {
             ) : (
               <ul className="mt-3 space-y-2">
                 {adjustments.map((a, i) => (
-                  <li key={i} className="rounded-xl border border-line bg-wrap p-3">
+                  <li key={i} className="rounded-md border border-line bg-wrap p-3">
                     <div className="flex flex-wrap items-baseline justify-between gap-2">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium text-d-text-primary">

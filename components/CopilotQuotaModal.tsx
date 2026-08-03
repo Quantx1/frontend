@@ -82,7 +82,7 @@ export default function CopilotQuotaModal() {
       onClick={close}
     >
       <div
-        className="w-full max-w-md glass-surface rounded-2xl p-5 space-y-4"
+        className="w-full max-w-md glass-surface rounded-lg p-5 space-y-4"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start gap-3">
@@ -95,7 +95,7 @@ export default function CopilotQuotaModal() {
           </div>
         </div>
 
-        <div className="rounded-md border border-d-border bg-d-bg-card p-3">
+        <div className="rounded-xs border border-d-border bg-d-bg-card p-3">
           <div className="flex items-center justify-between text-[11px] text-d-text-muted">
             <span>Today&apos;s usage</span>
             <span className="font-mono num-display text-d-text-primary">
@@ -114,7 +114,7 @@ export default function CopilotQuotaModal() {
           <button
             type="button"
             onClick={close}
-            className="flex-1 py-2 text-[13px] text-d-text-secondary border border-d-border rounded-md hover:bg-hover transition-colors"
+            className="flex-1 py-2 text-[13px] text-d-text-secondary border border-d-border rounded-xs hover:bg-hover transition-colors"
           >
             Maybe later
           </button>
@@ -132,7 +132,7 @@ export default function CopilotQuotaModal() {
               }
               close()
             }}
-            className="flex-1 py-2 text-[13px] font-medium bg-primary text-primary-foreground rounded-md hover:bg-primary-hover transition-colors text-center"
+            className="flex-1 py-2 text-[13px] font-medium bg-primary text-primary-foreground rounded-xs hover:bg-primary-hover transition-colors text-center"
           >
             {copy.cta}
           </Link>

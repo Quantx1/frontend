@@ -45,7 +45,7 @@ export default function AchievementsStrip({
   badges,
 }: Props) {
   return (
-    <div className="rounded-2xl border border-line bg-wrap p-4 flex flex-wrap items-center gap-4">
+    <div className="rounded-lg border border-line bg-wrap p-4 flex flex-wrap items-center gap-4">
       <Stat icon={Flame} label="Streak" value={`${streakDays}d`} tone={streakDays >= 3 ? 'warning' : 'muted'} />
       <Divider />
       <Stat icon={Trophy} label="Trades" value={String(tradeCount)} tone="primary" />

@@ -122,7 +122,7 @@ export const Sidebar = ({ pathname, collapsed, onToggle, animate, onSearch }: Pr
           href="/copilot"
           title="New Chat"
           className={cn(
-            'flex items-center justify-center gap-1.5 rounded-lg border border-line bg-surface-2 font-medium text-d-text-secondary transition-colors duration-instant ease-out hover:border-wrap-line hover:text-d-text-primary',
+            'flex items-center justify-center gap-1.5 rounded-sm border border-line bg-surface-2 font-medium text-d-text-secondary transition-colors duration-instant ease-out hover:border-wrap-line hover:text-d-text-primary',
             collapsed ? 'h-10' : 'px-3 py-2.5 text-[13px]',
           )}
         >
@@ -141,7 +141,7 @@ export const Sidebar = ({ pathname, collapsed, onToggle, animate, onSearch }: Pr
           title="Search — ⌘K"
           aria-keyshortcuts="Meta+K Control+K"
           className={cn(
-            'flex w-full items-center gap-2 rounded-lg text-d-text-muted transition-colors duration-instant ease-out hover:bg-surface-2 hover:text-d-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40',
+            'flex w-full items-center gap-2 rounded-sm text-d-text-muted transition-colors duration-instant ease-out hover:bg-surface-2 hover:text-d-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40',
             collapsed ? 'h-10 justify-center' : 'px-2.5 py-2 text-[13px]',
           )}
         >

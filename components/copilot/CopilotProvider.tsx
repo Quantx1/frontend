@@ -427,7 +427,7 @@ export default function CopilotProvider() {
     >
       {/* Header */}
       <div className="flex items-center gap-2 border-b border-line px-3 py-2.5">
-        <span className="grid h-6 w-6 place-items-center rounded-md bg-gradient-signature text-on-signature">
+        <span className="grid h-6 w-6 place-items-center rounded-xs bg-gradient-signature text-on-signature">
           <CopilotBot className="h-3.5 w-3.5" active={streaming} />
         </span>
         <span className="text-[13px] font-semibold text-d-text-primary">Copilot</span>
@@ -438,20 +438,20 @@ export default function CopilotProvider() {
           {messages.length > 0 ? (
             <button
               type="button" onClick={newThread} title="New thread" aria-label="New thread"
-              className="grid h-7 w-7 place-items-center rounded-md text-d-text-muted hover:bg-wrap-hover hover:text-d-text-primary"
+              className="grid h-7 w-7 place-items-center rounded-xs text-d-text-muted hover:bg-wrap-hover hover:text-d-text-primary"
             >
               <PlusCircle className="h-4 w-4" />
             </button>
           ) : null}
           <button
             type="button" onClick={maximize} title="Open full Main Chat" aria-label="Maximize to Main Chat"
-            className="grid h-7 w-7 place-items-center rounded-md text-d-text-muted hover:bg-wrap-hover hover:text-d-text-primary"
+            className="grid h-7 w-7 place-items-center rounded-xs text-d-text-muted hover:bg-wrap-hover hover:text-d-text-primary"
           >
             <ArrowUpRight className="h-4 w-4" />
           </button>
           <button
             type="button" onClick={() => setOpen(false)} title="Close (Esc)" aria-label="Close copilot"
-            className="grid h-7 w-7 place-items-center rounded-md text-d-text-muted hover:bg-wrap-hover hover:text-d-text-primary"
+            className="grid h-7 w-7 place-items-center rounded-xs text-d-text-muted hover:bg-wrap-hover hover:text-d-text-primary"
           >
             <X className="h-4 w-4" />
           </button>
@@ -497,7 +497,7 @@ export default function CopilotProvider() {
               {starters.map((s) => (
                 <button
                   key={s} type="button" onClick={() => send(s)}
-                  className="group flex items-center justify-between rounded-pill glass-control px-3.5 py-2 text-left text-[12px] text-d-text-secondary hover:text-d-text-primary"
+                  className="group flex items-center justify-between rounded-full glass-control px-3.5 py-2 text-left text-[12px] text-d-text-secondary hover:text-d-text-primary"
                 >
                   <span className="truncate">{s}</span>
                   <ChevronRight className="h-3.5 w-3.5 shrink-0 text-d-text-muted group-hover:text-accent" />
@@ -523,7 +523,7 @@ export default function CopilotProvider() {
                   {m.followups.map((f) => (
                     <button
                       key={f} type="button" onClick={() => send(f)}
-                      className="rounded-pill glass-control px-2.5 py-1 text-[11px] text-d-text-secondary transition-colors hover:text-d-text-primary"
+                      className="rounded-full glass-control px-2.5 py-1 text-[11px] text-d-text-secondary transition-colors hover:text-d-text-primary"
                     >
                       {f}
                     </button>
@@ -538,7 +538,7 @@ export default function CopilotProvider() {
 
       {/* Composer */}
       <div className="border-t border-line p-2.5">
-        <div className="flex items-end gap-2 rounded-xl border border-line bg-main px-2.5 py-1.5 focus-within:border-accent/50">
+        <div className="flex items-end gap-2 rounded-md border border-line bg-main px-2.5 py-1.5 focus-within:border-accent/50">
           <textarea
             ref={inputRef}
             value={input}
@@ -556,7 +556,7 @@ export default function CopilotProvider() {
           {streaming ? (
             <button
               type="button" onClick={stop} title="Stop"
-              className="shrink-0 rounded-lg glass-control px-2 py-1 text-[11px] font-medium text-d-text-secondary hover:text-d-text-primary"
+              className="shrink-0 rounded-sm glass-control px-2 py-1 text-[11px] font-medium text-d-text-secondary hover:text-d-text-primary"
             >
               Stop
             </button>
@@ -599,7 +599,7 @@ function Bubble({ msg }: { msg: Msg }) {
   if (msg.role === 'user') {
     return (
       <div className="flex justify-end">
-        <div className="max-w-[85%] rounded-2xl rounded-br-sm bg-d-text-primary px-3 py-2 text-[12.5px] text-main">
+        <div className="max-w-[85%] rounded-lg rounded-br-sm bg-d-text-primary px-3 py-2 text-[12.5px] text-main">
           {msg.content}
         </div>
       </div>
@@ -622,7 +622,7 @@ function Bubble({ msg }: { msg: Msg }) {
       {!thinking && (
         <div
           className={cn(
-            'max-w-[92%] rounded-2xl rounded-bl-sm border px-3 py-2 text-[12.5px] leading-relaxed',
+            'max-w-[92%] rounded-lg rounded-bl-sm border px-3 py-2 text-[12.5px] leading-relaxed',
             msg.error
               ? 'border-down/30 whitespace-pre-wrap bg-down/10 text-down'
               : 'border-line bg-main text-d-text-secondary',
@@ -650,7 +650,7 @@ function ActionCard({ action, onRun }: { action: ActionState; onRun: () => void 
   return (
     <div
       className={cn(
-        'rounded-lg border px-2.5 py-2 text-[12px]',
+        'rounded-sm border px-2.5 py-2 text-[12px]',
         danger ? 'border-down/40 bg-down/5' : 'border-line bg-main',
       )}
     >

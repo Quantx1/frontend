@@ -59,7 +59,7 @@ export function SectorHeatmap({ sectors, max = 12 }: { sectors: SectorTile[]; ma
         return (
           <div
             key={s.sector}
-            className={`group flex flex-col justify-between rounded-lg border p-2.5 transition-transform hover:-translate-y-0.5 ${spanFor(s.count, i)}`}
+            className={`group flex flex-col justify-between rounded-sm border p-2.5 transition-transform hover:-translate-y-0.5 ${spanFor(s.count, i)}`}
             style={{ background: bg, borderColor: border }}
             title={`${s.sector} · ${pct(s.avg_change_pct, 2)}${s.count ? ` · ${s.count} names` : ''}`}
           >

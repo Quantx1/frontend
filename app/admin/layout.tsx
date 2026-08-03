@@ -106,7 +106,7 @@ export default function AdminLayout({
       {/* Mobile sidebar toggle */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-d-bg-card rounded-lg text-white"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-d-bg-card rounded-sm text-white"
       >
         {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
       </button>
@@ -119,7 +119,7 @@ export default function AdminLayout({
       >
         {/* Logo */}
         <div className="flex items-center gap-3 px-6 py-5 border-b border-d-border">
-          <div className="w-8 h-8 rounded-lg bg-warning flex items-center justify-center">
+          <div className="w-8 h-8 rounded-sm bg-warning flex items-center justify-center">
             <Shield className="w-5 h-5 text-black" />
           </div>
           <div>
@@ -137,7 +137,7 @@ export default function AdminLayout({
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                className={`relative flex items-center gap-3 px-4 py-3 rounded-md transition-all ${
                   isActive
                     ? 'bg-warning/10 text-warning'
                     : 'text-d-text-muted hover:bg-white/[0.04] hover:text-white'
@@ -171,14 +171,14 @@ export default function AdminLayout({
           <div className="flex gap-2">
             <Link
               href="/copilot"
-              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-d-border bg-white/[0.02] text-sm text-d-text-muted transition hover:bg-white/[0.04] hover:text-white"
+              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-sm border border-d-border bg-white/[0.02] text-sm text-d-text-muted transition hover:bg-white/[0.04] hover:text-white"
             >
               <BarChart3 className="w-4 h-4" />
               Dashboard
             </Link>
             <button
               onClick={() => signOut()}
-              className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-d-border bg-white/[0.02] text-sm text-d-text-muted transition hover:bg-down/10 hover:text-down hover:border-down/20"
+              className="flex items-center justify-center gap-2 px-3 py-2 rounded-sm border border-d-border bg-white/[0.02] text-sm text-d-text-muted transition hover:bg-down/10 hover:text-down hover:border-down/20"
             >
               <LogOut className="w-4 h-4" />
             </button>

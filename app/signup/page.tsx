@@ -71,7 +71,7 @@ const plans = [
 ]
 
 const inputClass =
-  'w-full rounded-xl border border-line bg-main py-3 pl-11 pr-4 text-sm text-d-text-primary placeholder:text-d-text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all'
+  'w-full rounded-md border border-line bg-main py-3 pl-11 pr-4 text-sm text-d-text-primary placeholder:text-d-text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all'
 
 function PasswordStrength({ password }: { password: string }) {
   const strength = useMemo(() => {
@@ -240,7 +240,7 @@ function SignupContent() {
 
           {/* Step 2: Choose Plan */}
           {step === 2 && (
-            <div className="rounded-2xl border border-line bg-wrap p-8 shadow-glass">
+            <div className="rounded-lg border border-line bg-wrap p-8 shadow-glass">
               <div className="mb-8 text-center">
                 <h1 className="text-2xl font-bold text-d-text-primary">Pick your plan</h1>
                 <p className="mt-2 text-sm text-d-text-secondary">Start free. Upgrade the day you need more.</p>
@@ -253,14 +253,14 @@ function SignupContent() {
                     <button
                       key={plan.id}
                       onClick={() => setSelectedPlan(plan.id)}
-                      className={`relative rounded-xl border-2 p-5 text-left transition-all hover:shadow-glass-hover ${
+                      className={`relative rounded-md border-2 p-5 text-left transition-all hover:shadow-glass-hover ${
                         selectedPlan === plan.id
                           ? 'border-primary bg-primary/5'
                           : 'border-line bg-white/[0.06] hover:border-wrap-line'
                       }`}
                     >
                       {plan.popular && (
-                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-md bg-gradient-cta px-3 py-0.5 text-xs font-semibold text-on-signature">
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-xs bg-gradient-cta px-3 py-0.5 text-xs font-semibold text-on-signature">
                           Most Popular
                         </div>
                       )}
@@ -289,14 +289,14 @@ function SignupContent() {
               <div className="flex gap-4">
                 <button
                   onClick={() => setStep(1)}
-                  className="flex items-center gap-2 rounded-md border border-line bg-white/[0.03] px-5 py-3 text-sm font-medium text-d-text-primary transition-all hover:bg-white/[0.06]"
+                  className="flex items-center gap-2 rounded-xs border border-line bg-white/[0.03] px-5 py-3 text-sm font-medium text-d-text-primary transition-all hover:bg-white/[0.06]"
                 >
                   <ArrowLeft className="h-4 w-4" />
                   Back
                 </button>
                 <button
                   onClick={() => setStep(3)}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-md bg-gradient-cta px-6 py-3 text-sm font-bold text-on-signature transition-all hover:opacity-90"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-xs bg-gradient-cta px-6 py-3 text-sm font-bold text-on-signature transition-all hover:opacity-90"
                 >
                   Continue
                   <ArrowRight className="h-4 w-4" />
@@ -307,7 +307,7 @@ function SignupContent() {
 
           {/* Step 3: Confirmation */}
           {step === 3 && (
-            <div className="rounded-2xl border border-line bg-wrap p-8 shadow-glass text-center">
+            <div className="rounded-lg border border-line bg-wrap p-8 shadow-glass text-center">
               <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
                 <Check className="h-8 w-8 text-primary" />
               </div>
@@ -316,7 +316,7 @@ function SignupContent() {
                 Create your account and put the five engines to work.
               </p>
 
-              <div className="mx-auto mt-8 max-w-sm rounded-xl border border-line bg-hover p-5">
+              <div className="mx-auto mt-8 max-w-sm rounded-md border border-line bg-hover p-5">
                 <div className="mb-3 flex items-center justify-between">
                   <span className="text-sm text-d-text-secondary">Selected Plan:</span>
                   <span className="font-semibold text-d-text-primary">
@@ -334,7 +334,7 @@ function SignupContent() {
               <div className="mt-8 flex gap-4">
                 <button
                   onClick={() => setStep(2)}
-                  className="flex items-center gap-2 rounded-md border border-line bg-white/[0.03] px-5 py-3 text-sm font-medium text-d-text-primary transition-all hover:bg-white/[0.06]"
+                  className="flex items-center gap-2 rounded-xs border border-line bg-white/[0.03] px-5 py-3 text-sm font-medium text-d-text-primary transition-all hover:bg-white/[0.06]"
                 >
                   <ArrowLeft className="h-4 w-4" />
                   Back
@@ -342,7 +342,7 @@ function SignupContent() {
                 <button
                   onClick={handleFinalSignup}
                   disabled={isLoading}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-md bg-gradient-cta px-6 py-3 text-sm font-bold text-on-signature transition-all hover:opacity-90 disabled:opacity-50"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-xs bg-gradient-cta px-6 py-3 text-sm font-bold text-on-signature transition-all hover:opacity-90 disabled:opacity-50"
                 >
                   {isLoading ? (
                     <Loader2 className="h-5 w-5 animate-spin" />
@@ -379,7 +379,7 @@ function SignupContent() {
         <button
           onClick={handleGoogleSignup}
           disabled={isGoogleLoading}
-          className="mb-6 flex w-full items-center justify-center gap-3 rounded-md border border-line bg-white/[0.03] px-6 py-3 text-sm font-medium text-d-text-primary shadow-glass transition-all hover:shadow-glass-hover disabled:opacity-50"
+          className="mb-6 flex w-full items-center justify-center gap-3 rounded-xs border border-line bg-white/[0.03] px-6 py-3 text-sm font-medium text-d-text-primary shadow-glass transition-all hover:shadow-glass-hover disabled:opacity-50"
         >
           {isGoogleLoading ? (
             <Loader2 className="h-5 w-5 animate-spin" />
@@ -489,7 +489,7 @@ function SignupContent() {
           {/* Submit */}
           <button
             type="submit"
-            className="flex w-full items-center justify-center gap-2 rounded-md bg-gradient-cta px-6 py-3 text-sm font-bold text-on-signature transition-all hover:opacity-90 hover:shadow-glow-primary"
+            className="flex w-full items-center justify-center gap-2 rounded-xs bg-gradient-cta px-6 py-3 text-sm font-bold text-on-signature transition-all hover:opacity-90 hover:shadow-glow-primary"
           >
             Continue
             <ArrowRight className="h-4 w-4" />

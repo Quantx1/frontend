@@ -129,7 +129,7 @@ export default function MyScreenPage() {
           action={
             <Link
               href="/scanner"
-              className="glass-control inline-flex h-9 items-center rounded-pill px-4 text-[13px] text-d-text-primary transition-colors"
+              className="glass-control inline-flex h-9 items-center rounded-full px-4 text-[13px] text-d-text-primary transition-colors"
             >
               Back to Screener
             </Link>
@@ -272,7 +272,7 @@ function ScannerBlockChip({ id }: { id: number }) {
   const name = catalog?.scanners?.find((s) => s.id === id)?.name ?? `Scanner ${id}`
   return (
     <span
-      className={`inline-flex items-center rounded-pill border border-line bg-main px-3 py-1.5 text-[12px] ${MONO} text-d-text-primary`}
+      className={`inline-flex items-center rounded-full border border-line bg-main px-3 py-1.5 text-[12px] ${MONO} text-d-text-primary`}
     >
       {name}
     </span>

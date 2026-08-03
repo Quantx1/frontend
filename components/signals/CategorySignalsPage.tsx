@@ -250,7 +250,7 @@ export function CategorySignalsPage({
         {/* ── 2. hero — H1 left, decorative render bleeds right ── */}
         <Reveal className="relative mt-8 grid grid-cols-1 items-center gap-6 lg:grid-cols-[1fr_0.78fr]">
           <div className="min-w-0">
-            <div className="inline-flex items-center gap-2 rounded-pill border border-line bg-wrap/70 px-3 py-1">
+            <div className="inline-flex items-center gap-2 rounded-full border border-line bg-wrap/70 px-3 py-1">
               <Icon size={13} className="text-ai" />
               <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-d-text-secondary">
                 {cat.hold}
@@ -267,20 +267,20 @@ export function CategorySignalsPage({
             <div className="mt-7 flex flex-wrap items-center gap-2.5">
               <a
                 href="#how-it-works"
-                className="inline-flex h-10 items-center gap-1.5 rounded-pill border border-white/20 px-4 text-[13px] font-medium text-d-text-primary transition-colors hover:bg-white/[0.06]"
+                className="inline-flex h-10 items-center gap-1.5 rounded-full border border-white/20 px-4 text-[13px] font-medium text-d-text-primary transition-colors hover:bg-white/[0.06]"
               >
                 <Play className="h-3.5 w-3.5" /> How it works
               </a>
               <Link
                 href="/watchlist"
-                className="inline-flex h-10 items-center gap-1.5 rounded-pill border border-white/20 px-4 text-[13px] font-medium text-d-text-primary transition-colors hover:bg-white/[0.06]"
+                className="inline-flex h-10 items-center gap-1.5 rounded-full border border-white/20 px-4 text-[13px] font-medium text-d-text-primary transition-colors hover:bg-white/[0.06]"
               >
                 <Star className="h-3.5 w-3.5" /> Add to watchlist
               </Link>
               <button
                 type="button"
                 onClick={() => dispatchCopilotOpen(`Explain today's ${cat.label.toLowerCase()} signals and how you found them.`)}
-                className="bg-gradient-cta cta-gloss group inline-flex h-10 items-center gap-1.5 rounded-pill px-5 text-[13px] font-semibold text-on-signature transition-transform active:scale-[0.97]"
+                className="bg-gradient-cta cta-gloss group inline-flex h-10 items-center gap-1.5 rounded-full px-5 text-[13px] font-semibold text-on-signature transition-transform active:scale-[0.97]"
               >
                 <Sparkles className="h-3.5 w-3.5" /> Ask AI about these
                 <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
@@ -318,7 +318,7 @@ export function CategorySignalsPage({
           <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
             {KEY_READS.map((k, i) => (
               <Reveal key={k.label} delay={0.03 * i}>
-                <div className="min-h-[92px] rounded-2xl border border-line bg-wrap p-5">
+                <div className="min-h-[92px] rounded-lg border border-line bg-wrap p-5">
                   <div className="font-mono text-[10.5px] font-medium uppercase tracking-[0.12em] text-d-text-muted">
                     {k.label}
                   </div>
@@ -399,7 +399,7 @@ export function CategorySignalsPage({
                           key={q}
                           type="button"
                           onClick={() => dispatchCopilotOpen(q)}
-                          className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-wrap px-3 py-1.5 text-[12px] font-medium text-d-text-secondary transition-colors hover:border-[var(--color-ai)]/40 hover:text-d-text-primary"
+                          className="inline-flex items-center gap-1.5 rounded-full border border-line bg-wrap px-3 py-1.5 text-[12px] font-medium text-d-text-secondary transition-colors hover:border-[var(--color-ai)]/40 hover:text-d-text-primary"
                         >
                           <Sparkles className="h-3.5 w-3.5 text-ai" /> {q}
                         </button>
@@ -488,7 +488,7 @@ function CardSkeletons() {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="rounded-2xl border border-line bg-wrap p-4">
+        <div key={i} className="rounded-lg border border-line bg-wrap p-4">
           <div className="flex items-center justify-between">
             <div className="h-4 w-20 animate-pulse rounded bg-wrap-hover" />
             <div className="h-5 w-12 animate-pulse rounded bg-wrap-hover" />
@@ -533,7 +533,7 @@ function ModelBookPanel({
   return (
     <div className="relative hidden min-h-[240px] items-center lg:flex">
       <div aria-hidden className="bg-radial-glow-ai absolute -inset-6 -z-10 opacity-70" />
-      <div className="lg-surface relative w-full rounded-2xl p-5">
+      <div className="lg-surface relative w-full rounded-lg p-5">
         <div className="mb-1 flex items-center justify-between">
           <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-ai">Model book</span>
           <span className="font-mono text-[10px] text-d-text-muted">{openCount} open</span>

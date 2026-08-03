@@ -58,7 +58,7 @@ export default function AIDossierPanel({ symbol }: { symbol: string }) {
 
   if (loading) {
     return (
-      <section className="rounded-2xl border border-d-border bg-wrap p-5">
+      <section className="rounded-lg border border-d-border bg-wrap p-5">
         <p className="text-[12px] text-d-text-muted">Loading engine dossier…</p>
       </section>
     )
@@ -66,7 +66,7 @@ export default function AIDossierPanel({ symbol }: { symbol: string }) {
 
   if (error || !d) {
     return (
-      <section className="rounded-2xl border border-d-border bg-wrap p-5">
+      <section className="rounded-lg border border-d-border bg-wrap p-5">
         <p className="text-[12px] text-down">{error || 'Dossier unavailable'}</p>
       </section>
     )
@@ -78,7 +78,7 @@ export default function AIDossierPanel({ symbol }: { symbol: string }) {
   const isFree = d.tier === 'free'
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-d-border bg-wrap">
+    <section className="overflow-hidden rounded-lg border border-d-border bg-wrap">
       {/* Header */}
       <div
         className="flex items-center justify-between gap-3 border-b border-d-border px-5 py-4"
@@ -190,7 +190,7 @@ function formatDirection(d?: string): string {
 function EngineTile({ e, isFree }: { e: DossierEngineBlock; isFree: boolean }) {
   const modelKey = KEY_BY_ENGINE[e.engine] || 'swing_forecast'
   return (
-    <div className="rounded-xl border border-d-border bg-main px-3 py-2.5">
+    <div className="rounded-md border border-d-border bg-main px-3 py-2.5">
       <div className="flex items-center justify-between gap-2">
         <ModelBadge modelKey={modelKey} size="xs" />
         <span className={`text-[11px] font-semibold ${directionClass(e.direction ?? (e.engine === 'Regime' ? e.regime === 'bull' ? 'bullish' : e.regime === 'bear' ? 'bearish' : 'mixed' : undefined))}`}>
@@ -354,7 +354,7 @@ function LatestSignalLevels({
 
 function LevelCell({ label, value, accentClass }: { label: string; value: number; accentClass: string }) {
   return (
-    <div className="rounded-xl border border-d-border bg-main px-2.5 py-1.5">
+    <div className="rounded-md border border-d-border bg-main px-2.5 py-1.5">
       <p className="text-[9px] uppercase tracking-wider text-d-text-muted">{label}</p>
       <p className={`numeric mt-0.5 text-[13px] font-semibold ${accentClass}`}>
         ₹{value.toFixed(2)}
@@ -392,7 +392,7 @@ function ScoresBlock({ block }: { block: ScoresBlockData }) {
 
 function ScoreCell({ s }: { s: ScoresBlockData['scores'][number] }) {
   return (
-    <div className="rounded-xl border border-d-border bg-main px-2.5 py-1.5">
+    <div className="rounded-md border border-d-border bg-main px-2.5 py-1.5">
       <div className="flex items-center justify-between gap-2">
         <p className="truncate text-[9px] uppercase tracking-wider text-d-text-muted">{s.label}</p>
         <p className="numeric shrink-0 text-[12px] font-semibold text-d-text-primary">

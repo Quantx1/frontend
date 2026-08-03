@@ -24,7 +24,7 @@ const toneClass = (label?: string | null): string =>
 
 function Tile({ title, value, sub, tone }: { title: string; value: string; sub?: string | null; tone: string }) {
   return (
-    <div className="rounded-lg border border-line bg-surface-2/40 p-2.5 text-center">
+    <div className="rounded-sm border border-line bg-surface-2/40 p-2.5 text-center">
       <div className="font-mono text-[9px] uppercase tracking-[0.1em] text-d-text-muted">{title}</div>
       <div className={`mt-0.5 text-[13px] font-semibold capitalize ${tone}`}>{value}</div>
       {sub && <div className="font-mono text-[9px] text-d-text-muted">{sub}</div>}
@@ -54,7 +54,7 @@ export default function SentimentCard({ symbol }: { symbol: string }) {
     }
   }
 
-  if (isLoading) return <div className="h-[150px] animate-pulse rounded-2xl border border-line bg-wrap" />
+  if (isLoading) return <div className="h-[150px] animate-pulse rounded-lg border border-line bg-wrap" />
 
   const tech = data?.technical?.summary
   const news = data?.news
@@ -62,7 +62,7 @@ export default function SentimentCard({ symbol }: { symbol: string }) {
   const hasAny = !!(tech || news || market)
 
   return (
-    <div className="rounded-2xl border border-line bg-wrap px-4 py-3">
+    <div className="rounded-lg border border-line bg-wrap px-4 py-3">
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Scale className="h-3.5 w-3.5 text-primary" />
@@ -74,7 +74,7 @@ export default function SentimentCard({ symbol }: { symbol: string }) {
             type="button"
             onClick={fuse}
             disabled={fusing}
-            className="inline-flex items-center gap-1 rounded-pill border border-ai/30 px-2 py-0.5 text-[10px] font-medium text-ai transition-colors hover:bg-ai/10 disabled:opacity-60"
+            className="inline-flex items-center gap-1 rounded-full border border-ai/30 px-2 py-0.5 text-[10px] font-medium text-ai transition-colors hover:bg-ai/10 disabled:opacity-60"
           >
             {fusing ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
             AI read
