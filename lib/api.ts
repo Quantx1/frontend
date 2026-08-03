@@ -1518,6 +1518,22 @@ export const api = {
           intent: string | null
           refused: boolean
           created_at: string
+          // What the turn actually DREW, restored alongside its prose. Before
+          // `2026_08_03_pr_copilot_message_render_state.sql` these four were
+          // computed on every turn, streamed, and then dropped — so a reloaded
+          // thread showed the answer with all of its evidence stripped off.
+          //
+          // Field names match the live stream exactly, so a resumed message and
+          // a streaming one render through the same components. The server owns
+          // the column mapping (`citations` → `references`, `steps` →
+          // `progress`); nothing on this side needs to know about it.
+          //
+          // Always present and always an array: turns written before the
+          // migration read back as empty lists, so no version check is needed.
+          artifacts: CopilotArtifact[]
+          progress: CopilotStep[]
+          references: CopilotReference[]
+          followups: string[]
         }>
       }>(`/api/ai/copilot/conversations/${id}`),
 
