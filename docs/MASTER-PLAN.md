@@ -16,14 +16,19 @@ Detail lives in four companion documents. This one is the map.
 
 ## 1. WHERE WE ARE
 
-**34 frontend + 7 backend commits, all pushed.** Working trees clean. Gates green:
+**36 frontend + 8 backend commits, all pushed.** Working trees clean. Gates green:
 `tsc` clean · lint **4** warnings / 0 errors (was 6) · `validate-classes` 296 files 0
-violations · `validate-theme` ALL PASS · 13 format checks · **1,183 Python tests**
-(was 22 in this workstream) · `verify-copilot-protocol` 15–16/16 chunks valid against
-the AI SDK's own `uiMessageChunkSchema`.
+violations · `validate-theme` ALL PASS · 13 format checks · **1,200 Python tests**
+· `verify-copilot-protocol` 15–16/16 chunks valid against the AI SDK's own
+`uiMessageChunkSchema`.
 
-**Phase 0 CLOSED · Phase 2.1 / 2.2 / 2.3 / 2.5 SHIPPED.** Open: 2.4 (order
-preview), monitors, Phase 1 (typography), Phases 3–6.
+**Phase 0 CLOSED · Phase 2.1 / 2.2 / 2.3 / 2.5 SHIPPED · 2.4 engine shipped
+with rates withheld.** Open: 2.6 monitors, Phase 1 (typography), Phases 3–6.
+
+**81 new tests across Phase 2, and 21 mutations confirming they bite.** Every
+guard in this phase was mutation-tested — the two that matter most are "the
+render route cannot reach the credit limiter" and "the sentiment word is never
+translated into a buy/sell call", and both fail loudly when reverted.
 
 **`frontend` → `feat/terminal-redesign-and-ai-sdk`**
 
@@ -50,6 +55,7 @@ preview), monitors, Phase 1 (typography), Phases 3–6.
 | `9170788` | The `entity` artifact rendered — and the verdict vocabulary fixed (2.2) |
 | `e44953a` | Render transport: same `useChat`, zero chat credits (2.3) |
 | `638256d` | `llmCaps` / `capFor` / `isLockedFeature` — lock a zero, don't 402 on it (2.5) |
+| `441cee3` `+1` | Plan updated: Phase 2 record, the riskiest step closed, 2.4 status |
 
 **`backend` → `feat/ai-sdk-protocol-and-autonomy`**
 
@@ -62,6 +68,7 @@ preview), monitors, Phase 1 (typography), Phases 3–6.
 | `8f84071` | **2.2** — the `entity` artifact + `get_verdict`, and the word it must not say |
 | `4d4c703` | **2.3** — the template renderer. Navigation without the meter |
 | `6db3a2a` | **2.5** — admins are exempt from the block, not from the counter |
+| `6e9c617` | **2.4** — charge-preview engine; refuses to guess a rate it cannot source |
 
 ### Phase 2 — what shipped, and what it proved
 
@@ -71,6 +78,7 @@ preview), monitors, Phase 1 (typography), Phases 3–6.
 | **2.2** entity artifact | `get_verdict` (wraps the day-cached technical panel) · `build_artifacts` branch · `technical_panel` gains `series`/`change` | 14 tests, 4 mutations · live replay 15/15 · browser-verified 6.5:1 contrast |
 | **2.3** template renderer | `POST /ai/copilot/render` · 4 templates · same meta→token→done dialect, so `ui_stream` and the client are unchanged | 27 tests, 5 mutations · **0 LLM calls across 4 live renders**, counted on the provider log |
 | **2.5** metering | Admins consume but are never blocked · `llm_caps` + usage on `/api/user/tier` · 402 carries `resets_at` | 10 tests, 3 mutations · live: 4 renders → counter 0, 1 chat → counter 1 |
+| **2.4** charges | `POST /api/trades/preview-charges` · GST base, side-specific STT, flat DP, buy-side stamp duty · statutory and brokerage as separate tables | 17 tests, 5 mutations · rates unsourced ⇒ rows decline rather than estimate |
 
 **Three things Phase 2 corrected that the plan had not anticipated:**
 
