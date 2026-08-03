@@ -62,6 +62,43 @@ function extractErrorMessage(payload: ApiErrorShape, status: number): string {
 
 /** Thrown by ``request`` on non-2xx — carries structured detail for callers
  *  that want to branch on tier-gate payloads without parsing the message. */
+/**
+ * Turn a non-2xx streaming response into the SAME structured `ApiError` that
+ * `request()` produces, then throw it.
+ *
+ * Exported because two callers need byte-identical semantics: the legacy SSE
+ * reader below, and the AI SDK transport in `lib/copilot/transport.ts`. The SDK's
+ * `HttpChatTransport.sendMessages` does
+ * `if (!response.ok) throw new Error(await response.text())` — it DISCARDS the
+ * status (node_modules/ai/src/ui/http-chat-transport.ts:203-206). That would
+ * break every `e.status === 402` branch and silently kill the upgrade CTA for
+ * Free users, so the transport passes a custom `fetch` that calls this first.
+ */
+export async function throwStreamApiError(res: Response): Promise<never> {
+  const text = await res.text().catch(() => '')
+  let payload: ApiErrorShape = {}
+  try {
+    payload = text ? (JSON.parse(text) as ApiErrorShape) : {}
+  } catch {
+    /* non-JSON body */
+  }
+  const detailPayload =
+    payload.detail && typeof payload.detail === 'object' ? (payload.detail as StructuredDetail)
+    : typeof payload.detail === 'string' ? payload.detail
+    : null
+  throw new ApiError(extractErrorMessage(payload, res.status), res.status, detailPayload)
+}
+
+/** Base URL of the FastAPI backend. Exported for the copilot transport. */
+export function apiBase(): string {
+  return API_BASE
+}
+
+/** Current bearer token, or null when signed out. Exported for the copilot transport. */
+export function authToken(): Promise<string | null> {
+  return getAuthToken()
+}
+
 export class ApiError extends Error {
   status: number
   detail: StructuredDetail | string | null
@@ -452,6 +489,28 @@ export type NotificationsResponse = {
 
 // PR-V37 — structured chart/stat artifacts the Copilot emits inline in chat.
 // Every value is sourced from real tool data (price series, regime probs, …).
+/**
+ * Kill switch result — the FULL shape the endpoint returns.
+ *
+ * This was typed as `{ success, message }`, so the two fields that matter most
+ * in an emergency were invisible to the UI. `/api/trades/kill-switch` attempts
+ * every open position independently and reports precisely what happened:
+ * `positions_failed` is a list of SYMBOLS that could not be closed. Discarding
+ * it meant that when 3 of 5 closes failed, the user was never told which three
+ * they were still holding.
+ *
+ * Note the endpoint DOES liquidate — its docstring is "close all positions and
+ * pause trading". Any UI copy claiming otherwise is wrong.
+ */
+export interface KillSwitchResult {
+  success: boolean
+  message: string
+  /** Count of positions successfully closed. */
+  positions_closed?: number
+  /** Symbols that could NOT be closed. Present only on partial failure. */
+  positions_failed?: string[]
+}
+
 export type ArtifactTone = 'up' | 'down' | 'neutral'
 // Optional deep-link chip under an artifact (uTrade-style action handoff, 2026-07-11).
 export interface ArtifactCta { label: string; href: string }
@@ -798,10 +857,7 @@ export const api = {
       request<{ success: boolean; message: string }>(`/api/trades/${tradeId}/approve`, {
         method: 'POST',
       }),
-    killSwitch: () =>
-      request<{ success: boolean; message: string }>('/api/trades/kill-switch', {
-        method: 'POST',
-      }),
+    killSwitch: () => request<KillSwitchResult>('/api/trades/kill-switch', { method: 'POST' }),
   },
 
   positions: {
@@ -1349,21 +1405,7 @@ export const api = {
         signal,
       })
 
-      if (!res.ok) {
-        // Mirror request()'s error shaping so a 402 cap surfaces structured.
-        const text = await res.text().catch(() => '')
-        let payload: ApiErrorShape = {}
-        try {
-          payload = text ? (JSON.parse(text) as ApiErrorShape) : {}
-        } catch {
-          /* non-JSON body */
-        }
-        const detailPayload =
-          payload.detail && typeof payload.detail === 'object' ? (payload.detail as StructuredDetail)
-          : typeof payload.detail === 'string' ? payload.detail
-          : null
-        throw new ApiError(extractErrorMessage(payload, res.status), res.status, detailPayload)
-      }
+      if (!res.ok) await throwStreamApiError(res)
 
       if (!res.body) {
         handlers.onError?.('No response stream')
@@ -1708,10 +1750,8 @@ export const api = {
         status: string | null
       }>('/api/auto-trader/plan/today'),
 
-    killSwitch: () =>
-      request<{ success: boolean; message: string }>('/api/trades/kill-switch', {
-        method: 'POST',
-      }),
+    /** Alias of `api.trades.killSwitch` — same `/api/trades/kill-switch` endpoint. */
+    killSwitch: () => request<KillSwitchResult>('/api/trades/kill-switch', { method: 'POST' }),
   },
 
 

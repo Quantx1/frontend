@@ -180,22 +180,70 @@ export interface DSLEquityPoint {
   equity: number
 }
 
+/** One walk-forward window. The last fold is the holdout. */
+export interface DSLWalkForwardFold {
+  index: number
+  start_date: string
+  end_date: string
+  trades: number
+  net_return_pct: number
+  win_rate: number
+  sharpe: number
+  max_drawdown_pct: number
+  profitable: boolean
+}
+
+/**
+ * The out-of-sample block. `POST /{id}/backtest` is ALWAYS walk-forward
+ * (STRATEGY_GATE_FOLDS, default 4) and has always returned this — the
+ * frontend simply never modelled or read it, so every fold metric, the
+ * holdout result and the consistency score were invisible.
+ *
+ * This is the honest counterweight to a single in-sample number, and it is
+ * exactly what the promotion gate scores.
+ */
+export interface DSLOutOfSample {
+  n_folds: number
+  oos_trades: number
+  oos_folds_profitable: number
+  oos_consistency: number
+  oos_mean_sharpe: number
+  oos_worst_drawdown_pct: number
+  holdout_return_pct: number
+  holdout_sharpe: number
+  holdout_trades: number
+  folds: DSLWalkForwardFold[]
+}
+
+/**
+ * A backtest payload.
+ *
+ * ⚠️ Most fields are OPTIONAL on purpose. `POST /{id}/backtest` dispatches on
+ * the stored DSL, and the universe path
+ * (`UniverseWalkForwardResult.to_full_dict()`, backend .../backtest.py:760)
+ * returns only a summary — **no `equity_curve`, no `trades`, no capital or
+ * date fields**. Typing them as required made `result.equity_curve.map(...)`
+ * look safe and threw a TypeError for every universe-scoped strategy.
+ */
 export interface DSLBacktestResult {
   symbol: string
   strategy_name: string
-  start_date: string
-  end_date: string
-  initial_capital: number
-  final_capital: number
+  start_date?: string
+  end_date?: string
+  initial_capital?: number
+  final_capital?: number
   total_trades: number
   win_rate: number
-  total_return_pct: number
-  max_drawdown_pct: number
+  total_return_pct?: number
+  max_drawdown_pct?: number
   sharpe_ratio: number
-  profit_factor: number
-  avg_hold_days: number
-  trades: DSLTrade[]
-  equity_curve: DSLEquityPoint[]
+  profit_factor?: number
+  avg_hold_days?: number
+  trades?: DSLTrade[]
+  equity_curve?: DSLEquityPoint[]
+  /** Present on the universe path only. */
+  symbols_tested?: number
+  out_of_sample?: DSLOutOfSample
 }
 
 // ─────────────────────────────────────────────────────────────────────────

@@ -26,110 +26,153 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 
-import { Badge, Card, CardBody, CardHeader, DataTable, DisclaimerFooter } from '@/components/foundation'
+import {
+  Badge, Card, CardBody, CardHeader, DataTable, DisclaimerFooter, EyebrowMono,
+} from '@/components/foundation'
 import { formatPercent } from '@/lib/utils'
-import type { DSLBacktestResult, DSLTrade } from '@/types/strategies'
+import type { DSLBacktestResult, DSLOutOfSample, DSLTrade } from '@/types/strategies'
 
+import { num } from '@/lib/format'
 interface Props {
   result: DSLBacktestResult
 }
 
 export function BacktestViewer({ result }: Props) {
+  // ⚠️ Optional by contract. The universe path returns a summary with no
+  // equity curve at all (backend .../backtest.py:760); this used to be an
+  // unguarded .map() and threw for every universe-scoped strategy.
   const equity = useMemo(
     () =>
-      result.equity_curve.map((p) => ({
+      (result.equity_curve ?? []).map((p) => ({
         date: formatShortDate(p.date),
         equity: p.equity,
       })),
     [result.equity_curve],
   )
 
-  const pnlAbs = result.final_capital - result.initial_capital
-  const pnlSign = pnlAbs >= 0 ? '+' : '-'
-  const positive = pnlAbs >= 0
-  const cardTone = positive
-    ? 'border-up/30 bg-up/5'
-    : 'border-down/30 bg-down/5'
-  const pnlColor = positive ? 'text-up' : 'text-down'
-
-  // Annualise the return so the "what could I make per year" question
-  // has a believable answer. We derive the period from the date strings
-  // (yyyy-mm-dd → JS Date) and scale linearly.
-  const days = (() => {
-    const s = new Date(result.start_date).getTime()
-    const e = new Date(result.end_date).getTime()
-    const d = (e - s) / (1000 * 60 * 60 * 24)
-    return d > 0 && Number.isFinite(d) ? d : null
-  })()
-  const annualised = days && days > 30
-    ? (Math.pow(result.final_capital / result.initial_capital, 365 / days) - 1) * 100
-    : null
+  const trades = result.trades ?? []
+  const oos = result.out_of_sample
+  const inSampleReturn = result.total_return_pct
 
   return (
-    <div className="space-y-4">
-      {/* ── Hero summary — make the "you would have made" answer obvious ── */}
-      <Card className={cardTone}>
-        <CardBody className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          {/* Left: bold pnl */}
-          <div className="md:col-span-2">
-            <p className="text-[11px] uppercase tracking-wider text-d-text-muted">
-              {positive ? 'You would have made' : 'You would have lost'} · {result.symbol}
-            </p>
-            <p className={`mt-1 font-mono text-[34px] font-bold leading-none tabular-nums ${pnlColor}`}>
-              {pnlSign}₹{Math.abs(Math.round(pnlAbs)).toLocaleString('en-IN')}
-            </p>
-            <p className={`mt-1 font-mono text-[13px] font-medium tabular-nums ${pnlColor}`}>
-              {pnlSign}
-              {Math.abs(result.total_return_pct).toFixed(2)}% over {days?.toFixed(0) ?? '—'} days
-              {annualised != null && Number.isFinite(annualised) && (
-                <>
-                  <span className="mx-2 text-d-text-muted">·</span>
-                  <span>~{annualised > 0 ? '+' : ''}{annualised.toFixed(1)}% / yr</span>
-                </>
-              )}
-            </p>
-            <p className="mt-2 text-[11px] text-d-text-muted">
-              {result.start_date} → {result.end_date} · ₹
-              {Math.round(result.initial_capital).toLocaleString('en-IN')} starting capital
-            </p>
-          </div>
-          {/* Right: final capital */}
-          <div className="text-right md:border-l md:border-line md:pl-4">
-            <p className="text-[11px] uppercase tracking-wider text-d-text-muted">
-              Final capital
-            </p>
-            <p className="font-mono text-[22px] font-semibold text-d-text-primary tabular-nums">
-              ₹{Math.round(result.final_capital).toLocaleString('en-IN')}
-            </p>
-            <p className="text-[11px] text-d-text-muted">
-              after costs (slippage + brokerage + STT)
-            </p>
-          </div>
-        </CardBody>
-      </Card>
+    <div className="flex flex-col gap-4">
+      {/* ── Hero ──────────────────────────────────────────────────────────
+          What this replaced: a ₹ figure headed "You would have made", plus a
+          COMPOUNDED annualisation — Math.pow(final/initial, 365/days) — of a
+          single in-sample run. That is the most overfittable number the system
+          produces, extrapolated to a yearly rate, framed as the user's own
+          realised outcome, on a SEBI-constrained retail product.
 
-      {/* ── KPI strip ── */}
+          The honest headline is the out-of-sample evidence, which the backend
+          has always computed and the UI never read. In-sample return is still
+          shown — demoted to context, which is what it is. ── */}
+      {oos ? (
+        <Card elevation="raised">
+          <CardBody className="flex flex-col gap-4">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <p className="text-[11px] uppercase tracking-wider text-d-text-muted">
+                  Out-of-sample · {result.symbol}
+                </p>
+                <p className="mt-1 font-mono text-[34px] font-semibold leading-none tabular-nums text-d-text-primary">
+                  {oos.oos_folds_profitable}/{oos.n_folds}
+                </p>
+                <p className="mt-1 text-[13px] text-d-text-secondary">
+                  windows profitable on data the rules never saw
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-[11px] uppercase tracking-wider text-d-text-muted">
+                  In-sample return
+                </p>
+                <p
+                  className={`font-mono text-[20px] font-semibold tabular-nums ${
+                    (inSampleReturn ?? 0) >= 0 ? 'text-up' : 'text-down'
+                  }`}
+                >
+                  {(inSampleReturn ?? 0) >= 0 ? '+' : ''}
+                  {(inSampleReturn ?? 0).toFixed(2)}%
+                </p>
+                <p className="text-[11px] text-d-text-muted">after costs · not a forecast</p>
+              </div>
+            </div>
+
+            <FoldStrip oos={oos} />
+
+            <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+              <Metric label="OOS Sharpe" value={oos.oos_mean_sharpe.toFixed(2)} />
+              <Metric label="Consistency" value={`${Math.round(oos.oos_consistency * 100)}%`} />
+              <Metric
+                label="Worst OOS DD"
+                value={`-${Math.abs(oos.oos_worst_drawdown_pct).toFixed(1)}%`}
+                tone="down"
+              />
+              <Metric
+                label="Holdout"
+                value={`${oos.holdout_return_pct >= 0 ? '+' : ''}${oos.holdout_return_pct.toFixed(2)}%`}
+                tone={oos.holdout_return_pct >= 0 ? undefined : 'down'}
+              />
+            </div>
+            <p className="text-[11px] leading-relaxed text-d-text-muted">
+              Walk-forward over {oos.n_folds} windows, {oos.oos_trades} out-of-sample trades. The
+              final window is a holdout the rules were never fitted against. Past behaviour on
+              historical data does not predict future results.
+            </p>
+          </CardBody>
+        </Card>
+      ) : (
+        // No OOS block — say so rather than filling the space with an
+        // in-sample number dressed up as a result.
+        <Card elevation="raised">
+          <CardBody className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p className="text-[11px] uppercase tracking-wider text-d-text-muted">
+                In-sample return · {result.symbol}
+              </p>
+              <p
+                className={`mt-1 font-mono text-[28px] font-semibold leading-none tabular-nums ${
+                  (inSampleReturn ?? 0) >= 0 ? 'text-up' : 'text-down'
+                }`}
+              >
+                {(inSampleReturn ?? 0) >= 0 ? '+' : ''}
+                {(inSampleReturn ?? 0).toFixed(2)}%
+              </p>
+              <p className="mt-1.5 max-w-prose text-[12px] text-d-text-secondary">
+                No out-of-sample windows in this run, so there is nothing here that tests the rules
+                against unseen data. In-sample numbers cannot support a decision to trade.
+              </p>
+            </div>
+            {result.symbols_tested != null && (
+              <Metric label="Symbols tested" value={`${result.symbols_tested}`} />
+            )}
+          </CardBody>
+        </Card>
+      )}
+
+      {/* ── In-sample KPI strip. Every field here is optional on the universe
+             path, so each is guarded rather than assumed. ── */}
       <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-6">
         <Metric label="Sharpe" value={result.sharpe_ratio.toFixed(2)} />
         <Metric label="Win rate" value={formatPercent(result.win_rate, 1)} />
-        <Metric
-          label="Max DD"
-          value={`-${Math.abs(result.max_drawdown_pct).toFixed(2)}%`}
-          tone="down"
-        />
+        {result.max_drawdown_pct != null && (
+          <Metric
+            label="Max DD"
+            value={`-${Math.abs(result.max_drawdown_pct).toFixed(2)}%`}
+            tone="down"
+          />
+        )}
         <Metric label="Trades" value={`${result.total_trades}`} />
-        <Metric
-          label="Profit factor"
-          value={
-            Number.isFinite(result.profit_factor)
-              ? result.profit_factor.toFixed(2)
-              : '∞'
-          }
-        />
-        <Metric
-          label="Avg hold"
-          value={`${result.avg_hold_days.toFixed(1)}d`}
-        />
+        {result.profit_factor != null && (
+          <Metric
+            label="Profit factor"
+            value={
+              Number.isFinite(result.profit_factor) ? result.profit_factor.toFixed(2) : '∞'
+            }
+          />
+        )}
+        {result.avg_hold_days != null && (
+          <Metric label="Avg hold" value={`${result.avg_hold_days.toFixed(1)}d`} />
+        )}
       </div>
 
       {/* ── Equity curve ── */}
@@ -177,7 +220,7 @@ export function BacktestViewer({ result }: Props) {
                   }}
                   labelStyle={{ color: 'var(--color-muted)' }}
                   formatter={(v: number) => [
-                    `₹${Math.round(v).toLocaleString('en-IN')}`,
+                    `₹${num(Math.round(v))}`,
                     'Equity',
                   ]}
                 />
@@ -199,16 +242,18 @@ export function BacktestViewer({ result }: Props) {
         <CardHeader>
           <span className="flex items-center justify-between gap-2">
             <span>Trade log</span>
-            <Badge tone="muted">{result.trades.length} trades</Badge>
+            <Badge tone="muted">{trades.length} trades</Badge>
           </span>
         </CardHeader>
         <CardBody className="p-0">
-          {result.trades.length === 0 ? (
+          {trades.length === 0 ? (
             <p className="px-4 py-8 text-center text-sm text-d-text-muted">
-              No trades fired in this window.
+              {result.equity_curve
+                ? 'No trades fired in this window.'
+                : 'This run covered a universe of symbols, so there is no single-symbol trade log.'}
             </p>
           ) : (
-            <TradeTable trades={result.trades} />
+            <TradeTable trades={trades} />
           )}
         </CardBody>
       </Card>
@@ -221,6 +266,60 @@ export function BacktestViewer({ result }: Props) {
 // ─────────────────────────────────────────────────────────────────────────
 // Subcomponents
 // ─────────────────────────────────────────────────────────────────────────
+
+/**
+ * The walk-forward fold strip — one cell per window, the last being the holdout.
+ *
+ * This is the only view in which a strategy can visibly FAIL, which is exactly
+ * what makes it worth showing first. A run that made money overall but lost in
+ * two of four windows is a different object from one that was steady, and a
+ * single aggregate return cannot tell you which you are holding.
+ */
+function FoldStrip({ oos }: { oos: DSLOutOfSample }) {
+  const folds = oos.folds ?? []
+  if (folds.length === 0) return null
+
+  return (
+    <div>
+      <div className="flex items-center justify-between">
+        <EyebrowMono className="text-[10px]">Walk-forward windows</EyebrowMono>
+        <span className="text-[10px] text-d-text-muted">last = holdout</span>
+      </div>
+      <div className="mt-1.5 grid gap-1.5" style={{ gridTemplateColumns: `repeat(${folds.length}, minmax(0,1fr))` }}>
+        {folds.map((f, i) => {
+          const isHoldout = i === folds.length - 1
+          return (
+            <div
+              key={f.index ?? i}
+              title={`${f.start_date} → ${f.end_date} · ${f.trades} trades · Sharpe ${f.sharpe?.toFixed(2) ?? '—'}`}
+              className={`rounded-lg border p-2 ${
+                f.profitable ? 'border-up/30 bg-up/[0.07]' : 'border-down/30 bg-down/[0.07]'
+              } ${isHoldout ? 'ring-1 ring-inset ring-wrap-line' : ''}`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] text-d-text-muted">
+                  {isHoldout ? 'Holdout' : `W${i + 1}`}
+                </span>
+                <span className={f.profitable ? 'text-up' : 'text-down'} aria-hidden="true">
+                  {f.profitable ? '✓' : '✕'}
+                </span>
+              </div>
+              <p
+                className={`mt-0.5 font-mono text-[13px] font-medium tabular-nums ${
+                  f.net_return_pct >= 0 ? 'text-up' : 'text-down'
+                }`}
+              >
+                {f.net_return_pct >= 0 ? '+' : ''}
+                {f.net_return_pct.toFixed(1)}%
+              </p>
+              <p className="text-[10px] text-d-text-muted">{f.trades} trades</p>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
 
 function Metric({
   label,
