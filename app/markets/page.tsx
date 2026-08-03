@@ -21,14 +21,11 @@ import { useBrokerStatus } from '@/lib/hooks/useBrokerStatus'
 import { AppShell } from '@/components/shell/AppShell'
 import { Reveal, Card, Skeleton, DisclaimerFooter, EyebrowMono } from '@/components/foundation'
 import { MONO } from '@/lib/tokens'
+import { RenderedSurface } from '@/components/copilot/RenderedSurface'
 import MarketPulseCard from '@/components/markets/MarketPulseCard'
 import AiRadarStrip from '@/components/markets/AiRadarStrip'
-import BigDealsCard from '@/components/markets/BigDealsCard'
-import DailyBriefingCard from '@/components/markets/DailyBriefingCard'
 import OrderFlowAnalysis from '@/components/markets/OrderFlowAnalysis'
 import SectorRotationCard from '@/components/markets/SectorRotationCard'
-import BreadthCard from '@/components/markets/BreadthCard'
-import MarketExplainerCard from '@/components/markets/MarketExplainerCard'
 import { IndexStrip } from '@/components/markets/IndexStrip'
 import { RegimeGauge, regimeToScore } from '@/components/markets/RegimeGauge'
 import { MoversColumns, type Mover } from '@/components/markets/MoversColumns'
@@ -156,10 +153,21 @@ export default function MarketsPage() {
           {mktLabel && <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-wrap px-3 py-1.5 text-[11.5px]"><span className={`h-2 w-2 rounded-full ${mktLabel === 'Live' ? 'bg-up' : mktLabel === 'Pre-open' ? 'bg-warning' : 'bg-d-text-muted'}`} /><span className="font-semibold text-d-text-secondary">Market {mktLabel}</span></span>}
         </Reveal>
 
-        {/* ── AI Daily Briefing (the hero) — built from SAFE data (global cues +
-             EOD/derived India context + FII/DII EOD + events), so it shows to
-             EVERYONE, logged-out included. No live intraday NSE quotes here. ── */}
-        <DailyBriefingCard />
+        {/* ── The answer (§4.4) — headline + narrative + ONE card + chips ──
+             Rendered by the template renderer: deterministic prose from the
+             briefing service and a real `entity` artifact for the index. Two
+             requests, ~0.2s warm, and **zero chat credits** — navigation is
+             never metered (§R1).
+
+             It replaces DailyBriefingCard, BreadthCard and MarketExplainerCard.
+             Breadth now lives in the card's vote bar (41 of 53 constituents
+             advancing IS the breadth number), and the explainer's deterministic
+             drivers are the paragraph.
+
+             Everything below is the VISUAL layer the user scrolls to by
+             choosing to; the question "how's the market" is answered above the
+             fold, once. ── */}
+        <RenderedSurface template="market_brief" />
 
         {/* ── index ticker strip (NSE indices, gated) OR the broker-connect gate ── */}
         {dataEntitled ? (
@@ -190,10 +198,10 @@ export default function MarketsPage() {
 
         {/* ── BENTO ROW: AI Radar (8) | Market Breadth (4) ──
              every card stretches (h-full) so the row's bottoms align exactly. */}
-        <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-12">
-          <Reveal delay={0.028} className="h-full lg:col-span-8"><AiRadarStrip /></Reveal>
-          <Reveal delay={0.03} className="h-full lg:col-span-4"><BreadthCard /></Reveal>
-        </div>
+        {/* BreadthCard cut (§4.4): breadth is the vote bar in the card above —
+            "41 of 53 constituents advancing" IS the breadth number, and the
+            audit found THREE separate breadth surfaces on this page. */}
+        <Reveal delay={0.028}><AiRadarStrip /></Reveal>
 
         {/* ── BENTO ROW: Regime gauge (4) | Sector heatmap (8) ──
              The Daily Briefing above owns the global / India / FII-DII summary,
@@ -225,8 +233,11 @@ export default function MarketsPage() {
           </Reveal>
         </div>
 
-        {/* ── AI Market Explainer (deterministic drivers + on-click narrative) ── */}
-        <Reveal delay={0.06}><MarketExplainerCard entitled={dataEntitled} /></Reveal>
+        {/* MarketExplainerCard cut (§4.4). Its deterministic drivers are the
+            paragraph above. It also fired an LLM call on MOUNT — its own
+            docstring says the narrative is "fetched ONLY when the user clicks"
+            and a later `useEffect` auto-loaded it anyway, so the page answered
+            a question nobody asked. */}
 
         {/* ── market movers (gainers / losers / active) — raw NSE %, gated ── */}
         {moversShown.length > 0 && (
@@ -290,7 +301,6 @@ export default function MarketsPage() {
 
           {/* Big deals — NSE EOD-published bulk/block disclosures + upcoming
               corporate actions. Public lane, labelled. */}
-          <Reveal delay={0.16} className="h-full lg:col-span-4"><BigDealsCard /></Reveal>
         </div>
 
         {/* ── institutional order-flow (FII/DII flow · big deals · shorts) — raw NSE, gated ── */}

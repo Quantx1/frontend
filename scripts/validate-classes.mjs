@@ -89,13 +89,13 @@ const RATCHET = [
   // Converting them would trade a working gated loading state for a visual
   // change that fixes nothing. The baseline exists to stop UNGATED spinners
   // creeping in, not to demand this number reach zero.
-  { label: 'animate-spin', max: 106,
+  { label: 'animate-spin', max: 104,
     count: (src) => (src.match(/\banimate-spin\b/g) || []).length },
   // Sub-11px type. REDESIGN-VISUAL.md §2.2 sets the floor at 11px, and 11px is
   // `micro` only. The audit measured 658 of these and called that single number
   // "the user's 'congested, not designed properly' verdict, quantified".
   // The sweep onto the v6 roles is Phase 1; until then the count may not grow.
-  { label: 'type below the 11px floor', max: 560,
+  { label: 'type below the 11px floor', max: 532,
     count: (src) => (src.match(/text-\[(?:8|8\.5|9|9\.5|10|10\.5)px\]/g) || []).length },
 ]
 
