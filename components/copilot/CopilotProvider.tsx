@@ -23,6 +23,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useChat } from '@ai-sdk/react'
+import { StickToBottom } from 'use-stick-to-bottom'
 import {
   Activity,
   X, ArrowUpRight, ChevronRight, PlusCircle,
@@ -129,7 +130,6 @@ export default function CopilotProvider() {
   // maximize can hand the FULL conversation to the Main Chat.
   const [conversationId, setConversationId] = useState<string | null>(null)
 
-  const scrollRef = useRef<HTMLDivElement | null>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
   // ── AI SDK streaming ────────────────────────────────────────────────────
@@ -269,13 +269,14 @@ export default function CopilotProvider() {
     }
   }, [])
 
-  // Focus the composer + scroll to bottom when opened or on new messages.
   useEffect(() => {
     if (open) inputRef.current?.focus()
   }, [open])
-  useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
-  }, [messages, open])
+  // Scrolling is owned by <StickToBottom> below. The effect that used to live
+  // here forced the thread to the bottom on every `messages` change regardless
+  // of where the user was reading — so scrolling up mid-stream yanked you back
+  // on the next token. StickToBottom only follows while you are already at the
+  // bottom, and releases as soon as you scroll away.
 
   const stop = useCallback(() => {
     void stopChat()
@@ -478,8 +479,15 @@ export default function CopilotProvider() {
         })}
       </div>
 
-      {/* Messages */}
-      <div ref={scrollRef} className="min-h-0 flex-1 space-y-3 overflow-y-auto px-3 py-3">
+      {/* Messages — StickToBottom owns the scroll. `resize="smooth"` keeps the
+          view pinned as streaming text grows the content; it does nothing once
+          the user has scrolled away. */}
+      <StickToBottom
+        className="relative min-h-0 flex-1 overflow-y-auto"
+        resize="smooth"
+        initial="instant"
+      >
+        <StickToBottom.Content className="space-y-3 px-3 py-3">
         {messages.length === 0 ? (
           <div className="space-y-3 pt-2">
             <p className="text-[12.5px] text-d-text-secondary">
@@ -525,7 +533,8 @@ export default function CopilotProvider() {
             </div>
           ))
         )}
-      </div>
+        </StickToBottom.Content>
+      </StickToBottom>
 
       {/* Composer */}
       <div className="border-t border-line p-2.5">
