@@ -816,6 +816,10 @@ export const api = {
       }),
     getStats: () => request<UserStats>('/api/user/stats'),
     // PR 14 — tier + feature access map + Copilot daily cap.
+    // Typed in full by `lib/hooks/useTier.ts`, which is where the difference
+    // between `features` (may this tier touch it) and `llm_caps` (how many
+    // times today) is documented — conflating the two is what put a 402
+    // behind a control the UI rendered as available.
     getTier: () =>
       request<{
         user_id: string
@@ -823,6 +827,10 @@ export const api = {
         is_admin: boolean
         features: Record<string, boolean>
         copilot_daily_cap: number
+        copilot_used: number | null
+        copilot_remaining: number | null
+        copilot_resets_at: string | null
+        llm_caps: Record<string, number>
       }>('/api/user/tier'),
     // PR 123 — cross-device UI prefs blob (watchlist preset pins, etc.).
     getUIPreferences: () =>
