@@ -96,3 +96,70 @@ export function createCopilotTransport(getContext: () => CopilotSendContext) {
     },
   })
 }
+
+/** The deterministic surfaces. Keys must match `TEMPLATES` in the backend's
+ *  `ai/agents/templates.py` — a mismatch is a 404, not a silent fallback. */
+export type CopilotTemplate = 'market_brief' | 'stock_read' | 'my_book' | 'signals_today'
+
+export interface CopilotRenderContext {
+  template: CopilotTemplate
+  params?: Record<string, unknown>
+  conversation_id?: string
+  persist?: boolean
+}
+
+/**
+ * A transport for DETERMINISTIC renders — navigation, not chat.
+ *
+ * Same wire format, same `useChat`, same components. The only differences are
+ * the URL and the body, because the backend emits the identical event dialect
+ * whether the words were generated or written down. That equivalence is the
+ * point: it lets navigation stop being chat without becoming a second
+ * front-end.
+ *
+ * **It costs zero chat credits.** Free tier is 5 chat messages a day, so
+ * routing a sidebar tap through `/copilot/chat/stream` paywalls navigation on
+ * the sixth one — and because the backend's cap check returns early for
+ * admins, nobody building it would ever see that happen. `/copilot/render` has
+ * no cap call in it at all; a backend test asserts the route cannot even reach
+ * the credit limiter.
+ *
+ * The 402 handling below is therefore not for quota. It is kept because the
+ * shared `fetch` wrapper is what preserves HTTP status through the SDK's
+ * status-discarding error branch, and a 401 or 503 still needs to arrive as a
+ * real `ApiError`.
+ */
+export function createCopilotRenderTransport(getContext: () => CopilotRenderContext) {
+  return new DefaultChatTransport<CopilotUIMessage>({
+    api: `${apiBase()}/api/ai/copilot/render`,
+
+    headers: async () => {
+      const token = await authToken()
+      return {
+        Accept: 'text/event-stream',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      }
+    },
+
+    fetch: (async (input: RequestInfo | URL, init?: RequestInit) => {
+      const res = await fetch(input, init)
+      if (!res.ok) await throwStreamApiError(res)
+      return res
+    }) as typeof fetch,
+
+    prepareSendMessagesRequest: ({ api, headers, credentials }) => {
+      const ctx = getContext()
+      return {
+        api,
+        headers,
+        credentials,
+        body: {
+          template: ctx.template,
+          ...(ctx.params ? { params: ctx.params } : {}),
+          ...(ctx.conversation_id ? { conversation_id: ctx.conversation_id } : {}),
+          ...(ctx.persist ? { persist: true } : {}),
+        },
+      }
+    },
+  })
+}

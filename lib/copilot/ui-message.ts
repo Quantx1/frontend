@@ -41,6 +41,20 @@ export type CopilotDataParts = {
     refused?: boolean
     reply?: string
     grounding?: { grounded: boolean; unsupported: string[] } | null
+    /**
+     * True when the words were WRITTEN, not generated — a deterministic
+     * template render (`/copilot/render`), which costs zero chat credits and
+     * runs no model.
+     *
+     * The client needs this to stay honest in two directions. It must not
+     * animate a render as if a model were composing it, and it must not
+     * attach model-flavoured chrome ("thought for 2.4s") to text that was
+     * assembled from a tool result. `template` names which surface produced
+     * it, so analytics can separate navigation from chat without inspecting
+     * the prose.
+     */
+    rendered?: boolean
+    template?: string | null
   }
   progress: CopilotStep[]
   artifacts: CopilotArtifact[]
