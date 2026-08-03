@@ -202,11 +202,35 @@ function buildPath(path: string, query?: Record<string, Primitive>): string {
   return queryString ? `${path}?${queryString}` : path
 }
 
+/**
+ * How long to wait for Supabase to hand us a session before giving up and
+ * using the cached token.
+ *
+ * ⚠️ This bound is load-bearing. `supabase.auth.getSession()` can HANG rather
+ * than reject — most reliably when a tab has been open long enough that the
+ * token needs refreshing and the refresh cannot complete (backend restarted,
+ * network flapped, laptop resumed). A hang is not a throw, so the `catch`
+ * below never fires and the localStorage fallback is never reached.
+ *
+ * That matters far beyond auth: `getAuthToken()` is awaited inside `request()`
+ * (~line 254), so a stalled session silently freezes EVERY authenticated call
+ * in the app. Observed symptom: the copilot accepts a message, shows "Stop"
+ * forever, and never issues a network request at all — because the AI SDK
+ * transport awaits `headers` before it calls `fetch`. No error, no timeout, no
+ * console output; it just stops.
+ */
+const AUTH_SESSION_TIMEOUT_MS = 3_000
+
 async function getAuthToken(): Promise<string | null> {
   try {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
+    let timer: ReturnType<typeof setTimeout> | undefined
+    const session = await Promise.race([
+      supabase.auth.getSession().then(({ data }) => data.session),
+      new Promise<null>((resolve) => {
+        timer = setTimeout(() => resolve(null), AUTH_SESSION_TIMEOUT_MS)
+      }),
+    ]).finally(() => clearTimeout(timer))
+
     if (session?.access_token) {
       return session.access_token
     }
