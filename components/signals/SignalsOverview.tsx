@@ -33,7 +33,6 @@ import {
   Input,
   Reveal,
   Select,
-  StatCard,
 } from '@/components/foundation'
 import type { Column, SelectOption } from '@/components/foundation'
 import { dispatchCopilotOpen } from '@/components/copilot/CopilotProvider'
@@ -48,6 +47,7 @@ import {
   type CategoryId,
 } from '@/components/signals/categories'
 import { AutomationPanel } from '@/components/signals/AutomationPanel'
+import { RenderedSurface } from '@/components/copilot/RenderedSurface'
 import { expectedMovePct, type DisplaySignal } from '@/components/signals/SignalCard'
 import { api } from '@/lib/api'
 import { DataBadge } from '@/components/common/DataBadge'
@@ -116,7 +116,6 @@ export function SignalsOverview() {
   const stats = useMemo(() => {
     const total = open.length
     const longCount = open.filter((s) => s.direction === 'LONG').length
-    const rrs = open.map((s) => s.risk_reward).filter((n) => Number.isFinite(n) && n > 0)
     const byHorizon: Record<CategoryId, number> = { swing: 0, momentum: 0, momentum30: 0 }
     for (const s of open) byHorizon[horizonOf(s)] += 1
     const byConf = CONF_BANDS.map((b) => ({ label: b.label, n: open.filter((s) => b.test(s.confidence)).length }))
@@ -124,9 +123,6 @@ export function SignalsOverview() {
       total,
       longCount,
       shortCount: total - longCount,
-      avgConf: total ? Math.round(open.reduce((a, s) => a + s.confidence, 0) / total) : null,
-      avgRR: rrs.length ? rrs.reduce((a, n) => a + n, 0) / rrs.length : null,
-      bestRR: rrs.length ? Math.max(...rrs) : null,
       byHorizon,
       byConf,
     }
@@ -259,14 +255,17 @@ export function SignalsOverview() {
         </div>
       </Reveal>
 
-      {/* KPI strip */}
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
-        <Reveal><StatCard label="Open signals" value={loading ? null : String(stats.total)} loading={loading} /></Reveal>
-        <Reveal delay={0.03}><StatCard label="Avg confidence" value={loading ? null : stats.avgConf != null ? `${stats.avgConf}%` : '—'} loading={loading} /></Reveal>
-        <Reveal delay={0.06}><StatCard label="Long / Short" value={loading ? null : `${stats.longCount} / ${stats.shortCount}`} loading={loading} /></Reveal>
-        <Reveal delay={0.09}><StatCard label="Avg R:R" value={loading ? null : stats.avgRR != null ? `1:${stats.avgRR.toFixed(1)}` : '—'} loading={loading} tooltip="Mean reward-to-risk across the open book" /></Reveal>
-        <Reveal delay={0.12}><StatCard label="Best R:R" value={loading ? null : stats.bestRR != null ? `1:${stats.bestRR.toFixed(1)}` : '—'} loading={loading} /></Reveal>
-      </div>
+      {/* ── The answer — one sentence replaces five KPI tiles ──
+           Open signals · Avg confidence · Long/Short · Avg R:R · Best R:R were
+           five numbers behind five labels; the sentence carries the first four
+           and names which signal leads, which none of the tiles did.
+
+           Rendered by the template renderer: deterministic, **zero chat
+           credits**. "Best R:R" is dropped rather than carried — it is the
+           single most favourable row in the book, and leading with the best
+           case is the return-claim pattern §7 rules out. The mean stays; the
+           maximum goes. ── */}
+      <RenderedSurface template="signals_today" />
 
       {/* automation — trade the books manually (per-signal) or via the bot */}
       <Reveal>
