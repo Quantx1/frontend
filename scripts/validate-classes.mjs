@@ -81,6 +81,14 @@ const RATCHET = [
   { label: 'animate-pulse outside Skeleton.tsx', max: 7,
     test: (src, rel) => rel !== 'components/foundation/Skeleton.tsx' && /\banimate-pulse\b/.test(src),
     count: (src, rel) => rel === 'components/foundation/Skeleton.tsx' ? 0 : (src.match(/\banimate-pulse\b/g) || []).length },
+  // animate-spin is REVIEWED AND CLOSED, not debt. 102 of the 107 are gated on
+  // a real loading condition (Loader2 inside a button awaiting a response,
+  // RefreshCw during a refetch) and are correct as they are. The other 5 are
+  // hand-rolled `<div>` border rings — a consistency nit, not a bug, and they
+  // do not map onto <Spinner>'s h-4/h-6/h-8 scale (they are h-5, h-8, h-12).
+  // Converting them would trade a working gated loading state for a visual
+  // change that fixes nothing. The baseline exists to stop UNGATED spinners
+  // creeping in, not to demand this number reach zero.
   { label: 'animate-spin', max: 107,
     count: (src) => (src.match(/\banimate-spin\b/g) || []).length },
   // Sub-11px type. REDESIGN-VISUAL.md §2.2 sets the floor at 11px, and 11px is

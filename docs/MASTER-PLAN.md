@@ -66,9 +66,15 @@ violations · `validate-theme` ALL PASS · 13 format + 22 Python tests.
   because it was committed as a finding for one commit before being checked.
 - **16 `pr/*` branches unpushed** — bulk branch creation was blocked. Convenience only;
   every commit is on the remote via the working branch.
-- **Phase 0 remainder** — 28 `animate-pulse` (content-wrapping, need per-site judgement),
-  125 `animate-spin` (102 already gated on a loading condition and legitimate), 3 bare
-  `<div>` border-spinners, and switching on the ESLint ban.
+- **Phase 0 is CLOSED.** `animate-pulse` went 66 → 7, and the 7 that remain are correct:
+  two streaming text cursors, one `status === 'streaming'` gate, four wrappers that pulse
+  around content rather than standing in for it. `animate-spin` was reviewed and closed
+  rather than swept — 102 of 107 are gated on a real loading condition; the other 5 are
+  hand-rolled border rings that do not map onto `<Spinner>`'s size scale, so converting
+  them would change pixels to fix nothing.
+- **Three ratchets now hold the line** (`scripts/validate-classes.mjs`): `animate-pulse` 7,
+  `animate-spin` 107, sub-11px type 565. None may grow; each prints the new count and asks
+  you to lower the baseline when it drops.
 
 ## 2. WHAT WE GOT WRONG, AND CORRECTED
 
