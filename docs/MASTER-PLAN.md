@@ -16,9 +16,14 @@ Detail lives in four companion documents. This one is the map.
 
 ## 1. WHERE WE ARE
 
-**21 frontend + 2 backend commits, all pushed.** Working trees clean. Gates green:
-`tsc` clean · lint 6 warnings / 0 errors (baseline) · `validate-classes` 296 files 0
-violations · `validate-theme` ALL PASS · 13 format + 22 Python tests.
+**34 frontend + 7 backend commits, all pushed.** Working trees clean. Gates green:
+`tsc` clean · lint **4** warnings / 0 errors (was 6) · `validate-classes` 296 files 0
+violations · `validate-theme` ALL PASS · 13 format checks · **1,183 Python tests**
+(was 22 in this workstream) · `verify-copilot-protocol` 15–16/16 chunks valid against
+the AI SDK's own `uiMessageChunkSchema`.
+
+**Phase 0 CLOSED · Phase 2.1 / 2.2 / 2.3 / 2.5 SHIPPED.** Open: 2.4 (order
+preview), monitors, Phase 1 (typography), Phases 3–6.
 
 **`frontend` → `feat/terminal-redesign-and-ai-sdk`**
 
@@ -40,6 +45,11 @@ violations · `validate-theme` ALL PASS · 13 format + 22 Python tests.
 | `47ccf6f` | The "not SEBI-registered" statement now reaches all ~50 authed routes, was on 1 |
 | `9248186` | Dropped 5 always-on ping rings; kept the one that means something |
 | `6ce05ab` | 38 ad-hoc pulsing placeholders routed through `<Skeleton>` (66 → 28) |
+| `145cbbf` `a8f4ade` `3769426` | Two dead `useMemo`s · the sub-11px type ratchet · Phase 0 closed |
+| `b4e635a` | Typed the restored render state on the conversation reader (2.1) |
+| `9170788` | The `entity` artifact rendered — and the verdict vocabulary fixed (2.2) |
+| `e44953a` | Render transport: same `useChat`, zero chat credits (2.3) |
+| `638256d` | `llmCaps` / `capFor` / `isLockedFeature` — lock a zero, don't 402 on it (2.5) |
 
 **`backend` → `feat/ai-sdk-protocol-and-autonomy`**
 
@@ -47,6 +57,44 @@ violations · `validate-theme` ALL PASS · 13 format + 22 Python tests.
 |---|---|
 | `ae3f44b` | `trading_mode` enforcement + 9 mutation-verified tests |
 | `592a242` | AI SDK v1 UI-message stream behind a `protocol` flag + 13 golden tests |
+| `fce4b1a` | `complete_schema.sql` Part B was **11 migrations stale** — regenerated |
+| `5dbe7ba` | **2.1** — persist what a turn DREW, not just what it said |
+| `8f84071` | **2.2** — the `entity` artifact + `get_verdict`, and the word it must not say |
+| `4d4c703` | **2.3** — the template renderer. Navigation without the meter |
+| `6db3a2a` | **2.5** — admins are exempt from the block, not from the counter |
+
+### Phase 2 — what shipped, and what it proved
+
+| Sub-phase | Shipped | Proof |
+|---|---|---|
+| **2.1** persistence | `copilot_messages` + artifacts/steps/citations/followups · `render_state.py` (pure) · writer + reader each with one bounded pre-migration fallback | 13 tests, 4 mutations · protocol replay 16/16 valid |
+| **2.2** entity artifact | `get_verdict` (wraps the day-cached technical panel) · `build_artifacts` branch · `technical_panel` gains `series`/`change` | 14 tests, 4 mutations · live replay 15/15 · browser-verified 6.5:1 contrast |
+| **2.3** template renderer | `POST /ai/copilot/render` · 4 templates · same meta→token→done dialect, so `ui_stream` and the client are unchanged | 27 tests, 5 mutations · **0 LLM calls across 4 live renders**, counted on the provider log |
+| **2.5** metering | Admins consume but are never blocked · `llm_caps` + usage on `/api/user/tier` · 402 carries `resets_at` | 10 tests, 3 mutations · live: 4 renders → counter 0, 1 chat → counter 1 |
+
+**Three things Phase 2 corrected that the plan had not anticipated:**
+
+1. **The verdict word was a compliance problem.** `EntityCard` shipped with
+   `Buy | Accumulate | Neutral | Reduce | Sell`, copied from a competitor
+   screenshot. Those are recommendations, and we are not a SEBI-registered
+   Research Analyst. The backend had already settled this —
+   `technical_panel.py` specifies "bullish / bearish / neutral language only,
+   never buy/sell" — so the card now speaks the backend's words and
+   `build_artifacts` passes the label through untranslated.
+2. **`get_current_regime` fabricated a regime.** With `regime_history` empty it
+   returned `{"regime": "bull", "prob_bull": 1.0, "source": "fallback"}` — a
+   100%-confidence bull call, invented, indistinguishable downstream from a
+   real one, narrated by the responder and cited as a consulted entity. Now
+   `available: False`.
+3. **`complete_schema.sql` Part B was 11 migrations stale**, dating to
+   2026-06-22. Existing deployments were fine (they apply the per-PR directory
+   against the `schema_migrations` tracker); the gap only bit a fresh one-file
+   install, which is the documented path in `DEPLOYMENT.md:129`.
+
+**⚠️ Not applied:** `2026_08_03_pr_copilot_message_render_state.sql` is written
+and consolidated but has NOT been run against Supabase. Both the writer and the
+reader fall back to the base column set, so the code is correct in either
+state — a pre-migration deployment keeps its threads and loses only the cards.
 
 ### Still open
 
@@ -188,11 +236,24 @@ in `ui/sheet.tsx` and `ui/dropdown-menu.tsx`.
 ### Phase 1 — typography · 4–5d
 11 type roles, 11px floor.
 
-### Phase 2 — backend, fully parallel to 0–1 · 20–27d
-`copilot_messages` migration · `entity` artifact type · **the template renderer**
-(deterministic prose + card from REST, zero tokens — the keystone) · order-preview
-endpoint · **the metering redesign** · monitors (table + NL compiler + evaluator +
-scheduler + `create_alert`).
+### Phase 2 — backend · **2.1, 2.2, 2.3, 2.5 SHIPPED**
+
+~~`copilot_messages` migration~~ · ~~`entity` artifact type~~ · ~~**the template
+renderer**~~ · ~~**the metering redesign**~~ · **still open:** order-preview
+endpoint (2.4) · monitors (table + NL compiler + evaluator + scheduler +
+`create_alert`).
+
+**The Phase 4c gate is mechanically satisfied.** `/ai/copilot/render` cannot
+reach the credit limiter — asserted by parsing the AST, not grepping the source,
+because the code is surrounded by comments naming the very identifiers that must
+not appear. Live, on the running backend: 4 renders left the counter at 0, one
+chat moved it to 1. The remaining piece is the literal walk — a **seeded
+non-admin free account** through J1+J2+J3 in a browser — which needs Phase 3/4
+surfaces that do not exist yet.
+
+**What the free tier should now BE is a pricing decision, not an engineering
+one.** The constraint that forced the question is gone: navigation no longer
+spends from the chat budget.
 
 ### Phase 3 — the thread · 10–12d
 Gated on 2.1 + 2.2.
@@ -203,12 +264,35 @@ Gated on 2.1 + 2.2.
 ### Phase 5 — panel & terminal · 25d
 ### Phase 6 — light default · 3d
 
-### 🔴 The riskiest step
-**Phase 2.5, the metering redesign** — and the rule that nothing in Phase 4c ships before
-it merges. Free tier is 5 chat msgs/day; three of five mode chips map to buckets that are
-**0** for the tier being shown the chip. `_enforce_copilot_cap` returns early for
-`is_admin`, so **the team building this never sees the wall.** And it is not revertable by
-dropping a branch — by 4c the deterministic surfaces it replaced are deleted and 301'd.
+### ✅ The riskiest step — closed
+
+**Phase 2.5, the metering redesign.** The three failures it named, and what
+each turned out to be:
+
+**"`_enforce_copilot_cap` returns early for `is_admin`, so the team building
+this never sees the wall."** Confirmed exactly as described — the `return` was
+the first line of the function, before the limiter was even constructed, so
+every admin's counter read zero forever. Admins now consume and are simply
+never blocked; passing the cap logs `would_have_blocked` and names the request
+a free user would have lost.
+
+**"Three of five mode chips map to buckets that are 0 for the tier being shown
+the chip."** Confirmed, and the mechanism was worse than a mismatch: three of
+the zero-capped features — `scanner_thesis`, `chart_vision`, `fno_advisor` —
+have **no `FEATURE_MATRIX` entry at all**, so `features` never mentioned them
+and nothing in the tier response could distinguish "available" from
+"guaranteed 402 on first tap". `/api/user/tier` now ships `llm_caps`, and
+`useTier().isLockedFeature()` renders a lock instead of letting the tap
+through. A wall reached by tapping something the interface said you could do
+teaches the user the product is broken; a lock teaches them it is paid.
+
+**"Not revertable by dropping a branch."** Still true, and it is why the
+guarantee is structural rather than conditional. There is no `skip_cap` flag
+to un-skip: `/ai/copilot/render` has no cap call in it, and a test parses the
+route's AST to assert it cannot even name `_enforce_copilot_cap`,
+`AssistantCreditLimiter` or `consume_if_available`. A behavioural test would
+have passed on an admin account with the cap call still in place — which is
+the same blind spot in a different disguise.
 
 ---
 

@@ -568,11 +568,11 @@ Not mechanical. 658 sub-11px sites; `text-[9px]` → `micro` vs `text-[10px]` �
 
 | Step | Effort | Why it blocks the frontend |
 |---|---|---|
-| 2.1 `copilot_messages` migration + writer + reader | 2d | Today the schema is `role, content, tools_used, trace, intent, refused`. Artifacts/steps/references are forwarded to the client and **discarded**. Without this, the one-card reply is invisible on reload. |
-| 2.2 `entity` artifact type | 3–4d | Verdict word, indicator count and vote shares exist in **no** artifact payload. Needs a `get_verdict` tool (the copilot toolset has 20 tools, none of them verdict), a `build_artifacts` branch, pytest, and `verify-copilot-protocol.mts` (which replays frames through the AI SDK schema). |
-| 2.3 **Template renderer** | **4d** | **§R1 — the keystone.** Deterministic prose + card from REST, zero tokens. Everything in §4.4/§4.5 depends on it. |
+| ✅ 2.1 `copilot_messages` migration + writer + reader | **SHIPPED** `5dbe7ba` | Today the schema is `role, content, tools_used, trace, intent, refused`. Artifacts/steps/references are forwarded to the client and **discarded**. Without this, the one-card reply is invisible on reload. |
+| ✅ 2.2 `entity` artifact type | **SHIPPED** `8f84071` | Verdict word, indicator count and vote shares exist in **no** artifact payload. Needs a `get_verdict` tool (the copilot toolset had **18** tools — the plan said 20 — none of them verdict), a `build_artifacts` branch, pytest, and `verify-copilot-protocol.mts` (which replays frames through the AI SDK schema). |
+| ✅ 2.3 **Template renderer** | **SHIPPED** `4d4c703` | **§R1 — the keystone.** Deterministic prose + card from REST, zero tokens. Everything in §4.4/§4.5 depends on it. |
 | 2.4 Order preview endpoint | 3d | Real domain work: STT/stamp/GST/exchange-txn per segment. Until it lands the ticket omits Charges/Net (§4.6). |
-| 2.5 **Metering redesign** | 4–6d eng + a pricing decision | Separate deterministic renders from `chat`. Free must complete J1+J2+J3 without a 402. |
+| ✅ 2.5 **Metering redesign** | **SHIPPED** `6db3a2a` — eng done; the pricing call remains the owner's | Separate deterministic renders from `chat`. Free must complete J1+J2+J3 without a 402. |
 | 2.6 Monitors (table + NL compiler + evaluator + scheduler + CRUD + `create_alert` action) | 8–12d | §R5. A **feature**, not a merge. `saved_scans` also needs `source_prompt` and `next_run_at` columns before a Tasks row can render 3 of its 5 fields. A real APScheduler exists, so the pattern is proven. |
 
 ### Phase 3 — The thread · **10–12d**
