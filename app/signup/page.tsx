@@ -260,7 +260,7 @@ function SignupContent() {
                       }`}
                     >
                       {plan.popular && (
-                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-[6px] bg-gradient-cta px-3 py-0.5 text-xs font-semibold text-on-signature">
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-md bg-gradient-cta px-3 py-0.5 text-xs font-semibold text-on-signature">
                           Most Popular
                         </div>
                       )}
@@ -289,14 +289,14 @@ function SignupContent() {
               <div className="flex gap-4">
                 <button
                   onClick={() => setStep(1)}
-                  className="flex items-center gap-2 rounded-[6px] border border-line bg-white/[0.03] px-5 py-3 text-sm font-medium text-d-text-primary transition-all hover:bg-white/[0.06]"
+                  className="flex items-center gap-2 rounded-md border border-line bg-white/[0.03] px-5 py-3 text-sm font-medium text-d-text-primary transition-all hover:bg-white/[0.06]"
                 >
                   <ArrowLeft className="h-4 w-4" />
                   Back
                 </button>
                 <button
                   onClick={() => setStep(3)}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-[6px] bg-gradient-cta px-6 py-3 text-sm font-bold text-on-signature transition-all hover:opacity-90"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-md bg-gradient-cta px-6 py-3 text-sm font-bold text-on-signature transition-all hover:opacity-90"
                 >
                   Continue
                   <ArrowRight className="h-4 w-4" />
@@ -334,7 +334,7 @@ function SignupContent() {
               <div className="mt-8 flex gap-4">
                 <button
                   onClick={() => setStep(2)}
-                  className="flex items-center gap-2 rounded-[6px] border border-line bg-white/[0.03] px-5 py-3 text-sm font-medium text-d-text-primary transition-all hover:bg-white/[0.06]"
+                  className="flex items-center gap-2 rounded-md border border-line bg-white/[0.03] px-5 py-3 text-sm font-medium text-d-text-primary transition-all hover:bg-white/[0.06]"
                 >
                   <ArrowLeft className="h-4 w-4" />
                   Back
@@ -342,7 +342,7 @@ function SignupContent() {
                 <button
                   onClick={handleFinalSignup}
                   disabled={isLoading}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-[6px] bg-gradient-cta px-6 py-3 text-sm font-bold text-on-signature transition-all hover:opacity-90 disabled:opacity-50"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-md bg-gradient-cta px-6 py-3 text-sm font-bold text-on-signature transition-all hover:opacity-90 disabled:opacity-50"
                 >
                   {isLoading ? (
                     <Loader2 className="h-5 w-5 animate-spin" />
@@ -379,7 +379,7 @@ function SignupContent() {
         <button
           onClick={handleGoogleSignup}
           disabled={isGoogleLoading}
-          className="mb-6 flex w-full items-center justify-center gap-3 rounded-[6px] border border-line bg-white/[0.03] px-6 py-3 text-sm font-medium text-d-text-primary shadow-glass transition-all hover:shadow-glass-hover disabled:opacity-50"
+          className="mb-6 flex w-full items-center justify-center gap-3 rounded-md border border-line bg-white/[0.03] px-6 py-3 text-sm font-medium text-d-text-primary shadow-glass transition-all hover:shadow-glass-hover disabled:opacity-50"
         >
           {isGoogleLoading ? (
             <Loader2 className="h-5 w-5 animate-spin" />
@@ -489,7 +489,7 @@ function SignupContent() {
           {/* Submit */}
           <button
             type="submit"
-            className="flex w-full items-center justify-center gap-2 rounded-[6px] bg-gradient-cta px-6 py-3 text-sm font-bold text-on-signature transition-all hover:opacity-90 hover:shadow-glow-primary"
+            className="flex w-full items-center justify-center gap-2 rounded-md bg-gradient-cta px-6 py-3 text-sm font-bold text-on-signature transition-all hover:opacity-90 hover:shadow-glow-primary"
           >
             Continue
             <ArrowRight className="h-4 w-4" />

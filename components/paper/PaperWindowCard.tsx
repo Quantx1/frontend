@@ -15,7 +15,7 @@ import { api, type PaperWindowEngine } from '@/lib/api'
 import { MONO } from '@/lib/tokens'
 
 /** Card surface — xAI flat panel (matches the /paper-trading page). */
-const CARD = 'rounded-[20px] border border-line bg-wrap p-4'
+const CARD = 'rounded-2xl border border-line bg-wrap p-4'
 
 const STATUS_CHIP: Record<PaperWindowEngine['status'], { label: string; cls: string }> = {
   collecting: { label: 'Collecting', cls: 'border-line text-d-text-secondary' },

@@ -206,7 +206,7 @@ export default function AlertEditModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-sm rounded-[20px] border border-d-border bg-main p-5 space-y-4"
+        className="w-full max-w-sm rounded-2xl border border-d-border bg-main p-5 space-y-4"
         onClick={(e) => e.stopPropagation()}
       >
         <header className="flex items-start justify-between gap-3">

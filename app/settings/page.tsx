@@ -64,15 +64,27 @@ export default function SettingsPage() {
 
   // Hash-anchored section nav (the reference archetype H: /settings#appearance).
   // Deep-link in on mount + keep the URL hash in sync as the tab changes so
-  // sections are shareable/bookmarkable. Falls back to 'profile' on a bad hash.
+  // sections are shareable/bookmarkable. Falls back to 'profile'.
+  //
+  // ?tab= is ALSO honoured: middleware.ts rewrites three legacy URLs
+  // (/login/mfa, /settings/security, /settings/whatsapp) to `/settings?tab=…`,
+  // and this only ever read the hash — so every one of those redirects silently
+  // landed the user on Profile.
+  //
+  // NOTE: two of those redirects target `security` and `channels`, which are
+  // not tabs at all (they render as external links in the section nav), so they
+  // still fall back to Profile. Fixing the redirect targets is a separate change
+  // from making the parameter work.
   useEffect(() => {
-    const fromHash = () => {
-      const h = window.location.hash.replace('#', '') as TabKey
-      if (VALID_TABS.includes(h)) setActiveTab(h)
+    const fromUrl = () => {
+      const hash = window.location.hash.replace('#', '')
+      const query = new URLSearchParams(window.location.search).get('tab') || ''
+      const candidate = (hash || query) as TabKey
+      if (VALID_TABS.includes(candidate)) setActiveTab(candidate)
     }
-    fromHash()
-    window.addEventListener('hashchange', fromHash)
-    return () => window.removeEventListener('hashchange', fromHash)
+    fromUrl()
+    window.addEventListener('hashchange', fromUrl)
+    return () => window.removeEventListener('hashchange', fromUrl)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   const selectTab = (id: TabKey) => {
@@ -531,7 +543,7 @@ export default function SettingsPage() {
         {/* Section nav — the reference archetype H: a left sub-nav tab rail,
             hash-anchored (#profile, #appearance, …) so sections deep-link. */}
         <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-6">
-          <aside className="h-fit rounded-[20px] border border-line bg-wrap p-2">
+          <aside className="h-fit rounded-2xl border border-line bg-wrap p-2">
             <EyebrowMono className="px-3 pt-1 pb-2">Settings</EyebrowMono>
             <nav className="flex lg:flex-col gap-0.5 overflow-x-auto lg:overflow-visible">
               {tabs.map((tab) => {
@@ -562,7 +574,7 @@ export default function SettingsPage() {
             </nav>
           </aside>
 
-          <div className="rounded-[20px] border border-line bg-wrap p-6 md:p-8 min-h-[500px]">
+          <div className="rounded-2xl border border-line bg-wrap p-6 md:p-8 min-h-[500px]">
             {/* Profile Tab */}
             {activeTab === 'profile' && (
               <div className="space-y-6">
@@ -1575,11 +1587,21 @@ export default function SettingsPage() {
         body="This closes ALL open positions through your broker and freezes trading until you switch it back on. Positions already closed cannot be undone."
         onConfirm={async () => {
           try {
-            await api.trades.killSwitch()
+            // The endpoint closes each position independently and reports which
+            // ones failed. Claiming "All positions closed" unconditionally — as
+            // this did — tells a user holding an un-closable position that they
+            // are flat when they are not.
+            const res = await api.trades.killSwitch()
             await refreshProfile()
-            setMessage({ type: 'success', text: 'Kill switch activated. All positions closed.' })
+            setMessage({
+              type: res.success ? 'success' : 'error',
+              text: res.message || 'Kill switch fired.',
+            })
           } catch {
-            setMessage({ type: 'error', text: 'Failed to activate kill switch.' })
+            setMessage({
+              type: 'error',
+              text: 'Could not reach the kill switch. Positions may still be open — check Portfolio or your broker.',
+            })
           }
         }}
       />

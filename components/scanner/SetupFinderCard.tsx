@@ -47,11 +47,11 @@ export default function SetupFinderCard() {
     return () => { cancelled = true }
   }, [])
 
-  if (state === 'loading') return <div className="rounded-[20px] border border-line bg-wrap h-[120px] animate-pulse" />
+  if (state === 'loading') return <div className="rounded-2xl border border-line bg-wrap h-[120px] animate-pulse" />
   if (state === 'empty') return null
 
   return (
-    <div className="rounded-[20px] border border-line bg-wrap overflow-hidden">
+    <div className="rounded-2xl border border-line bg-wrap overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-line">
         <span className="flex items-center gap-2 text-[12px] font-semibold text-d-text-primary">
           <Crosshair className="w-3.5 h-3.5 text-primary" /> Setup Finder

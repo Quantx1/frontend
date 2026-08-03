@@ -88,7 +88,7 @@ export default function FactorScreenerCard() {
   const labelFor = (key: string) => available.find((f) => f.key === key)?.label ?? key
 
   return (
-    <div className="rounded-[20px] border border-line bg-wrap overflow-hidden">
+    <div className="rounded-2xl border border-line bg-wrap overflow-hidden">
       <div className="flex items-center justify-between gap-2 border-b border-line px-4 py-2.5">
         <span className="flex items-center gap-2 text-[12px] font-semibold text-d-text-primary">
           <Layers className="h-3.5 w-3.5 text-primary" /> Factor Screener

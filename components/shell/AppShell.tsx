@@ -84,7 +84,13 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
       </a>
 
       {/* Zone 1 — left sidebar (fixed) */}
-      <Sidebar pathname={pathname} collapsed={collapsed} onToggle={toggleCollapsed} animate={mounted} />
+      <Sidebar
+        pathname={pathname}
+        collapsed={collapsed}
+        onToggle={toggleCollapsed}
+        animate={mounted}
+        onSearch={() => setPaletteOpen(true)}
+      />
 
       {/* Zone 3 — right utility rail (fixed, desktop only) */}
       <RightRail onSearch={() => setPaletteOpen(true)} />

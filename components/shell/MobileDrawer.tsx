@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import {
-  Bell, Instagram, Linkedin, Plus, Send, Settings, Twitter, X, Youtube,
+  Bell, Plus, Settings, X,
 } from '@/lib/icons'
 import { NavList } from './NavList'
 
@@ -13,13 +13,10 @@ interface Props {
   pathname: string
 }
 
-const SOCIALS = [
-  { icon: Twitter, label: 'X / Twitter', href: '#' },
-  { icon: Send, label: 'Telegram', href: '#' },
-  { icon: Instagram, label: 'Instagram', href: '#' },
-  { icon: Linkedin, label: 'LinkedIn', href: '#' },
-  { icon: Youtube, label: 'YouTube', href: '#' },
-]
+// The five social links here were removed for the same reason they were removed
+// from the desktop Sidebar: every one pointed at `href: '#'`. On mobile it was
+// worse — five dead 28px targets sat in the drawer's footer, the scarcest
+// real estate in the product, directly below Notifications and Settings.
 
 export const MobileDrawer = ({ open, onClose, pathname }: Props) => {
   const closeBtnRef = useRef<HTMLButtonElement>(null)
@@ -91,21 +88,6 @@ export const MobileDrawer = ({ open, onClose, pathname }: Props) => {
             <Link href="/settings" onClick={onClose} aria-label="Settings" className="flex h-10 flex-1 items-center justify-center gap-2 rounded-full text-d-text-secondary transition-colors hover:bg-wrap-hover hover:text-d-text-primary">
               <Settings className="h-[18px] w-[18px]" /><span className="text-[12px] font-medium">Settings</span>
             </Link>
-          </div>
-          <div className="flex items-center justify-between border-t border-line px-4 py-3">
-            {SOCIALS.map(({ icon: Icon, label, href }) => (
-              <a
-                key={label}
-                href={href}
-                aria-label={label}
-                title={label}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="grid h-7 w-7 place-items-center rounded-full text-d-text-muted transition-colors hover:bg-wrap-hover hover:text-d-text-primary"
-              >
-                <Icon className="h-[15px] w-[15px]" />
-              </a>
-            ))}
           </div>
         </div>
       </aside>

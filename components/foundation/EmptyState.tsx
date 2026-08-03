@@ -1,70 +1,62 @@
 'use client'
 
 /**
- * Foundation EmptyState — icon + headline + description + optional CTA.
+ * EmptyState — v5 "Instrument".
  *
- * Every list view needs this. Standardised so the "no signals yet" /
- * "no positions" / "no trades" experience is consistent across the app.
+ * An empty state is not an apology, it is a fork in the road: the user got
+ * here on purpose and something they expected isn't there. It must say what
+ * is missing, why that is (or isn't) normal, and give exactly one obvious
+ * next move.
  *
- * Tone hints: pass ``tone='info'`` (default) for neutral empty states,
- * ``tone='error'`` for failure states (broker disconnected, etc.).
+ * What changed: the headline was `text-sm font-normal` — an empty-state title
+ * at 14px regular, indistinguishable from its own description, which is why
+ * these read as flat grey boxes. It is now the `heading` step (16/600), the
+ * description is one line of body, and `action` is genuinely primary.
  *
- * @example  Standard empty
+ * COPY RULE: never "No data found". Name the thing, name the reason, name the
+ * action. Compare:
+ *   ✗  "No data found."
+ *   ✓  title="No signals today"
+ *      description="The scan runs at 09:15 IST and only publishes setups that
+ *                   clear the backtest gate. Some sessions produce none."
+ *      action=<Button>Browse yesterday's book</Button>
+ *
+ * @example
  *   <EmptyState
- *     icon={<Inbox className="h-8 w-8" />}
- *     title="No signals yet"
- *     description="Today's scan finishes at 09:15 IST. Check back then."
- *   />
- *
- * @example  With action
- *   <EmptyState
- *     icon={<Wand2 className="h-8 w-8" />}
+ *     icon={<Wand2 size={20} />}
  *     title="Build your first strategy"
- *     description="Describe what you want in plain English — Copilot does the rest."
- *     action={<Button onClick={() => router.push('/strategies/new')}>New strategy</Button>}
- *   />
- *
- * @example  Error state
- *   <EmptyState
- *     tone="error"
- *     icon={<AlertCircle className="h-8 w-8" />}
- *     title="Broker disconnected"
- *     description="Your Zerodha session expired. Reconnect to keep AutoPilot running."
- *     action={<Button onClick={reconnect}>Reconnect broker</Button>}
+ *     description="Describe what you want in plain English — Copilot writes the rules, backtests them, and shows you the equity curve before anything trades."
+ *     action={<Button onClick={newStrategy}>Describe a strategy</Button>}
  *   />
  */
 import * as React from 'react'
 import { cn } from '@/lib/utils'
 
 interface Props {
-  /** Lucide icon (or any JSX). Auto-tinted to match tone. */
+  /** Lucide icon (or any JSX), ~20px. Auto-tinted to match tone. */
   icon?: React.ReactNode
   title: string
   description?: React.ReactNode
-  /** Right-side CTA, typically a Button. */
+  /** The one obvious next move. Typically a primary Button. */
   action?: React.ReactNode
+  /** A quieter escape hatch beside the primary action. */
+  secondaryAction?: React.ReactNode
   tone?: 'info' | 'success' | 'warning' | 'error'
-  /** Compact size for inline empty cells; default is centered full-width. */
+  /** `sm` for inline empty cells inside a card; `md` for a full section. */
   size?: 'sm' | 'md'
   className?: string
   /**
    * Heading tag for `title`. Defaults to `h3`, which is right when the empty
    * state sits inside a section that already has an h2 — the common case
-   * across the 37 files using this.
+   * across the ~37 files using this.
    *
    * Pass `h2` when the empty state is the FIRST heading under a page's h1, or
-   * the document jumps h1 -> h3 and screen-reader users lose a level. That is
-   * what /watchlist did: PageHeader renders the h1, and the only other heading
-   * on the page was this component's "Put the AI on watch".
-   *
-   * Opt-in rather than changing the default, because for most of the other 36
-   * call sites h3 is the correct level and a blanket change would just move
-   * the skip somewhere else.
+   * the document jumps h1 -> h3 and screen-reader users lose a level.
    */
   headingLevel?: 'h2' | 'h3' | 'h4'
 }
 
-const TONE_CLASSES: Record<Required<Props>['tone'], string> = {
+const TONE: Record<Required<Props>['tone'], string> = {
   info: 'text-d-text-muted',
   success: 'text-up',
   warning: 'text-warning',
@@ -76,6 +68,7 @@ export const EmptyState = ({
   title,
   description,
   action,
+  secondaryAction,
   tone = 'info',
   size = 'md',
   className,
@@ -85,30 +78,52 @@ export const EmptyState = ({
     role="status"
     aria-live="polite"
     className={cn(
-      // xAI: a framed charcoal panel, flat hairline, 8px radius.
-      'flex flex-col items-center justify-center gap-3 rounded-sm bg-wrap-hover text-center',
-      size === 'sm' ? 'p-8' : 'p-12',
+      // L2 recessed well, no border: an empty state is a hole in the page, so
+      // it reads as recessed rather than as one more card competing for weight.
+      'flex flex-col items-center justify-center rounded-xl bg-surface-2 text-center',
+      size === 'sm' ? 'gap-2.5 p-6' : 'gap-3 p-10',
       className,
     )}
   >
     {icon && (
       <div
         className={cn(
-          'flex items-center justify-center rounded-full border border-line bg-wrap',
-          size === 'sm' ? 'h-10 w-10' : 'h-14 w-14',
-          TONE_CLASSES[tone],
+          'grid place-items-center rounded-full border border-line bg-wrap',
+          size === 'sm' ? 'h-9 w-9' : 'h-11 w-11',
+          TONE[tone],
         )}
         aria-hidden="true"
       >
         {icon}
       </div>
     )}
-    <div className="max-w-sm">
-      <Heading className="text-sm font-normal text-d-text-primary">{title}</Heading>
+
+    <div className="max-w-[42ch]">
+      <Heading
+        className={cn(
+          'font-semibold tracking-[-0.01em] text-d-text-primary',
+          size === 'sm' ? 'text-sm leading-5' : 'text-[16px] leading-[22px]',
+        )}
+      >
+        {title}
+      </Heading>
       {description && (
-        <div className="mt-1 text-sm text-d-text-secondary">{description}</div>
+        <p
+          className={cn(
+            'mt-1.5 text-d-text-secondary',
+            size === 'sm' ? 'text-xs leading-[18px]' : 'text-sm leading-[21px]',
+          )}
+        >
+          {description}
+        </p>
       )}
     </div>
-    {action && <div className="mt-2">{action}</div>}
+
+    {(action || secondaryAction) && (
+      <div className="mt-1 flex flex-wrap items-center justify-center gap-2">
+        {action}
+        {secondaryAction}
+      </div>
+    )}
   </div>
 )

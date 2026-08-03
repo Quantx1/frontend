@@ -67,10 +67,10 @@ export default function RelativeStrengthCard({ symbol }: { symbol: string }) {
     return () => { cancelled = true }
   }, [symbol])
 
-  if (state === 'loading') return <div className="rounded-[20px] border border-line bg-wrap h-[150px] animate-pulse" />
+  if (state === 'loading') return <div className="rounded-2xl border border-line bg-wrap h-[150px] animate-pulse" />
   if (state === 'empty' || !rs) {
     return (
-      <div className="rounded-[20px] border border-line bg-wrap px-4 py-3">
+      <div className="rounded-2xl border border-line bg-wrap px-4 py-3">
         <div className="mb-1 flex items-center gap-2">
           <Activity className="h-3.5 w-3.5 text-primary" />
           <span className="text-[12px] font-semibold text-d-text-primary">Relative Strength</span>
@@ -86,7 +86,7 @@ export default function RelativeStrengthCard({ symbol }: { symbol: string }) {
   const ratioEnd = rs.ratio_line?.length ? rs.ratio_line[rs.ratio_line.length - 1] : null
 
   return (
-    <div className="rounded-[20px] border border-line bg-wrap px-4 py-3">
+    <div className="rounded-2xl border border-line bg-wrap px-4 py-3">
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Activity className="h-3.5 w-3.5 text-primary" />

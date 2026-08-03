@@ -37,6 +37,13 @@ const RI = {
   X: "solar:close-circle-linear",
   Target: "solar:target-linear",
   Check: "solar:check-circle-linear",
+  // shadcn/ui primitives (Checkbox, Select, Accordion, Resizable, Command)
+  // need these. `CheckLine` is a BARE check — Check maps to a circled glyph,
+  // which double-rings inside shadcn's own indicator boxes.
+  ChevronUp: "solar:alt-arrow-up-linear",
+  CheckLine: "lucide:check",
+  Circle: "lucide:circle",
+  GripVertical: "lucide:grip-vertical",
   ChevronDown: "solar:alt-arrow-down-linear",
   Search: "solar:magnifer-linear",
   Play: "solar:play-linear",
@@ -188,7 +195,7 @@ const RI = {
 }
 
 // The full set of names the app imports (from the enumeration pass).
-const NAMES = "Loader2,Sparkles,TrendingUp,RefreshCw,AlertTriangle,Activity,TrendingDown,ArrowUpRight,ArrowRight,Layers,AlertCircle,CheckCircle,Zap,X,Target,Check,ChevronDown,Search,Play,Bell,CheckCircle2,Brain,Plus,ArrowLeft,Shield,Eye,Clock,ChevronLeft,ChevronRight,BarChart3,ArrowDownRight,Newspaper,Trash2,XCircle,Calendar,Mail,Users,Info,Bot,Minus,ArrowUp,ScanLine,ShieldCheck,User,Lock,Inbox,LineChart,ExternalLink,Settings,Download,CreditCard,Cpu,Stethoscope,Briefcase,RotateCcw,ShieldAlert,Send,Gauge,Crown,Scale,HelpCircle,ArrowDown,Wallet,Save,EyeOff,Menu,DollarSign,Server,Globe,FileText,History,Power,PlayCircle,Calculator,Pause,Percent,MessageSquare,LayoutDashboard,MessageCircle,LogOut,Home,Wifi,Database,TableProperties,Star,Filter,Ban,UserX,UserCheck,BellOff,CheckCheck,Copy,Wand2,Layers3,Sigma,Radio,Wrench,RotateCw,PauseCircle,ClipboardList,Bookmark,Flame,Trophy,FlaskConical,Instagram,Linkedin,Twitter,Youtube,Monitor,Moon,Sun,ArrowLeftRight,ScrollText,Palette,Receipt,BellPlus,Grid3x3,LayoutGrid,Hash,MoreVertical,CircleDollarSign,Phone,HeartPulse,Gift,Share2,Compass,Settings2,PlusCircle,BookmarkCheck,CalendarDays,Pencil,ClipboardCheck,CalendarRange,Medal,Award,GitBranch,UserPlus,Store,ScanSearch,Plug,Unlink,SlidersHorizontal,PanelLeftClose,GitCompare,Code2,Gavel,ArrowDownLeft,ArrowUpLeft,AlertOctagon,ChevronsUpDown,BookOpen,Building2,Scissors,Banknote,Coins,Landmark,AlignLeft,Crosshair,CornerDownRight,Repeat,Volume2,Mountain,BrainCircuit,Radar".split(',')
+const NAMES = "Loader2,Sparkles,TrendingUp,RefreshCw,AlertTriangle,Activity,TrendingDown,ArrowUpRight,ArrowRight,Layers,AlertCircle,CheckCircle,Zap,X,Target,Check,ChevronDown,Search,Play,Bell,CheckCircle2,Brain,Plus,ArrowLeft,Shield,Eye,Clock,ChevronLeft,ChevronRight,BarChart3,ArrowDownRight,Newspaper,Trash2,XCircle,Calendar,Mail,Users,Info,Bot,Minus,ArrowUp,ScanLine,ShieldCheck,User,Lock,Inbox,LineChart,ExternalLink,Settings,Download,CreditCard,Cpu,Stethoscope,Briefcase,RotateCcw,ShieldAlert,Send,Gauge,Crown,Scale,HelpCircle,ArrowDown,Wallet,Save,EyeOff,Menu,DollarSign,Server,Globe,FileText,History,Power,PlayCircle,Calculator,Pause,Percent,MessageSquare,LayoutDashboard,MessageCircle,LogOut,Home,Wifi,Database,TableProperties,Star,Filter,Ban,UserX,UserCheck,BellOff,CheckCheck,Copy,Wand2,Layers3,Sigma,Radio,Wrench,RotateCw,PauseCircle,ClipboardList,Bookmark,Flame,Trophy,FlaskConical,Instagram,Linkedin,Twitter,Youtube,Monitor,Moon,Sun,ArrowLeftRight,ScrollText,Palette,Receipt,BellPlus,Grid3x3,LayoutGrid,Hash,MoreVertical,CircleDollarSign,Phone,HeartPulse,Gift,Share2,Compass,Settings2,PlusCircle,BookmarkCheck,CalendarDays,Pencil,ClipboardCheck,CalendarRange,Medal,Award,GitBranch,UserPlus,Store,ScanSearch,Plug,Unlink,SlidersHorizontal,PanelLeftClose,GitCompare,Code2,Gavel,ArrowDownLeft,ArrowUpLeft,AlertOctagon,ChevronsUpDown,BookOpen,Building2,Scissors,Banknote,Coins,Landmark,AlignLeft,Crosshair,CornerDownRight,Repeat,Volume2,Mountain,BrainCircuit,Radar,ChevronUp,CheckLine,Circle,GripVertical".split(',')
 
 const camelKebab = (s) => s.replace(/([a-z0-9])([A-Z])/g, '$1-$2').replace(/([A-Z])([A-Z][a-z])/g, '$1-$2').toLowerCase()
 

@@ -79,7 +79,7 @@ export function AutomationPanel() {
   const streamState = (name: string) => st?.streams.find((x) => x.stream === name && !x.user_strategy_id)
 
   return (
-    <div className="lg-surface rounded-[20px] p-4">
+    <div className="lg-surface rounded-2xl p-4">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Bot className="h-4 w-4 text-ai" />

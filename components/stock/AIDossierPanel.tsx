@@ -58,7 +58,7 @@ export default function AIDossierPanel({ symbol }: { symbol: string }) {
 
   if (loading) {
     return (
-      <section className="rounded-[20px] border border-d-border bg-wrap p-5">
+      <section className="rounded-2xl border border-d-border bg-wrap p-5">
         <p className="text-[12px] text-d-text-muted">Loading engine dossier…</p>
       </section>
     )
@@ -66,7 +66,7 @@ export default function AIDossierPanel({ symbol }: { symbol: string }) {
 
   if (error || !d) {
     return (
-      <section className="rounded-[20px] border border-d-border bg-wrap p-5">
+      <section className="rounded-2xl border border-d-border bg-wrap p-5">
         <p className="text-[12px] text-down">{error || 'Dossier unavailable'}</p>
       </section>
     )
@@ -78,7 +78,7 @@ export default function AIDossierPanel({ symbol }: { symbol: string }) {
   const isFree = d.tier === 'free'
 
   return (
-    <section className="overflow-hidden rounded-[20px] border border-d-border bg-wrap">
+    <section className="overflow-hidden rounded-2xl border border-d-border bg-wrap">
       {/* Header */}
       <div
         className="flex items-center justify-between gap-3 border-b border-d-border px-5 py-4"

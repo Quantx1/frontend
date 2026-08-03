@@ -45,7 +45,7 @@ function Column({
 }) {
   const toneCls = tone === 'up' ? 'text-up' : tone === 'down' ? 'text-down' : 'text-d-text-secondary'
   return (
-    <div className="overflow-hidden rounded-[20px] bg-wrap">
+    <div className="overflow-hidden rounded-2xl bg-wrap">
       <header className="flex items-center gap-2 border-b border-line px-3.5 py-2.5">
         <span className={toneCls} aria-hidden>{icon}</span>
         <EyebrowMono className="text-[10.5px] tracking-[0.12em]">{title}</EyebrowMono>

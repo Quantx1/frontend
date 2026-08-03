@@ -62,7 +62,7 @@ function VolBars({ series, avg }: { series: number[]; avg: number | null }) {
         return (
           <span
             key={i}
-            className="flex-1 rounded-[1px]"
+            className="flex-1 rounded-mark"
             style={{
               height: `${Math.max(4, (v / max) * 100)}%`,
               background: isToday ? PRIMARY : aboveAvg ? 'color-mix(in srgb, var(--color-primary) 55%, transparent)' : 'var(--color-border)',
@@ -123,10 +123,10 @@ export default function VolumeIntelCard({ symbol }: { symbol: string }) {
     return () => { cancelled = true }
   }, [symbol])
 
-  if (state === 'loading') return <div className="rounded-[20px] border border-line bg-wrap h-[180px] animate-pulse" />
+  if (state === 'loading') return <div className="rounded-2xl border border-line bg-wrap h-[180px] animate-pulse" />
   if (state === 'empty' || !v) {
     return (
-      <div className="rounded-[20px] border border-line bg-wrap px-4 py-3">
+      <div className="rounded-2xl border border-line bg-wrap px-4 py-3">
         <div className="mb-1 flex items-center gap-2">
           <BarChart3 className="h-3.5 w-3.5 text-primary" />
           <span className="text-[12px] font-semibold text-d-text-primary">Volume Intelligence</span>
@@ -140,7 +140,7 @@ export default function VolumeIntelCard({ symbol }: { symbol: string }) {
 
   const sig = SIGNAL[v.signal] || SIGNAL.normal
   return (
-    <div className="rounded-[20px] border border-line bg-wrap px-4 py-3">
+    <div className="rounded-2xl border border-line bg-wrap px-4 py-3">
       <div className="mb-2 flex items-center justify-between">
         <span className="flex items-center gap-2 text-[12px] font-semibold text-d-text-primary">
           <BarChart3 className="h-3.5 w-3.5 text-primary" /> Volume Intelligence

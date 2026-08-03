@@ -25,7 +25,7 @@ export const Topbar = ({ onMenuOpen }: Props) => (
       aria-label="Quant X — Trading OS, go to home"
     >
       <span
-        className="grid h-7 w-7 shrink-0 place-items-center rounded-[8px] bg-primary text-primary-foreground"
+        className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground"
         aria-hidden="true"
       >
         <span className="text-[15px] font-black leading-none">Q</span>

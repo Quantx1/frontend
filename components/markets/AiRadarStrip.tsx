@@ -38,7 +38,7 @@ export default function AiRadarStrip() {
   if (!alertItems.length && !setupItems.length) return null
 
   return (
-    <section aria-label="AI radar" className="flex h-full flex-col rounded-[20px] bg-wrap px-4 py-3.5 sm:px-5">
+    <section aria-label="AI radar" className="flex h-full flex-col rounded-2xl bg-wrap px-4 py-3.5 sm:px-5">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <span className="flex items-center gap-2 text-[13px] font-semibold text-d-text-primary">
           <Radar className="h-4 w-4 text-primary" /> AI Radar

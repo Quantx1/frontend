@@ -37,7 +37,7 @@ import { useTheme } from 'next-themes'
 import { api } from '@/lib/api'
 import type { Signal } from '@/types'
 import { AppShell } from '@/components/shell/AppShell'
-import { DisclaimerFooter, Reveal, toast } from '@/components/foundation'
+import { ConfirmDialog, DisclaimerFooter, Reveal, toast } from '@/components/foundation'
 import ExplanationMarkdown from '@/components/signals/ExplanationMarkdown'
 import DebateTranscript, { type DebatePayload } from '@/components/signals/DebateTranscript'
 import QuickTrade from '@/components/dashboard/QuickTrade'
@@ -102,6 +102,13 @@ export default function SignalDetailPage() {
   const [tier, setTier] = useState<'free' | 'pro' | 'elite'>('free')
   const [isAdmin, setIsAdmin] = useState(false)
   const [showTrade, setShowTrade] = useState(false)
+  /** A live ticket collected by QuickTrade and awaiting the mandatory confirm.
+   *  Non-null means "the user filled the form"; it is NOT an order yet. */
+  const [pendingLiveTrade, setPendingLiveTrade] = useState<{
+    quantity: number
+    stopLoss?: number
+    target?: number
+  } | null>(null)
   // Which execution path the trade modal drives: paper (virtual ₹10L book,
   // free, no broker) or live (real broker order via /api/trades/execute).
   const [tradeMode, setTradeMode] = useState<'paper' | 'live'>('paper')
@@ -546,22 +553,23 @@ export default function SignalDetailPage() {
                 router.push('/paper-trading')
                 return
               }
-              // Live path: place the signal as a real trade. QuickTrade
-              // already gates this behind <BrokerLock> when no broker is
-              // connected, so live orders can't fire without a broker.
-              const result = await api.trades.execute({
-                signal_id: id,
+              // Live path: REAL MONEY. Do not fire here — stash the ticket and
+              // let ConfirmDialog take the deliberate second action.
+              //
+              // This page previously called api.trades.execute() straight from
+              // onSubmit, so a single click on QuickTrade's submit sent a live
+              // broker order. <BrokerLock> only checks that a broker is
+              // CONNECTED; it is not a confirmation. That made the one page
+              // whose primary CTA is "Live trade" the one page that skipped the
+              // confirm step components/trade/TradeTicketButton.tsx documents as
+              // mandatory ("the order never fires on a single click"). Same
+              // two-step contract is now enforced here.
+              setPendingLiveTrade({
                 quantity: data.quantity,
-                custom_sl: data.stopLoss,
-                custom_target: data.target,
+                stopLoss: data.stopLoss,
+                target: data.target,
               })
               setShowTrade(false)
-              // Pending (order placed, awaiting fill) -> Orders; filled/open -> Portfolio.
-              if (result.status === 'pending') {
-                router.push('/trades')
-              } else {
-                router.push('/portfolio')
-              }
             }}
             initialSymbol={signal.symbol}
             initialDirection={signal.direction}
@@ -570,6 +578,41 @@ export default function SignalDetailPage() {
             initialTarget={target}
           />
         )}
+
+        {/* ── Mandatory confirm for LIVE orders ──
+            The deliberate second action between "I filled the ticket" and
+            "money moved". Mirrors components/trade/TradeTicketButton.tsx. */}
+        <ConfirmDialog
+          open={!!pendingLiveTrade}
+          onClose={() => setPendingLiveTrade(null)}
+          onConfirm={async () => {
+            if (!pendingLiveTrade) return
+            const result = await api.trades.execute({
+              signal_id: id,
+              quantity: pendingLiveTrade.quantity,
+              custom_sl: pendingLiveTrade.stopLoss,
+              custom_target: pendingLiveTrade.target,
+            })
+            setPendingLiveTrade(null)
+            // Pending (order placed, awaiting fill) -> Orders; filled/open -> Portfolio.
+            router.push(result.status === 'pending' ? '/trades' : '/portfolio')
+          }}
+          title="Confirm live order"
+          body={
+            <span>
+              <span className="font-semibold text-d-text-primary">
+                {signal.direction === 'SHORT' ? 'SELL' : 'BUY'} {pendingLiveTrade?.quantity} {signal.symbol}
+              </span>
+              {pendingLiveTrade?.stopLoss ? ` · SL ${pendingLiveTrade.stopLoss}` : ''}
+              {pendingLiveTrade?.target ? ` · Target ${pendingLiveTrade.target}` : ''}
+              <br />
+              <span className="text-[12px] text-d-text-muted">
+                Real order routed to your connected broker. This cannot be undone from here.
+              </span>
+            </span>
+          }
+          confirmLabel="Place order"
+        />
 
         {/* ── Point-of-action calculator ── conditionally rendered so it
             remounts with THIS signal's computed levels on each open. */}

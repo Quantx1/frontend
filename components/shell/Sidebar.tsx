@@ -6,12 +6,12 @@ import { useEffect, useState } from 'react'
 import useSWR, { useSWRConfig } from 'swr'
 import { Skeleton } from '@/components/foundation'
 import {
-  Instagram, Linkedin, Menu, MessageSquare, PanelLeftClose,
-  Plus, Send, Sparkles, Trash2, Twitter, Youtube,
+  Menu, MessageSquare, PanelLeftClose, Plus, Search, Sparkles, Trash2,
 } from '@/lib/icons'
 import { NavList } from './NavList'
 import { QuantXMark } from '@/components/brand/QuantXMark'
 import { cn } from '@/lib/utils'
+import { MONO } from '@/lib/tokens'
 import { api } from '@/lib/api'
 
 type Conv = { id: string; title: string | null; created_at: string; updated_at: string }
@@ -38,15 +38,15 @@ interface Props {
   onToggle: () => void
   /** Only enable the width transition after mount (avoids a load-time snap). */
   animate: boolean
+  /** Opens the command palette. */
+  onSearch: () => void
 }
 
-const SOCIALS = [
-  { icon: Twitter, label: 'X / Twitter', href: '#' },
-  { icon: Send, label: 'Telegram', href: '#' },
-  { icon: Instagram, label: 'Instagram', href: '#' },
-  { icon: Linkedin, label: 'LinkedIn', href: '#' },
-  { icon: Youtube, label: 'YouTube', href: '#' },
-]
+// The five social links that used to sit in the footer were removed: every one
+// of them pointed at `href: '#'`. Five dead controls occupied the most valuable
+// strip of persistent chrome in the product, directly under the upgrade CTA.
+// Social links belong in the marketing footer, not in a trading workspace —
+// and certainly not when they go nowhere.
 
 // 3-zone reference shell — LEFT SIDEBAR (Wave 1, 2026-06-20).
 // Fixed 240px, bg-wrap, 1px border-line right border. Top→bottom:
@@ -55,7 +55,7 @@ const SOCIALS = [
 //   toggle). Notifications + Settings live on the right rail only.
 // Re-skinned to OUR theme-aware tokens (no teal, no hex). Collapses below `lg`
 // where the MobileDrawer takes over.
-export const Sidebar = ({ pathname, collapsed, onToggle, animate }: Props) => {
+export const Sidebar = ({ pathname, collapsed, onToggle, animate, onSearch }: Props) => {
   const { data, isLoading: convLoading } = useSWR(
     'copilot:conversations',
     () => api.ai.copilotListConversations(),
@@ -122,7 +122,7 @@ export const Sidebar = ({ pathname, collapsed, onToggle, animate }: Props) => {
           href="/copilot"
           title="New Chat"
           className={cn(
-            'flex items-center justify-center gap-1.5 rounded-full border border-line bg-surface-2 font-medium text-d-text-secondary transition-colors hover:text-d-text-primary',
+            'flex items-center justify-center gap-1.5 rounded-lg border border-line bg-surface-2 font-medium text-d-text-secondary transition-colors duration-instant ease-out hover:border-wrap-line hover:text-d-text-primary',
             collapsed ? 'h-10' : 'px-3 py-2.5 text-[13px]',
           )}
         >
@@ -130,16 +130,48 @@ export const Sidebar = ({ pathname, collapsed, onToggle, animate }: Props) => {
         </Link>
       </div>
 
+      {/* Search — the command palette's visible affordance.
+          ⌘K was previously a hidden keystroke with no UI anywhere, so the
+          palette effectively did not exist for anyone who had not been told
+          about it. A keyboard-first tool still has to advertise its keys. */}
+      <div className="shrink-0 px-2 pt-1.5">
+        <button
+          type="button"
+          onClick={onSearch}
+          title="Search — ⌘K"
+          aria-keyshortcuts="Meta+K Control+K"
+          className={cn(
+            'flex w-full items-center gap-2 rounded-lg text-d-text-muted transition-colors duration-instant ease-out hover:bg-surface-2 hover:text-d-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40',
+            collapsed ? 'h-10 justify-center' : 'px-2.5 py-2 text-[13px]',
+          )}
+        >
+          <Search className={collapsed ? 'h-[19px] w-[19px]' : 'h-4 w-4 shrink-0'} />
+          {!collapsed && (
+            <>
+              <span className="flex-1 text-left">Search</span>
+              <kbd className={`rounded border border-line px-1 py-px text-[10px] leading-4 ${MONO}`}>⌘K</kbd>
+            </>
+          )}
+        </button>
+      </div>
+
       {/* top nav + grouped feature nav */}
       <NavList pathname={pathname} collapsed={collapsed} />
 
       {/* History — recent chats, date-grouped, active-highlighted, delete on hover */}
       {/* First load: show a skeleton so History doesn't silently pop in. */}
+      {/* The skeleton keeps its own "History" heading. Without it, three bare
+          grey bars appear directly under the last nav group and read as nav
+          items that failed to load, rather than as history still arriving. A
+          skeleton has to be recognisable as the thing it is standing in for. */}
       {!collapsed && convLoading && conversations.length === 0 && (
-        <div className="border-t border-line px-4 py-3 space-y-2" aria-hidden="true">
-          <Skeleton w="56px" h="12px" />
-          <Skeleton h="14px" />
-          <Skeleton h="14px" />
+        <div className="shrink-0 space-y-2 border-t border-line px-4 py-3">
+          <div className="text-[12px] font-semibold text-d-text-secondary">History</div>
+          <div aria-hidden="true" className="space-y-2">
+            <Skeleton h="14px" />
+            <Skeleton h="14px" />
+          </div>
+          <span className="sr-only">Loading recent chats…</span>
         </div>
       )}
 
@@ -200,25 +232,6 @@ export const Sidebar = ({ pathname, collapsed, onToggle, animate }: Props) => {
             {!collapsed && 'Upgrade'}
           </Link>
         </div>
-
-        {/* socials */}
-        {!collapsed && (
-          <div className="flex items-center justify-between border-t border-line px-3 py-2.5">
-            {SOCIALS.map(({ icon: Icon, label, href }) => (
-              <a
-                key={label}
-                href={href}
-                aria-label={label}
-                title={label}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="grid h-7 w-7 place-items-center rounded-full text-d-text-muted transition-colors hover:bg-wrap-hover hover:text-d-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
-              >
-                <Icon className="h-[15px] w-[15px]" />
-              </a>
-            ))}
-          </div>
-        )}
 
         {/* collapse / expand toggle — bottom */}
         <div className="border-t border-line p-2">

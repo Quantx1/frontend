@@ -36,7 +36,38 @@
   --color-card: #151517;           /* L1 alias */
   --color-card-hover: #1E1E21;     /* L2 alias */
   --color-surface-2: #1E1E21;      /* secondary surface */
+  --color-surface-3: #26262A;      /* L3 overlay — popovers/palette/dialogs */
+  --color-surface-inset: #0A0A0B;  /* L-1 wells, table stripes, code */
   --color-chart-bg: #0D0D0E;
+
+  /* ── Elevation — 3 neutral levels, no colour in a shadow. Dark leans on
+        borders first and shadow second, so opacities run heavier than light
+        to register against a near-black canvas. ── */
+  --elev-1: 0 1px 2px rgba(0, 0, 0, 0.30), 0 4px 12px -6px rgba(0, 0, 0, 0.40);
+  --elev-2: 0 2px 6px rgba(0, 0, 0, 0.36), 0 12px 28px -12px rgba(0, 0, 0, 0.52);
+  --elev-3: 0 8px 24px -8px rgba(0, 0, 0, 0.50), 0 32px 64px -24px rgba(0, 0, 0, 0.64);
+
+  /* ── Radius scale — 5 steps, the only permitted values (was 16). ── */
+  --radius-xs: 6px;                /* chips, badges, tags, table cells */
+  --radius-sm: 8px;                /* inputs, buttons, list rows */
+  --radius-md: 12px;               /* THE default card, panels, dropdowns */
+  --radius-lg: 16px;               /* hero cards, modals, sheets */
+
+  /* ── Motion — 4 durations, 2 easings. Motion communicates
+        state → action → result; anything else is decoration. ── */
+  --dur-instant: 90ms;             /* hover, focus, press — must feel free */
+  --dur-fast: 160ms;               /* chips, tabs, tooltips, toggles */
+  --dur-base: 240ms;               /* cards, panels, dropdowns, content */
+  --dur-slow: 380ms;               /* sheets, modals, layout, chart draw */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in: cubic-bezier(0.64, 0, 0.78, 0);
+
+  /* ── Agent step states. `done` is deliberately MUTED, not green: a
+        completed step is not a profit, and green stays reserved for P&L. ── */
+  --state-active: var(--color-primary-text);
+  --state-done: var(--color-muted);
+  --state-failed: var(--color-down);
+  --state-pending: var(--color-wrap-line);
 
   /* ── Ink / text ── */
   --color-light: #F7F7F8;          /* text primary   (17.6:1) */
@@ -57,9 +88,14 @@
         reverted to our blue-primary FintechX theme. ── */
   --grad-silver: linear-gradient(90deg, #908D8E 0%, #C7C7C7 26.71%, #EEECEC 51.11%, #C7C7C7 75.57%, #908D8E 100%);
 
-  /* ── Financial semantics — P&L ONLY, never chrome ── */
-  --color-up: #16C784;             /* vivid trading green — deep + high-visibility */
-  --color-down: #EA3943;           /* vivid trading red — deep + high-visibility */
+  /* ── Financial semantics — P&L ONLY, never chrome.
+        These MUST equal the --rgb-up/--rgb-down triplets below: components
+        reach P&L colour two ways (`text-up` → the triplet, `var(--color-up)`
+        → the hex), and the two had drifted apart (#16C784 vs 16 185 129),
+        so the same "up" rendered as two different greens on one page.
+        Values are the pair scripts/validate-theme.mjs asserts. ── */
+  --color-up: #10B981;             /* 6.9:1 on canvas */
+  --color-down: #F5808C;           /* 8.1:1 on canvas */
   --color-warning: #F0A94F;        /* true-caution only (9.7:1) */
   --color-highlight: #F0A94F;
   --color-orange: #F0A94F;
@@ -79,9 +115,9 @@
 
   /* ── Font aliases ── one Geist family for body + display, Geist Mono for
      numerics. GeistSans/GeistMono set --font-geist-sans/-mono on <html>. ── */
-  --font-sans: var(--font-geist-sans);
+  --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
 
   /* ── shadcn channel vars — rgb(var(--x) / <alpha>) ── */
   --background: 13 13 14;
@@ -126,6 +162,8 @@
   --rgb-wrap-hover: 30 30 33;
   --rgb-line: 41 41 45;
   --rgb-wrap-line: 59 59 64;
+  --rgb-surface-3: 38 38 42;
+  --rgb-surface-inset: 10 10 11;
   --rgb-ink: 247 247 248;
   --rgb-desc: 211 211 215;
   --rgb-muted: 150 150 158;
@@ -138,22 +176,34 @@
 }
 
 /* ════════════════════════════════════════════════════════════════
-   LIGHT — FintechX-native register: cool blue-grey page, pure-white
-   cards, hairline borders, same single blue accent (deepened for
-   ink duty). next-themes sets html.light.
+   LIGHT — the daylight register. Cool NEUTRAL grey page, pure-white
+   cards, hairline borders, one blue accent (deepened for ink duty).
+
+   `html.light` is set by next-themes; `.light-landing` pins the same
+   register on marketing pages regardless of the app theme. They were
+   two byte-identical 95-line blocks maintained by hand ("keep the two
+   in lockstep"); they are now ONE rule, so they cannot drift.
+
+   Values are the ones scripts/validate-theme.mjs actually asserts.
+   The shipped palette had drifted to a lavender-blue (#E9EEFB page,
+   #D5DEF4 hairlines) that the validator never saw — which is why light
+   mode read washed-out. Restored to the validated cool grey.
    ════════════════════════════════════════════════════════════════ */
 
-html.light {
-  /* ── Surfaces (cool blue-grey page → white cards) ── */
-  --color-main: #E9EEFB;
-  --color-wrap: #FFFFFF;
-  --color-wrap-hover: #E6ECFB;
-  --color-hover: #E6ECFB;
-  --color-line: #D5DEF4;
-  --color-wrap-line: #C3D0EE;
+html.light,
+.light-landing {
+  /* ── Surfaces (cool neutral grey page → white cards) ── */
+  --color-main: #EDF1F4;           /* L0 page canvas */
+  --color-wrap: #FFFFFF;           /* L1 cards / sidebar */
+  --color-wrap-hover: #F4F7F9;     /* L2 elevated / hover */
+  --color-hover: #F4F7F9;          /* L2 row hover */
+  --color-line: #DDE5ED;           /* L3 hairline borders */
+  --color-wrap-line: #C8D4DE;      /* L4 accent borders */
   --color-card: #FFFFFF;
-  --color-card-hover: #E6ECFB;
-  --color-surface-2: #E6ECFB;
+  --color-card-hover: #F4F7F9;
+  --color-surface-2: #F4F7F9;
+  --color-surface-3: #FFFFFF;      /* L3 overlay — popovers/palette/dialogs */
+  --color-surface-inset: #E7ECF1;  /* L-1 wells, table stripes, code */
   --color-chart-bg: #FFFFFF;
 
   /* ── Ink / text ── */
@@ -173,9 +223,12 @@ html.light {
   /* darker steel so .text-silver stays legible on the light canvas */
   --grad-silver: linear-gradient(90deg, #55555D 0%, #85858D 26.71%, #2C2C31 51.11%, #85858D 75.57%, #55555D 100%);
 
-  /* ── Financial semantics ── */
-  --color-up: #15803D;             /* vivid green — punchy + AA-legible on light */
-  --color-down: #DC2626;           /* vivid red — punchy + AA-legible on light */
+  /* ── Financial semantics — P&L ONLY. These are the validated pair;
+        the hex tokens previously disagreed with the --rgb-* triplets
+        below (#15803D vs 10 107 80), so `text-up` and `var(--color-up)`
+        rendered two different greens on the same page. ── */
+  --color-up: #0A6B50;             /* 6.50:1 on white */
+  --color-down: #B81C22;           /* 6.51:1 on white */
   --color-warning: #9A4D00;        /* 6.1:1 */
   --color-highlight: #9A4D00;
   --color-orange: #9A4D00;
@@ -190,8 +243,13 @@ html.light {
   /* ── Gradients — same glossy fills (white ink), text stops deepened ── */
   --gradient-text: linear-gradient(110deg, #3055C2 0%, #406AE4 100%);
 
+  /* ── Elevation — light leans on shadow (dark leans on borders). ── */
+  --elev-1: 0 1px 2px rgba(29, 29, 29, 0.04), 0 4px 12px -6px rgba(29, 29, 29, 0.10);
+  --elev-2: 0 2px 4px rgba(29, 29, 29, 0.06), 0 12px 28px -12px rgba(29, 29, 29, 0.16);
+  --elev-3: 0 8px 24px -8px rgba(29, 29, 29, 0.14), 0 32px 64px -24px rgba(29, 29, 29, 0.20);
+
   /* ── shadcn channel vars ── */
-  --background: 233 238 251;
+  --background: 237 241 244;
   --foreground: 29 29 29;
   --card: 255 255 255;
   --card-foreground: 29 29 29;
@@ -199,16 +257,16 @@ html.light {
   --popover-foreground: 29 29 29;
   --primary: 64 106 228;
   --primary-foreground: 255 255 255;
-  --secondary: 230 236 251;
+  --secondary: 244 247 249;
   --secondary-foreground: 29 29 29;
-  --muted: 230 236 251;
+  --muted: 244 247 249;
   --muted-foreground: 95 107 117;
   --accent: 64 106 228;
   --accent-foreground: 255 255 255;
   --destructive: 184 28 34;
   --destructive-foreground: 255 255 255;
-  --border: 213 222 244;
-  --input: 213 222 244;
+  --border: 221 229 237;
+  --input: 221 229 237;
   --ring: 64 106 228;
 
   /* ── Channel vars referenced by tailwind.config.ts ── */
@@ -218,16 +276,18 @@ html.light {
   --text-primary: 29 29 29;
   --text-secondary: 77 88 95;
   --text-muted: 95 107 117;
-  --background-primary: 233 238 251;
+  --background-primary: 237 241 244;
   --background-surface: 255 255 255;
-  --background-elevated: 230 236 251;
+  --background-elevated: 244 247 249;
 
-  /* ── RGB channel triplets (light) — see the :root block note. ── */
-  --rgb-main: 233 238 251;
+  /* ── RGB channel triplets — REQUIRED for Tailwind alpha modifiers. ── */
+  --rgb-main: 237 241 244;
   --rgb-wrap: 255 255 255;
-  --rgb-wrap-hover: 230 236 251;
-  --rgb-line: 213 222 244;
-  --rgb-wrap-line: 195 208 238;
+  --rgb-wrap-hover: 244 247 249;
+  --rgb-line: 221 229 237;
+  --rgb-wrap-line: 200 212 222;
+  --rgb-surface-3: 255 255 255;
+  --rgb-surface-inset: 231 236 241;
   --rgb-ink: 29 29 29;
   --rgb-desc: 77 88 95;
   --rgb-muted: 95 107 117;
@@ -243,108 +303,6 @@ html.light {
 html.light body {
   background: var(--color-main);
   color: var(--color-light);
-}
-
-/* ════════════════════════════════════════════════════════════════
-   LIGHT-LANDING — marketing pages pin light mode regardless of the
-   app theme (template-true). EXACT duplicate of the html.light
-   variable override block; keep the two in lockstep.
-   ════════════════════════════════════════════════════════════════ */
-
-.light-landing {
-  /* ── Surfaces (cool blue-grey page → white cards) ── */
-  --color-main: #E9EEFB;
-  --color-wrap: #FFFFFF;
-  --color-wrap-hover: #E6ECFB;
-  --color-hover: #E6ECFB;
-  --color-line: #D5DEF4;
-  --color-wrap-line: #C3D0EE;
-  --color-card: #FFFFFF;
-  --color-card-hover: #E6ECFB;
-  --color-surface-2: #E6ECFB;
-  --color-chart-bg: #FFFFFF;
-
-  /* ── Ink / text ── */
-  --color-light: #1D1D1D;          /* 16.9:1 on white */
-  --color-pure-white: #FFFFFF;
-  --color-desc: #4D585F;           /* 7.3:1 */
-  --color-muted: #5F6B75;          /* 5.5:1 */
-
-  /* ── Accent ── */
-  --color-primary: #406AE4;        /* FILL — white on it at 4.77:1 */
-  --color-primary-hover: #3055C2;
-  --color-primary-text: #3459C9;   /* INK — 6.14:1 on white */
-  --color-signature-ink: #3459C9;
-  --color-ai: #3459C9;
-  --color-cyan: #2563EB;
-
-  /* darker steel so .text-silver stays legible on the light canvas */
-  --grad-silver: linear-gradient(90deg, #55555D 0%, #85858D 26.71%, #2C2C31 51.11%, #85858D 75.57%, #55555D 100%);
-
-  /* ── Financial semantics ── */
-  --color-up: #15803D;             /* vivid green — punchy + AA-legible on light */
-  --color-down: #DC2626;           /* vivid red — punchy + AA-legible on light */
-  --color-warning: #9A4D00;        /* 6.1:1 */
-  --color-highlight: #9A4D00;
-  --color-orange: #9A4D00;
-
-  /* ── Chart tokens ── */
-  --chart-primary: #406AE4;
-  --chart-secondary: #5F6B75;
-  --chart-accent: #406AE4;
-  --chart-tooltip-bg: #FFFFFF;
-  --chart-grid: rgba(29, 29, 29, 0.06);
-
-  /* ── Gradients — same glossy fills (white ink), text stops deepened ── */
-  --gradient-text: linear-gradient(110deg, #3055C2 0%, #406AE4 100%);
-
-  /* ── shadcn channel vars ── */
-  --background: 233 238 251;
-  --foreground: 29 29 29;
-  --card: 255 255 255;
-  --card-foreground: 29 29 29;
-  --popover: 255 255 255;
-  --popover-foreground: 29 29 29;
-  --primary: 64 106 228;
-  --primary-foreground: 255 255 255;
-  --secondary: 230 236 251;
-  --secondary-foreground: 29 29 29;
-  --muted: 230 236 251;
-  --muted-foreground: 95 107 117;
-  --accent: 64 106 228;
-  --accent-foreground: 255 255 255;
-  --destructive: 184 28 34;
-  --destructive-foreground: 255 255 255;
-  --border: 213 222 244;
-  --input: 213 222 244;
-  --ring: 64 106 228;
-
-  /* ── Channel vars referenced by tailwind.config.ts ── */
-  --success: 10 107 80;
-  --danger: 184 28 34;
-  --warning: 154 77 0;
-  --text-primary: 29 29 29;
-  --text-secondary: 77 88 95;
-  --text-muted: 95 107 117;
-  --background-primary: 233 238 251;
-  --background-surface: 255 255 255;
-  --background-elevated: 230 236 251;
-
-  /* ── RGB channel triplets (light) — see the :root block note. ── */
-  --rgb-main: 233 238 251;
-  --rgb-wrap: 255 255 255;
-  --rgb-wrap-hover: 230 236 251;
-  --rgb-line: 213 222 244;
-  --rgb-wrap-line: 195 208 238;
-  --rgb-ink: 29 29 29;
-  --rgb-desc: 77 88 95;
-  --rgb-muted: 95 107 117;
-  --rgb-up: 10 107 80;
-  --rgb-down: 184 28 34;
-  --rgb-warning: 154 77 0;
-  --rgb-ai: 52 89 201;
-  --rgb-cyan: 37 99 235;
-  --rgb-primary-text: 52 89 201;
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -475,52 +433,29 @@ select option {
    SURFACES — flat, opaque, border-defined (no glass tint)
    ════════════════════════════════════════════════════════════════ */
 
-.trading-surface {
-  background: var(--color-wrap);
-  border: 1px solid var(--color-line);
-  border-radius: 8px;
-  padding: 20px;
-  transition: border-color 0.2s ease;
-}
-
-.trading-surface:hover {
-  border-color: var(--color-wrap-line);
-}
-
-/* Frosted glass card — light translucent tint consistent with .glass-surface.
-   Falls back to the flat --color-wrap surface where color-mix is unsupported
-   (see the @supports-not block in the LIQUID GLASS section). */
-.glass-card {
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--color-pure-white) 12%, transparent) 0%, transparent 44%),
-    color-mix(in srgb, var(--color-wrap) 68%, transparent);
-  backdrop-filter: blur(22px) saturate(1.9);
-  -webkit-backdrop-filter: blur(22px) saturate(1.9);
-  border: 1px solid color-mix(in srgb, var(--color-pure-white) 30%, transparent);
-  border-radius: 8px;
-  box-shadow:
-    0 14px 44px -16px rgba(12, 16, 38, 0.30),
-    inset 0 1px 0 color-mix(in srgb, var(--color-pure-white) 62%, transparent);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  position: relative;
-}
-
-.glass-card:hover {
-  border-color: color-mix(in srgb, var(--color-pure-white) 32%, transparent);
-}
-
+/* Legacy card aliases. All three used to define their own fill, border, shadow
+   AND radius — 8px, 8px and 10px respectively, three of the sixteen competing
+   radii this system collapses to five. They now inherit the single L1 card
+   recipe from the SURFACES block below and differ only in padding.
+   `.glass-card`'s own visual definition is gone; it is an alias there. */
+.trading-surface,
 .feature-card {
   background: var(--color-wrap);
   border: 1px solid var(--color-line);
-  border-radius: 10px;
-  padding: 24px;
-  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: var(--radius-md);
+  box-shadow: var(--elev-1);
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
 }
 
+.trading-surface { padding: 20px; }
+.feature-card { padding: 24px; }
+
+.trading-surface:hover,
 .feature-card:hover {
   border-color: var(--color-wrap-line);
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--elev-2);
 }
 
 /* Forced-light wrapper (marketing/auth pages that stay light). */
@@ -544,7 +479,7 @@ select option {
   background: var(--color-primary);
   color: #FFFFFF;
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 10px 32px;
   border: none;
   font-size: 14px;
@@ -565,7 +500,7 @@ select option {
   background: transparent;
   color: var(--color-primary-text);
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 10px 32px;
   border: 1px solid var(--color-line);
   font-size: 14px;
@@ -631,14 +566,14 @@ select option {
 
 .input-animated-wrapper {
   position: relative;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
 }
 
 .input-animated-wrapper::before {
   content: '';
   position: absolute;
   inset: -1px;
-  border-radius: 11px;
+  border-radius: calc(var(--radius-sm) + 1px);
   padding: 1px;
   background: conic-gradient(
     from var(--conic-angle),
@@ -893,102 +828,98 @@ html.light .glow-signature {
   position: relative;
   z-index: 0;
 }
+/* v5 "Instrument": the four-blob multi-hue mesh (primary 42% + ai 34% + cyan
+   30% + primary 28%, blurred 34px and drifting on a 34s loop) is retired. It
+   tinted every surface in the product lavender-blue, fought the P&L colours for
+   attention, and read "gamer RGB" rather than "calm and expensive" — and it
+   animated forever, on every route, for no informational reason.
+
+   What replaces it is ONE static accent pool anchored top-left at 6% (dark) /
+   3% (light): just enough to keep the canvas from reading as a flat void behind
+   the chrome, nowhere near enough to tint a card. No animation, no second hue.
+   Delete this rule entirely and the app still looks deliberate — which is the
+   test every decorative effect in this system has to pass. */
 .app-canvas::before {
   content: '';
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background:
-    radial-gradient(42% 46% at 14% 10%, color-mix(in srgb, var(--color-primary) 42%, transparent) 0%, transparent 60%),
-    radial-gradient(38% 42% at 90% 4%, color-mix(in srgb, var(--color-ai) 34%, transparent) 0%, transparent 58%),
-    radial-gradient(48% 52% at 84% 90%, color-mix(in srgb, var(--color-cyan) 30%, transparent) 0%, transparent 60%),
-    radial-gradient(42% 48% at 16% 94%, color-mix(in srgb, var(--color-primary) 28%, transparent) 0%, transparent 58%);
-  filter: blur(34px) saturate(1.25);
-  animation: lg-drift 34s ease-in-out infinite alternate;
-  will-change: transform;
+  background: radial-gradient(
+    58% 44% at 18% 0%,
+    color-mix(in srgb, var(--color-primary) 6%, transparent) 0%,
+    transparent 62%
+  );
 }
 html.light .app-canvas::before {
-  background:
-    radial-gradient(42% 46% at 14% 10%, color-mix(in srgb, var(--color-primary) 22%, transparent) 0%, transparent 60%),
-    radial-gradient(38% 42% at 90% 4%, color-mix(in srgb, var(--color-ai) 16%, transparent) 0%, transparent 58%),
-    radial-gradient(48% 52% at 84% 90%, color-mix(in srgb, var(--color-cyan) 15%, transparent) 0%, transparent 60%),
-    radial-gradient(42% 48% at 16% 94%, color-mix(in srgb, var(--color-primary) 14%, transparent) 0%, transparent 58%);
-}
-@keyframes lg-drift {
-  0%   { transform: translate3d(-2%, -1.5%, 0) scale(1.05); }
-  100% { transform: translate3d(2%, 1.5%, 0) scale(1.12); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .app-canvas::before { animation: none; transform: scale(1.05); }
+  background: radial-gradient(
+    58% 44% at 18% 0%,
+    color-mix(in srgb, var(--color-primary) 3%, transparent) 0%,
+    transparent 62%
+  );
 }
 
 /* ════════════════════════════════════════════════════════════════
-   LIQUID GLASS — elevated/floating chrome (token-driven)
+   SURFACES (v5 "Instrument") — opaque, border-defined, tiered.
+
+   These class names are unchanged on purpose: `.glass-*` is referenced
+   from 67 files, and redefining the CLASS re-skins every call site at
+   once instead of touching 67 components. The names are now historical;
+   the behaviour is not glass.
+
+   WHY the change: every button (Button.tsx mapped all five variants to
+   .glass-control) and every card (Card.tsx → .glass-surface) rendered a
+   backdrop-filter. On a 12-card page that is 12+ compositing layers, it
+   costs real scroll performance, and — worse — it destroys hierarchy:
+   when everything floats, nothing is elevated.
+
+   THE RULE NOW: translucency is reserved for surfaces that genuinely
+   float above content AND are dismissible — the command palette, sheets,
+   dropdowns, sticky bars. Those keep .glass-float below. Everything
+   anchored in the page is opaque and earns depth from the surface ramp
+   (L0 canvas → L1 card → L2 raised → L3 overlay) plus a hairline.
    ════════════════════════════════════════════════════════════════ */
 
-.lg-surface {
-  background: color-mix(in srgb, var(--color-wrap) 72%, transparent);
-  backdrop-filter: blur(20px) saturate(1.4);
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
-  border: 1px solid color-mix(in srgb, var(--color-wrap) 60%, transparent);
-  box-shadow:
-    0 8px 32px -12px rgba(29, 29, 29, 0.14),
-    inset 0 1px 0 color-mix(in srgb, var(--color-pure-white) 60%, transparent);
+/* L1 — the resting card. The default surface for anything anchored. */
+.lg-surface,
+.glass-surface,
+.glass-card {
+  background: var(--color-wrap);
+  border: 1px solid var(--color-line);
+  box-shadow: var(--elev-1);
 }
 
-/* Floating frosted pill — toolbars / navbars (template's white glass bar).
-   Light glass tint aligned with .glass-surface. */
-.glass-pill {
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--color-pure-white) 14%, transparent) 0%, transparent 50%),
-    color-mix(in srgb, var(--color-wrap) 64%, transparent);
-  backdrop-filter: blur(20px) saturate(1.9);
-  -webkit-backdrop-filter: blur(20px) saturate(1.9);
-  border: 1px solid color-mix(in srgb, var(--color-pure-white) 30%, transparent);
-  box-shadow:
-    0 10px 34px -12px rgba(12, 16, 38, 0.20),
-    inset 0 1px 0 color-mix(in srgb, var(--color-pure-white) 62%, transparent);
-  border-radius: 9999px;
-}
-
-/* Card-level frosted glass — Apple liquid-glass surface for Cards, modal
-   panels and sheets: translucent --color-wrap fill, real backdrop blur +
-   saturation, a 1px translucent light border, a soft drop shadow and a bright
-   inset top highlight. Text contrast holds in BOTH themes because the fill
-   never drops below ~76% opaque. Falls back to the flat --color-wrap surface
-   on engines without color-mix()/backdrop-filter. */
-.glass-surface {
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--color-pure-white) 12%, transparent) 0%, transparent 44%),
-    color-mix(in srgb, var(--color-wrap) 68%, transparent);
-  backdrop-filter: blur(22px) saturate(1.9);
-  -webkit-backdrop-filter: blur(22px) saturate(1.9);
-  border: 1px solid color-mix(in srgb, var(--color-pure-white) 30%, transparent);
-  box-shadow:
-    0 14px 44px -16px rgba(12, 16, 38, 0.34),
-    inset 0 1px 0 color-mix(in srgb, var(--color-pure-white) 66%, transparent),
-    inset 0 -1px 1px color-mix(in srgb, var(--color-pure-white) 9%, transparent);
-}
-
-/* Frosted chrome — full-edge app shell panels (sidebar / topbar / drawer).
-   Same tint family as .glass-surface but WITHOUT a border or shadow, so the
-   panel keeps its own single hairline edge (border-r / border-b). */
+/* L1 chrome — full-edge shell panels (sidebar / topbar / drawer). No border
+   or shadow of its own: the panel carries a single hairline edge (border-r /
+   border-b) so the shell reads as one continuous plane, not a stack of cards. */
 .glass-chrome {
-  background: color-mix(in srgb, var(--color-wrap) 68%, transparent);
-  backdrop-filter: blur(24px) saturate(1.9);
-  -webkit-backdrop-filter: blur(24px) saturate(1.9);
+  background: var(--color-wrap);
 }
 
-/* Flat recessed tinted tile — the template's card register: page-tint fill,
-   NO border, NO shadow. Sits inside white (bg-wrap) sections. */
-.tile-tint {
-  background: var(--color-main);
-  border-radius: 20px;
+/* FLOATING — the one place translucency still earns its keep: surfaces that
+   sit above the page and can be dismissed. Blur here communicates "this is
+   temporarily on top of your work", which is exactly what it should mean. */
+.glass-float,
+.glass-pill {
+  background: color-mix(in srgb, var(--color-surface-3) 86%, transparent);
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  border: 1px solid var(--color-line);
+  box-shadow: var(--elev-3);
+}
+.glass-pill { border-radius: var(--radius-full, 9999px); }
+
+/* L2 — a recessed panel for content nested INSIDE a card. No border, no
+   shadow: nesting is expressed by the surface step alone. This is what
+   replaces card-in-card (see docs/DESIGN.md §4.2 nesting rule). */
+.tile-tint,
+.panel-inset {
+  background: var(--color-surface-2);
+  border-radius: var(--radius-md);
 }
 .tile-tint-lg {
-  background: var(--color-main);
-  border-radius: 30px;
+  background: var(--color-surface-2);
+  border-radius: var(--radius-lg);
 }
 
 /* Gradient hairline ring — hero / AI surfaces */
@@ -1001,88 +932,81 @@ html.light .app-canvas::before {
 
 .glow-ai { box-shadow: inset 0 1px 0 0 color-mix(in srgb, var(--color-light) 7%, transparent), 0 0 0 1px color-mix(in srgb, var(--color-ai) 24%, transparent), 0 0 30px -6px color-mix(in srgb, var(--color-ai) 36%, transparent); }
 
-/* Fallback for engines without color-mix(): flat panels. */
+/* Fallback for engines without color-mix(): the floating surfaces go flat.
+   Everything else is already opaque and needs no fallback. */
 @supports not (background: color-mix(in srgb, white 50%, transparent)) {
-  .lg-surface,
-  .glass-pill,
-  .glass-surface,
-  .glass-card {
-    background: var(--color-wrap);
+  .glass-float,
+  .glass-pill {
+    background: var(--color-surface-3);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     border-color: var(--color-line);
   }
-  .glass-chrome {
-    background: var(--color-wrap);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
 }
 
 /* ════════════════════════════════════════════════════════════════
-   LIQUID GLASS — Apple-style translucent controls: a real backdrop
-   blur + saturation, a bright top edge and a soft drop shadow. Wired
-   app-wide through the Button component and the chat composer, so
-   every button carries the same glass register. color-mix +
-   backdrop-filter required; the @supports fallback degrades to the
-   flat token surfaces so nothing breaks on old engines.
+   CONTROLS (v5 "Instrument") — solid, quiet, legible.
+
+   Previously every Button variant resolved to a backdrop-blurred glass
+   control (see the SURFACES note above). A button is not a window: it is
+   the most-clicked, smallest-target element in the product, and it needs
+   an unambiguous edge and a fill you can read a label against — not a
+   refraction of whatever happens to be behind it.
+
+   Class names kept (67 call sites). Behaviour is now: L2 fill + hairline,
+   one accent fill for the primary action, colour used sparingly.
    ════════════════════════════════════════════════════════════════ */
 
-/* Neutral glass — secondary / ghost / tool controls, chips, tabs. */
+/* Neutral — secondary / ghost / tool controls, chips, tabs. */
 .glass-control {
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--color-pure-white) 16%, transparent) 0%, transparent 52%),
-    color-mix(in srgb, var(--color-wrap) 42%, transparent);
-  backdrop-filter: blur(18px) saturate(2);
-  -webkit-backdrop-filter: blur(18px) saturate(2);
-  border: 1px solid color-mix(in srgb, var(--color-pure-white) 32%, transparent);
-  box-shadow:
-    0 8px 22px -10px rgba(12, 16, 38, 0.30),
-    inset 0 1px 0 color-mix(in srgb, var(--color-pure-white) 70%, transparent),
-    inset 0 -2px 3px -2px color-mix(in srgb, var(--color-pure-white) 20%, transparent);
-  transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-line);
+  transition:
+    background-color var(--dur-instant) var(--ease-out),
+    border-color var(--dur-instant) var(--ease-out);
 }
 .glass-control:hover {
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--color-pure-white) 20%, transparent) 0%, transparent 52%),
-    color-mix(in srgb, var(--color-wrap) 58%, transparent);
-  border-color: color-mix(in srgb, var(--color-pure-white) 44%, transparent);
+  background: color-mix(in srgb, var(--color-light) 6%, var(--color-surface-2));
+  border-color: var(--color-wrap-line);
 }
 
-/* Accent glass — the primary action (blue liquid glass). Kept opaque
-   enough (88–96% primary) that white ink clears AA over any backdrop. */
+/* Accent — the primary action. One solid fill, white ink at 4.77:1.
+   No gradient, no glow: the primary button should be the most legible
+   thing on screen, not the most decorated. */
 .glass-control-accent {
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--color-pure-white) 34%, transparent) 0%, transparent 46%),
-    linear-gradient(160deg, color-mix(in srgb, var(--color-primary) 92%, white), color-mix(in srgb, var(--color-primary) 84%, transparent));
-  backdrop-filter: blur(14px) saturate(1.7);
-  -webkit-backdrop-filter: blur(14px) saturate(1.7);
-  border: 1px solid color-mix(in srgb, var(--color-pure-white) 40%, transparent);
-  box-shadow:
-    0 10px 28px -10px color-mix(in srgb, var(--color-primary) 60%, transparent),
-    inset 0 1px 0 color-mix(in srgb, var(--color-pure-white) 60%, transparent);
+  background: var(--color-primary);
+  border: 1px solid var(--color-primary);
   color: #fff;
-  transition: filter 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: var(--elev-1);
+  transition:
+    background-color var(--dur-instant) var(--ease-out),
+    border-color var(--dur-instant) var(--ease-out);
 }
-.glass-control-accent:hover { filter: brightness(1.06); }
+.glass-control-accent:hover {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
 
-/* Danger glass — red-tinted variant of the neutral control. */
+/* Danger — a quiet tinted control. Destructive actions should read as
+   serious, not alarming; the alarm belongs to the confirm step. */
 .glass-control-danger {
-  background: color-mix(in srgb, var(--color-down) 16%, color-mix(in srgb, var(--color-wrap) 50%, transparent));
-  backdrop-filter: blur(16px) saturate(1.8);
-  -webkit-backdrop-filter: blur(16px) saturate(1.8);
-  border: 1px solid color-mix(in srgb, var(--color-down) 34%, transparent);
-  box-shadow:
-    0 6px 20px -10px color-mix(in srgb, var(--color-down) 30%, transparent),
-    inset 0 1px 0 color-mix(in srgb, var(--color-pure-white) 40%, transparent);
-  transition: background 0.18s ease, border-color 0.18s ease;
+  background: color-mix(in srgb, var(--color-down) 12%, var(--color-wrap));
+  border: 1px solid color-mix(in srgb, var(--color-down) 32%, transparent);
+  transition:
+    background-color var(--dur-instant) var(--ease-out),
+    border-color var(--dur-instant) var(--ease-out);
 }
-.glass-control-danger:hover { background: color-mix(in srgb, var(--color-down) 24%, color-mix(in srgb, var(--color-wrap) 55%, transparent)); }
+.glass-control-danger:hover {
+  background: color-mix(in srgb, var(--color-down) 18%, var(--color-wrap));
+  border-color: color-mix(in srgb, var(--color-down) 46%, transparent);
+}
 
+/* Controls are opaque now; only the two color-mix() hover/tint recipes need a
+   fallback on engines without it. */
 @supports not (background: color-mix(in srgb, white 50%, transparent)) {
-  .glass-control { background: var(--color-wrap); border-color: var(--color-line); backdrop-filter: none; -webkit-backdrop-filter: none; }
-  .glass-control-accent { background: var(--color-primary); backdrop-filter: none; -webkit-backdrop-filter: none; }
-  .glass-control-danger { background: var(--color-wrap); border-color: color-mix(in srgb, var(--color-down) 40%, transparent); backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .glass-control:hover { background: var(--color-wrap-hover); }
+  .glass-control-danger { background: var(--color-wrap); border-color: var(--color-down); }
+  .glass-control-danger:hover { background: var(--color-wrap-hover); }
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -1385,7 +1309,7 @@ html.light .qxw-c, .light-landing .qxw-c { stop-color: #9AA0AC; }
       Override --spin-accent for the sweep hue, --spin-speed for the duration. ── */
 .spin-border {
   position: relative;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
   isolation: isolate;
 }

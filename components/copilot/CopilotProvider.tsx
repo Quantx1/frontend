@@ -571,9 +571,11 @@ function Bubble({ msg }: { msg: Msg }) {
       {!thinking && msg.artifacts && msg.artifacts.length > 0 ? (
         <ChatArtifacts artifacts={msg.artifacts} />
       ) : null}
-      {thinking ? (
-        <ProgressRail steps={msg.steps ?? []} live />
-      ) : (
+      {/* Live timeline → persistent collapsed summary (see the Main Chat). */}
+      {(thinking || (msg.steps && msg.steps.length > 0)) && (
+        <ProgressRail steps={msg.steps ?? []} live={thinking} />
+      )}
+      {!thinking && (
         <div
           className={cn(
             'max-w-[92%] rounded-2xl rounded-bl-sm border px-3 py-2 text-[12.5px] leading-relaxed',

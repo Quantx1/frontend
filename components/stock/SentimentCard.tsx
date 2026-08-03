@@ -54,7 +54,7 @@ export default function SentimentCard({ symbol }: { symbol: string }) {
     }
   }
 
-  if (isLoading) return <div className="h-[150px] animate-pulse rounded-[20px] border border-line bg-wrap" />
+  if (isLoading) return <div className="h-[150px] animate-pulse rounded-2xl border border-line bg-wrap" />
 
   const tech = data?.technical?.summary
   const news = data?.news
@@ -62,7 +62,7 @@ export default function SentimentCard({ symbol }: { symbol: string }) {
   const hasAny = !!(tech || news || market)
 
   return (
-    <div className="rounded-[20px] border border-line bg-wrap px-4 py-3">
+    <div className="rounded-2xl border border-line bg-wrap px-4 py-3">
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Scale className="h-3.5 w-3.5 text-primary" />

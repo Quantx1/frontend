@@ -61,7 +61,7 @@ export default function WatchCard({
 
   return (
     <article
-      className="rounded-[20px] border bg-wrap overflow-hidden hover:border-d-border-hover transition-colors"
+      className="rounded-2xl border bg-wrap overflow-hidden hover:border-d-border-hover transition-colors"
       style={{ borderLeft: `3px solid ${consensusColor}`, borderColor: 'var(--color-line)' }}
     >
       {/* Header */}

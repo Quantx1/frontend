@@ -1,5 +1,11 @@
-// WCAG contrast validator for the Quant X from-scratch palette.
+// WCAG contrast validator for the Quant X palette (v5 "Instrument").
 // Usage: node validate-theme.mjs  → prints PASS/FAIL per pair, exits 1 on any FAIL.
+//
+// IMPORTANT: the D/L objects below must mirror app/globals.css EXACTLY. This
+// guard previously asserted a palette the app no longer shipped (globals.css
+// had drifted to a lavender light theme, #E9EEFB/#D5DEF4, and to #16C784/
+// #15803D for P&L) and still printed ALL PASS — it was validating a fiction.
+// If you change a colour, change it in globals.css, lib/tokens.ts and here.
 
 const hex2rgb = (h) => {
   h = h.replace('#', '')

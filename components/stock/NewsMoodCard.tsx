@@ -78,7 +78,7 @@ export default function NewsMoodCard({ symbol, autoFetch = false }: { symbol: st
   const meterPct = Math.max(3, Math.min(97, ((score + 1) / 2) * 100))
 
   return (
-    <div className="lg-surface rounded-[20px] p-4">
+    <div className="lg-surface rounded-2xl p-4">
       <div className="flex items-center justify-between gap-2">
         <h3 className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-d-text-muted">
           <Newspaper className="h-3.5 w-3.5" /> News Mood{symbol ? ` · ${symbol}` : ''}

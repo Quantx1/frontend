@@ -58,11 +58,21 @@ const config: Config = {
         'd-text-secondary': 'rgb(var(--rgb-desc) / <alpha-value>)',
         'd-text-muted':     'rgb(var(--rgb-muted) / <alpha-value>)',
 
+        // ── shadcn/ui bridge ────────────────────────────────────────────
+        // shadcn primitives are written against `bg-background`,
+        // `text-foreground` and `border-input`. Without these three the
+        // classes generate NOTHING — a Dialog renders with no surface, an
+        // Input with no edge. It fails silently, which is the worst way for
+        // a design system to fail, so they are wired explicitly here to the
+        // same CSS variables globals.css already defines.
         background: {
+          DEFAULT: 'rgb(var(--background) / <alpha-value>)',
           primary: 'rgb(var(--background-primary) / <alpha-value>)',
           surface: 'rgb(var(--background-surface) / <alpha-value>)',
           elevated: 'rgb(var(--background-elevated) / <alpha-value>)',
         },
+        foreground: 'rgb(var(--foreground) / <alpha-value>)',
+        input: 'rgb(var(--input) / <alpha-value>)',
         primary: {
           DEFAULT: 'rgb(var(--primary) / <alpha-value>)',
           foreground: 'rgb(var(--primary-foreground) / <alpha-value>)',
@@ -172,7 +182,12 @@ const config: Config = {
         'gradient-cta': 'linear-gradient(180deg, #5290F4 0%, #406AE4 55%, #3055C2 100%)',
       },
       animation: {
-        'fade-in': 'fadeIn 0.3s ease-in-out',
+        // shadcn Accordion / Collapsible — Radix reports the panel height on
+      // --radix-accordion-content-height, so the open/close is a real height
+      // transition rather than a max-height guess.
+      'accordion-down': 'accordion-down 200ms var(--ease-out)',
+      'accordion-up': 'accordion-up 160ms var(--ease-in)',
+      'fade-in': 'fadeIn 0.3s ease-in-out',
         'fade-in-up': 'fadeInUp 0.4s ease-out',
         // ── Dep-free overlay motion (replaces tailwindcss-animate). ──
         // Strong ease-out, sub-300ms, scale from 0.97 (never 0). Origin is
@@ -196,7 +211,15 @@ const config: Config = {
         'sheet-out-bottom': 'sheetOutBottom 200ms cubic-bezier(0.32, 0.72, 0, 1)',
       },
       keyframes: {
-        fadeIn: {
+        'accordion-down': {
+        from: { height: '0' },
+        to: { height: 'var(--radix-accordion-content-height)' },
+      },
+      'accordion-up': {
+        from: { height: 'var(--radix-accordion-content-height)' },
+        to: { height: '0' },
+      },
+      fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
         },
@@ -225,23 +248,64 @@ const config: Config = {
         '2xl': '40px',
       },
       boxShadow: {
-        // Neutral elevation only — depth comes from borders first, shadow
-        // second. No colored glows; accent halos live in globals.css
-        // (.glow-signature / .glow-ai) where they stay token-driven.
-        'glass': '0 8px 32px -4px rgba(0, 0, 0, 0.4), inset 0 1px 0 0 rgba(255, 255, 255, 0.06)',
-        'glass-lg': '0 16px 48px -8px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.08)',
-        'soft': '0 4px 24px -1px rgba(0, 0, 0, 0.3)',
+        // ELEVATION — three neutral levels, theme-aware via CSS vars so dark
+        // (which needs heavier opacities against near-black) and light (which
+        // carries depth on shadow rather than borders) each get their own
+        // recipe from globals.css. Colour NEVER appears in a shadow.
+        'elev-1': 'var(--elev-1)',
+        'elev-2': 'var(--elev-2)',
+        'elev-3': 'var(--elev-3)',
+        // Legacy aliases — the old frosted-glass shadows, now mapped onto the
+        // elevation scale so existing call sites re-skin without edits.
+        'glass': 'var(--elev-1)',
+        'glass-lg': 'var(--elev-2)',
+        'soft': 'var(--elev-1)',
       },
+      // ──────────────────────────────────────────────────────────────
+      // RADIUS — v5 "Instrument". The app shipped SIXTEEN distinct radii
+      // (rounded-full/md/lg/sm/xl/2xl + rounded-[20px]/[24px]/[14px]/
+      // [12px]/[8px]/[6px]/[3px]/[1px]/[13px] + CSS-defined 8/10/20/30px).
+      // Collapsed to FIVE UI steps, mapped so the classes already in use
+      // keep their current pixel values — only the arbitrary ones moved:
+      //
+      //   xs  6px  chips, badges, tags, table cells   (= md)
+      //   sm  8px  inputs, buttons, list rows         (= lg)
+      //   md 12px  THE default card, panels, menus    (= xl)
+      //   lg 16px  hero cards, modals, sheets         (= 2xl)
+      //   full     pills, avatars, icon buttons
+      //
+      // `mark` (2px) is the one exception and is NOT part of the UI scale:
+      // data-viz marks (volume bars, candles) need micro-geometry that
+      // would look broken at 6px. Chart marks only — never chrome.
       borderRadius: {
+        'mark': '2px',
+        'xs': '6px',
         'sm': '8px',
+        'md': '6px',
+        'lg': '8px',
+        'xl': '12px',
+        '2xl': '16px',
+        '3xl': '16px',
+        '4xl': '16px',
+        '5xl': '16px',
         'pill': '9999px',
-        '4xl': '2rem',
-        '5xl': '2.5rem',
       },
       transitionTimingFunction: {
-        // Strong custom ease-out for UI. Built-in easings are too weak for
-        // entering/exiting overlays.
-        'xai-out': 'cubic-bezier(0.23, 1, 0.32, 1)',
+        // Two easings, both from globals.css so CSS and Tailwind agree.
+        // Everything that enters uses `out`; everything that leaves uses `in`.
+        'out': 'var(--ease-out)',
+        'in': 'var(--ease-in)',
+        // Legacy alias (the old xAI-era curve) — kept so existing call sites
+        // keep working; it now resolves to the same system ease-out.
+        'xai-out': 'var(--ease-out)',
+      },
+      transitionDuration: {
+        // Four durations. Anything outside this scale is a judgement call
+        // that should instead pick the nearest step (docs/DESIGN.md §3.6).
+        'instant': 'var(--dur-instant)',  //  90ms — hover, focus, press
+        'fast': 'var(--dur-fast)',        // 160ms — chips, tabs, tooltips
+        'base': 'var(--dur-base)',        // 240ms — cards, panels, content
+        'slow': 'var(--dur-slow)',        // 380ms — sheets, modals, charts
       },
     },
   },

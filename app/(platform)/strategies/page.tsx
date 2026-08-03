@@ -655,7 +655,7 @@ function BuilderTab() {
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="e.g. Buy Nifty 50 stocks when 20EMA crosses above 50EMA and RSI is between 50 and 70. Exit when 20EMA crosses back below 50EMA, or stop-loss at -3%."
-              className="w-full resize-none rounded-[14px] bg-transparent p-3 text-sm text-d-text-primary outline-none placeholder:text-d-text-muted"
+              className="w-full resize-none rounded-xl bg-transparent p-3 text-sm text-d-text-primary outline-none placeholder:text-d-text-muted"
               aria-label="Strategy description"
               disabled={phase === 'compiling'}
             />
@@ -710,7 +710,7 @@ function BuilderTab() {
                 value={clarifyAnswer}
                 onChange={(e) => setClarifyAnswer(e.target.value)}
                 placeholder="Add the missing details…"
-                className="mt-3 w-full resize-none rounded-[14px] border border-line bg-transparent p-3 text-sm text-d-text-primary outline-none placeholder:text-d-text-muted focus:border-ai/60"
+                className="mt-3 w-full resize-none rounded-xl border border-line bg-transparent p-3 text-sm text-d-text-primary outline-none placeholder:text-d-text-muted focus:border-ai/60"
                 aria-label="Clarification answer"
               />
               <div className="mt-2 flex justify-end">

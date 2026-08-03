@@ -236,9 +236,11 @@ function HomeInlineAnswer({
       </div>
       <div className="mt-3 max-h-[46vh] space-y-3 overflow-y-auto pr-1">
         {last.artifacts && last.artifacts.length > 0 && <ChatArtifacts artifacts={last.artifacts} />}
-        {thinking ? (
-          <ProgressRail steps={last.steps ?? []} live />
-        ) : (
+        {/* Live timeline → persistent collapsed summary (see the thread view). */}
+        {(thinking || (last.steps && last.steps.length > 0)) && (
+          <ProgressRail steps={last.steps ?? []} live={thinking} />
+        )}
+        {!thinking && (
           <div className="text-[13.5px] leading-relaxed text-d-text-secondary">
             <MarkdownMessage content={last.text} />
           </div>
@@ -734,7 +736,7 @@ function CopilotHub() {
     return (
       <div className="relative">
         <div
-          className="lg-surface group relative overflow-hidden rounded-[24px] transition-[border-color,box-shadow] duration-200 ease-out"
+          className="lg-surface group relative overflow-hidden rounded-2xl transition-[border-color,box-shadow] duration-200 ease-out"
           style={
             composerFocused
               ? {
@@ -955,18 +957,25 @@ function CopilotHub() {
                           {!isThinking && t.references && t.references.length > 0 && (
                             <ReferencesRail refs={t.references} />
                           )}
-                          <div className="text-[13.5px] leading-relaxed text-d-text-secondary">
-                            <span className="sr-only">Assistant: </span>
-                            {isThinking ? (
-                              // Honest streamed telemetry — replaces the old fake THINK_STEPS.
-                              <ProgressRail steps={t.steps ?? []} live />
-                            ) : (
+                          {/* Agent work. While thinking this is the live timeline;
+                              once the answer arrives it PERSISTS as a collapsed
+                              "N steps · 2.4s" summary the user can reopen.
+                              It used to be swapped out for the prose entirely, so
+                              the moment an answer appeared the evidence of how it
+                              was reached vanished — the opposite of what a product
+                              asking people to risk money should do. */}
+                          {(isThinking || (t.steps && t.steps.length > 0)) && (
+                            <ProgressRail steps={t.steps ?? []} live={isThinking} />
+                          )}
+                          {!isThinking && (
+                            <div className="text-[13.5px] leading-relaxed text-d-text-secondary">
+                              <span className="sr-only">Assistant: </span>
                               <span className="inline">
                                 <MarkdownMessage content={shown} />
                                 {showCursor && <span className="ml-0.5 inline-block h-3.5 w-[2px] translate-y-[3px] animate-pulse bg-white align-middle" />}
                               </span>
-                            )}
-                          </div>
+                            </div>
+                          )}
                           {showTools && (
                             <div className="flex flex-wrap items-center gap-1.5 px-0.5">
                               <EyebrowMono className="text-[9.5px]">CONSULTED</EyebrowMono>
@@ -1111,7 +1120,7 @@ function CopilotHub() {
             <BlurFade key={name} delay={i * 0.04} offset={8} duration={0.3}>
               <Link
                 href={href}
-                className="group relative flex h-full flex-col overflow-hidden rounded-[20px] bg-wrap transition-shadow hover:ring-1 hover:ring-primary/25 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40"
+                className="group relative flex h-full flex-col overflow-hidden rounded-2xl bg-wrap transition-shadow hover:ring-1 hover:ring-primary/25 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40"
               >
                 {image ? (
                   // ── IMAGE-TOPPED media band ── on-brand dark art as the card
@@ -1168,7 +1177,7 @@ function CopilotHub() {
                 <Stat label="Profit factor" value={stats!.profit_factor != null ? stats!.profit_factor.toFixed(2) : '—'} />
                 <Stat label="Signals tracked" value={String(stats!.n)} />
               </div>
-              <div className="rounded-[20px] bg-wrap p-4">
+              <div className="rounded-2xl bg-wrap p-4">
                 <div className="flex items-center justify-between">
                   <EyebrowMono className="text-[11px]">Cumulative return · 90d</EyebrowMono>
                   {track?.current_regime?.regime && <Badge tone="primary">{track.current_regime.regime} regime</Badge>}
@@ -1186,7 +1195,7 @@ function CopilotHub() {
             <p className="mt-3 text-[11px] text-d-text-secondary">Live, outcome-tracked signal performance over the last 90 days. Past performance does not guarantee future results.</p>
           </>
         ) : (
-          <div className="mt-5 flex flex-col gap-3 rounded-[20px] bg-wrap p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-5 flex flex-col gap-3 rounded-2xl bg-wrap p-5 sm:flex-row sm:items-center sm:justify-between">
             <p className="max-w-2xl text-[13.5px] leading-relaxed text-d-text-secondary">
               Every signal we publish gets tracked to its outcome: win, loss or expiry. Audited, unedited, no cherry-picking. The live record builds right here as trades resolve.
               {(stats?.n ?? 0) > 0 && <span className="font-normal text-d-text-primary"> {stats!.n} signals tracked so far.</span>}
@@ -1219,7 +1228,7 @@ function SectionHead({ eyebrow, title }: { eyebrow: string; title: string }) {
 function Stat({ label, value, tone = 'neutral' }: { label: string; value: string; tone?: 'up' | 'down' | 'neutral' }) {
   const color = tone === 'up' ? 'text-up' : tone === 'down' ? 'text-down' : 'text-d-text-primary'
   return (
-    <div className="rounded-[20px] bg-wrap p-4">
+    <div className="rounded-2xl bg-wrap p-4">
       <EyebrowMono className="text-[11px]">{label}</EyebrowMono>
       <div className={`mt-1 text-[26px] font-normal leading-none ${MONO} ${color}`}>{value}</div>
     </div>

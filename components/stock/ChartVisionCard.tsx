@@ -82,7 +82,7 @@ export default function ChartVisionCard({ symbol, anywhere = false }: Props) {
   }
 
   return (
-    <section className="rounded-[20px] border border-d-border bg-wrap overflow-hidden">
+    <section className="rounded-2xl border border-d-border bg-wrap overflow-hidden">
       <header className="px-5 py-3 border-b border-d-border flex items-center justify-between gap-3">
         <h3 className="text-[13px] font-semibold text-d-text-primary flex items-center gap-2">
           <Eye className="w-4 h-4 text-primary" />
