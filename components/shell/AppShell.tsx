@@ -10,6 +10,7 @@ import { MobileDrawer } from './MobileDrawer'
 import { appSans, appMono } from './appFont'
 import { ConnectBrokerBanner } from '@/components/broker/ConnectBrokerBanner'
 import { cn } from '@/lib/utils'
+import { ComplianceFooter } from './ComplianceFooter'
 
 // 3-zone reference shell (Wave 1, 2026-06-20).
 //   • LEFT sidebar — fixed 240px (240 expanded / 68 collapsed), bg-wrap.
@@ -109,6 +110,13 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
           <ConnectBrokerBanner />
           {/* Content gutter + 1440px cap (reference: px-4 md:px-6, max-w-8xl). */}
           <div className="mx-auto w-full max-w-[1440px] px-4 md:px-6">{children}</div>
+          {/* Statutory block on EVERY authed surface. Previously it lived only
+              inside HomeFooter on /copilot, so the "not a SEBI-registered
+              Research Analyst" statement and the SCORES grievance route were
+              unreachable from the other ~50 routes. */}
+          <div className="mx-auto w-full max-w-[1440px]">
+            <ComplianceFooter />
+          </div>
         </main>
       </div>
 

@@ -181,32 +181,9 @@ export function HomeFooter() {
         </p>
       </div>
 
-      {/* 5 · SEBI / compliance block — HONEST placeholders, no fabricated numbers */}
-      <div className="mt-8 space-y-2.5 border-t border-line pt-8 text-[11.5px] leading-relaxed text-d-text-muted">
-        <p>© 2021–2026 Quant X Technologies Private Limited [entity to be confirmed]. All rights reserved. CIN: [pending].</p>
-        <p>
-          Quant X is <span className="text-d-text-secondary">not a SEBI-registered Research Analyst or Investment Adviser</span> and holds
-          no stock-exchange algo empanelment. All tools, signals, backtests and AI outputs are informational and educational only — not
-          investment advice, not a recommendation to buy or sell, and not a guarantee of returns. You trade on your own broker account at
-          your own risk. Investments in the securities market are subject to market risks; read all related documents carefully.
-        </p>
-        <p>SEBI registration: [pending] · GSTIN: [pending] · Registered &amp; Corporate Office: [address to be confirmed].</p>
-        <p>For any query / feedback / grievance, email [grievance email to be confirmed]. Unresolved complaints can be escalated on SEBI SCORES.</p>
-        <div className="flex flex-wrap items-start gap-x-6 gap-y-2 pt-2">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            <span className="font-semibold text-d-text-secondary">Important Links:</span>
-            {IMPORTANT_LINKS.map(([label, href]) => (
-              <a key={label} href={href} target="_blank" rel="noopener noreferrer" className="text-primary transition-colors hover:opacity-80">{label}</a>
-            ))}
-          </div>
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            <span className="font-semibold text-d-text-secondary">Important Information:</span>
-            {LEGAL_LINKS.map(([label, href]) => (
-              <Link key={label} href={href} className="text-primary transition-colors hover:opacity-80">{label}</Link>
-            ))}
-          </div>
-        </div>
-      </div>
+      {/* 5 · The statutory block moved to components/shell/ComplianceFooter,
+            mounted in AppShell so it reaches every authed route rather than
+            only this one. Rendering it here too would duplicate it. */}
 
       {/* 6 · giant Quant X wordmark — Every-AI style: fills the full width,
             silver gradient, the WHOLE label shows (SVG scales to fit, nothing
