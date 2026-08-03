@@ -50,10 +50,12 @@ export default function PreviewDesign() {
             price={2847.3}
             change={32.1}
             changePct={1.14}
-            verdict="Buy"
+            // Sentiment, never a call — we are not a SEBI-registered Research
+            // Analyst. See EntityVerdict in lib/api.ts.
+            verdict="bullish"
             votes={{ bull: 5, neutral: 2, bear: 1 }}
             series={[2731, 2748, 2740, 2762, 2755, 2788, 2801, 2794, 2822, 2815, 2839, 2847]}
-            provenance="EOD · derived · as of 3 Aug, 15:30 IST"
+            provenance="Indicator votes on settled closes to 2026-08-01. Analysis, not advice."
           />
         </div>
       </section>

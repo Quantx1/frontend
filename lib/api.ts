@@ -619,6 +619,56 @@ export type CopilotArtifact =
       rules: Array<{ label: string; value: string }>
       cta?: ArtifactCta
     }
+  | {
+      // The ONE card a chat reply is allowed to render — 7 rows, an 8-number
+      // budget (docs/REDESIGN-VISUAL.md §4.1). Built by `build_artifacts` from
+      // the `get_verdict` tool, which wraps the day-cached technical panel.
+      //
+      // Unlike every other variant this one has no `title`: its title is the
+      // symbol, rendered as identity (logo + name) rather than as a heading.
+      type: 'entity'
+      symbol: string
+      name?: string | null
+      exchange?: string
+      price?: number | null
+      change?: number | null
+      changePct?: number | null
+      // Sentiment language, NOT a call. See EntityVerdict for why.
+      label?: EntityVerdict | null
+      votes?: { bull: number; neutral: number; bear: number } | null
+      // Null rather than [] when there are fewer than 2 points — the card
+      // omits the sparkline instead of drawing a flat line.
+      series?: number[] | null
+      asOf?: string | null
+      cta?: ArtifactCta
+    }
+
+/**
+ * The verdict vocabulary — a compliance boundary, not a style choice.
+ *
+ * These are the words `services/market/technical_panel.py` already uses, and
+ * it chose them deliberately: its module docstring says the tally is computed
+ * "bullish / bearish / neutral language only, never buy/sell".
+ *
+ * That constraint is ours too. Quant X is not a SEBI-registered Research
+ * Analyst — the statement now sits in the footer of every authed route — so a
+ * `Buy` verdict word would be a recommendation we are not registered to make.
+ * `bullish` describes what the indicators READ; `Buy` instructs the user what
+ * to DO, and only one of those is a claim we can support.
+ *
+ * The vote counts beside it are what make the word checkable: "bullish · 7 of
+ * 12 indicators" carries its own evidence, where "Buy" carries none.
+ *
+ * An earlier draft of EntityCard used `Buy | Accumulate | Neutral | Reduce |
+ * Sell`, copied from a competitor screenshot. Copying their verdict word
+ * copies their regulatory posture, which we do not have.
+ */
+export type EntityVerdict =
+  | 'strong bullish'
+  | 'bullish'
+  | 'neutral'
+  | 'bearish'
+  | 'strong bearish'
 
 // WP-RAILS — honest transparent-agent telemetry streamed alongside the reply.
 // Both are brand-safe, whitelisted projections of AgentState (never raw tool

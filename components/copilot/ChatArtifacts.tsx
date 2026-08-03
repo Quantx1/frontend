@@ -21,6 +21,7 @@ import {
 import { ArrowRight } from '@/lib/icons'
 
 import { BlurFade } from '@/components/ui/blur-fade'
+import { EntityCard } from '@/components/copilot/EntityCard'
 import { EyebrowMono, Sparkline } from '@/components/foundation'
 import { MONO } from '@/lib/tokens'
 import type { CopilotArtifact, ArtifactCta, ArtifactTone } from '@/lib/api'
@@ -63,6 +64,27 @@ function ArtifactCtaChip({ cta }: { cta?: ArtifactCta }) {
 }
 
 export function ArtifactCard({ a }: { a: CopilotArtifact }) {
+  // The entity card comes FIRST because it is the one card a reply is allowed
+  // to render (REDESIGN-VISUAL §4.1). It is also the only variant that does
+  // not use the shared `rounded-sm border-line bg-wrap p-3` chrome below —
+  // it owns its own anatomy, so it delegates wholesale to EntityCard rather
+  // than being reimplemented here with a different number budget.
+  if (a.type === 'entity') {
+    return (
+      <EntityCard
+        symbol={a.symbol}
+        name={a.name}
+        exchange={a.exchange}
+        price={a.price}
+        change={a.change}
+        changePct={a.changePct}
+        verdict={a.label}
+        votes={a.votes}
+        series={a.series}
+        provenance={a.asOf ? `Indicator votes on settled closes to ${a.asOf}. Analysis, not advice.` : undefined}
+      />
+    )
+  }
   if (a.type === 'sparkline') {
     const up = (a.changePct ?? 0) >= 0
     return (

@@ -26,18 +26,28 @@
 
 import { Button, Card, CardBody, ChangeBadge, Sparkline } from '@/components/foundation'
 import { SymbolLogo } from '@/components/ui/BrandLogo'
+import type { EntityVerdict } from '@/lib/api'
 import { inr, num } from '@/lib/format'
 import { cn } from '@/lib/utils'
 
-/** Fixed, short vocabulary. Never a score, never a percentage, never "0.72". */
-export type EntityVerdict = 'Buy' | 'Accumulate' | 'Neutral' | 'Reduce' | 'Sell'
+export type { EntityVerdict }
 
+/**
+ * Fixed, short vocabulary. Never a score, never a percentage, never "0.72".
+ *
+ * These are SENTIMENT words, not calls — see `EntityVerdict` in lib/api.ts for
+ * the full reasoning. The short version: we are not a SEBI-registered Research
+ * Analyst, so the card says what the indicators read, never what to do. An
+ * earlier draft of this file used `Buy | Accumulate | Neutral | Reduce | Sell`
+ * lifted from a competitor screenshot; that copies their regulatory posture
+ * along with their layout.
+ */
 const VERDICT_TONE: Record<EntityVerdict, string> = {
-  Buy: 'text-up',
-  Accumulate: 'text-up',
-  Neutral: 'text-d-text-primary',
-  Reduce: 'text-down',
-  Sell: 'text-down',
+  'strong bullish': 'text-up',
+  bullish: 'text-up',
+  neutral: 'text-d-text-primary',
+  bearish: 'text-down',
+  'strong bearish': 'text-down',
 }
 
 export interface EntityCardProps {
@@ -142,8 +152,10 @@ export function EntityCard({
         </div>
       )}
 
+      {/* Capitalised for display only — the value stays lowercase everywhere
+          else so it round-trips against the backend's `label` verbatim. */}
       {verdict && (
-        <p className={cn('mt-3 text-title', VERDICT_TONE[verdict])}>{verdict}</p>
+        <p className={cn('mt-3 text-title capitalize', VERDICT_TONE[verdict])}>{verdict}</p>
       )}
 
       {/* ── row 5 — sparkline. No axes, no grid, no tooltip, no Recharts. ── */}
