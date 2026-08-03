@@ -60,6 +60,31 @@ const DEAD = [
  */
 const RAW_COLOUR = /\b(?:text|bg|border)-(?:green|red|emerald|rose)-\d{2,3}\b/
 
+
+/**
+ * ── The ratchet ────────────────────────────────────────────────────────────
+ * Some debt cannot be cleared in one pass without making things worse.
+ *
+ * `animate-pulse` outside Skeleton.tsx and `animate-spin` are the motion kill
+ * list (REDESIGN-VISUAL.md §5.6). The easy half is done — 38 self-closing
+ * placeholder divs now route through <Skeleton>, and 5 always-on ping rings are
+ * gone. What is left needs a per-site decision: a pulse WRAPPING content is not
+ * the same as one standing in for it, and a spinner inside a button genuinely
+ * awaiting a response must stay. Converting those in bulk would trade real
+ * loading feedback for silence.
+ *
+ * So instead of a ban that would fail the build today, or a rule that lets the
+ * debt grow quietly, these counts may only ever go DOWN. Lower a baseline when
+ * you clear sites; the guard fails if you raise one.
+ */
+const RATCHET = [
+  { label: 'animate-pulse outside Skeleton.tsx', max: 23,
+    test: (src, rel) => rel !== 'components/foundation/Skeleton.tsx' && /\banimate-pulse\b/.test(src),
+    count: (src, rel) => rel === 'components/foundation/Skeleton.tsx' ? 0 : (src.match(/\banimate-pulse\b/g) || []).length },
+  { label: 'animate-spin', max: 107,
+    count: (src) => (src.match(/\banimate-spin\b/g) || []).length },
+]
+
 const files = []
 ;(function walk(dir) {
   for (const e of readdirSync(dir)) {
@@ -107,8 +132,21 @@ for (const file of files) {
   })
 }
 
-if (violations) {
-  console.error(`\n${violations} dead/unsafe class${violations === 1 ? '' : 'es'}. These render silently wrong.\n`)
+// ── ratchet check ──────────────────────────────────────────────────────────
+let ratchetFailed = false
+for (const r of RATCHET) {
+  let n = 0
+  for (const file of files) n += r.count(readFileSync(file, 'utf8'), relative(ROOT, file))
+  if (n > r.max) {
+    console.error(`  ✗ ${r.label}: ${n} — baseline is ${r.max}. This count may only go DOWN.`)
+    ratchetFailed = true
+  } else if (n < r.max) {
+    console.log(`  ↓ ${r.label}: ${n} (baseline ${r.max}) — lower the baseline in scripts/validate-classes.mjs`)
+  }
+}
+
+if (violations || ratchetFailed) {
+  if (violations) console.error(`\n${violations} dead/unsafe class${violations === 1 ? '' : 'es'}. These render silently wrong.\n`)
   process.exit(1)
 }
 console.log(`validate-classes: ${files.length} files scanned, 0 violations`)
