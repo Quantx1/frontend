@@ -139,6 +139,30 @@ const config: Config = {
         mono: ['var(--font-mono)', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
       fontSize: {
+        // ── v6 type roles (docs/REDESIGN-VISUAL.md §2.2) ────────────────────
+        // 7 prose roles + 4 numeric roles. The measured sprawl they replace is
+        // 25 distinct sizes with 658 occurrences at ≤10.5px — which is the
+        // "congested, not designed properly" verdict, quantified.
+        //
+        // ADDITIVE on purpose: xs/sm/base/lg/… stay so the ~1,700 existing
+        // sites keep compiling. New work uses the roles; the sweep converting
+        // old sites is Phase 1 and is deliberately NOT bundled here.
+        //
+        // FLOOR IS 11px, and 11px is `micro` only (eyebrows, column headers,
+        // provenance). 8 / 8.5 / 9 / 9.5 / 10 / 10.5px are banned.
+        'display':  ['34px', { lineHeight: '40px', letterSpacing: '-0.02em',  fontWeight: '600' }],
+        'title':    ['24px', { lineHeight: '32px', letterSpacing: '-0.015em', fontWeight: '600' }],
+        'heading':  ['17px', { lineHeight: '24px', letterSpacing: '-0.01em',  fontWeight: '600' }],
+        'body':     ['15px', { lineHeight: '24px' }],
+        'label':    ['13px', { lineHeight: '18px', fontWeight: '500' }],
+        'meta':     ['12px', { lineHeight: '16px' }],
+        'micro':    ['11px', { lineHeight: '14px', letterSpacing: '0.06em', fontWeight: '500' }],
+        // Numeric roles — pair with `font-mono tabular-nums` at the call site.
+        'num-hero': ['40px', { lineHeight: '44px', letterSpacing: '-0.02em' }],
+        'num-lg':   ['22px', { lineHeight: '28px' }],
+        'num':      ['14px', { lineHeight: '20px' }],
+        'num-sm':   ['13px', { lineHeight: '18px' }],
+
         'xs': ['0.75rem', { lineHeight: '1rem' }],
         'sm': ['0.875rem', { lineHeight: '1.25rem' }],
         'base': ['1rem', { lineHeight: '1.5rem' }],

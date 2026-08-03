@@ -19,6 +19,7 @@ import {
   Skeleton,
 } from '@/components/foundation'
 import { Inbox } from '@/lib/icons'
+import { EntityCard } from '@/components/copilot/EntityCard'
 import { OverlaysDemo } from './OverlaysDemo'
 
 type DemoRow = { id: string; symbol: string; price: number; change: number }
@@ -37,6 +38,26 @@ export default function PreviewDesign() {
   if (process.env.NODE_ENV === 'production') notFound()
   return (
     <main data-testid="preview-root" className="min-h-screen bg-main text-d-text-primary p-8 space-y-10">
+      {/* EntityCard — the one card a chat reply may render (REDESIGN-VISUAL §4.1) */}
+      <section data-testid="sec-entity-card" className="space-y-3">
+        <p className="font-sans font-semibold uppercase tracking-[0.12em] text-xs text-d-text-muted">
+          Entity card
+        </p>
+        <div className="max-w-[560px]">
+          <EntityCard
+            symbol="RELIANCE"
+            name="Reliance Industries"
+            price={2847.3}
+            change={32.1}
+            changePct={1.14}
+            verdict="Buy"
+            votes={{ bull: 5, neutral: 2, bear: 1 }}
+            series={[2731, 2748, 2740, 2762, 2755, 2788, 2801, 2794, 2822, 2815, 2839, 2847]}
+            provenance="EOD · derived · as of 3 Aug, 15:30 IST"
+          />
+        </div>
+      </section>
+
       <section data-testid="sec-type" className="space-y-3">
         {/* Eyebrow — Plus Jakarta Sans uppercase + tracked (NOT mono). */}
         <p className="font-sans font-semibold uppercase tracking-[0.12em] text-xs text-d-text-muted">Typography</p>
