@@ -239,7 +239,7 @@ export default function TradesPage() {
             ))}
           </div>
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="rounded-sm border border-line bg-wrap p-5 h-16 animate-pulse" />
+            <Skeleton key={i} className="rounded-sm border border-line bg-wrap p-5 h-16" />
           ))}
         </div>
       </AppShell>

@@ -271,7 +271,7 @@ export default function FundamentalsCard({ symbol }: { symbol: string }) {
       {loading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-24 animate-pulse rounded-md bg-surface-2" />
+            <Skeleton key={i} className="h-24 rounded-md bg-surface-2" />
           ))}
         </div>
       ) : !hasData || !f ? (

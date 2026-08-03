@@ -496,7 +496,7 @@ function CardSkeletons() {
           </div>
           <Skeleton className="mt-3 h-10 w-full rounded bg-wrap-hover" />
           <div className="mt-3 grid grid-cols-3 gap-2">
-            {[0, 1, 2].map((j) => <div key={j} className="h-10 animate-pulse rounded bg-wrap-hover" />)}
+            {[0, 1, 2].map((j) => <Skeleton key={j} className="h-10 rounded bg-wrap-hover" />)}
           </div>
         </div>
       ))}

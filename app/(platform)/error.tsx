@@ -25,7 +25,7 @@ export default function Error({
           </svg>
           <div className="absolute inset-2 rounded-full bg-down/10 blur-sm" />
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-down text-3xl font-bold animate-pulse">!</span>
+            <span className="text-down text-3xl font-bold">!</span>
           </div>
         </div>
         <h2 className="mb-2 text-lg font-bold text-d-text-primary">Something went wrong</h2>

@@ -325,7 +325,7 @@ export default function OrderFlowAnalysis({ entitled = true }: { entitled?: bool
           {!deals && !dealsErr ? (
             <div className="space-y-1.5">
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="h-6 animate-pulse rounded bg-surface-2" />
+                <Skeleton key={i} className="h-6 rounded bg-surface-2" />
               ))}
             </div>
           ) : dealsErr || dealRows.length === 0 ? (
@@ -385,7 +385,7 @@ export default function OrderFlowAnalysis({ entitled = true }: { entitled?: bool
           {!shorts && !shortsErr ? (
             <div className="space-y-1.5">
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="h-5 animate-pulse rounded bg-surface-2" />
+                <Skeleton key={i} className="h-5 rounded bg-surface-2" />
               ))}
             </div>
           ) : shortsErr || shortRows.length === 0 ? (

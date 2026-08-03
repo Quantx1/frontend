@@ -364,7 +364,7 @@ export default function StockTerminalPage() {
                 <DataBadge mode={brokerConnected ? 'live' : 'eod'} />
                 {wsConnected ? (
                   <span className="inline-flex items-center gap-1 rounded-full bg-up/10 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.1em] text-up">
-                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-up" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-up" />
                     Streaming
                   </span>
                 ) : (

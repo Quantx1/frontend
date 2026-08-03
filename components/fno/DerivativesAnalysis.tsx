@@ -403,7 +403,7 @@ export default function DerivativesAnalysis() {
             {loading ? (
               <div className="space-y-1.5">
                 {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="h-4 animate-pulse rounded bg-surface-2" />
+                  <Skeleton key={i} className="h-4 rounded bg-surface-2" />
                 ))}
               </div>
             ) : chain.length === 0 ? (
@@ -495,7 +495,7 @@ export default function DerivativesAnalysis() {
           {!participants ? (
             <div className="space-y-1.5">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-6 animate-pulse rounded bg-surface-2" />
+                <Skeleton key={i} className="h-6 rounded bg-surface-2" />
               ))}
             </div>
           ) : participants.participants.length === 0 ? (
@@ -563,7 +563,7 @@ export default function DerivativesAnalysis() {
           {!ban ? (
             <div className="flex flex-wrap gap-1.5">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-6 w-16 animate-pulse rounded-xs bg-surface-2" />
+                <Skeleton key={i} className="h-6 w-16 rounded-xs bg-surface-2" />
               ))}
             </div>
           ) : ban.symbols.length === 0 ? (
