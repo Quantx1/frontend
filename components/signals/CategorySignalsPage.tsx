@@ -39,6 +39,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
+  Skeleton,
 } from '@/components/foundation'
 import { SignalCard, type DisplaySignal } from './SignalCard'
 import { FaqAccordion } from './FaqAccordion'
@@ -490,10 +491,10 @@ function CardSkeletons() {
       {Array.from({ length: 3 }).map((_, i) => (
         <div key={i} className="rounded-lg border border-line bg-wrap p-4">
           <div className="flex items-center justify-between">
-            <div className="h-4 w-20 animate-pulse rounded bg-wrap-hover" />
-            <div className="h-5 w-12 animate-pulse rounded bg-wrap-hover" />
+            <Skeleton className="h-4 w-20 rounded bg-wrap-hover" />
+            <Skeleton className="h-5 w-12 rounded bg-wrap-hover" />
           </div>
-          <div className="mt-3 h-10 w-full animate-pulse rounded bg-wrap-hover" />
+          <Skeleton className="mt-3 h-10 w-full rounded bg-wrap-hover" />
           <div className="mt-3 grid grid-cols-3 gap-2">
             {[0, 1, 2].map((j) => <div key={j} className="h-10 animate-pulse rounded bg-wrap-hover" />)}
           </div>

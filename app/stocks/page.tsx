@@ -46,6 +46,7 @@ import {
   Reveal,
   Select,
   type Column,
+  Skeleton,
 } from '@/components/foundation'
 import { MONO } from '@/lib/tokens'
 import { DataBadge } from '@/components/common/DataBadge'
@@ -501,7 +502,7 @@ export default function StocksPage() {
 
 function RegimeBanner({ regime, loading }: { regime: CurrentRegime | null; loading: boolean }) {
   if (loading && !regime) {
-    return <div className="h-[64px] animate-pulse rounded-sm border border-line bg-wrap" />
+    return <Skeleton className="h-[64px] rounded-sm border border-line bg-wrap" />
   }
   if (!regime) return null
 

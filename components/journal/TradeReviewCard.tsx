@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react'
 import { ClipboardCheck, Sparkles, Loader2 } from '@/lib/icons'
 
 import { api } from '@/lib/api'
+import { Skeleton } from '@/components/foundation'
 
 interface Resp {
   points: string[]
@@ -58,7 +59,7 @@ export default function TradeReviewCard({ tradeId }: { tradeId: string }) {
     }
   }
 
-  if (state === 'loading') return <div className="rounded-sm border border-line bg-wrap h-[96px] animate-pulse" />
+  if (state === 'loading') return <Skeleton className="rounded-sm border border-line bg-wrap h-[96px]" />
   if (state === 'empty' || points.length === 0) return null
 
   return (

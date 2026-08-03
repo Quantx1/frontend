@@ -43,6 +43,7 @@ import {
   UsageMeter,
   toast,
   type Column,
+  Skeleton,
 } from '@/components/foundation'
 import { dispatchCopilotOpen } from '@/components/copilot/CopilotProvider'
 import { DataBadge } from '@/components/common/DataBadge'
@@ -512,13 +513,13 @@ function SkelCard() {
   return (
     <div className="space-y-3 rounded-lg border border-line bg-wrap p-4">
       <div className="flex items-center justify-between">
-        <div className="h-4 w-20 animate-pulse rounded bg-wrap-hover" />
-        <div className="h-3 w-12 animate-pulse rounded bg-wrap-hover/70" />
+        <Skeleton className="h-4 w-20 rounded bg-wrap-hover" />
+        <Skeleton className="h-3 w-12 rounded bg-wrap-hover/70" />
       </div>
       <div className="grid grid-cols-3 gap-3">
-        <div className="h-8 animate-pulse rounded bg-wrap-hover/70" />
-        <div className="h-8 animate-pulse rounded bg-wrap-hover/70" />
-        <div className="h-8 animate-pulse rounded bg-wrap-hover/70" />
+        <Skeleton className="h-8 rounded bg-wrap-hover/70" />
+        <Skeleton className="h-8 rounded bg-wrap-hover/70" />
+        <Skeleton className="h-8 rounded bg-wrap-hover/70" />
       </div>
     </div>
   )

@@ -19,6 +19,7 @@ import {
 } from '@/lib/icons'
 import { api } from '@/lib/api'
 import { timeAgo as sharedTimeAgo } from '@/lib/format'
+import { Skeleton } from '@/components/foundation'
 
 type NewsItem = {
   title: string
@@ -110,11 +111,11 @@ function NewsCard({ n }: { n: NewsItem }) {
 function NewsSkeleton() {
   return (
     <div className="overflow-hidden rounded-lg border border-line bg-wrap">
-      <div className="aspect-[16/9] w-full animate-pulse bg-wrap-hover" />
+      <Skeleton className="aspect-[16/9] w-full bg-wrap-hover" />
       <div className="space-y-2 p-3.5">
-        <div className="h-2.5 w-16 animate-pulse rounded bg-wrap-hover/70" />
-        <div className="h-3.5 w-full animate-pulse rounded bg-wrap-hover" />
-        <div className="h-3 w-2/3 animate-pulse rounded bg-wrap-hover/60" />
+        <Skeleton className="h-2.5 w-16 rounded bg-wrap-hover/70" />
+        <Skeleton className="h-3.5 w-full rounded bg-wrap-hover" />
+        <Skeleton className="h-3 w-2/3 rounded bg-wrap-hover/60" />
       </div>
     </div>
   )

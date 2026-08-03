@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react'
 import { Brain } from '@/lib/icons'
 
 import { api } from '@/lib/api'
+import { Skeleton } from '@/components/foundation'
 
 interface Note { indicator: string; value: number | null; signal: string; read: string }
 
@@ -41,7 +42,7 @@ export default function IndicatorInterpreterCard({ symbol }: { symbol: string })
     return () => { cancelled = true }
   }, [symbol])
 
-  if (state === 'loading') return <div className="rounded-lg border border-line bg-wrap h-[140px] animate-pulse" />
+  if (state === 'loading') return <Skeleton className="rounded-lg border border-line bg-wrap h-[140px]" />
   if (state === 'empty') return null
 
   const b = BIAS[bias] || BIAS.mixed

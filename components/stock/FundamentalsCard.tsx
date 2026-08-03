@@ -37,6 +37,7 @@ import {
 
 import { api } from '@/lib/api'
 import { inr, inrCrore, numMax } from '@/lib/format'
+import { Skeleton } from '@/components/foundation'
 
 type FundamentalsData = Awaited<ReturnType<typeof api.screener.fundamentals>>
 type Fundamentals = NonNullable<FundamentalsData['fundamentals']>
@@ -255,7 +256,7 @@ export default function FundamentalsCard({ symbol }: { symbol: string }) {
         {/* one-line quality verdict */}
         <div className="mt-3 border-t border-d-border pt-3">
           {loading ? (
-            <div className="h-4 w-2/3 animate-pulse rounded bg-surface-2" />
+            <Skeleton className="h-4 w-2/3 rounded bg-surface-2" />
           ) : verdict ? (
             <p className={`text-[13px] font-medium leading-snug ${verdict.cls}`}>{verdict.text}</p>
           ) : (

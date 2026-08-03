@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react'
 import { Percent } from '@/lib/icons'
 
 import { api } from '@/lib/api'
+import { Skeleton } from '@/components/foundation'
 
 interface Setup { name: string; active_now: boolean; occurrences: number; prob_pct: number | null }
 
@@ -38,7 +39,7 @@ export default function ProbabilityCard({ symbol }: { symbol: string }) {
     return () => { cancelled = true }
   }, [symbol])
 
-  if (state === 'loading') return <div className="rounded-lg border border-line bg-wrap h-[140px] animate-pulse" />
+  if (state === 'loading') return <Skeleton className="rounded-lg border border-line bg-wrap h-[140px]" />
   if (state === 'empty') return null
 
   return (

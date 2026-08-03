@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react'
 import { CalendarRange, RefreshCw, TrendingUp, TrendingDown } from '@/lib/icons'
 
 import { api } from '@/lib/api'
+import { Skeleton } from '@/components/foundation'
 
 interface Review {
   week_of: string
@@ -52,7 +53,7 @@ export default function WeeklyReviewCard() {
   }
 
   if (state === 'loading') {
-    return <div className="rounded-sm border border-line bg-wrap h-[120px] animate-pulse" />
+    return <Skeleton className="rounded-sm border border-line bg-wrap h-[120px]" />
   }
   if (state === 'empty') {
     return (

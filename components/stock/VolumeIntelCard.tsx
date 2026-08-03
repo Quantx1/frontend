@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react'
 import { BarChart3 } from '@/lib/icons'
 
 import { api } from '@/lib/api'
+import { Skeleton } from '@/components/foundation'
 
 interface Intel {
   signal: string
@@ -123,7 +124,7 @@ export default function VolumeIntelCard({ symbol }: { symbol: string }) {
     return () => { cancelled = true }
   }, [symbol])
 
-  if (state === 'loading') return <div className="rounded-lg border border-line bg-wrap h-[180px] animate-pulse" />
+  if (state === 'loading') return <Skeleton className="rounded-lg border border-line bg-wrap h-[180px]" />
   if (state === 'empty' || !v) {
     return (
       <div className="rounded-lg border border-line bg-wrap px-4 py-3">

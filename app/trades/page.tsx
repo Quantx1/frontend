@@ -29,6 +29,7 @@ import {
   EyebrowMono,
   Reveal,
   StatCard,
+  Skeleton,
 } from '@/components/foundation'
 import { dispatchCopilotOpen } from '@/components/copilot/CopilotProvider'
 import { AppShell } from '@/components/shell/AppShell'
@@ -227,13 +228,13 @@ export default function TradesPage() {
     return (
       <AppShell>
         <div className="w-full space-y-5 p-4 md:p-6 xl:px-8">
-          <div className="h-8 w-44 rounded-sm bg-wrap animate-pulse" />
-          <div className="h-4 w-64 rounded bg-wrap animate-pulse" />
+          <Skeleton className="h-8 w-44 rounded-sm bg-wrap" />
+          <Skeleton className="h-4 w-64 rounded bg-wrap" />
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="rounded-sm border border-line bg-wrap p-4 space-y-3">
-                <div className="h-3 w-20 rounded bg-wrap-hover animate-pulse" />
-                <div className="h-7 w-28 rounded bg-wrap-hover animate-pulse" />
+                <Skeleton className="h-3 w-20 rounded bg-wrap-hover" />
+                <Skeleton className="h-7 w-28 rounded bg-wrap-hover" />
               </div>
             ))}
           </div>

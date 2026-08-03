@@ -15,6 +15,7 @@ import useSWR from 'swr'
 import { Loader2, Scale, Sparkles } from '@/lib/icons'
 
 import { api } from '@/lib/api'
+import { Skeleton } from '@/components/foundation'
 
 const toneClass = (label?: string | null): string =>
   !label ? 'text-d-text-muted'
@@ -54,7 +55,7 @@ export default function SentimentCard({ symbol }: { symbol: string }) {
     }
   }
 
-  if (isLoading) return <div className="h-[150px] animate-pulse rounded-lg border border-line bg-wrap" />
+  if (isLoading) return <Skeleton className="h-[150px] rounded-lg border border-line bg-wrap" />
 
   const tech = data?.technical?.summary
   const news = data?.news

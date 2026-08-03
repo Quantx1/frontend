@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react'
 import { Activity } from '@/lib/icons'
 
 import { api } from '@/lib/api'
+import { Skeleton } from '@/components/foundation'
 
 interface Rs {
   benchmark: string; outperforming: boolean
@@ -67,7 +68,7 @@ export default function RelativeStrengthCard({ symbol }: { symbol: string }) {
     return () => { cancelled = true }
   }, [symbol])
 
-  if (state === 'loading') return <div className="rounded-lg border border-line bg-wrap h-[150px] animate-pulse" />
+  if (state === 'loading') return <Skeleton className="rounded-lg border border-line bg-wrap h-[150px]" />
   if (state === 'empty' || !rs) {
     return (
       <div className="rounded-lg border border-line bg-wrap px-4 py-3">

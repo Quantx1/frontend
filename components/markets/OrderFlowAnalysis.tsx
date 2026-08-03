@@ -28,6 +28,7 @@ import {
 
 import { api } from '@/lib/api'
 import { inr, inrCompact, inrCrore, qtyCompact } from '@/lib/format'
+import { Skeleton } from '@/components/foundation'
 
 type FiiDiiData = Awaited<ReturnType<typeof api.screener.orderflowFiiDii>>
 type DealsData = Awaited<ReturnType<typeof api.screener.orderflowDeals>>
@@ -239,7 +240,7 @@ export default function OrderFlowAnalysis({ entitled = true }: { entitled?: bool
         {/* one-line verdict */}
         <div className="mt-3 border-t border-d-border pt-3">
           {!flow && !flowErr ? (
-            <div className="h-4 w-2/3 animate-pulse rounded bg-surface-2" />
+            <Skeleton className="h-4 w-2/3 rounded bg-surface-2" />
           ) : flowErr || !hasFlow ? (
             <p className="text-[13px] font-medium leading-snug text-d-text-muted">
               No institutional flow data yet — check back after the close.
@@ -259,7 +260,7 @@ export default function OrderFlowAnalysis({ entitled = true }: { entitled?: bool
         }
       >
         {!flow && !flowErr ? (
-          <div className="h-28 animate-pulse rounded-sm bg-surface-2" />
+          <Skeleton className="h-28 rounded-sm bg-surface-2" />
         ) : flowErr || !hasFlow ? (
           <p className="py-6 text-center text-[11.5px] text-d-text-muted">No FII/DII flow data yet.</p>
         ) : (

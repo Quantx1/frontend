@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react'
 import { LineChart, Sparkles, Loader2, AlertTriangle } from '@/lib/icons'
 
 import { api } from '@/lib/api'
+import { Skeleton } from '@/components/foundation'
 
 interface Bucket { label: string; n: number; win_rate: number; total_pnl: number }
 interface SymRow { symbol: string; n: number; total_pnl: number }
@@ -64,7 +65,7 @@ export default function TradePatternsCard() {
     } catch { /* keep */ } finally { setCoachBusy(false) }
   }
 
-  if (state === 'loading') return <div className="rounded-sm border border-line bg-wrap h-[120px] animate-pulse" />
+  if (state === 'loading') return <Skeleton className="rounded-sm border border-line bg-wrap h-[120px]" />
   if (state === 'empty' || !stats) return null
 
   const topSession = stats.by_session?.[0]

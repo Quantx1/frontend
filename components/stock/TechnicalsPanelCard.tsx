@@ -24,6 +24,7 @@ import { Gauge } from '@/lib/icons'
 import { api } from '@/lib/api'
 
 import { num } from '@/lib/format'
+import { Skeleton } from '@/components/foundation'
 const VOTE_CLASS: Record<string, string> = {
   bullish: 'text-up',
   bearish: 'text-down',
@@ -106,7 +107,7 @@ export default function TechnicalsPanelCard({ symbol }: { symbol: string }) {
     { revalidateOnFocus: false, dedupingInterval: 300_000 },
   )
 
-  if (isLoading) return <div className="h-72 animate-pulse rounded-lg border border-line bg-wrap" />
+  if (isLoading) return <Skeleton className="h-72 rounded-lg border border-line bg-wrap" />
 
   if (!data || !data.available) {
     return (

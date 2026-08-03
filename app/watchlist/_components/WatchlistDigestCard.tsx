@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react'
 import { Sparkles, Loader2 } from '@/lib/icons'
 
 import { api } from '@/lib/api'
+import { Skeleton } from '@/components/foundation'
 
 interface DigestItem {
   symbol: string
@@ -59,7 +60,7 @@ export default function WatchlistDigestCard() {
     setLlm('done')
   }
 
-  if (state === 'loading') return <div className="rounded-lg border border-line bg-wrap h-[140px] animate-pulse" />
+  if (state === 'loading') return <Skeleton className="rounded-lg border border-line bg-wrap h-[140px]" />
   if (state === 'empty') return null
 
   const withBullets = items.filter((it) => it.bullets.length > 0)

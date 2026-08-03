@@ -13,6 +13,7 @@ import useSWR from 'swr'
 
 import { api, type PaperWindowEngine } from '@/lib/api'
 import { MONO } from '@/lib/tokens'
+import { Skeleton } from '@/components/foundation'
 
 /** Card surface — xAI flat panel (matches the /paper-trading page). */
 const CARD = 'rounded-lg border border-line bg-wrap p-4'
@@ -65,8 +66,8 @@ export default function PaperWindowCard() {
       {/* Body — loading / error / honest-empty / engines */}
       {isLoading && !data ? (
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4" aria-hidden="true">
-          <div className="h-16 rounded-md bg-hover animate-pulse" />
-          <div className="h-16 rounded-md bg-hover animate-pulse" />
+          <Skeleton className="h-16 rounded-md bg-hover" />
+          <Skeleton className="h-16 rounded-md bg-hover" />
         </div>
       ) : error && !data ? (
         <p className="mt-4 text-[11px] text-d-text-muted">

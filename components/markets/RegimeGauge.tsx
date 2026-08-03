@@ -14,6 +14,7 @@
  */
 
 import { MONO } from '@/lib/tokens'
+import { Skeleton } from '@/components/foundation'
 
 const BANDS = [
   { upTo: 20, label: 'Extreme Bear', tone: 'var(--color-down)', toneClass: 'text-down' },
@@ -68,7 +69,7 @@ export function RegimeGauge({
     return (
       <div className="flex flex-col items-center justify-center" style={{ minHeight: H + 44 }}>
         <div className="animate-pulse rounded-t-full bg-wrap-hover/60" style={{ height: r * 0.9, width: W - 24 }} />
-        <div className="mt-3 h-4 w-28 animate-pulse rounded bg-wrap-hover/50" />
+        <Skeleton className="mt-3 h-4 w-28 rounded bg-wrap-hover/50" />
       </div>
     )
   }

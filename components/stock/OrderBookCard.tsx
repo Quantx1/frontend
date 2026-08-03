@@ -15,6 +15,7 @@ import { ArrowLeftRight } from '@/lib/icons'
 import { api } from '@/lib/api'
 
 import { num } from '@/lib/format'
+import { Skeleton } from '@/components/foundation'
 interface Level { price: number; quantity: number; orders: number }
 interface DepthResp {
   depth: { bids: Level[]; asks: Level[]; source: string }
@@ -51,7 +52,7 @@ export default function OrderBookCard({ symbol }: { symbol: string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [symbol])
 
-  if (state === 'loading') return <div className="rounded-lg border border-line bg-wrap h-[200px] animate-pulse" />
+  if (state === 'loading') return <Skeleton className="rounded-lg border border-line bg-wrap h-[200px]" />
   if (state === 'empty' || !data) return null // honest: no order book without a live feed
 
   const a = data.analysis

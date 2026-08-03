@@ -31,6 +31,7 @@ import { api } from '@/lib/api'
 import { useBrokerStatus } from '@/lib/hooks/useBrokerStatus'
 import BrokerLock, { OptionChainPreview } from '@/components/broker/BrokerLock'
 import { num, numMax, qtyCompact } from '@/lib/format'
+import { Skeleton } from '@/components/foundation'
 
 type EodData = Awaited<ReturnType<typeof api.screener.fnoEod>>
 type ParticipantsData = Awaited<ReturnType<typeof api.screener.fnoParticipants>>
@@ -259,7 +260,7 @@ export default function DerivativesAnalysis() {
         {/* one-line verdict */}
         <div className="mt-3 border-t border-d-border pt-3">
           {loading ? (
-            <div className="h-4 w-2/3 animate-pulse rounded bg-surface-2" />
+            <Skeleton className="h-4 w-2/3 rounded bg-surface-2" />
           ) : (
             <p className={`text-[13px] font-medium leading-snug ${verdict.cls}`}>{verdict.text}</p>
           )}
@@ -297,7 +298,7 @@ export default function DerivativesAnalysis() {
               }
             >
               {loading || !m ? (
-                <div className="h-20 animate-pulse rounded-sm bg-surface-2" />
+                <Skeleton className="h-20 rounded-sm bg-surface-2" />
               ) : (
                 <>
                   <div className="flex items-end justify-between gap-3">
@@ -345,7 +346,7 @@ export default function DerivativesAnalysis() {
               right={<InfoDot text="Max pain is the strike where the largest number of option BUYERS lose money at expiry. Price often drifts toward it as expiry nears (the 'pinning' effect)." />}
             >
               {loading || !m ? (
-                <div className="h-20 animate-pulse rounded-sm bg-surface-2" />
+                <Skeleton className="h-20 rounded-sm bg-surface-2" />
               ) : (
                 <>
                   <div className="flex items-end justify-between gap-3">

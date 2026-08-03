@@ -21,7 +21,7 @@ import { useState } from 'react'
 import useSWR from 'swr'
 import { Loader2, Sparkles } from '@/lib/icons'
 
-import { Button, Card, CardBody, CardHeader } from '@/components/foundation'
+import { Button, Card, CardBody, CardHeader, Skeleton } from '@/components/foundation'
 import { dispatchCopilotOpen } from '@/components/copilot/CopilotProvider'
 import { api } from '@/lib/api'
 
@@ -81,7 +81,7 @@ export default function AITradeDeskCard({ symbol }: { symbol: string }) {
       </CardHeader>
       <CardBody>
         {isLoading ? (
-          <div className="h-24 w-full animate-pulse rounded-sm bg-d-text-muted/10" />
+          <Skeleton className="h-24 w-full rounded-sm bg-d-text-muted/10" />
         ) : !data ? (
           <p className="text-sm text-d-text-muted">
             Trade Desk evidence unavailable for {symbol} right now.
