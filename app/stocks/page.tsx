@@ -54,6 +54,7 @@ import { SymbolLogo } from '@/components/ui/BrandLogo'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import AiTopPicks from '@/components/discover/AiTopPicks'
 import StockMoodLookup from '@/components/markets/StockMoodLookup'
+import { qtyCompact } from '@/lib/format'
 
 // ----------------------------------------------------------------- types
 
@@ -706,9 +707,6 @@ function titleCase(s: string): string {
 }
 
 function formatVolume(v: number): string {
-  if (!v || !isFinite(v)) return '-'
-  if (v >= 1e7) return `${(v / 1e7).toFixed(1)}Cr`
-  if (v >= 1e5) return `${(v / 1e5).toFixed(1)}L`
-  if (v >= 1e3) return `${(v / 1e3).toFixed(1)}K`
-  return String(v)
+  if (!v || !isFinite(v)) return '—'
+  return qtyCompact(v)
 }

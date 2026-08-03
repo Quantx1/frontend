@@ -18,6 +18,7 @@ import { Layers, RefreshCw, TrendingDown, TrendingUp } from '@/lib/icons'
 
 import { api } from '@/lib/api'
 
+import { numMax } from '@/lib/format'
 const INDICES = ['NIFTY', 'BANKNIFTY', 'FINNIFTY', 'MIDCPNIFTY'] as const
 type FlowSymbol = (typeof INDICES)[number]
 
@@ -120,7 +121,7 @@ export default function OptionsFlowCard() {
             />
             <Stat
               label="Max pain"
-              value={data.max_pain != null ? data.max_pain.toLocaleString('en-IN', { maximumFractionDigits: 0 }) : '—'}
+              value={data.max_pain != null ? numMax(data.max_pain, 0) : '—'}
               hint={
                 data.max_pain_pull_pct != null
                   ? `${data.max_pain_pull_pct > 0 ? '▲' : '▼'} ${Math.abs(data.max_pain_pull_pct).toFixed(1)}% from spot`
@@ -137,7 +138,7 @@ export default function OptionsFlowCard() {
                 <span className={data.biggest_buildup.side === 'PE' ? 'text-up' : 'text-down'}>
                   {data.biggest_buildup.side}
                 </span>{' '}
-                {data.biggest_buildup.strike.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                {numMax(data.biggest_buildup.strike, 0)}
                 {' · '}
                 {data.biggest_buildup.direction}{' '}
                 <span className={data.biggest_buildup.oi_change > 0 ? 'text-up' : 'text-down'}>

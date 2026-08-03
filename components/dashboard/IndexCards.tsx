@@ -14,6 +14,7 @@ import { ArrowDown, ArrowUp } from '@/lib/icons'
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
+import { num } from '@/lib/format'
 type IndexKey = 'nifty' | 'banknifty' | 'sensex' | 'vix'
 
 interface IndexRow {
@@ -33,7 +34,7 @@ const FALLBACK: IndexRow[] = [
 
 function fmt(n: number | null | undefined, digits = 2): string {
   if (n == null || Number.isNaN(n)) return '--'
-  return n.toLocaleString('en-IN', { minimumFractionDigits: digits, maximumFractionDigits: digits })
+  return num(n, digits)
 }
 
 function IndexCard({ row }: { row: IndexRow }) {

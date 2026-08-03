@@ -5,6 +5,7 @@ import {
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
   CartesianGrid, ReferenceLine,
 } from 'recharts'
+import { num } from '@/lib/format'
 
 // ============================================================================
 // TYPES
@@ -120,14 +121,14 @@ export default function PayoffDiagram({ legs, spotPrice, lotSize, label }: Payof
       {/* Summary badges */}
       <div className="flex flex-wrap gap-3 mb-4 mt-2">
         <span className="text-[10px] px-2 py-0.5 rounded-full bg-up/10 border border-up/20 text-up">
-          Max Profit: {maxProfit === Infinity ? '∞' : `₹${maxProfit.toLocaleString('en-IN')}`}
+          Max Profit: {maxProfit === Infinity ? '∞' : `₹${num(maxProfit)}`}
         </span>
         <span className="text-[10px] px-2 py-0.5 rounded-full bg-down/10 border border-down/20 text-down">
-          Max Loss: {maxLoss === -Infinity ? '∞' : `₹${Math.abs(maxLoss).toLocaleString('en-IN')}`}
+          Max Loss: {maxLoss === -Infinity ? '∞' : `₹${num(Math.abs(maxLoss))}`}
         </span>
         {breakevens.map((be, i) => (
           <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-surface-2 border border-white/[0.08] text-d-text-secondary">
-            BE: {be.toLocaleString('en-IN')}
+            BE: {num(be)}
           </span>
         ))}
       </div>
@@ -150,7 +151,7 @@ export default function PayoffDiagram({ legs, spotPrice, lotSize, label }: Payof
             <XAxis
               dataKey="price"
               tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)' }}
-              tickFormatter={(v: number) => v.toLocaleString('en-IN')}
+              tickFormatter={(v: number) => num(v)}
             />
             <YAxis
               tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)' }}
@@ -163,8 +164,8 @@ export default function PayoffDiagram({ legs, spotPrice, lotSize, label }: Payof
                 borderRadius: '8px',
                 fontSize: '12px',
               }}
-              formatter={(value: number) => [`₹${value.toLocaleString('en-IN')}`, 'P&L']}
-              labelFormatter={(label: number) => `Spot: ${label.toLocaleString('en-IN')}`}
+              formatter={(value: number) => [`₹${num(value)}`, 'P&L']}
+              labelFormatter={(label: number) => `Spot: ${num(label)}`}
             />
 
             {/* Zero line */}

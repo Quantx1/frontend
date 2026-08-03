@@ -13,11 +13,14 @@ import { ClipboardList, Sparkles } from '@/lib/icons'
 
 import { dispatchCopilotOpen } from '@/components/copilot/CopilotProvider'
 import { planTrade } from '@/lib/tradePlan'
+import { inr as fmtInr } from '@/lib/format'
 
 const UP = 'text-up'
 const DOWN = 'text-down'
 
-const inr = (x: number) => `₹${x.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`
+// Was local and had no null guard — lib/format returns an em dash instead
+// of rendering "₹NaN".
+const inr = (x: number) => fmtInr(x, 2)
 
 interface TradePlannerCardProps {
   entry: number

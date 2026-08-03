@@ -15,16 +15,14 @@ import useSWR from 'swr'
 import { Activity, TrendingUp, TrendingDown } from '@/lib/icons'
 import { api } from '@/lib/api'
 
+import { inrCrore, num } from '@/lib/format'
 const UP = 'var(--color-up)'
 const DOWN = 'var(--color-down)'
 
 type Pulse = Awaited<ReturnType<typeof api.screener.marketPulse>>
 
-const fmtCr = (v: number) => {
-  const a = Math.abs(v)
-  const s = a >= 1000 ? `${(a / 1000).toFixed(1)}K` : `${Math.round(a)}`
-  return `₹${s} Cr`
-}
+// Magnitude only — both call sites prefix their own coloured +/−.
+const fmtCr = inrCrore
 
 export default function MarketPulseCard() {
   const { data, isLoading } = useSWR<Pulse | null>(
@@ -33,7 +31,7 @@ export default function MarketPulseCard() {
     { revalidateOnFocus: false, dedupingInterval: 120_000, keepPreviousData: true, errorRetryCount: 4 },
   )
 
-  if (isLoading && !data) return <Skeleton h="210px" rounded="lg" className="rounded-[20px]" />
+  if (isLoading && !data) return <Skeleton h="210px" rounded="lg" className="rounded-2xl" />
   const b = data?.breadth
   if (!b) return null
   const vol = data?.vol
@@ -50,7 +48,7 @@ export default function MarketPulseCard() {
     : DOWN
 
   return (
-    <section aria-label="Market pulse" className="rounded-[20px] bg-wrap px-4 py-3.5 sm:px-5">
+    <section aria-label="Market pulse" className="rounded-2xl bg-wrap px-4 py-3.5 sm:px-5">
       {/* header */}
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <span className="flex items-center gap-2 text-[13px] font-semibold text-d-text-primary">
@@ -175,16 +173,16 @@ export default function MarketPulseCard() {
           {pos && (
             <span
               className="inline-flex items-center gap-1.5 rounded-full border border-line px-2.5 py-1 text-[11px]"
-              title={`${pos.label} · long ${pos.long.toLocaleString('en-IN')} / short ${pos.short.toLocaleString('en-IN')} contracts · ${pos.date}`}
+              title={`${pos.label} · long ${num(pos.long)} / short ${num(pos.short)} contracts · ${pos.date}`}
             >
               <span className="font-semibold text-d-text-primary">FII index futures</span>
               <span style={{ color: pos.net >= 0 ? UP : DOWN }}>
-                net {pos.net >= 0 ? 'long' : 'short'} {Math.abs(pos.net).toLocaleString('en-IN')}
+                net {pos.net >= 0 ? 'long' : 'short'} {num(Math.abs(pos.net))}
               </span>
               <span className="numeric text-d-text-muted">{pos.long_share_pct}% long</span>
               {pos.net_delta != null && pos.net_delta !== 0 && (
                 <span className="numeric" style={{ color: pos.net_delta >= 0 ? UP : DOWN }}>
-                  {pos.net_delta > 0 ? '▲' : '▼'} {Math.abs(pos.net_delta).toLocaleString('en-IN')}
+                  {pos.net_delta > 0 ? '▲' : '▼'} {num(Math.abs(pos.net_delta))}
                 </span>
               )}
             </span>
@@ -232,7 +230,7 @@ export default function MarketPulseCard() {
           )}
           <span className="text-d-text-secondary">above 50× <span className="numeric" style={{ color: DOWN }}>{val.pct_above_50x}%</span></span>
           <span className="text-d-text-secondary">below 15× <span className="numeric" style={{ color: UP }}>{val.pct_below_15x}%</span></span>
-          <span className="ml-auto text-[10px] text-d-text-muted">NSE P/E file · {val.coverage.toLocaleString('en-IN')} stocks</span>
+          <span className="ml-auto text-[10px] text-d-text-muted">NSE P/E file · {num(val.coverage)} stocks</span>
         </div>
       )}
     </section>

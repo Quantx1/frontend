@@ -20,6 +20,7 @@ import { Badge, Button } from '@/components/foundation'
 import { api } from '@/lib/api'
 import PayoffDiagram from '@/components/strategy/PayoffDiagram'
 
+import { num } from '@/lib/format'
 interface Leg {
   id: string
   strike: number
@@ -201,7 +202,7 @@ export default function PayoffCalculator() {
           <footer className="flex items-center justify-between border-t border-line px-3 py-2 text-[11px]">
             <span className="text-d-text-muted">Net premium</span>
             <span className={`font-mono tabular-nums ${netPremium >= 0 ? 'text-up' : 'text-down'}`}>
-              {netPremium >= 0 ? '+' : ''}₹{Math.abs(netPremium).toLocaleString('en-IN')}
+              {netPremium >= 0 ? '+' : ''}₹{num(Math.abs(netPremium))}
             </span>
           </footer>
         </div>

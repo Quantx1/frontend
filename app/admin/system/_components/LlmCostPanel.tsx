@@ -19,6 +19,7 @@ import { CircleDollarSign, Loader2, RefreshCw } from '@/lib/icons'
 
 import { api, handleApiError } from '@/lib/api'
 
+import { num } from '@/lib/format'
 type CostData = Awaited<ReturnType<typeof api.admin.getLlmCost>>
 
 const WINDOWS: { label: string; hours: number }[] = [
@@ -100,7 +101,7 @@ export default function LlmCostPanel() {
           {/* ── Totals strip ── */}
           <div className="grid grid-cols-2 gap-2 mb-4">
             <Metric label="Total spend (USD)" value={`$${data.total.usd.toFixed(4)}`} primary />
-            <Metric label="Calls" value={data.total.calls.toLocaleString('en-IN')} />
+            <Metric label="Calls" value={num(data.total.calls)} />
           </div>
 
           {/* ── By feature ── */}
@@ -126,10 +127,10 @@ export default function LlmCostPanel() {
                         {f.calls}
                       </td>
                       <td className="py-1.5 text-right font-mono tabular-nums text-d-text-muted">
-                        {f.input_tokens.toLocaleString('en-IN')}
+                        {num(f.input_tokens)}
                       </td>
                       <td className="py-1.5 text-right font-mono tabular-nums text-d-text-muted">
-                        {f.output_tokens.toLocaleString('en-IN')}
+                        {num(f.output_tokens)}
                       </td>
                       <td className="py-1.5 text-right font-mono tabular-nums text-primary">
                         ${f.usd.toFixed(4)}

@@ -24,6 +24,7 @@ import type { ButtonVariant, ButtonSize } from '@/components/foundation'
 import { api, handleApiError } from '@/lib/api'
 import QuickTrade from '@/components/dashboard/QuickTrade'
 
+import { numMax } from '@/lib/format'
 interface Props {
   symbol?: string
   currentPrice?: number
@@ -81,7 +82,7 @@ export function TradeTicketButton({
   const summary = pending
     ? `${pending.direction} ${pending.quantity} ${pending.symbol} · ${pending.orderType}${
         pending.orderType === 'LIMIT' && pending.price
-          ? ` ₹${pending.price.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`
+          ? ` ₹${numMax(pending.price, 2)}`
           : ''
       } · ${pending.product}`
     : ''

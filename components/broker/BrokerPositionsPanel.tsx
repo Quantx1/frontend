@@ -27,6 +27,7 @@ import { useBrokerStatus } from '@/lib/hooks/useBrokerStatus'
 import BrokerLock from '@/components/broker/BrokerLock'
 import { api } from '@/lib/api'
 import { MONO } from '@/lib/tokens'
+import { inr as fmtInr, num } from '@/lib/format'
 
 // ── shapes (match the backend /positions + /orders + /margin endpoints) ──────
 interface BrokerPosition {
@@ -54,10 +55,7 @@ interface BrokerOrder {
 }
 
 // ── formatting ───────────────────────────────────────────────────────────────
-const inr = (n: number | null | undefined): string =>
-  n == null || !Number.isFinite(n)
-    ? '—'
-    : `₹${n.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`
+const inr = (n: number | null | undefined): string => fmtInr(n, 2)
 
 /** Map a broker order status to a Badge tone. */
 function statusTone(status: string): Tone {
@@ -131,7 +129,7 @@ export function BrokerPositionsPanel({ className = '' }: { className?: string })
       align: 'right',
       sortable: true,
       sortValue: (r) => r.quantity,
-      cell: (r) => <span className={MONO}>{r.quantity.toLocaleString('en-IN')}</span>,
+      cell: (r) => <span className={MONO}>{num(r.quantity)}</span>,
     },
     {
       key: 'average_price',
@@ -207,8 +205,8 @@ export function BrokerPositionsPanel({ className = '' }: { className?: string })
       align: 'right',
       cell: (r) => (
         <span className={MONO}>
-          {Number(r.filled_quantity ?? 0).toLocaleString('en-IN')}/
-          {Number(r.quantity ?? 0).toLocaleString('en-IN')}
+          {num(Number(r.filled_quantity ?? 0))}/
+          {num(Number(r.quantity ?? 0))}
         </span>
       ),
     },

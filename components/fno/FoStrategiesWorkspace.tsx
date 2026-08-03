@@ -52,6 +52,7 @@ import {
 import OptionsCopilotCard from '@/components/fno/OptionsCopilotCard'
 import { api, handleApiError, type FoStrategyProposal } from '@/lib/api'
 import { AI } from '@/lib/tokens'
+import { inrSigned, num, numMax } from '@/lib/format'
 
 const SWR_RECS = {
   revalidateOnFocus: false,
@@ -66,14 +67,10 @@ const SWR_POSITIONS = {
   keepPreviousData: true,
 }
 
-const fmtInr = (n: number | null | undefined, decimals = 0) => {
-  if (n == null) return '—'
-  const sign = n < 0 ? '-' : n > 0 ? '+' : ''
-  return `${sign}₹${Math.abs(n).toLocaleString('en-IN', { maximumFractionDigits: decimals })}`
-}
+const fmtInr = (n: number | null | undefined, decimals = 0) => inrSigned(n, decimals)
 
 const fmtInrAbs = (n: number | null | undefined, decimals = 0) =>
-  n == null ? '—' : `₹${Math.abs(n).toLocaleString('en-IN', { maximumFractionDigits: decimals })}`
+  n == null ? '—' : `₹${numMax(Math.abs(n), decimals)}`
 
 const fmtPct = (n: number | null | undefined, decimals = 1) =>
   n == null ? '—' : `${n >= 0 ? '+' : ''}${n.toFixed(decimals)}%`
@@ -666,7 +663,7 @@ export function FoStrategiesWorkspace() {
                 placeholder="e.g. 'I think Nifty will stay range-bound between 23800-24300 this week. Want defined risk, prefer collecting premium.'"
                 rows={3}
                 maxLength={600}
-                className="w-full resize-none rounded-[14px] bg-transparent px-3 py-2 text-sm text-d-text-primary outline-none placeholder:text-d-text-muted"
+                className="w-full resize-none rounded-xl bg-transparent px-3 py-2 text-sm text-d-text-primary outline-none placeholder:text-d-text-muted"
               />
             </div>
             <p className="mt-1 text-[10px] text-d-text-muted">
@@ -1464,7 +1461,7 @@ function OptionChainPanel() {
         </Button>
         <span className="ml-auto flex items-center gap-3 font-mono text-[10px] text-d-text-muted">
           {data?.spot && (
-            <span>Spot ₹{data.spot.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>
+            <span>Spot ₹{numMax(data.spot, 2)}</span>
           )}
           {data?.rows[0]?.expiry && <span>Expiry {data.rows[0].expiry}</span>}
         </span>
@@ -2064,7 +2061,7 @@ function TermStructureChart({ symbol }: { symbol: string }) {
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Kpi label="Spot" value={`₹${data.spot.toLocaleString('en-IN')}`} />
+        <Kpi label="Spot" value={`₹${num(data.spot)}`} />
         <Kpi label="Front expiry IV" value={`${rows[0].atmIv.toFixed(1)}%`} />
         <Kpi label="Back expiry IV" value={`${rows[rows.length - 1].atmIv.toFixed(1)}%`} />
         <Kpi
@@ -2233,7 +2230,7 @@ function VolConeChart({ symbol }: { symbol: string }) {
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Kpi
           label="Symbol"
-          value={`${data.symbol} · spot ₹${data.spot.toLocaleString('en-IN')}`}
+          value={`${data.symbol} · spot ₹${num(data.spot)}`}
         />
         <Kpi
           label="Sample size"
@@ -2471,7 +2468,7 @@ function AdjustmentButton({ position }: { position: any }) {
           onClick={() => !loading && setOpen(false)}
         >
           <div
-            className="w-full max-w-2xl max-h-[80vh] overflow-y-auto rounded-[20px] border border-line bg-main p-5 shadow-2xl"
+            className="w-full max-w-2xl max-h-[80vh] overflow-y-auto rounded-2xl border border-line bg-main p-5 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-line pb-3">

@@ -25,6 +25,7 @@ import { EyebrowMono, Sparkline } from '@/components/foundation'
 import { MONO } from '@/lib/tokens'
 import type { CopilotArtifact, ArtifactCta, ArtifactTone } from '@/lib/api'
 
+import { num, numMax } from '@/lib/format'
 const artTone = (tone?: ArtifactTone) =>
   tone === 'up' ? 'text-up' : tone === 'down' ? 'text-down' : 'text-d-text-primary'
 const artBarBg = (tone?: ArtifactTone) =>
@@ -80,7 +81,7 @@ export function ArtifactCard({ a }: { a: CopilotArtifact }) {
         </div>
         {a.last != null && (
           <div className={`mt-1 text-[13px] ${MONO} text-d-text-primary`}>
-            ₹{a.last.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+            ₹{numMax(a.last, 2)}
           </div>
         )}
         <ArtifactCtaChip cta={a.cta} />
@@ -131,7 +132,7 @@ export function ArtifactCard({ a }: { a: CopilotArtifact }) {
                   borderRadius: 6, fontSize: 11, padding: '4px 8px',
                 }}
                 labelFormatter={() => ''}
-                formatter={(v: number | string) => [`${a.yLabel ?? ''}${Number(v).toLocaleString('en-IN', { maximumFractionDigits: 2 })}`, '']}
+                formatter={(v: number | string) => [`${a.yLabel ?? ''}${numMax(Number(v), 2)}`, '']}
               />
               <Area type="monotone" dataKey="v" stroke={stroke} strokeWidth={1.75} fill={`url(#${gid})`} isAnimationActive={false} />
             </AreaChart>
@@ -139,7 +140,7 @@ export function ArtifactCard({ a }: { a: CopilotArtifact }) {
         </div>
         {a.last != null && (
           <div className={`mt-1 text-[13px] ${MONO} text-d-text-primary`}>
-            {a.yLabel ?? ''}{a.last.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+            {a.yLabel ?? ''}{numMax(a.last, 2)}
           </div>
         )}
         <ArtifactCtaChip cta={a.cta} />
@@ -260,7 +261,7 @@ export function ArtifactCard({ a }: { a: CopilotArtifact }) {
                 cursor={{ stroke: 'var(--color-line)' }}
                 contentStyle={{ background: 'var(--color-wrap)', border: '1px solid var(--color-line)', borderRadius: 6, fontSize: 11, padding: '4px 8px' }}
                 labelFormatter={(l) => `At ${Number(l).toFixed(0)}`}
-                formatter={(val: number | string) => [`${Number(val) >= 0 ? '+' : ''}₹${Number(val).toLocaleString('en-IN')}`, 'P&L']}
+                formatter={(val: number | string) => [`${Number(val) >= 0 ? '+' : ''}₹${num(Number(val))}`, 'P&L']}
               />
               <Line type="monotone" dataKey="y" stroke="var(--color-up)" strokeWidth={1.75} dot={false} isAnimationActive={false} />
             </LineChart>
@@ -268,8 +269,8 @@ export function ArtifactCard({ a }: { a: CopilotArtifact }) {
         </div>
         {(a.maxProfit != null || a.maxLoss != null) && (
           <div className={`mt-1 flex justify-between text-[11px] ${MONO}`}>
-            <span className="text-up">max +₹{Number(a.maxProfit ?? 0).toLocaleString('en-IN')}</span>
-            <span className="text-down">max −₹{Math.abs(Number(a.maxLoss ?? 0)).toLocaleString('en-IN')}</span>
+            <span className="text-up">max +₹{num(Number(a.maxProfit ?? 0))}</span>
+            <span className="text-down">max −₹{num(Math.abs(Number(a.maxLoss ?? 0)))}</span>
           </div>
         )}
         <ArtifactCtaChip cta={a.cta} />

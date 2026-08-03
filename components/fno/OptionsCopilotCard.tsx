@@ -23,6 +23,7 @@ import {
 
 import { api, type FnoStrategy } from '@/lib/api'
 
+import { numMax } from '@/lib/format'
 const SYMBOLS = ['NIFTY', 'BANKNIFTY', 'FINNIFTY'] as const
 type CopilotSymbol = (typeof SYMBOLS)[number]
 
@@ -149,7 +150,7 @@ export default function OptionsCopilotCard() {
               )}
               {data.facts.max_pain != null && (
                 <span className="rounded-md border border-line bg-main px-2 py-0.5">
-                  Max Pain · {data.facts.max_pain.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                  Max Pain · {numMax(data.facts.max_pain, 0)}
                 </span>
               )}
               {data.facts.days_to_expiry != null && (

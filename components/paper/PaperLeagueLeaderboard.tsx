@@ -11,6 +11,7 @@
 import { Medal, Crown } from '@/lib/icons'
 import { MONO } from '@/lib/tokens'
 
+import { numMax } from '@/lib/format'
 interface Row {
   rank: number
   handle: string
@@ -27,14 +28,14 @@ interface Props {
 export default function PaperLeagueLeaderboard({ rows, currentUserHandle }: Props) {
   if (!rows.length) {
     return (
-      <div className="rounded-[20px] border border-line bg-wrap text-[12px] text-d-text-muted text-center py-6">
+      <div className="rounded-2xl border border-line bg-wrap text-[12px] text-d-text-muted text-center py-6">
         League opens at the end of the first week. Keep paper-trading.
       </div>
     )
   }
 
   return (
-    <div className="rounded-[20px] border border-line bg-wrap overflow-hidden">
+    <div className="rounded-2xl border border-line bg-wrap overflow-hidden">
       <div className="px-5 py-3 border-b border-line flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Crown className="w-3.5 h-3.5 text-primary" />
@@ -76,7 +77,7 @@ export default function PaperLeagueLeaderboard({ rows, currentUserHandle }: Prop
                     {r.return_pct >= 0 ? '+' : ''}{r.return_pct.toFixed(2)}%
                   </td>
                   <td className={`px-5 py-2.5 text-right ${MONO} text-d-text-primary`}>
-                    ₹{r.final_equity.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                    ₹{numMax(r.final_equity, 0)}
                   </td>
                 </tr>
               )

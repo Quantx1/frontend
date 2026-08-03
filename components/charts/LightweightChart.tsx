@@ -43,6 +43,7 @@ import {
 } from 'lightweight-charts'
 
 import { api } from '@/lib/api'
+import { qtyCompact } from '@/lib/format'
 
 interface Props {
   symbol: string                       // raw NSE/BSE ticker
@@ -197,8 +198,7 @@ function snapToBar(dateStr: string, bars: OHLCBar[]): string | null {
   return best
 }
 
-const fmtVol = (v: number): string =>
-  v >= 1e7 ? `${(v / 1e7).toFixed(2)}Cr` : v >= 1e5 ? `${(v / 1e5).toFixed(2)}L` : v >= 1e3 ? `${(v / 1e3).toFixed(1)}K` : String(v)
+const fmtVol = (v: number): string => qtyCompact(v)
 
 /** Paint the TradingView-style OHLC legend straight into the DOM (safe
  *  createElement/textContent nodes only) so mousemove never re-renders

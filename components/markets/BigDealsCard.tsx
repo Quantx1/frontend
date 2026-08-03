@@ -14,8 +14,9 @@ import Link from 'next/link'
 import { Landmark } from '@/lib/icons'
 import { api } from '@/lib/api'
 import { MONO } from '@/lib/tokens'
+import { num, qtyCompact } from '@/lib/format'
 
-const fmtQty = (q: number) => (q >= 1e7 ? `${(q / 1e7).toFixed(1)}Cr` : q >= 1e5 ? `${(q / 1e5).toFixed(1)}L` : q.toLocaleString('en-IN'))
+const fmtQty = (q: number) => qtyCompact(q)
 
 export default function BigDealsCard() {
   const { data, isLoading } = useSWR(
@@ -33,11 +34,11 @@ export default function BigDealsCard() {
     return perSymbol[d.symbol] <= 2
   })
   const actions = data?.corporate_actions ?? []
-  if (isLoading && !data) return <Skeleton h="160px" rounded="lg" className="rounded-[20px]" />
+  if (isLoading && !data) return <Skeleton h="160px" rounded="lg" className="rounded-2xl" />
   if (!deals.length && !actions.length) return null
 
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-[20px] bg-wrap">
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl bg-wrap">
       <div className="flex items-center justify-between border-b border-line px-4 py-2.5">
         <span className="flex items-center gap-2 text-[12px] font-semibold text-d-text-primary">
           <Landmark className="h-3.5 w-3.5 text-primary" /> Big deals
@@ -63,8 +64,8 @@ export default function BigDealsCard() {
               </div>
               <span className={`text-[11px] font-semibold ${d.side === 'BUY' ? 'text-up' : 'text-down'}`}>{d.side}</span>
               <span className={`text-right text-[11px] ${MONO} text-d-text-secondary`}>
-                ₹{d.value_cr.toLocaleString('en-IN')} Cr
-                <span className="block text-[9.5px] text-d-text-muted">{fmtQty(d.qty)} @ {d.price.toLocaleString('en-IN')}</span>
+                ₹{num(d.value_cr)} Cr
+                <span className="block text-[9.5px] text-d-text-muted">{fmtQty(d.qty)} @ {num(d.price)}</span>
               </span>
             </Link>
           ))}

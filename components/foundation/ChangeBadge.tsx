@@ -19,6 +19,7 @@ import * as React from 'react'
 import { ArrowDown, ArrowUp } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 
+import { num, numMax } from '@/lib/format'
 export type ChangeKind = 'percent' | 'currency-inr' | 'plain'
 
 interface Props {
@@ -41,9 +42,9 @@ const format = (value: number, kind: ChangeKind): string => {
   }
   if (kind === 'currency-inr') {
     // Indian numbering (lakh/crore separators)
-    return `${sign}₹${abs.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`
+    return `${sign}₹${numMax(abs, 2)}`
   }
-  return `${sign}${abs.toLocaleString('en-IN')}`
+  return `${sign}${num(abs)}`
 }
 
 const SIZE_CLASSES = {

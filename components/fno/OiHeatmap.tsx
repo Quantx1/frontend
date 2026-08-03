@@ -20,6 +20,7 @@ import { api, handleApiError } from '@/lib/api'
 import { useBrokerStatus } from '@/lib/hooks/useBrokerStatus'
 import BrokerLock, { OptionChainPreview } from '@/components/broker/BrokerLock'
 
+import { num, numMax } from '@/lib/format'
 const INDICES = ['NIFTY', 'BANKNIFTY', 'FINNIFTY', 'MIDCPNIFTY'] as const
 
 export default function OiHeatmap() {
@@ -58,7 +59,7 @@ export default function OiHeatmap() {
         <div className="ml-auto flex items-center gap-2 text-[11px] text-d-text-muted">
           {data && (
             <>
-              <Badge tone="muted">Spot ₹{data.spot.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</Badge>
+              <Badge tone="muted">Spot ₹{numMax(data.spot, 2)}</Badge>
               <Badge tone="muted">{data.strike_count} strikes</Badge>
             </>
           )}
@@ -124,7 +125,7 @@ export default function OiHeatmap() {
                   </div>
                   {/* Strike */}
                   <div className="text-center font-mono font-medium tabular-nums">
-                    {r.strike.toLocaleString('en-IN')}
+                    {num(r.strike)}
                   </div>
                   {/* Call OI — red, left-aligned bar */}
                   <div className="relative flex h-5 items-center">

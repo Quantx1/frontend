@@ -30,6 +30,7 @@ import { MONO } from '@/lib/tokens'
 import PayoffDiagram from '@/components/strategy/PayoffDiagram'
 import type { DSLBacktestResult, DSLStrategy, LegSpec, UserStrategy } from '@/types/strategies'
 
+import { num } from '@/lib/format'
 type BuilderPhase = 'idle' | 'compiling' | 'preview' | 'backtesting' | 'backtested'
 type DeployMode = 'paper' | 'live'
 
@@ -95,7 +96,7 @@ function toPayoffLegs(legs: LegSpec[]): PayoffLeg[] {
 
 // ── Margin estimate ─────────────────────────────────────────────────────
 function formatRupees(n: number): string {
-  return `₹${Math.round(n).toLocaleString('en-IN')}`
+  return `₹${num(Math.round(n))}`
 }
 
 interface MarginEstimate {

@@ -37,6 +37,7 @@ import TradePatternsCard from '@/components/journal/TradePatternsCard'
 import TradeReviewCard from '@/components/journal/TradeReviewCard'
 import { MONO } from '@/lib/tokens'
 
+import { numMax } from '@/lib/format'
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
 /* ------------------------------------------------------------------ */
@@ -254,7 +255,7 @@ export default function TradesPage() {
       label: 'Total P&L',
       value: (
         <span className={totalPnL >= 0 ? 'text-up' : 'text-down'}>
-          {`${totalPnL >= 0 ? '+' : ''}₹${totalPnL.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`}
+          {`${totalPnL >= 0 ? '+' : ''}₹${numMax(totalPnL, 0)}`}
         </span>
       ),
     },
@@ -530,7 +531,7 @@ export default function TradesPage() {
                     <div className="col-span-2 text-right">
                       <span className={`text-sm font-bold ${MONO} ${trade.pnl >= 0 ? 'text-up' : 'text-down'}`}>
                         {trade.pnl >= 0 ? '+' : ''}
-                        ₹{trade.pnl.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                        ₹{numMax(trade.pnl, 0)}
                       </span>
                       <span className={`flex items-center justify-end gap-0.5 text-xs ${MONO} mt-0.5 ${trade.pnl >= 0 ? 'text-up' : 'text-down'}`}>
                         {trade.pnl >= 0 ? (
@@ -583,7 +584,7 @@ export default function TradesPage() {
                       <div className="text-right">
                         <div className={`text-sm font-bold ${MONO} ${trade.pnl >= 0 ? 'text-up' : 'text-down'}`}>
                           {trade.pnl >= 0 ? '+' : ''}
-                          ₹{trade.pnl.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                          ₹{numMax(trade.pnl, 0)}
                         </div>
                         <div className={`text-xs ${MONO} ${trade.pnl >= 0 ? 'text-up' : 'text-down'}`}>
                           {trade.pnl >= 0 ? '+' : ''}

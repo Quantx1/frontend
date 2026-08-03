@@ -30,23 +30,17 @@ import {
 import { api } from '@/lib/api'
 import { useBrokerStatus } from '@/lib/hooks/useBrokerStatus'
 import BrokerLock, { OptionChainPreview } from '@/components/broker/BrokerLock'
+import { num, numMax, qtyCompact } from '@/lib/format'
 
 type EodData = Awaited<ReturnType<typeof api.screener.fnoEod>>
 type ParticipantsData = Awaited<ReturnType<typeof api.screener.fnoParticipants>>
 type BanData = Awaited<ReturnType<typeof api.screener.fnoBan>>
 
 // ── helpers ─────────────────────────────────────────────────────────
-const fmtOi = (n: number | null | undefined): string => {
-  if (n == null) return '—'
-  const a = Math.abs(n)
-  if (a >= 1e7) return `${(n / 1e7).toFixed(2)}Cr`
-  if (a >= 1e5) return `${(n / 1e5).toFixed(2)}L`
-  if (a >= 1e3) return `${(n / 1e3).toFixed(1)}k`
-  return `${n}`
-}
+const fmtOi = (n: number | null | undefined): string => qtyCompact(n)
 
 const fmtNum = (n: number | null | undefined): string =>
-  n == null ? '—' : n.toLocaleString('en-IN', { maximumFractionDigits: 2 })
+  n == null ? '—' : numMax(n, 2)
 
 // PCR → tone bucket. <0.8 call-heavy (bullish-leaning), 0.8–1.2 neutral,
 // >1.2 put-heavy (bearish-leaning / hedged).
@@ -447,7 +441,7 @@ export default function DerivativesAnalysis() {
                             isSup ? 'text-up' : isRes ? 'text-down' : 'text-d-text-primary'
                           }`}
                         >
-                          {r.strike.toLocaleString('en-IN')}
+                          {num(r.strike)}
                         </div>
                         {/* CE bar — red, grows rightward */}
                         <div className="relative flex h-4 items-center">
@@ -468,19 +462,19 @@ export default function DerivativesAnalysis() {
                 <div className="mt-3 flex flex-wrap gap-2 border-t border-d-border pt-2.5 text-[10.5px]">
                   {topPe && (
                     <span className="inline-flex items-center gap-1 rounded-md bg-up/10 px-2 py-0.5 font-medium text-up">
-                      Support {topPe.strike.toLocaleString('en-IN')}
+                      Support {num(topPe.strike)}
                     </span>
                   )}
                   {topCe && (
                     <span className="inline-flex items-center gap-1 rounded-md bg-down/10 px-2 py-0.5 font-medium text-down">
-                      Resistance {topCe.strike.toLocaleString('en-IN')}
+                      Resistance {num(topCe.strike)}
                     </span>
                   )}
                 </div>
 
                 <Plain show={beginner}>
-                  Biggest support <strong>{topPe ? topPe.strike.toLocaleString('en-IN') : '—'}</strong> (put writers),
-                  biggest resistance <strong>{topCe ? topCe.strike.toLocaleString('en-IN') : '—'}</strong> (call
+                  Biggest support <strong>{topPe ? num(topPe.strike) : '—'}</strong> (put writers),
+                  biggest resistance <strong>{topCe ? num(topCe.strike) : '—'}</strong> (call
                   writers).
                 </Plain>
               </>

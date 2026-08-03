@@ -58,6 +58,7 @@ import { DataBadge } from '@/components/common/DataBadge'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import { SymbolLogo } from '@/components/ui/BrandLogo'
 import { dispatchCopilotOpen } from '@/components/copilot/CopilotProvider'
+import { inr, inrCrore, numMax, qtyCompact } from '@/lib/format'
 
 // Lightweight Charts (PR-S16) — TradingView free embed paywall'd NSE data,
 // so we switched to TV's self-hostable Lightweight Charts library fed by our
@@ -67,7 +68,7 @@ const TradingViewWidget = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="flex h-[520px] w-full items-center justify-center rounded-[20px] border border-line bg-wrap text-d-text-muted">
+      <div className="flex h-[520px] w-full items-center justify-center rounded-2xl border border-line bg-wrap text-d-text-muted">
         <div className="flex flex-col items-center gap-3">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
           <p className="font-mono text-[11px] uppercase tracking-wider">Loading chart…</p>
@@ -128,16 +129,9 @@ interface TechnicalData {
   volume_ratio: number
 }
 
-const fmtInr = (n?: number | null, decimals = 0) =>
-  n == null ? '—' : `₹${n.toLocaleString('en-IN', { maximumFractionDigits: decimals })}`
+const fmtInr = (n?: number | null, decimals = 0) => inr(n, decimals)
 
-const fmtCompact = (n?: number | null) => {
-  if (n == null) return '—'
-  if (n >= 1e7) return `${(n / 1e7).toFixed(2)} Cr`
-  if (n >= 1e5) return `${(n / 1e5).toFixed(2)} L`
-  if (n >= 1e3) return `${(n / 1e3).toFixed(1)} K`
-  return n.toLocaleString('en-IN')
-}
+const fmtCompact = (n?: number | null) => qtyCompact(n)
 
 export default function StockTerminalPage() {
   const params = useParams()
@@ -360,7 +354,7 @@ export default function StockTerminalPage() {
             {stockData && (
               <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
                 <span className="font-mono text-3xl font-semibold tabular-nums text-d-text-primary">
-                  ₹{stockData.price.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+                  ₹{numMax(stockData.price, 2)}
                 </span>
                 <span className={`font-mono text-base font-medium tabular-nums ${up ? 'text-up' : 'text-down'}`}>
                   {up ? '+' : ''}
@@ -418,12 +412,9 @@ export default function StockTerminalPage() {
                   label="Mkt Cap"
                   value={
                     fnd?.market_cap_cr
-                      ? fnd.market_cap_cr >= 1e5
-                        ? `₹${(fnd.market_cap_cr / 1e5).toFixed(2)} L Cr`
-                        : `₹${fnd.market_cap_cr.toLocaleString('en-IN', { maximumFractionDigits: 0 })} Cr`
-                      : stockData.market_cap
-                        ? `₹${(stockData.market_cap / 1e7).toLocaleString('en-IN', { maximumFractionDigits: 0 })} Cr`
-                        : '—'
+                      ? inrCrore(fnd.market_cap_cr)
+                      // Fallback payload is in RUPEES — convert to crore first.
+                      : inrCrore(stockData.market_cap ? stockData.market_cap / 1e7 : null)
                   }
                 />
                 {/* pe_ratio comes back 0 when the source has no P/E — treat as missing */}

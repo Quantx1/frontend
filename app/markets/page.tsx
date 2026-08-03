@@ -33,10 +33,11 @@ import { IndexStrip } from '@/components/markets/IndexStrip'
 import { RegimeGauge, regimeToScore } from '@/components/markets/RegimeGauge'
 import { MoversColumns, type Mover } from '@/components/markets/MoversColumns'
 import { SectorHeatmap } from '@/components/markets/SectorHeatmap'
+import { numMax, timeAgo as sharedTimeAgo } from '@/lib/format'
 
 const cap = (s?: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : '--')
 const pct = (n?: number | null, d = 2) => (n == null || Number.isNaN(n) ? '--' : `${n >= 0 ? '+' : ''}${n.toFixed(d)}%`)
-const num = (n?: number | null) => (n == null || Number.isNaN(n) ? '--' : n.toLocaleString('en-IN', { maximumFractionDigits: 2 }))
+const num = (n?: number | null) => (n == null || Number.isNaN(n) ? '--' : numMax(n, 2))
 const SWR_OPTS = { revalidateOnFocus: false, dedupingInterval: 30_000 }
 
 /** Impact-first headline order: big stories first, newest first within a tier. */
@@ -47,16 +48,12 @@ const headlineOrder = (items: any[]) =>
   })
 
 /** Compact relative timestamp ("42m ago" / "3h ago"); null when unknown. */
+// Delegates to lib/format; keeps this call site's `null` contract so the
+// caller's conditional rendering is unchanged.
 const timeAgo = (iso?: string | null) => {
   if (!iso) return null
-  const ms = Date.now() - new Date(iso).getTime()
-  if (!Number.isFinite(ms) || ms < 0) return null
-  const m = Math.round(ms / 60_000)
-  if (m < 1) return 'now'
-  if (m < 60) return `${m}m ago`
-  const h = Math.round(m / 60)
-  if (h < 24) return `${h}h ago`
-  return `${Math.round(h / 24)}d ago`
+  const out = sharedTimeAgo(iso)
+  return out === '—' ? null : out
 }
 
 /**
@@ -68,9 +65,9 @@ const timeAgo = (iso?: string | null) => {
  */
 function MarketDataGate() {
   return (
-    <div className="lg-surface lg-ring flex flex-col gap-4 rounded-[24px] p-5 sm:flex-row sm:items-center sm:justify-between md:p-6">
+    <div className="lg-surface lg-ring flex flex-col gap-4 rounded-2xl p-5 sm:flex-row sm:items-center sm:justify-between md:p-6">
       <div className="flex min-w-0 items-start gap-3.5">
-        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[14px] bg-primary/15 text-primary"><Zap size={20} /></span>
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary/15 text-primary"><Zap size={20} /></span>
         <div className="min-w-0">
           <h2 className="text-[15px] font-semibold text-d-text-primary">Live NSE prices &amp; flows — from your broker</h2>
           <p className="mt-1 max-w-xl text-[12.5px] leading-relaxed text-d-text-muted">
@@ -204,7 +201,7 @@ export default function MarketsPage() {
              stat tiles or global strip. ── */}
         <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-12">
           <Reveal delay={0.03} className="h-full lg:col-span-4">
-            <Card className="flex h-full min-h-[240px] flex-col rounded-[20px] border-0 p-4">
+            <Card className="flex h-full min-h-[240px] flex-col rounded-2xl border-0 p-4">
               <div className="flex items-center gap-2 text-[13px] font-semibold text-d-text-primary"><LineChart size={14} className="text-primary" /> Regime gauge</div>
               <div className="flex flex-1 flex-col items-center justify-center py-4">
                 <RegimeGauge score={gaugeScore} caption={cur ? `Regime ${cap(cur.regime)} · ${regimeConf}% confidence` : undefined} size="lg" />
@@ -213,7 +210,7 @@ export default function MarketsPage() {
           </Reveal>
 
           <Reveal delay={0.05} className="h-full lg:col-span-8">
-            <Card className="flex h-full min-h-[240px] flex-col rounded-[20px] border-0 p-4">
+            <Card className="flex h-full min-h-[240px] flex-col rounded-2xl border-0 p-4">
               <div className="mb-3 flex items-center gap-2 text-[12px] font-semibold text-d-text-primary"><Grid3x3 size={14} className="text-primary" /> Sector heatmap<span className="text-[10.5px] font-normal text-d-text-muted">every NSE sector, ranked by avg change</span></div>
               {sectorList.length ? (
                 <SectorHeatmap sectors={sectorList as any} max={12} />
@@ -258,7 +255,7 @@ export default function MarketsPage() {
           <Reveal delay={0.12} className="h-full lg:col-span-4"><SectorRotationCard /></Reveal>
 
           <Reveal delay={0.14} className="h-full lg:col-span-4">
-            <Card id="top-headlines" className="flex h-full scroll-mt-24 flex-col rounded-[20px] border-0 p-4">
+            <Card id="top-headlines" className="flex h-full scroll-mt-24 flex-col rounded-2xl border-0 p-4">
               <div className="flex items-center justify-between gap-2 text-[12px] font-semibold text-d-text-primary">
                 <span className="flex items-center gap-2"><Newspaper size={14} className="text-highlight" /> Top headlines</span>
                 <span className="text-[10px] font-normal text-d-text-muted">live · RSS · impact-ranked</span>

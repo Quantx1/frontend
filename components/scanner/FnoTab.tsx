@@ -35,6 +35,7 @@ import OptionsFlowCard from '@/components/fno/OptionsFlowCard'
 import { api, handleApiError, type FnoIndexSnapshot, type FnoStrategy } from '@/lib/api'
 import OptionsCopilotCard from '@/components/fno/OptionsCopilotCard'
 
+import { numMax } from '@/lib/format'
 const INDICES = ['NIFTY', 'BANKNIFTY', 'FINNIFTY', 'MIDCPNIFTY'] as const
 
 const PCR_TAG_TONE: Record<string, string> = {
@@ -155,7 +156,7 @@ export default function FnoTab() {
 
       {/* Options Teacher — deterministic plain-English read (0 LLM tokens) */}
       {detail?.teach?.length ? (
-        <section className="rounded-[20px] border border-line bg-wrap p-4">
+        <section className="rounded-2xl border border-line bg-wrap p-4">
           <div className="mb-2 flex items-center gap-2">
             <Sparkles className="h-3.5 w-3.5 text-primary" />
             <h3 className="text-[12px] font-semibold text-d-text-primary">
@@ -239,14 +240,14 @@ function SnapshotCard({
 }) {
   if (loading) {
     return (
-      <div className="rounded-[20px] border border-line bg-wrap p-4">
+      <div className="rounded-2xl border border-line bg-wrap p-4">
         <Skeleton w="100%" h="120px" />
       </div>
     )
   }
   if (!snap) {
     return (
-      <div className="rounded-[20px] border border-line bg-wrap p-4 opacity-60">
+      <div className="rounded-2xl border border-line bg-wrap p-4 opacity-60">
         <p className="text-xs font-medium text-d-text-primary">{symbol}</p>
         <p className="mt-1 text-[10px] text-d-text-muted">Snapshot unavailable.</p>
       </div>
@@ -257,7 +258,7 @@ function SnapshotCard({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-[20px] border bg-wrap p-4 text-left transition-colors ${
+      className={`rounded-2xl border bg-wrap p-4 text-left transition-colors ${
         isSelected ? 'border-primary bg-primary/5' : 'border-line hover:border-wrap-line'
       }`}
     >
@@ -266,7 +267,7 @@ function SnapshotCard({
         <span className="font-mono text-[10px] text-d-text-muted">{snap.days_to_expiry ?? '—'} DTE</span>
       </div>
       <p className="mt-1 font-mono text-lg font-medium tabular-nums text-d-text-primary">
-        ₹{snap.spot.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+        ₹{numMax(snap.spot, 2)}
       </p>
       <div className="mt-2 grid grid-cols-2 gap-2 text-[11px]">
         <div>
@@ -279,7 +280,7 @@ function SnapshotCard({
         <div>
           <p className="text-[9px] uppercase tracking-wider text-d-text-muted">Max Pain</p>
           <p className="font-mono tabular-nums">
-            {snap.max_pain != null ? snap.max_pain.toLocaleString('en-IN', { maximumFractionDigits: 0 }) : '—'}
+            {snap.max_pain != null ? numMax(snap.max_pain, 0) : '—'}
           </p>
           {snap.max_pain_distance_pct != null && (
             <p className={`font-mono text-[10px] ${snap.max_pain_distance_pct > 0 ? 'text-down' : 'text-up'}`}>
@@ -337,7 +338,7 @@ function StrategyRow({ s }: { s: FnoStrategy }) {
       : s.confidence === 'medium' ? 'border-primary/60 bg-primary/5 text-primary'
         : 'border-line bg-main text-d-text-muted'
   return (
-    <li className="rounded-[20px] border border-line bg-wrap p-4">
+    <li className="rounded-2xl border border-line bg-wrap p-4">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <div className="flex items-center gap-2">
           {biasIcon}

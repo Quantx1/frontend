@@ -25,6 +25,7 @@ import {
 import { Badge, Button, EmptyState, Skeleton } from '@/components/foundation'
 import { api, handleApiError } from '@/lib/api'
 
+import { num } from '@/lib/format'
 interface OiRow {
   symbol: string
   change_pct: number
@@ -66,12 +67,12 @@ export default function FnoStockScanners() {
   return (
     <div className="space-y-4">
       {/* FII/DII header strip */}
-      <div className="flex flex-wrap items-center gap-3 rounded-[20px] border border-line bg-wrap/60 px-3 py-2 text-xs">
+      <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-wrap/60 px-3 py-2 text-xs">
         <span className="text-[10px] font-semibold uppercase tracking-wider text-d-text-muted">Institutional flow</span>
         {data ? (
           <>
-            <span>FII <span className={`font-mono tabular-nums ${fiiTone}`}>{data.fii_dii.fii_net >= 0 ? '+' : ''}{data.fii_dii.fii_net.toLocaleString('en-IN')} Cr</span></span>
-            <span>DII <span className={`font-mono tabular-nums ${diiTone}`}>{data.fii_dii.dii_net >= 0 ? '+' : ''}{data.fii_dii.dii_net.toLocaleString('en-IN')} Cr</span></span>
+            <span>FII <span className={`font-mono tabular-nums ${fiiTone}`}>{data.fii_dii.fii_net >= 0 ? '+' : ''}{num(data.fii_dii.fii_net)} Cr</span></span>
+            <span>DII <span className={`font-mono tabular-nums ${diiTone}`}>{data.fii_dii.dii_net >= 0 ? '+' : ''}{num(data.fii_dii.dii_net)} Cr</span></span>
             <Badge tone="muted">{data.fii_dii.date ?? 'unknown date'}</Badge>
             <Badge tone={data.fii_dii.source === 'nse_live' ? 'up' : 'muted'}>
               {data.fii_dii.source}
@@ -104,7 +105,7 @@ export default function FnoStockScanners() {
           const rows: OiRow[] = (data?.buckets?.[b.key] ?? []) as OiRow[]
           const count = data?.counts?.[b.key] ?? 0
           return (
-            <div key={b.key} className="rounded-[20px] border border-line bg-wrap">
+            <div key={b.key} className="rounded-2xl border border-line bg-wrap">
               <header className="flex items-center justify-between border-b border-line px-3 py-2">
                 <div className="flex items-center gap-2">
                   <Icon className={`h-4 w-4 ${b.tone}`} />

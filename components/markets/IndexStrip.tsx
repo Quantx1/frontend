@@ -18,6 +18,7 @@ import { ArrowDown, ArrowUp } from '@/lib/icons'
 import { api } from '@/lib/api'
 import { MONO } from '@/lib/tokens'
 
+import { num } from '@/lib/format'
 interface Chip {
   key: string
   label: string
@@ -27,7 +28,7 @@ interface Chip {
 }
 
 const fmt = (n?: number | null, d = 2) =>
-  n == null || Number.isNaN(n) ? '—' : n.toLocaleString('en-IN', { minimumFractionDigits: d, maximumFractionDigits: d })
+  n == null || Number.isNaN(n) ? '—' : num(n, d)
 
 function QuoteChip({ c }: { c: Chip }) {
   const up = (c.change_pct ?? 0) > 0
@@ -83,7 +84,7 @@ export function IndexStrip({
   if (!entitled) return null
 
   return (
-    <div className="overflow-hidden rounded-[24px] bg-wrap p-2" aria-label="Index ticker">
+    <div className="overflow-hidden rounded-2xl bg-wrap p-2" aria-label="Index ticker">
       <div className="flex gap-2 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
         {all.map((c) => <QuoteChip key={c.key} c={c} />)}
       </div>

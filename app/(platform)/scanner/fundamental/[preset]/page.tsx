@@ -31,13 +31,14 @@ import { MONO } from '@/lib/tokens'
 import { findFundamentalPreset } from '@/lib/prebuilt-screeners'
 import { dispatchCopilotOpen } from '@/components/copilot/CopilotProvider'
 import { downloadCsv, printReport } from '@/lib/export'
+import { inrCrore } from '@/lib/format'
 
 type Row = NonNullable<Awaited<ReturnType<typeof api.screener.fundamentalScreen>>>['results'][number]
 
 const fmtNum = (v: number | null, dp = 1, suffix = '') =>
   v == null || Number.isNaN(v) ? '—' : `${v.toFixed(dp)}${suffix}`
-const fmtMcap = (v: number | null) =>
-  v == null ? '—' : v >= 1e5 ? `₹${(v / 1e5).toFixed(2)}L Cr` : v >= 1e3 ? `₹${(v / 1e3).toFixed(1)}K Cr` : `₹${v.toFixed(0)} Cr`
+// Market cap arrives already denominated in ₹ crore.
+const fmtMcap = inrCrore
 
 export default function FundamentalScreenPage() {
   const params = useParams<{ preset: string }>()

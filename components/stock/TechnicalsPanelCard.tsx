@@ -23,6 +23,7 @@ import { Gauge } from '@/lib/icons'
 
 import { api } from '@/lib/api'
 
+import { num } from '@/lib/format'
 const VOTE_CLASS: Record<string, string> = {
   bullish: 'text-up',
   bearish: 'text-down',
@@ -105,11 +106,11 @@ export default function TechnicalsPanelCard({ symbol }: { symbol: string }) {
     { revalidateOnFocus: false, dedupingInterval: 300_000 },
   )
 
-  if (isLoading) return <div className="h-72 animate-pulse rounded-[20px] border border-line bg-wrap" />
+  if (isLoading) return <div className="h-72 animate-pulse rounded-2xl border border-line bg-wrap" />
 
   if (!data || !data.available) {
     return (
-      <div className="rounded-[20px] border border-line bg-wrap px-4 py-3">
+      <div className="rounded-2xl border border-line bg-wrap px-4 py-3">
         <span className="text-[12px] font-semibold text-d-text-primary">Technicals &amp; Levels</span>
         <p className="mt-1 text-[11px] text-d-text-muted">
           Not enough price history to compute the technical panel for {symbol}.
@@ -121,7 +122,7 @@ export default function TechnicalsPanelCard({ symbol }: { symbol: string }) {
   const { summary, oscillators = [], moving_averages: mas = [], pivots, supports = [], resistances = [], week52, atr, candle_patterns: patterns = [] } = data
 
   return (
-    <div className="rounded-[20px] border border-line bg-wrap px-4 py-4">
+    <div className="rounded-2xl border border-line bg-wrap px-4 py-4">
       {/* Header — title + overall technical sentiment */}
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
@@ -167,7 +168,7 @@ export default function TechnicalsPanelCard({ symbol }: { symbol: string }) {
                 <div className="flex items-baseline justify-between gap-2">
                   <span className="text-d-text-secondary">{m.label}</span>
                   <span className="flex items-baseline gap-2 text-right">
-                    <span className="numeric font-medium text-d-text-primary">₹{m.value.toLocaleString('en-IN')}</span>
+                    <span className="numeric font-medium text-d-text-primary">₹{num(m.value)}</span>
                     <span className={`w-[64px] text-[10px] ${VOTE_CLASS[m.vote]}`}>
                       {m.vote === 'bullish' ? 'above' : 'below'} {m.dist_pct >= 0 ? '+' : ''}{m.dist_pct.toFixed(1)}%
                     </span>
@@ -194,7 +195,7 @@ export default function TechnicalsPanelCard({ symbol }: { symbol: string }) {
             {[...resistances].reverse().map((r) => (
               <div key={`r${r.price}`} className="text-[12px]">
                 <div className="flex items-baseline justify-between">
-                  <span className="text-down">R · ₹{r.price.toLocaleString('en-IN')}</span>
+                  <span className="text-down">R · ₹{num(r.price)}</span>
                   <span className="font-mono text-[10px] text-d-text-muted">
                     {r.touches}× · {r.dist_pct >= 0 ? '+' : ''}{r.dist_pct.toFixed(1)}%
                   </span>
@@ -204,7 +205,7 @@ export default function TechnicalsPanelCard({ symbol }: { symbol: string }) {
             ))}
             {data.price != null && (
               <div className="flex items-baseline justify-between border-y border-line py-1 text-[12px]">
-                <span className="font-semibold text-d-text-primary">Price · ₹{data.price.toLocaleString('en-IN')}</span>
+                <span className="font-semibold text-d-text-primary">Price · ₹{num(data.price)}</span>
                 {atr?.pct != null && (
                   <span className="font-mono text-[10px] text-d-text-muted">ATR {atr.pct.toFixed(1)}%/d</span>
                 )}
@@ -213,7 +214,7 @@ export default function TechnicalsPanelCard({ symbol }: { symbol: string }) {
             {supports.map((s) => (
               <div key={`s${s.price}`} className="text-[12px]">
                 <div className="flex items-baseline justify-between">
-                  <span className="text-up">S · ₹{s.price.toLocaleString('en-IN')}</span>
+                  <span className="text-up">S · ₹{num(s.price)}</span>
                   <span className="font-mono text-[10px] text-d-text-muted">
                     {s.touches}× · {s.dist_pct.toFixed(1)}%
                   </span>
@@ -228,14 +229,14 @@ export default function TechnicalsPanelCard({ symbol }: { symbol: string }) {
               <ColHeader>Floor pivots · next session</ColHeader>
               <div className="grid grid-cols-4 gap-x-2 gap-y-0.5 font-mono text-[10px] tabular-nums">
                 <span className="text-d-text-muted">P</span>
-                <span className="col-span-3 text-d-text-primary">₹{pivots.p.toLocaleString('en-IN')}</span>
+                <span className="col-span-3 text-d-text-primary">₹{num(pivots.p)}</span>
                 <span className="text-down">R1·R2</span>
                 <span className="col-span-3 text-d-text-secondary">
-                  ₹{pivots.r1.toLocaleString('en-IN')} · ₹{pivots.r2.toLocaleString('en-IN')}
+                  ₹{num(pivots.r1)} · ₹{num(pivots.r2)}
                 </span>
                 <span className="text-up">S1·S2</span>
                 <span className="col-span-3 text-d-text-secondary">
-                  ₹{pivots.s1.toLocaleString('en-IN')} · ₹{pivots.s2.toLocaleString('en-IN')}
+                  ₹{num(pivots.s1)} · ₹{num(pivots.s2)}
                 </span>
               </div>
             </div>
@@ -243,7 +244,7 @@ export default function TechnicalsPanelCard({ symbol }: { symbol: string }) {
 
           {week52 && (week52.high != null || week52.low != null) && (
             <p className="mt-2 font-mono text-[9px] uppercase tracking-wider text-d-text-muted">
-              52W ₹{week52.low?.toLocaleString('en-IN') ?? '—'} → ₹{week52.high?.toLocaleString('en-IN') ?? '—'}
+              52W ₹{num(week52.low)} → ₹{num(week52.high)}
             </p>
           )}
         </div>

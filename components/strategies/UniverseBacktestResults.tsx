@@ -16,6 +16,7 @@ import { TrendingDown, TrendingUp } from '@/lib/icons'
 import { Badge, Card, CardBody, CardHeader, DataTable, DisclaimerFooter, ErrorState } from '@/components/foundation'
 import { formatPercent } from '@/lib/utils'
 
+import { num } from '@/lib/format'
 interface SymbolRow {
   symbol: string
   status: 'ok'
@@ -121,7 +122,7 @@ export function UniverseBacktestResults({
               {UNIVERSE_LABELS[universe] ?? universe} · {aggregate.symbols_run} stocks
             </p>
             <p className={`mt-1 font-mono text-[34px] font-bold leading-none tabular-nums ${pnlColor}`}>
-              {sign}₹{Math.abs(Math.round(aggregate.total_pnl_inr)).toLocaleString('en-IN')}
+              {sign}₹{num(Math.abs(Math.round(aggregate.total_pnl_inr)))}
             </p>
             <p className={`mt-1 font-mono text-[13px] font-medium tabular-nums ${pnlColor}`}>
               {sign}{Math.abs(aggregate.total_return_pct).toFixed(2)}% portfolio return
@@ -133,7 +134,7 @@ export function UniverseBacktestResults({
               <span>{(aggregate.win_pct * 100).toFixed(0)}% hit rate</span>
             </p>
             <p className="mt-2 text-[11px] text-d-text-muted">
-              ₹{Math.round(aggregate.total_capital_deployed).toLocaleString('en-IN')} total
+              ₹{num(Math.round(aggregate.total_capital_deployed))} total
               capital deployed · {lookback_days}d lookback
             </p>
           </div>
@@ -212,7 +213,7 @@ export function UniverseBacktestResults({
                   const s = r.pnl_inr >= 0 ? '+' : '-'
                   return (
                     <span className={`font-mono text-xs tabular-nums ${color}`}>
-                      {s}₹{Math.abs(Math.round(r.pnl_inr)).toLocaleString('en-IN')}
+                      {s}₹{num(Math.abs(Math.round(r.pnl_inr)))}
                     </span>
                   )
                 },

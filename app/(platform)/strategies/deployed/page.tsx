@@ -47,6 +47,7 @@ import {
 } from '@/components/foundation'
 import { api, handleApiError } from '@/lib/api'
 import { stockHref } from '@/lib/stock-href'
+import { inrSigned, numMax } from '@/lib/format'
 
 const SWR_OPTS = {
   revalidateOnFocus: false,
@@ -55,11 +56,10 @@ const SWR_OPTS = {
   keepPreviousData: true,
 }
 
-const fmtInr = (n: number | undefined | null) => {
-  if (n == null) return '—'
-  const sign = n < 0 ? '-' : n > 0 ? '+' : ''
-  return `${sign}₹${Math.abs(n).toLocaleString('en-IN', { maximumFractionDigits: 0 })}`
-}
+// Delegates to lib/format — one money rule for the whole app.
+// (Was a local signed formatter using a hyphen; lib/format uses U+2212 so
+//  negatives align in tabular-nums columns.)
+const fmtInr = (n: number | undefined | null) => inrSigned(n, 0)
 
 const fmtPct = (n: number | undefined | null) => {
   if (n == null) return '—'
@@ -380,11 +380,11 @@ function StrategyCard({
                     {p.quantity}
                   </span>
                   <span className="col-span-2 text-right font-mono tabular-nums text-d-text-muted">
-                    ₹{p.entry_price.toLocaleString('en-IN', { maximumFractionDigits: 1 })}
+                    ₹{numMax(p.entry_price, 1)}
                   </span>
                   <span className="col-span-2 text-right font-mono tabular-nums text-d-text-primary">
                     {p.current_price
-                      ? `₹${p.current_price.toLocaleString('en-IN', { maximumFractionDigits: 1 })}`
+                      ? `₹${numMax(p.current_price, 1)}`
                       : '—'}
                   </span>
                   <span className={`col-span-3 text-right font-mono tabular-nums ${pnlTone}`}>
@@ -435,7 +435,7 @@ function StrategyCard({
                       {e.symbol}
                     </span>
                     <span className="font-mono text-d-text-muted">
-                      @ ₹{e.price.toLocaleString('en-IN', { maximumFractionDigits: 1 })}
+                      @ ₹{numMax(e.price, 1)}
                     </span>
                     {e.at && (
                       <span className="ml-auto text-[10px] text-d-text-muted">

@@ -14,6 +14,7 @@ import { ArrowLeftRight } from '@/lib/icons'
 
 import { api } from '@/lib/api'
 
+import { num } from '@/lib/format'
 interface Level { price: number; quantity: number; orders: number }
 interface DepthResp {
   depth: { bids: Level[]; asks: Level[]; source: string }
@@ -50,7 +51,7 @@ export default function OrderBookCard({ symbol }: { symbol: string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [symbol])
 
-  if (state === 'loading') return <div className="rounded-[20px] border border-line bg-wrap h-[200px] animate-pulse" />
+  if (state === 'loading') return <div className="rounded-2xl border border-line bg-wrap h-[200px] animate-pulse" />
   if (state === 'empty' || !data) return null // honest: no order book without a live feed
 
   const a = data.analysis
@@ -60,7 +61,7 @@ export default function OrderBookCard({ symbol }: { symbol: string }) {
   const bidPct = Math.round(((a.imbalance + 1) / 2) * 100) // -1..1 -> 0..100
 
   return (
-    <div className="rounded-[20px] border border-line bg-wrap overflow-hidden">
+    <div className="rounded-2xl border border-line bg-wrap overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-line">
         <div className="flex items-center gap-2">
           <ArrowLeftRight className="w-3.5 h-3.5 text-primary" />
@@ -74,9 +75,9 @@ export default function OrderBookCard({ symbol }: { symbol: string }) {
       {/* Imbalance bar */}
       <div className="px-4 pt-3">
         <div className="flex items-center justify-between text-[10px] mb-1">
-          <span style={{ color: UP }}>Bids {a.total_bid_qty.toLocaleString('en-IN')}</span>
+          <span style={{ color: UP }}>Bids {num(a.total_bid_qty)}</span>
           <span className="text-d-text-muted uppercase tracking-wider">{a.pressure.replace('_', ' ')}</span>
-          <span style={{ color: DOWN }}>{a.total_ask_qty.toLocaleString('en-IN')} Asks</span>
+          <span style={{ color: DOWN }}>{num(a.total_ask_qty)} Asks</span>
         </div>
         <div className="h-1.5 rounded-full overflow-hidden flex bg-surface-2">
           <div style={{ width: `${bidPct}%`, background: UP }} />
@@ -112,7 +113,7 @@ function Side({ levels, color, align, maxQty, wall }: {
             />
             <div className={`relative flex items-center justify-between text-[11px] numeric ${align === 'right' ? 'flex-row-reverse' : ''}`}>
               <span style={{ color }} className={isWall ? 'font-bold' : 'font-medium'}>{l.price.toFixed(2)}</span>
-              <span className="text-d-text-secondary">{l.quantity.toLocaleString('en-IN')}{isWall ? ' ◀ wall' : ''}</span>
+              <span className="text-d-text-secondary">{num(l.quantity)}{isWall ? ' ◀ wall' : ''}</span>
             </div>
           </div>
         )

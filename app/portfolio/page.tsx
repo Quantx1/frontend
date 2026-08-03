@@ -52,6 +52,7 @@ import { api } from '@/lib/api'
 import { stockHref } from '@/lib/stock-href'
 import { MONO } from '@/lib/tokens'
 
+import { num, numMax } from '@/lib/format'
 interface Position {
   id: string
   symbol: string
@@ -76,7 +77,7 @@ const PERIOD_TABS = [
 ] as const
 
 const formatInr = (n: number) =>
-  `₹${n.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`
+  `₹${numMax(n, 0)}`
 
 export default function PortfolioPage() {
   const router = useRouter()
@@ -164,7 +165,7 @@ export default function PortfolioPage() {
       sortable: true,
       sortValue: (r) => r.quantity,
       cell: (r) => (
-        <span className={MONO}>{r.quantity.toLocaleString('en-IN')}</span>
+        <span className={MONO}>{num(r.quantity)}</span>
       ),
     },
     {
@@ -277,7 +278,7 @@ export default function PortfolioPage() {
         </Reveal>
 
         {/* ─── KPI strip ─── */}
-        <div className="grid grid-cols-2 gap-2 rounded-[20px] border border-line bg-wrap p-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2 rounded-2xl border border-line bg-wrap p-2 lg:grid-cols-4">
           {KPIS.map((k, i) => (
             <Reveal key={k.label} delay={0.03 * i} className="h-full">
               <div className="tile-tint h-full p-4">
@@ -305,7 +306,7 @@ export default function PortfolioPage() {
 
         {/* ─── Performance chart ─── */}
         <Reveal delay={0.06}>
-          <Card variant="glass" className="overflow-hidden rounded-[20px]">
+          <Card variant="glass" className="overflow-hidden rounded-2xl">
             <div className="flex items-center justify-between border-b border-line px-4 py-3">
               <h2 className="text-sm font-semibold text-d-text-primary">Performance</h2>
               <Tabs value={period} onValueChange={(v) => setPeriod(v as any)}>
@@ -377,7 +378,7 @@ export default function PortfolioPage() {
 
         {/* ─── Positions table ─── */}
         <Reveal delay={0.09}>
-          <Card variant="glass" className="overflow-hidden rounded-[20px]">
+          <Card variant="glass" className="overflow-hidden rounded-2xl">
             <div className="border-b border-line px-4 py-3">
               <h2 className="text-sm font-semibold text-d-text-primary">Positions</h2>
             </div>

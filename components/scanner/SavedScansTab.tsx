@@ -29,6 +29,7 @@ import {
   toast,
 } from '@/components/foundation'
 import { api, handleApiError } from '@/lib/api'
+import { timeAgo as sharedTimeAgo } from '@/lib/format'
 
 const SCHEDULE_LABELS: Record<string, string> = {
   hourly: 'Hourly',
@@ -229,12 +230,6 @@ export default function SavedScansTab() {
   )
 }
 
-function timeAgo(iso: string): string {
-  const ms = Date.now() - new Date(iso).getTime()
-  const min = Math.floor(ms / 60_000)
-  if (min < 1) return 'just now'
-  if (min < 60) return `${min}m ago`
-  const hr = Math.floor(min / 60)
-  if (hr < 24) return `${hr}h ago`
-  return `${Math.floor(hr / 24)}d ago`
-}
+// Delegates to lib/format. The local version had NO invalid-date guard and
+// could render "NaNm ago"; lib/format returns an em dash instead.
+const timeAgo = sharedTimeAgo

@@ -38,6 +38,7 @@ import { BacktestViewer } from '@/components/strategies/BacktestViewer'
 import { DSLPreview } from '@/components/strategies/DSLPreview'
 import { UniverseBacktestResults } from '@/components/strategies/UniverseBacktestResults'
 
+import { num } from '@/lib/format'
 type UniverseValue =
   | 'single' | 'nifty50' | 'nifty100' | 'nifty500'
   | 'sector:IT' | 'sector:BANK' | 'sector:AUTO' | 'sector:PHARMA'
@@ -440,7 +441,7 @@ export default function UserStrategyDetailPage() {
                   </div>
                 </div>
                 <p className="text-[11px] text-d-text-muted">
-                  Total capital = ₹{(btPerSymbol * btMaxSymbols).toLocaleString('en-IN')}.
+                  Total capital = ₹{num((btPerSymbol * btMaxSymbols))}.
                   Universe runs on up to {btMaxSymbols} stocks in parallel (5 at a
                   time) — typically 30-90 seconds. Strategy will trade on all of
                   these when promoted to paper / live.

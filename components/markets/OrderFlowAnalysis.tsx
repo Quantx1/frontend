@@ -27,6 +27,7 @@ import {
 } from '@/lib/icons'
 
 import { api } from '@/lib/api'
+import { inr, inrCompact, inrCrore, qtyCompact } from '@/lib/format'
 
 type FiiDiiData = Awaited<ReturnType<typeof api.screener.orderflowFiiDii>>
 type DealsData = Awaited<ReturnType<typeof api.screener.orderflowDeals>>
@@ -34,32 +35,18 @@ type ShortsData = Awaited<ReturnType<typeof api.screener.orderflowShorts>>
 
 // ── helpers ─────────────────────────────────────────────────────────
 // Compact qty formatter — Indian L/Cr above 1L, M/k for round numbers.
-const fmtQty = (n: number | null | undefined): string => {
-  if (n == null) return '—'
-  const a = Math.abs(n)
-  if (a >= 1e7) return `${(n / 1e7).toFixed(2)}Cr`
-  if (a >= 1e5) return `${(n / 1e5).toFixed(2)}L`
-  if (a >= 1e3) return `${(n / 1e3).toFixed(1)}k`
-  return `${Math.round(n)}`
-}
+const fmtQty = (n: number | null | undefined): string => qtyCompact(n)
 
-// ₹ crore — values already arrive in ₹cr from the EOD feed.
-const fmtCr = (n: number | null | undefined): string => {
-  if (n == null) return '—'
-  return `₹${Math.abs(n).toLocaleString('en-IN', { maximumFractionDigits: 0 })} cr`
-}
+// ₹ crore — values already arrive in ₹cr from the EOD feed. Magnitude only:
+// callers render the sign as a coloured +/− beside a BOUGHT/SOLD label, or as
+// |…| notation under the diverging bar.
+const fmtCr = inrCrore
 
-// ₹ notional value for a deal (qty × price arrives as raw rupees).
-const fmtValue = (n: number | null | undefined): string => {
-  if (n == null) return '—'
-  const a = Math.abs(n)
-  if (a >= 1e7) return `₹${(n / 1e7).toFixed(2)} cr`
-  if (a >= 1e5) return `₹${(n / 1e5).toFixed(2)} L`
-  return `₹${n.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`
-}
+// ₹ notional value for a deal (qty × price arrives as raw RUPEES, unlike the
+// crore-denominated flows above — hence inrCompact here, inrCrore there).
+const fmtValue = (n: number | null | undefined): string => inrCompact(n)
 
-const fmtPrice = (n: number | null | undefined): string =>
-  n == null ? '—' : `₹${n.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`
+const fmtPrice = (n: number | null | undefined): string => inr(n, 2)
 
 // Tiny info popover — click to toggle a plain-language definition.
 function InfoDot({ text }: { text: string }) {
@@ -98,7 +85,7 @@ function CardShell({
   children: React.ReactNode
 }) {
   return (
-    <div className={`lg-surface rounded-[20px] p-4 ${className}`}>
+    <div className={`lg-surface rounded-2xl p-4 ${className}`}>
       <div className="mb-3 flex items-center justify-between gap-2">
         <h3 className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-d-text-muted">
           <Icon className="h-3.5 w-3.5" /> {title}
@@ -214,7 +201,7 @@ export default function OrderFlowAnalysis({ entitled = true }: { entitled?: bool
   return (
     <div className="space-y-4">
       {/* ── HEADER ROW ─────────────────────────────────────────── */}
-      <div className="lg-surface rounded-[20px] p-4 md:p-5">
+      <div className="lg-surface rounded-2xl p-4 md:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="min-w-0">
             <h2 className="flex items-center gap-2 text-[18px] font-bold tracking-tight text-d-text-primary">

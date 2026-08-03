@@ -28,6 +28,7 @@ import { ArrowUp, ArrowDown } from '@/lib/icons'
 
 import { MONO } from '@/lib/tokens'
 
+import { num } from '@/lib/format'
 export interface ScreenMatch {
   symbol: string
   name?: string
@@ -113,7 +114,7 @@ export function RichScreenResults({ rows }: { rows: ScreenMatch[] }) {
       {/* A chart: matches-by-sector when we have sectors (single-hue magnitude),
           else top movers (diverging around a zero baseline, duotone). */}
       {stats.sectors.length > 1 ? (
-        <div className="rounded-[20px] border border-line bg-wrap p-4">
+        <div className="rounded-2xl border border-line bg-wrap p-4">
           <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-d-text-muted">Matches by sector</p>
           <ResponsiveContainer width="100%" height={Math.max(120, stats.sectors.length * 26)}>
             <BarChart data={stats.sectors} layout="vertical" margin={{ top: 2, right: 28, bottom: 2, left: 2 }}>
@@ -133,7 +134,7 @@ export function RichScreenResults({ rows }: { rows: ScreenMatch[] }) {
           </ResponsiveContainer>
         </div>
       ) : stats.movers.length > 1 ? (
-        <div className="rounded-[20px] border border-line bg-wrap p-4">
+        <div className="rounded-2xl border border-line bg-wrap p-4">
           <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-d-text-muted">Top movers · change %</p>
           <ResponsiveContainer width="100%" height={Math.max(120, stats.movers.length * 26)}>
             <BarChart data={stats.movers} layout="vertical" margin={{ top: 2, right: 34, bottom: 2, left: 2 }}>
@@ -178,7 +179,7 @@ export function RichScreenResults({ rows }: { rows: ScreenMatch[] }) {
                     </Link>
                   </td>
                   <td className={`px-4 py-2.5 text-right tabular-nums text-d-text-secondary ${MONO}`}>
-                    ₹{Math.round(m.last_price ?? 0).toLocaleString('en-IN')}
+                    ₹{num(Math.round(m.last_price ?? 0))}
                   </td>
                   <td className={`px-4 py-2.5 text-right tabular-nums ${MONO} ${up ? 'text-up' : 'text-down'}`}>
                     <span className="inline-flex items-center justify-end gap-0.5">
@@ -201,7 +202,7 @@ export function RichScreenResults({ rows }: { rows: ScreenMatch[] }) {
 
 function Tile({ label, value, tone, small }: { label: string; value: string; tone?: 'up' | 'down'; small?: boolean }) {
   return (
-    <div className="rounded-[20px] border border-line bg-wrap p-4">
+    <div className="rounded-2xl border border-line bg-wrap p-4">
       <p className="text-[9px] font-medium uppercase tracking-wider text-d-text-muted">{label}</p>
       <p
         className={`mt-0.5 ${small ? 'text-[13px]' : 'text-[18px]'} font-semibold tabular-nums ${MONO} ${

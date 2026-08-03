@@ -16,6 +16,7 @@ import { Badge, ChangeBadge, Sparkline } from '@/components/foundation'
 import { SymbolLogo } from '@/components/ui/BrandLogo'
 import { api } from '@/lib/api'
 import { MONO } from '@/lib/tokens'
+import { timeAgo as sharedTimeAgo } from '@/lib/format'
 
 export interface DisplaySignal {
   id: string
@@ -49,16 +50,11 @@ export const riskPct = (s: DisplaySignal): number => {
   return Math.abs(((s.entry_price - s.stop_loss) / s.entry_price) * 100)
 }
 
+// Delegates to lib/format; preserves this call site's empty-string contract.
 function timeAgo(iso?: string): string {
   if (!iso) return ''
-  const ms = Date.now() - new Date(iso).getTime()
-  if (Number.isNaN(ms)) return ''
-  const m = Math.floor(ms / 60_000)
-  if (m < 1) return 'just now'
-  if (m < 60) return `${m}m ago`
-  const h = Math.floor(m / 60)
-  if (h < 24) return `${h}h ago`
-  return `${Math.floor(h / 24)}d ago`
+  const out = sharedTimeAgo(iso)
+  return out === '—' ? '' : out
 }
 
 const STATUS_LABEL: Record<string, string> = {

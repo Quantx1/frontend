@@ -18,6 +18,7 @@ import {
   ScanLine, Radar, Layers, Zap,
 } from '@/lib/icons'
 import { api } from '@/lib/api'
+import { timeAgo as sharedTimeAgo } from '@/lib/format'
 
 type NewsItem = {
   title: string
@@ -34,15 +35,11 @@ type NewsItem = {
 }
 type Filter = 'all' | 'India' | 'Global'
 
+// Delegates to lib/format; preserves this call site's empty-string contract.
 function timeAgo(iso?: string | null): string {
   if (!iso) return ''
-  const t = new Date(iso).getTime()
-  if (Number.isNaN(t)) return ''
-  const s = Math.max(0, (Date.now() - t) / 1000)
-  if (s < 60) return 'just now'
-  if (s < 3600) return `${Math.floor(s / 60)}m ago`
-  if (s < 86400) return `${Math.floor(s / 3600)}h ago`
-  return `${Math.floor(s / 86400)}d ago`
+  const out = sharedTimeAgo(iso)
+  return out === '—' ? '' : out
 }
 
 // ── one news card: 16:9 image (with branded placeholder fallback) + text ──
@@ -55,7 +52,7 @@ function NewsCard({ n }: { n: NewsItem }) {
       href={n.link || '#'}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex flex-col overflow-hidden rounded-[20px] border border-line bg-wrap transition-all duration-200 hover:-translate-y-0.5 hover:border-d-text-muted/30 hover:shadow-lg"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-wrap transition-all duration-200 hover:-translate-y-0.5 hover:border-d-text-muted/30 hover:shadow-lg"
     >
       <div className="relative aspect-[16/9] w-full overflow-hidden">
         {/* branded placeholder — always present; the image sits on top of it */}
@@ -112,7 +109,7 @@ function NewsCard({ n }: { n: NewsItem }) {
 
 function NewsSkeleton() {
   return (
-    <div className="overflow-hidden rounded-[20px] border border-line bg-wrap">
+    <div className="overflow-hidden rounded-2xl border border-line bg-wrap">
       <div className="aspect-[16/9] w-full animate-pulse bg-wrap-hover" />
       <div className="space-y-2 p-3.5">
         <div className="h-2.5 w-16 animate-pulse rounded bg-wrap-hover/70" />
@@ -175,7 +172,7 @@ export function MarketNewsFeed() {
           {Array.from({ length: 8 }).map((_, i) => <NewsSkeleton key={i} />)}
         </div>
       ) : items.length === 0 ? (
-        <div className="rounded-[20px] border border-line bg-wrap p-12 text-center text-[12px] text-d-text-muted">
+        <div className="rounded-2xl border border-line bg-wrap p-12 text-center text-[12px] text-d-text-muted">
           News tape is quiet — market headlines will stream in here as they break.
         </div>
       ) : (
@@ -205,7 +202,7 @@ function FeatureCard({ icon: Icon, title, desc, href }: (typeof FEATURE_LINKS)[n
   return (
     <Link
       href={href}
-      className="group flex items-center gap-3 rounded-[20px] bg-wrap px-3.5 py-3 transition-all duration-200 hover:-translate-y-0.5 hover:ring-1 hover:ring-primary/25"
+      className="group flex items-center gap-3 rounded-2xl bg-wrap px-3.5 py-3 transition-all duration-200 hover:-translate-y-0.5 hover:ring-1 hover:ring-primary/25"
     >
       <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white/[0.05] text-d-text-secondary transition-colors group-hover:text-d-text-primary">
         <Icon className="h-4 w-4" />
@@ -223,7 +220,7 @@ export function HomeCtaBand() {
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-5">
       {/* product upsell */}
-      <div className="relative overflow-hidden rounded-[24px] bg-wrap p-4 lg:col-span-5">
+      <div className="relative overflow-hidden rounded-2xl bg-wrap p-4 lg:col-span-5">
         <div
           aria-hidden
           className="pointer-events-none absolute -right-8 -top-10 h-32 w-32 rounded-full opacity-30 blur-2xl"

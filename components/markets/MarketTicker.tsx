@@ -21,6 +21,7 @@ import useSWR from 'swr'
 import { Skeleton } from '@/components/foundation'
 import { SymbolLogo } from '@/components/ui/BrandLogo'
 import { api } from '@/lib/api'
+import { num } from '@/lib/format'
 import { MONO } from '@/lib/tokens'
 
 const NIFTY50_INDEX = 'NIFTY 50'
@@ -93,7 +94,7 @@ function TickerCell({ item, animate }: { item: TickerItem; animate: boolean }) {
         <>
           <span className={`numeric whitespace-nowrap tabular-nums text-[12.5px] text-d-text-secondary ${MONO}`}>
             {item.isStock ? '₹' : ''}
-            {item.price!.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            {num(item.price, 2)}
           </span>
           {item.changePct != null && (
             <span className={`numeric whitespace-nowrap tabular-nums text-[11.5px] font-medium ${MONO} ${up ? 'text-up' : 'text-down'}`}>

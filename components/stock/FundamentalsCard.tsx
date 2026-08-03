@@ -36,6 +36,7 @@ import {
 } from '@/lib/icons'
 
 import { api } from '@/lib/api'
+import { inr, inrCrore, numMax } from '@/lib/format'
 
 type FundamentalsData = Awaited<ReturnType<typeof api.screener.fundamentals>>
 type Fundamentals = NonNullable<FundamentalsData['fundamentals']>
@@ -48,19 +49,14 @@ const NEUTRAL: Tone = { cls: 'text-d-text-primary', bar: 'var(--color-warning)' 
 const WARN: Tone = { cls: 'text-warning', bar: 'var(--color-warning)' }
 const DOWN: Tone = { cls: 'text-down', bar: 'var(--color-down)' }
 
-// ₹ value already in crore — compact Indian L Cr / Cr.
-const fmtCr = (n: number | null | undefined): string => {
-  if (n == null) return '—'
-  if (n >= 1e5) return `${(n / 1e5).toFixed(2)}L Cr`
-  if (n >= 1e3) return `${(n / 1e3).toFixed(2)}K Cr`
-  return `${n.toLocaleString('en-IN', { maximumFractionDigits: 0 })} Cr`
-}
+// ₹ value already in crore — compact Indian L Cr / Cr. Now carries its own ₹,
+// so the call site no longer prefixes one.
+const fmtCr = inrCrore
 
 const fmtNum = (n: number | null | undefined, d = 1): string =>
-  n == null ? '—' : n.toLocaleString('en-IN', { maximumFractionDigits: d })
+  n == null ? '—' : numMax(n, d)
 
-const fmtInr = (n: number | null | undefined): string =>
-  n == null ? '—' : `₹${n.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`
+const fmtInr = (n: number | null | undefined): string => inr(n, 2)
 
 // Tiny info popover — click to toggle a plain-language definition.
 function InfoDot({ text }: { text: string }) {
@@ -99,7 +95,7 @@ function CardShell({
   children: React.ReactNode
 }) {
   return (
-    <div className={`lg-surface rounded-[20px] p-4 ${className}`}>
+    <div className={`lg-surface rounded-2xl p-4 ${className}`}>
       <div className="mb-3 flex items-center justify-between gap-2">
         <h3 className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-d-text-muted">
           <Icon className="h-3.5 w-3.5" /> {title}
@@ -233,7 +229,7 @@ export default function FundamentalsCard({ symbol }: { symbol: string }) {
   return (
     <div className="space-y-4">
       {/* ── HEADER ROW ─────────────────────────────────────────── */}
-      <div className="lg-surface rounded-[20px] p-4 md:p-5">
+      <div className="lg-surface rounded-2xl p-4 md:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="min-w-0">
             <h2 className="flex items-center gap-2 text-[18px] font-bold tracking-tight text-d-text-primary">
@@ -278,7 +274,7 @@ export default function FundamentalsCard({ symbol }: { symbol: string }) {
           ))}
         </div>
       ) : !hasData || !f ? (
-        <div className="lg-surface rounded-[20px] p-6 text-center text-[12px] text-d-text-muted">
+        <div className="lg-surface rounded-2xl p-6 text-center text-[12px] text-d-text-muted">
           Fundamentals not available for {symbol} yet.
         </div>
       ) : (
@@ -408,7 +404,7 @@ export default function FundamentalsCard({ symbol }: { symbol: string }) {
                   <Landmark className="h-3 w-3" /> Market cap
                 </span>
                 <div className="numeric mt-1 text-[18px] font-bold leading-none text-d-text-primary">
-                  {f.market_cap_cr != null ? `₹${fmtCr(f.market_cap_cr)}` : '—'}
+                  {fmtCr(f.market_cap_cr)}
                 </div>
               </div>
               <div className="rounded-lg border border-line bg-surface-2/40 p-3">

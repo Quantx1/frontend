@@ -23,6 +23,7 @@ import { EyebrowMono, Reveal } from '@/components/foundation'
 import { api } from '@/lib/api'
 import { MONO } from '@/lib/tokens'
 
+import { num } from '@/lib/format'
 /** Card surface — xAI flat panel (replaces legacy `.trading-surface`). */
 const CARD = 'rounded-sm border border-line bg-wrap p-4'
 
@@ -192,7 +193,7 @@ export default function PaperTradingPage() {
                 </p>
                 <div className="flex items-baseline gap-3 mt-1">
                   <span className={`${MONO} text-[26px] font-normal text-d-text-primary`}>
-                    ₹{Math.round(latestEquity).toLocaleString('en-IN')}
+                    ₹{num(Math.round(latestEquity))}
                   </span>
                   <span className={`${MONO} text-[13px] font-medium ${yourPct >= 0 ? 'text-up' : 'text-down'}`}>
                     {yourPct >= 0 ? '+' : ''}{yourPct.toFixed(2)}%

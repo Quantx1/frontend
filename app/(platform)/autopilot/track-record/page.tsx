@@ -23,6 +23,7 @@ import { Activity, AlertTriangle, RefreshCw, TrendingDown, TrendingUp } from '@/
 import { Badge, Button, EmptyState, PageHeader, Skeleton } from '@/components/foundation'
 import { api, handleApiError } from '@/lib/api'
 
+import { num } from '@/lib/format'
 const WINDOWS = [30, 60, 90] as const
 type WindowDays = (typeof WINDOWS)[number]
 const SOURCES = ['paper', 'live'] as const
@@ -145,7 +146,7 @@ export default function TrackRecordPage() {
               />
               <MetricCard
                 label="Total P&L"
-                value={`${data.total_pnl_inr >= 0 ? '+' : ''}₹${Math.abs(data.total_pnl_inr).toLocaleString('en-IN')}`}
+                value={`${data.total_pnl_inr >= 0 ? '+' : ''}₹${num(Math.abs(data.total_pnl_inr))}`}
                 sub={`${data.trades_count} trades`}
                 tone={data.total_pnl_inr >= 0 ? 'up' : 'down'}
               />

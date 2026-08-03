@@ -52,13 +52,17 @@ import { expectedMovePct, type DisplaySignal } from '@/components/signals/Signal
 import { api } from '@/lib/api'
 import { DataBadge } from '@/components/common/DataBadge'
 import { MONO } from '@/lib/tokens'
+import { inr as fmtInr } from '@/lib/format'
 
 // ── helpers ─────────────────────────────────────────────────────────────────
 
 const horizonOf = (s: DisplaySignal): CategoryId => categoryOf(s)
 
+// BUGFIX via lib/format: the old guard was `n ? … : '—'`, so a genuine ZERO
+// rendered as an em dash rather than ₹0. Adaptive precision is preserved —
+// sub-₹100 prices keep 2dp.
 const inr = (n: number | undefined): string =>
-  n ? `₹${n.toLocaleString('en-IN', { maximumFractionDigits: n < 100 ? 2 : 0 })}` : '—'
+  n == null ? '—' : fmtInr(n, Math.abs(n) < 100 ? 2 : 0)
 
 const CONF_BANDS: { label: string; test: (c: number) => boolean }[] = [
   { label: '90%+', test: (c) => c >= 90 },
