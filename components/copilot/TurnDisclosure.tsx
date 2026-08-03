@@ -41,6 +41,7 @@ import { useState } from 'react'
 
 import { Check, ChevronRight, XCircle } from '@/lib/icons'
 import type { CopilotReference, CopilotStep } from '@/lib/api'
+import { prettyTools } from '@/lib/copilot/tool-labels'
 import { MONO } from '@/lib/tokens'
 import { cn } from '@/lib/utils'
 
@@ -99,7 +100,13 @@ function StatusGlyph({ status, size = 12 }: { status: CopilotStep['status']; siz
 export interface TurnDisclosureProps {
   steps?: CopilotStep[] | null
   references?: CopilotReference[] | null
-  /** Public tool labels. Rendered as chips under the steps, not as a sibling row. */
+  /**
+   * RAW tool names, as `meta.tools_used` carries them. This component maps
+   * them to public labels itself — see `lib/copilot/tool-labels.ts`. Passing
+   * pre-labelled strings is not the contract, because a firewall that depends
+   * on each caller remembering to apply it leaks the first time one does not.
+   * That already happened once, here, to this component.
+   */
   tools?: string[] | null
   className?: string
 }
@@ -108,7 +115,7 @@ export function TurnDisclosure({ steps, references, tools, className }: TurnDisc
   const [open, setOpen] = useState(false)
   const s = steps ?? []
   const refs = references ?? []
-  const chips = tools ?? []
+  const chips = prettyTools(tools ?? [])
 
   // Nothing to disclose is not an empty panel — it is no panel.
   if (!s.length && !refs.length && !chips.length) return null

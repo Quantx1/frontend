@@ -94,22 +94,6 @@ interface Turn {
   followups?: string[]
 }
 
-// Public, brand-safe labels for the tools the copilot consulted — shown as the
-// "algorithm trace" under each answer. Never leaks real model/provider names.
-const TOOL_LABEL: Record<string, string> = {
-  signals: 'Signals', signal: 'Signals', regime: 'Regime', mood: 'Mood',
-  sentiment: 'Mood', news: 'Mood', alpha: 'Alpha', portfolio: 'Portfolio',
-  doctor: 'Portfolio Doctor', scanner: 'Scanner', screener: 'Scanner',
-  stock: 'Analysis', dossier: 'Analysis', vision: 'Analysis', chart: 'Analysis',
-  strategy: 'Strategy', backtest: 'Strategy', fno: 'F&O', options: 'F&O',
-  market: 'Markets', indices: 'Markets', earnings: 'Markets',
-}
-const toolLabel = (t: string) =>
-  TOOL_LABEL[t.toLowerCase().replace(/[_-].*$/, '')] ??
-  TOOL_LABEL[t.toLowerCase()] ??
-  t.replace(/[_-]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
-const prettyTools = (tools: string[]): string[] =>
-  Array.from(new Set(tools.map(toolLabel))).slice(0, 6)
 
 const pctFmt = (v: number | null | undefined, signed = false): string => {
   if (v == null || Number.isNaN(v)) return '—'
@@ -979,7 +963,7 @@ function CopilotHub() {
                             <TurnDisclosure
                               steps={t.steps}
                               references={t.references}
-                              tools={showTools ? prettyTools(t.tools!) : null}
+                              tools={showTools ? t.tools : null}
                             />
                           )}
                           {showFollowups && (
