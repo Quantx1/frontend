@@ -12,7 +12,6 @@
 
 import useSWR from 'swr'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
 import {
   LineChart, Newspaper, TrendingUp, Grid3x3, ArrowUpRight, Zap,
 } from '@/lib/icons'
@@ -105,16 +104,6 @@ export default function MarketsPage() {
   const LICENSED = process.env.NEXT_PUBLIC_LICENSED_MARKET_DATA === 'true'
   const dataEntitled = isConnected || LICENSED
 
-  const [mktLabel, setMktLabel] = useState('')
-  useEffect(() => {
-    const f = () => {
-      const ist = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }))
-      const m = ist.getHours() * 60 + ist.getMinutes(), wd = ist.getDay() >= 1 && ist.getDay() <= 5
-      setMktLabel(wd && m >= 555 && m < 930 ? 'Live' : wd && m >= 540 && m < 555 ? 'Pre-open' : 'Closed')
-    }
-    f(); const id = setInterval(f, 60_000); return () => clearInterval(id)
-  }, [])
-
   // ---- derive ----
   const cur = (regime.data as any)?.current
   const sectorList = (((sectors.data as any)?.sectors ?? []) as any[]).slice().sort((a, b) => b.avg_change_pct - a.avg_change_pct)
@@ -148,9 +137,15 @@ export default function MarketsPage() {
           <div>
             <EyebrowMono>Regime-aware desk</EyebrowMono>
             <h1 className="heading-display mt-1 flex items-center gap-2 text-[clamp(1.6rem,3vw,2.2rem)] font-semibold tracking-tight text-d-text-primary"><LineChart size={22} className="text-primary" /> Markets</h1>
-            <p className="mt-1 text-[12.5px] text-d-text-muted">Your AI market desk — the full read before the bell and the wrap after the close.</p>
+            {/* Subtitle cut: "the full read before the bell and the wrap
+                after the close" described the page. The paragraph below IS the
+                read, so the description was a label on top of the thing.
+
+                The "Market Live/Closed" pill is cut too (§4.4). It was computed
+                from a CLIENT-SIDE IST clock and could disagree with the
+                session the API itself reported — two authorities for one fact,
+                and the wrong one visible. The brief states its own session. */}
           </div>
-          {mktLabel && <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-wrap px-3 py-1.5 text-[11.5px]"><span className={`h-2 w-2 rounded-full ${mktLabel === 'Live' ? 'bg-up' : mktLabel === 'Pre-open' ? 'bg-warning' : 'bg-d-text-muted'}`} /><span className="font-semibold text-d-text-secondary">Market {mktLabel}</span></span>}
         </Reveal>
 
         {/* ── The answer (§4.4) — headline + narrative + ONE card + chips ──
@@ -259,13 +254,14 @@ export default function MarketsPage() {
             canonical FII/DII surface — the audit's consolidation call.) */}
 
         {/* ── market internals + the day ahead ──
-             Balanced two-column band: LEFT = Sector Rotation + Market Breadth,
-             RIGHT = Headlines + Big Deals — the stacks land at similar heights
-             so neither column trails into dead space. */}
-        <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-12">
-          <Reveal delay={0.12} className="h-full lg:col-span-4"><SectorRotationCard /></Reveal>
+             TWO columns, evenly split. This was a 12-column grid with two
+             `col-span-4` children — 8 of 12 filled — because BigDealsCard held
+             the other 4 and §4.4 cut it. The result was a third of the row
+             rendering as dead space at the bottom right of the page. */}
+        <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-2">
+          <Reveal delay={0.12} className="h-full"><SectorRotationCard /></Reveal>
 
-          <Reveal delay={0.14} className="h-full lg:col-span-4">
+          <Reveal delay={0.14} className="h-full">
             <Card id="top-headlines" className="flex h-full scroll-mt-24 flex-col rounded-lg border-0 p-4">
               <div className="flex items-center justify-between gap-2 text-[12px] font-semibold text-d-text-primary">
                 <span className="flex items-center gap-2"><Newspaper size={14} className="text-highlight" /> Top headlines</span>

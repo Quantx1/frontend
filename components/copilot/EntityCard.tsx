@@ -75,6 +75,15 @@ export interface EntityCardProps {
    * "indicators" would claim a computation that never ran.
    */
   votesNoun?: string
+  /**
+   * The caption above the vote bar. Defaults to "Overall signal".
+   *
+   * An index passes "Today's breadth", because the verdict word beneath the
+   * bar describes the advance/decline split — not a call on the market. The
+   * card's promise is that the count makes the word checkable, which only
+   * holds while the caption says what is being counted.
+   */
+  signalLabel?: string
   /** Close series for the sparkline. Needs ≥2 points to draw. */
   series?: number[] | null
   /**
@@ -103,6 +112,7 @@ export function EntityCard({
   verdict,
   votes,
   votesNoun = 'indicators',
+  signalLabel = 'Overall signal',
   series,
   provenance,
   onDetails,
@@ -159,7 +169,7 @@ export function EntityCard({
       {/* ── rows 2-4 — the signal read ───────────────────────────────────── */}
       {/* The indicator clause is OMITTED when the count is unknown, never faked. */}
       <p className="text-micro uppercase text-d-text-muted">
-        Overall signal{total > 0 ? ` · ${total} ${votesNoun}` : ''}
+        {signalLabel}{total > 0 ? ` · ${total} ${votesNoun}` : ''}
       </p>
 
       {votes && total > 0 && (
@@ -192,15 +202,25 @@ export function EntityCard({
 
       <div className="my-4 border-t border-line" />
 
-      {/* ── row 6 — exactly two actions. A third would be a follow-up chip. ─ */}
-      <div className="flex items-center justify-between gap-2">
-        <Button variant="secondary" size="md" onClick={onDetails}>
-          Details
-        </Button>
-        <Button variant="primary" size="md" onClick={onBuy}>
-          Buy
-        </Button>
-      </div>
+      {/* ── row 6 — at most two actions, and only the ones that DO something.
+          Both used to render unconditionally, which put a **Buy** button on
+          the NIFTY 50 card. You cannot buy an index, and an inert button is
+          worse than no button — it teaches the user their tap did nothing.
+          The caller decides by passing a handler or not. ── */}
+      {(onDetails || onBuy) && (
+        <div className="flex items-center justify-between gap-2">
+          {onDetails && (
+            <Button variant="secondary" size="md" onClick={onDetails}>
+              Details
+            </Button>
+          )}
+          {onBuy && (
+            <Button variant="primary" size="md" onClick={onBuy}>
+              Buy
+            </Button>
+          )}
+        </div>
+      )}
 
       {/* ── row 7 — TWO footnote rows. They are different statements. ─────
           Provenance says where the numbers came from; the advice line says we

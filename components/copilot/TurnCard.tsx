@@ -52,6 +52,7 @@ export function TurnCard({ artifacts, onOpen, className }: TurnCardProps) {
           verdict={picked.artifact.label}
           votes={picked.artifact.votes}
           votesNoun={picked.artifact.votesNoun}
+          signalLabel={picked.artifact.signalLabel}
           series={picked.artifact.series}
           // Follows `votesNoun`, because the sentence has to describe what was
           // actually counted. An index card says breadth; a stock card says
@@ -65,6 +66,14 @@ export function TurnCard({ artifacts, onOpen, className }: TurnCardProps) {
               : undefined
           }
           onDetails={() => onOpen?.(picked.artifact)}
+          // No Buy on an index — NIFTY 50 is not an instrument you can take a
+          // delivery position in. `constituents` is how an index identifies
+          // itself in this payload.
+          onBuy={
+            picked.artifact.votesNoun === 'constituents'
+              ? undefined
+              : () => onOpen?.(picked.artifact)
+          }
         />
       )}
 

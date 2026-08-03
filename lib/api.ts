@@ -638,6 +638,10 @@ export type CopilotArtifact =
       votes?: { bull: number; neutral: number; bear: number } | null
       /** What the votes count — "indicators" (a stock) or "constituents" (an index). */
       votesNoun?: string
+      /** The caption above the bar. "Overall signal" for a stock; an index says
+       *  "Today's breadth", because the word beneath describes that split and
+       *  not a verdict on the market. */
+      signalLabel?: string
       // Null rather than [] when there are fewer than 2 points — the card
       // omits the sparkline instead of drawing a flat line.
       series?: number[] | null
