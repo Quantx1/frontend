@@ -26,10 +26,16 @@ violations · `validate-theme` ALL PASS · 13 format checks · **1,200 Python te
 §4.4 `/markets` SHIPPED.** Open: 2.6 monitors, Phase 1 (typography), the rest
 of Phase 4 (the 55→9 route cut), Phases 5–6.
 
-**`/markets` is the proof the whole Phase 2 investment was for.** 18 card
-surfaces and 19 requests became a paragraph, one card and four chips, answered
-in **192ms** for **zero chat credits**. `RenderedSurface` is reusable — `/book`
-and the signals surface are the same component with a different template key.
+**Three surfaces now render deterministically, from one component.** `/markets`
+(192ms), `/portfolio` (579ms) and `/signals` (217ms) all use `RenderedSurface`
+with a different template key and nothing else. **Zero chat credits between
+them.** §4.5 counts "20 KPI tiles across five routes"; nine are gone.
+
+The empty states are the part the tiles could not do. Five "—" cells read as a
+broken page; "No signals are active today — that's the engines finding nothing
+worth flagging, not an outage" says what happened. Same distinction the book
+surface draws between an empty book and a failed positions query, which the old
+tiles rendered identically as "₹0 · 0 positions".
 
 **81 new tests across Phase 2, and 21 mutations confirming they bite.** Every
 guard in this phase was mutation-tested — the two that matter most are "the
@@ -65,6 +71,8 @@ translated into a buy/sell call", and both fail loudly when reverted.
 | `59831fb` | A raw tool name reached the UI — the firewall closed properly |
 | `43e5591` | `votesNoun` — an index counts constituents, a stock counts indicators |
 | `793d384` | **§4.4** — `/markets` answers, then stops. 802 lines cut, 192ms |
+| `97b6163` | **§4.5** — `/portfolio`: one sentence for four KPI tiles |
+| `7167b15` | **§4.5** — `/signals`: one sentence for five KPI tiles |
 | `441cee3` `+1` | Plan updated: Phase 2 record, the riskiest step closed, 2.4 status |
 
 **`backend` → `feat/ai-sdk-protocol-and-autonomy`**
