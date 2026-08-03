@@ -22,11 +22,15 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
+import { useChat } from '@ai-sdk/react'
 import {
   Activity,
   X, ArrowUpRight, ChevronRight, PlusCircle,
 } from '@/lib/icons'
 import { api, type CopilotStep, type CopilotReference, type CopilotArtifact } from '@/lib/api'
+import { createCopilotTransport, type CopilotSendContext } from '@/lib/copilot/transport'
+import { msgData, msgDisplayText } from '@/lib/copilot/selectors'
+import type { CopilotUIMessage } from '@/lib/copilot/ui-message'
 import { DisclaimerFooter, Spinner } from '@/components/foundation'
 import { cn } from '@/lib/utils'
 import { MODES, type CopilotMode } from '@/lib/copilot-modes'
@@ -121,15 +125,113 @@ export default function CopilotProvider() {
   const [open, setOpen] = useState(false)
   const [mode, setMode] = useState<CopilotMode>('ask')
   const [input, setInput] = useState('')
-  const [messages, setMessages] = useState<Msg[]>([])
-  const [streaming, setStreaming] = useState(false)
-  // Server-side thread id — set from the stream's `saved` frame so maximize
-  // can hand the FULL conversation to the Main Chat.
+  // Server-side thread id — set from the stream's `data-conversation` part so
+  // maximize can hand the FULL conversation to the Main Chat.
   const [conversationId, setConversationId] = useState<string | null>(null)
 
-  const abortRef = useRef<AbortController | null>(null)
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
+
+  // ── AI SDK streaming ────────────────────────────────────────────────────
+  // The transport reads this ref at send time rather than closing over state,
+  // so mode / route / thread are always current.
+  const ctxRef = useRef<CopilotSendContext>({ message: '' })
+  const transport = useMemo(() => createCopilotTransport(() => ctxRef.current), [])
+
+  // Client-only state the stream does not carry. Keyed by MESSAGE ID, not array
+  // index — assistant messages now have stable server-minted ids.
+  const [actionsById, setActionsById] = useState<Record<string, ActionState[]>>({})
+  const [stoppedIds, setStoppedIds] = useState<Set<string>>(() => new Set())
+  const actionyRef = useRef(false)
+  const lastUserTextRef = useRef('')
+
+  const {
+    messages: uiMessages,
+    sendMessage,
+    stop: stopChat,
+    status,
+    setMessages: setUiMessages,
+    error,
+    clearError,
+  } = useChat<CopilotUIMessage>({
+    transport,
+    // Coalesce re-renders during token streaming.
+    throttle: 50,
+    // ⚠️ Deliberately NO `id` option. useChat recreates its Chat instance
+    // whenever `options.id` changes and re-seeds from that render's `messages`.
+    // Binding it to conversationId — which arrives mid-turn from the server —
+    // would wipe the just-completed turn on the FIRST message of every new
+    // thread. conversationId is tracked as plain state instead.
+    onData: (part) => {
+      if (part.type === 'data-conversation') {
+        const id = (part.data as { conversation_id: string | null })?.conversation_id
+        if (id) setConversationId(id)
+      }
+    },
+    onFinish: ({ message, isAbort }) => {
+      if (isAbort) {
+        setStoppedIds((prev) => new Set(prev).add(message.id))
+        return
+      }
+      // Cursor-style: propose reviewable action cards on action-y turns. Best
+      // effort — a failure here must never break the chat.
+      if (!actionyRef.current) return
+      api.ai
+        .copilotActions({ message: lastUserTextRef.current, route: ctx.route, symbol: ctx.symbol })
+        .then(({ actions }) => {
+          if (actions?.length) {
+            setActionsById((prev) => ({
+              ...prev,
+              [message.id]: actions.map((a) => ({ ...a, status: 'idle' as const })),
+            }))
+          }
+        })
+        .catch(() => {})
+    },
+  })
+
+  const streaming = status === 'streaming' || status === 'submitted'
+
+  /**
+   * Adapt the SDK's messages into the `Msg` shape the renderer already speaks,
+   * so Bubble / ChatArtifacts / ProgressRail / ReferencesRail are untouched.
+   */
+  const messages = useMemo<Msg[]>(() => {
+    const out: Msg[] = uiMessages.map((m, i) => {
+      const isLast = i === uiMessages.length - 1
+      const stopped = stoppedIds.has(m.id)
+      const text = msgDisplayText(m)
+      return {
+        role: m.role as 'user' | 'assistant',
+        content: stopped && !text ? '(stopped)' : text,
+        tools: msgData(m, 'meta')?.tools_used,
+        steps: msgData(m, 'progress'),
+        references: msgData(m, 'references'),
+        artifacts: msgData(m, 'artifacts'),
+        followups: msgData(m, 'followups'),
+        actions: actionsById[m.id],
+        // Per-message, NOT the chat-global status: `streaming` feeds Bubble's
+        // `thinking` flag, which also gates whether artifacts and prose render.
+        // Driving it from chat status would pulse every message in the thread
+        // and hide the live message's artifacts for the whole reply.
+        streaming: isLast && m.role === 'assistant' && streaming,
+        error: stopped || undefined,
+      }
+    })
+
+    // The SDK adds no assistant message until the first chunk arrives, and the
+    // backend sends nothing until `meta` — i.e. for the entire tool phase, the
+    // longest part of a turn. Without this the thinking pulse disappears.
+    if (status === 'submitted') {
+      out.push({ role: 'assistant', content: '', streaming: true })
+    }
+    // On failure the assistant message may never have been created, so the old
+    // "patch the last bubble" approach has nothing to patch. Append instead.
+    if (error) {
+      out.push({ role: 'assistant', content: error.message || COPILOT_ERROR_MSG, error: true })
+    }
+    return out
+  }, [uiMessages, status, streaming, actionsById, stoppedIds, error])
 
   // Now that the dock is global, some routes (e.g. /stock/*) render without
   // AppShell — no 72px utility rail. Anchor the panel to the window edge there
@@ -176,13 +278,8 @@ export default function CopilotProvider() {
   }, [messages, open])
 
   const stop = useCallback(() => {
-    abortRef.current?.abort()
-    abortRef.current = null
-    setStreaming(false)
-    setMessages((prev) =>
-      prev.map((m, i) => (i === prev.length - 1 && m.streaming ? { ...m, streaming: false } : m)),
-    )
-  }, [])
+    void stopChat()
+  }, [stopChat])
 
   const send = useCallback(
     async (raw?: string) => {
@@ -201,15 +298,8 @@ export default function CopilotProvider() {
         .map((m) => ({ role: m.role, content: m.content }))
 
       setInput('')
-      setMessages((prev) => [
-        ...prev,
-        { role: 'user', content: text },
-        { role: 'assistant', content: '', streaming: true },
-      ])
-      setStreaming(true)
+      clearError()
 
-      const controller = new AbortController()
-      abortRef.current = controller
       // Action-y turns get a reviewable card; tell the responder to describe the
       // PLAN and never claim it already happened — the card the user confirms is
       // the source of truth.
@@ -217,85 +307,27 @@ export default function CopilotProvider() {
       const guard = actiony
         ? ' (The user will review and CONFIRM any action via a button below your reply. Describe what you WILL do in one short line; do NOT say it is already done, added, placed, or removed.)'
         : ''
-      const outgoing = `${activeMode.prefix(ctx)}${text}${guard}`
+      actionyRef.current = actiony
+      lastUserTextRef.current = text
 
-      const patchLast = (patch: Partial<Msg>) =>
-        setMessages((prev) =>
-          prev.map((m, i) => (i === prev.length - 1 ? { ...m, ...patch } : m)),
-        )
-
-      try {
-        await api.ai.copilotChatStream(
-          {
-            message: outgoing,
-            route: ctx.route,
-            history,
-            mentioned_symbols: mentioned,
-            // Chat unification (2026-07-11): dock threads persist like the
-            // Main Chat so maximize/Recent can resume them. display_message
-            // keeps mode/guard scaffolding out of the saved thread.
-            persist: true,
-            conversation_id: conversationId ?? undefined,
-            display_message: text,
-          },
-          {
-            onMeta: (meta) =>
-              patchLast({ tools: meta.tools_used, steps: meta.progress, references: meta.references, artifacts: meta.artifacts }),
-            onToken: (t) =>
-              setMessages((prev) =>
-                prev.map((m, i) =>
-                  i === prev.length - 1 ? { ...m, content: m.content + t } : m,
-                ),
-              ),
-            onDone: (done) =>
-              patchLast({
-                content: done.reply || '',
-                tools: done.tools_used,
-                streaming: false,
-                // done carries references with `cited` flags — prefer them.
-                ...(done.references ? { references: done.references } : {}),
-                ...(done.followups ? { followups: done.followups } : {}),
-              }),
-            onError: (msg) =>
-              patchLast({ content: msg || COPILOT_ERROR_MSG, streaming: false, error: true }),
-            onSaved: (id) => {
-              if (id) setConversationId(id)
-            },
-          },
-          controller.signal,
-        )
-
-        // Cursor-style: after the reply, propose reviewable action cards on
-        // action-y turns (mode- or verb-gated so pure Q&A skips the extra call).
-        if (actiony) {
-          try {
-            const { actions } = await api.ai.copilotActions({
-              message: text, route: ctx.route, symbol: ctx.symbol,
-            })
-            if (actions && actions.length) {
-              const staged: ActionState[] = actions.map((a) => ({ ...a, status: 'idle' as const }))
-              setMessages((prev) =>
-                prev.map((m, i) => (i === prev.length - 1 ? { ...m, actions: staged } : m)),
-              )
-            }
-          } catch {
-            /* proposals are best-effort — never break the chat */
-          }
-        }
-      } catch (err) {
-        const msg =
-          err instanceof Error && err.name === 'AbortError'
-            ? '(stopped)'
-            : err instanceof Error
-              ? err.message
-              : COPILOT_ERROR_MSG
-        patchLast({ content: msg, streaming: false, error: true })
-      } finally {
-        setStreaming(false)
-        abortRef.current = null
+      // The transport reads this at request time. `message` carries the mode
+      // scaffolding; `display_message` is what the user typed, so the persisted
+      // thread reads clean. Chat unification (2026-07-11): dock threads persist
+      // like the Main Chat so maximize / Recent can resume them.
+      ctxRef.current = {
+        message: `${activeMode.prefix(ctx)}${text}${guard}`,
+        display_message: text,
+        route: ctx.route,
+        history,
+        mentioned_symbols: mentioned,
+        persist: true,
+        conversation_id: conversationId ?? undefined,
       }
+
+      // `text` (not the scaffolded prompt) becomes the visible user bubble.
+      void sendMessage({ text })
     },
-    [input, streaming, ctx, activeMode, messages, conversationId],
+    [input, streaming, ctx, activeMode, messages, conversationId, sendMessage, clearError],
   )
 
   const maximize = useCallback(() => {
@@ -311,30 +343,31 @@ export default function CopilotProvider() {
   }, [conversationId, messages, router])
 
   const newThread = useCallback(() => {
-    abortRef.current?.abort()
-    abortRef.current = null
-    setStreaming(false)
-    setMessages([])
+    void stopChat()
+    setUiMessages([])
+    setActionsById({})
+    setStoppedIds(new Set())
+    clearError()
     setInput('')
     setConversationId(null)
     inputRef.current?.focus()
-  }, [])
+  }, [stopChat, setUiMessages, clearError])
 
   // Execute a CONFIRMED action card against the existing gated endpoints. The
   // server re-validates everything (orders ride the full kill-switch→tier→broker
   // gate chain); this only fires on an explicit user click.
   const runAction = useCallback(
     async (msgIdx: number, actionId: string) => {
-      const action = messages[msgIdx]?.actions?.find((a) => a.id === actionId)
+      // Action cards live in client state keyed by MESSAGE ID (the SDK owns the
+      // message array now, and ids are stable where indices are not).
+      const msgId = uiMessages[msgIdx]?.id
+      const action = msgId ? actionsById[msgId]?.find((a) => a.id === actionId) : undefined
       if (!action || action.status === 'running' || action.status === 'done') return
       const patch = (s: Partial<ActionState>) =>
-        setMessages((prev) =>
-          prev.map((m, i) =>
-            i === msgIdx
-              ? { ...m, actions: m.actions?.map((a) => (a.id === actionId ? { ...a, ...s } : a)) }
-              : m,
-          ),
-        )
+        setActionsById((prev) => ({
+          ...prev,
+          [msgId]: (prev[msgId] ?? []).map((a) => (a.id === actionId ? { ...a, ...s } : a)),
+        }))
       patch({ status: 'running' })
       const args = action.args as Record<string, any>
       try {
@@ -370,7 +403,9 @@ export default function CopilotProvider() {
         patch({ status: 'error', result: err instanceof Error ? err.message : 'Action failed' })
       }
     },
-    [messages, router],
+    // Reads uiMessages (index → id) and actionsById (the card's current state).
+    // Omitting either leaves a stale closure that can re-run a finished action.
+    [uiMessages, actionsById, router],
   )
 
   const starters = useMemo(() => STARTERS[mode](ctx), [mode, ctx])
