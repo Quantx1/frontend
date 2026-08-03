@@ -147,7 +147,6 @@ export function MarketNewsFeed() {
           <Newspaper className="h-4 w-4 text-primary" />
           <h2 className="text-[15px] font-semibold">Market news</h2>
           <span className="relative flex h-1.5 w-1.5">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-up opacity-70" />
             <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-up" />
           </span>
           <span className="hidden text-[11px] text-d-text-muted sm:inline">Live · Indian &amp; global</span>

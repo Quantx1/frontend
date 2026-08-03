@@ -98,7 +98,6 @@ export default function AutopilotCard({ autopilot }: { autopilot: ManagedOvervie
               ) : (
                 <>
                   <span className="relative flex h-2.5 w-2.5">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-60" />
                     <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-success" />
                   </span>
                   <span className="font-medium text-d-text-primary">Active on your broker account</span>

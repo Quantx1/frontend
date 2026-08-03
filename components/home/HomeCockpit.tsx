@@ -59,7 +59,6 @@ export function HomeCockpit() {
         </div>
         <span className="inline-flex items-center gap-1.5 rounded-sm border border-line bg-wrap px-2.5 py-1.5 text-[11.5px]">
           <span className="relative flex h-2 w-2">
-            <span className={`absolute inline-flex h-full w-full rounded-full ${mkt.tone === 'up' ? 'animate-ping bg-up opacity-60' : ''}`} />
             <span className={`relative inline-flex h-2 w-2 rounded-full ${mktDot}`} />
           </span>
           <span className={`font-semibold ${mktToneCls}`}>{mkt.label}</span>
