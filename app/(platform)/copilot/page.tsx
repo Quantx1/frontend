@@ -39,11 +39,11 @@ import { HomeFooter } from '@/components/home/HomeFooter'
 import { MarketTicker } from '@/components/markets/MarketTicker'
 import { useAuth } from '@/contexts/AuthContext'
 import { MarkdownMessage } from '@/components/copilot/MarkdownMessage'
-import { ProgressRail } from '@/components/copilot/ProgressRail'
-import { ReferencesRail } from '@/components/copilot/ReferencesRail'
+import { ThinkingLine } from '@/components/copilot/ThinkingLine'
+import { TurnCard } from '@/components/copilot/TurnCard'
+import { TurnDisclosure } from '@/components/copilot/TurnDisclosure'
 import { BlurFade } from '@/components/ui/blur-fade'
 import { api, handleApiError, ApiError, type CopilotArtifact, type CopilotStep, type CopilotReference } from '@/lib/api'
-import { ChatArtifacts } from '@/components/copilot/ChatArtifacts'
 import { useTier } from '@/lib/hooks/useTier'
 import { MONO } from '@/lib/tokens'
 import { MODES, MODE_PROMPTS, pickGrid, type CopilotMode } from '@/lib/copilot-modes'
@@ -172,7 +172,7 @@ function symbolSuggestions(sym: string): string[] {
   ]
 }
 
-// The "thinking" trace is now the honest, streamed <ProgressRail> (WP-RAILS) —
+// The "thinking" trace is now <ThinkingLine> + <TurnDisclosure> —
 // it replaces the old hardcoded THINK_STEPS terminal with real telemetry
 // (reasoning stages + tool calls + durations) projected from the copilot.
 
@@ -236,18 +236,16 @@ function HomeInlineAnswer({
         </div>
       </div>
       <div className="mt-3 max-h-[46vh] space-y-3 overflow-y-auto pr-1">
-        {last.artifacts && last.artifacts.length > 0 && <ChatArtifacts artifacts={last.artifacts} />}
-        {/* Live timeline → persistent collapsed summary (see the thread view). */}
-        {(thinking || (last.steps && last.steps.length > 0)) && (
-          <ProgressRail steps={last.steps ?? []} live={thinking} />
-        )}
+        {!thinking && <TurnCard artifacts={last.artifacts} />}
+        {thinking && <ThinkingLine />}
         {!thinking && (
           <div className="text-[13.5px] leading-relaxed text-d-text-secondary">
             <MarkdownMessage content={last.text} />
           </div>
         )}
-        {!thinking && last.references && last.references.length > 0 && (
-          <ReferencesRail refs={last.references} />
+        {/* ONE disclosure — steps, tool chips and references together. */}
+        {!thinking && (
+          <TurnDisclosure steps={last.steps} references={last.references} tools={last.tools} />
         )}
         {!pending && last.text && (
           <div className="flex flex-wrap gap-1.5">
@@ -959,41 +957,30 @@ function CopilotHub() {
                       <div className="flex flex-col gap-2">
                         <EyebrowMono>QUANT X</EyebrowMono>
                         <div className="min-w-0 space-y-3">
-                          {/* GenUI artifacts — real charts/stats, rendered before the prose */}
-                          {t.artifacts && t.artifacts.length > 0 && <ChatArtifacts artifacts={t.artifacts} />}
-                          {/* References — market-data entities the agent touched (WP-RAILS).
-                              Hidden while thinking (the ProgressRail owns that phase). */}
-                          {!isThinking && t.references && t.references.length > 0 && (
-                            <ReferencesRail refs={t.references} />
-                          )}
-                          {/* Agent work. While thinking this is the live timeline;
-                              once the answer arrives it PERSISTS as a collapsed
-                              "N steps · 2.4s" summary the user can reopen.
-                              It used to be swapped out for the prose entirely, so
-                              the moment an answer appeared the evidence of how it
-                              was reached vanished — the opposite of what a product
-                              asking people to risk money should do. */}
-                          {(isThinking || (t.steps && t.steps.length > 0)) && (
-                            <ProgressRail steps={t.steps ?? []} live={isThinking} />
-                          )}
+                          {/* The ONE card this turn is allowed (§4.2). Nine
+                              artifact types collapse to three renderings, and
+                              anything the cap drops is stated, not hidden. */}
+                          {!isThinking && <TurnCard artifacts={t.artifacts} />}
+                          {/* One honest line while working — a real elapsed
+                              counter, and nothing claimed beyond it. */}
+                          {isThinking && <ThinkingLine />}
                           {!isThinking && (
                             <div className="text-[13.5px] leading-relaxed text-d-text-secondary">
                               <span className="sr-only">Assistant: </span>
                               <span className="inline">
                                 <MarkdownMessage content={shown} />
-                                {showCursor && <span className="ml-0.5 inline-block h-3.5 w-[2px] translate-y-[3px] animate-pulse bg-white align-middle" />}
                               </span>
                             </div>
                           )}
-                          {showTools && (
-                            <div className="flex flex-wrap items-center gap-1.5 px-0.5">
-                              <EyebrowMono className="text-[9.5px]">CONSULTED</EyebrowMono>
-                              {prettyTools(t.tools!).map((tl) => (
-                                <span key={tl} className="inline-flex items-center gap-1 rounded-sm border border-line bg-wrap-hover px-2 py-0.5 font-mono text-[10.5px] text-d-text-secondary">
-                                  {tl}
-                                </span>
-                              ))}
-                            </div>
+                          {/* Steps, tool chips and references in ONE panel.
+                              They used to be three siblings saying the same
+                              thing in three visual languages, above the prose. */}
+                          {!isThinking && (
+                            <TurnDisclosure
+                              steps={t.steps}
+                              references={t.references}
+                              tools={showTools ? prettyTools(t.tools!) : null}
+                            />
                           )}
                           {showFollowups && (
                             <div className="flex flex-wrap gap-1.5">

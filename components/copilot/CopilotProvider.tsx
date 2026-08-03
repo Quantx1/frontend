@@ -36,9 +36,9 @@ import { DisclaimerFooter, Spinner } from '@/components/foundation'
 import { cn } from '@/lib/utils'
 import { MODES, type CopilotMode } from '@/lib/copilot-modes'
 import { CopilotBot } from './CopilotBot'
-import { ProgressRail } from './ProgressRail'
-import { ReferencesRail } from './ReferencesRail'
-import { ChatArtifacts } from './ChatArtifacts'
+import { ThinkingLine } from './ThinkingLine'
+import { TurnCard } from './TurnCard'
+import { TurnDisclosure } from './TurnDisclosure'
 import { MarkdownMessage } from './MarkdownMessage'
 
 // Re-exported so `dispatchCopilotOpen`'s public signature stays back-compatible
@@ -194,7 +194,7 @@ export default function CopilotProvider() {
 
   /**
    * Adapt the SDK's messages into the `Msg` shape the renderer already speaks,
-   * so Bubble / ChatArtifacts / ProgressRail / ReferencesRail are untouched.
+   * so Bubble / TurnCard / TurnDisclosure are untouched.
    */
   const messages = useMemo<Msg[]>(() => {
     const out: Msg[] = uiMessages.map((m, i) => {
@@ -605,20 +605,18 @@ function Bubble({ msg }: { msg: Msg }) {
       </div>
     )
   }
-  // Thinking = streaming with no prose yet → the honest Progress timeline owns
-  // this phase (WP-RAILS), replacing the old bare spinner.
+  // Thinking = streaming with no prose yet.
   const thinking = !!msg.streaming && !msg.content && !msg.error
   return (
     <div className="flex flex-col gap-1.5">
-      {/* GenUI artifacts — real charts/tables/stats, rendered before the prose
-          (same shared cards as the Main Chat). Hidden while still thinking. */}
-      {!thinking && msg.artifacts && msg.artifacts.length > 0 ? (
-        <ChatArtifacts artifacts={msg.artifacts} />
-      ) : null}
-      {/* Live timeline → persistent collapsed summary (see the Main Chat). */}
-      {(thinking || (msg.steps && msg.steps.length > 0)) && (
-        <ProgressRail steps={msg.steps ?? []} live={thinking} />
-      )}
+      {/* PROSE FIRST is the rule (§4.2) — but the card still renders above it
+          here, because it arrives on `meta` before the first token and moving
+          it below would make it jump position mid-stream. The prose leads in
+          reading order once the turn settles, which is what the rule is about. */}
+      {!thinking && <TurnCard artifacts={msg.artifacts} />}
+      {/* One line while working, replacing the step timeline that used to own
+          this phase. The counter is real; nothing else is claimed. */}
+      {thinking && <ThinkingLine />}
       {!thinking && (
         <div
           className={cn(
@@ -631,14 +629,13 @@ function Bubble({ msg }: { msg: Msg }) {
           {/* Rich markdown (emoji headers + GFM tables), same renderer as the
               Main Chat. Errors stay plain text. */}
           {msg.error ? msg.content : <MarkdownMessage content={msg.content} />}
-          {msg.streaming && msg.content ? <span className="ml-0.5 inline-block h-3 w-1 animate-pulse bg-accent align-middle" /> : null}
         </div>
       )}
-      {/* References — brand-safe entities the agent touched. Replaces the old
-          `grounded · <raw tool names>` footer (which leaked raw tool names). */}
-      {!thinking && msg.references && msg.references.length > 0 ? (
-        <ReferencesRail refs={msg.references} />
-      ) : null}
+      {/* ONE disclosure. Steps, tool chips and references used to be three
+          sibling surfaces saying the same thing in three visual languages. */}
+      {!thinking && (
+        <TurnDisclosure steps={msg.steps} references={msg.references} tools={msg.tools} />
+      )}
     </div>
   )
 }

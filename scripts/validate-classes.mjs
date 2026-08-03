@@ -89,13 +89,13 @@ const RATCHET = [
   // Converting them would trade a working gated loading state for a visual
   // change that fixes nothing. The baseline exists to stop UNGATED spinners
   // creeping in, not to demand this number reach zero.
-  { label: 'animate-spin', max: 107,
+  { label: 'animate-spin', max: 106,
     count: (src) => (src.match(/\banimate-spin\b/g) || []).length },
   // Sub-11px type. REDESIGN-VISUAL.md §2.2 sets the floor at 11px, and 11px is
   // `micro` only. The audit measured 658 of these and called that single number
   // "the user's 'congested, not designed properly' verdict, quantified".
   // The sweep onto the v6 roles is Phase 1; until then the count may not grow.
-  { label: 'type below the 11px floor', max: 565,
+  { label: 'type below the 11px floor', max: 560,
     count: (src) => (src.match(/text-\[(?:8|8\.5|9|9\.5|10|10\.5)px\]/g) || []).length },
 ]
 
@@ -147,10 +147,26 @@ for (const file of files) {
 }
 
 // ── ratchet check ──────────────────────────────────────────────────────────
+//
+// Ratchets count CLASS USAGES, so comments are stripped first. Without this a
+// docblock explaining why a component must not use `animate-spin` counts as an
+// `animate-spin` — which happened twice: once to an Iconify name containing
+// `-in-`, and once to this file's own rules quoted in `TurnDisclosure`. A
+// guard that fires on the sentence describing it teaches people to stop
+// writing the sentence.
+//
+// Deliberately naive: block comments and `//` lines. It over-strips a `//`
+// inside a string literal, which for these class-name patterns is harmless —
+// and under-counting a ratchet is caught the moment someone tries to raise it,
+// where over-counting is only ever noticed as a mystery failure.
+function stripComments(src) {
+  return src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')
+}
+
 let ratchetFailed = false
 for (const r of RATCHET) {
   let n = 0
-  for (const file of files) n += r.count(readFileSync(file, 'utf8'), relative(ROOT, file))
+  for (const file of files) n += r.count(stripComments(readFileSync(file, 'utf8')), relative(ROOT, file))
   if (n > r.max) {
     console.error(`  ✗ ${r.label}: ${n} — baseline is ${r.max}. This count may only go DOWN.`)
     ratchetFailed = true

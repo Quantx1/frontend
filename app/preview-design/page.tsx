@@ -20,6 +20,9 @@ import {
 } from '@/components/foundation'
 import { Inbox } from '@/lib/icons'
 import { EntityCard } from '@/components/copilot/EntityCard'
+import { ThinkingLine } from '@/components/copilot/ThinkingLine'
+import { TurnCard } from '@/components/copilot/TurnCard'
+import { TurnDisclosure } from '@/components/copilot/TurnDisclosure'
 import { OverlaysDemo } from './OverlaysDemo'
 
 type DemoRow = { id: string; symbol: string; price: number; change: number }
@@ -55,7 +58,37 @@ export default function PreviewDesign() {
             verdict="bullish"
             votes={{ bull: 5, neutral: 2, bear: 1 }}
             series={[2731, 2748, 2740, 2762, 2755, 2788, 2801, 2794, 2822, 2815, 2839, 2847]}
-            provenance="Indicator votes on settled closes to 2026-08-01. Analysis, not advice."
+            provenance="Indicator votes on settled closes to 2026-08-01."
+          />
+        </div>
+      </section>
+
+      {/* Phase 3 — the turn shape: one card, one disclosure, one thinking line */}
+      <section data-testid="sec-turn" className="space-y-3">
+        <p className="font-sans font-semibold uppercase tracking-[0.12em] text-xs text-d-text-muted">
+          Turn shape
+        </p>
+        <div className="max-w-[560px] space-y-4">
+          <ThinkingLine />
+          <TurnCard
+            artifacts={[
+              { type: 'table', title: 'Screener hits', columns: ['Change', 'Volume'],
+                rows: Array.from({ length: 14 }, (_, i) => ({ symbol: `S${i}`, cells: [] })) },
+              { type: 'gauge', title: 'Market regime', value: 62, valueLabel: 'Bull · 62% confidence' },
+            ] as never}
+          />
+          <TurnDisclosure
+            steps={[
+              { stage: 'classifier', label: 'Understanding your question', status: 'ok', duration_ms: 120 },
+              { stage: 'tool_caller', label: 'Fetching live data', status: 'ok', duration_ms: 2280 },
+              { stage: 'tool_caller', label: 'Option chain', status: 'error', duration_ms: 4010,
+                error: 'Upstream timed out — used the EOD chain instead.' },
+            ]}
+            references={[
+              { kind: 'symbol', label: 'RELIANCE', tool: 'Price data' },
+              { kind: 'regime', label: 'Bull regime', tool: 'Market regime' },
+            ]}
+            tools={['Price data', 'Market regime']}
           />
         </div>
       </section>

@@ -27,6 +27,7 @@
 import { Button, Card, CardBody, ChangeBadge, Sparkline } from '@/components/foundation'
 import { SymbolLogo } from '@/components/ui/BrandLogo'
 import type { EntityVerdict } from '@/lib/api'
+import { ADVICE_FOOTNOTE } from '@/lib/copilot/one-card'
 import { inr, num } from '@/lib/format'
 import { cn } from '@/lib/utils'
 
@@ -69,7 +70,16 @@ export interface EntityCardProps {
   votes?: { bull: number; neutral: number; bear: number } | null
   /** Close series for the sparkline. Needs ≥2 points to draw. */
   series?: number[] | null
-  /** One line. Replaces the six distinct disclaimer strings on /stock today. */
+  /**
+   * Where the numbers came from and how stale they are. Card-specific.
+   *
+   * This is NOT the disclaimer — the advice statement renders as its own row
+   * below it, from `ADVICE_FOOTNOTE`. The first cut of this component ran them
+   * together ("Indicator votes on settled closes to 2026-08-01. Analysis, not
+   * advice."), which is exactly the conflation §R2 rules against: one line of
+   * small grey text reads as boilerplate and gets skipped whole, and the
+   * provenance half is the part that changes per card and needs reading.
+   */
   provenance?: string
   onDetails?: () => void
   onBuy?: () => void
@@ -184,8 +194,14 @@ export function EntityCard({
         </Button>
       </div>
 
-      {/* ── row 7 — provenance. Exactly one line. ────────────────────────── */}
+      {/* ── row 7 — TWO footnote rows. They are different statements. ─────
+          Provenance says where the numbers came from; the advice line says we
+          are not telling anyone what to do. Merging them lets the eye discard
+          both as boilerplate (§R2, extended by §4.2). */}
       {provenance && <p className="mt-3 text-micro text-d-text-muted">{provenance}</p>}
+      <p className={cn('text-micro text-d-text-muted', provenance ? 'mt-1' : 'mt-3')}>
+        {ADVICE_FOOTNOTE}
+      </p>
       </CardBody>
     </Card>
   )
