@@ -55,6 +55,8 @@ translated into a buy/sell call", and both fail loudly when reverted.
 | `9170788` | The `entity` artifact rendered — and the verdict vocabulary fixed (2.2) |
 | `e44953a` | Render transport: same `useChat`, zero chat credits (2.3) |
 | `638256d` | `llmCaps` / `capFor` / `isLockedFeature` — lock a zero, don't 402 on it (2.5) |
+| `8c5a904` | **Phase 3** — one card, one disclosure, one honest thinking line |
+| `59831fb` | A raw tool name reached the UI — the firewall closed properly |
 | `441cee3` `+1` | Plan updated: Phase 2 record, the riskiest step closed, 2.4 status |
 
 **`backend` → `feat/ai-sdk-protocol-and-autonomy`**
@@ -275,8 +277,36 @@ surfaces that do not exist yet.
 one.** The constraint that forced the question is gone: navigation no longer
 spends from the chat budget.
 
-### Phase 3 — the thread · 10–12d
-Gated on 2.1 + 2.2.
+### Phase 3 — the thread · ✅ **SHIPPED**
+
+One card, one disclosure, one honest thinking line. `ProgressRail` and
+`ReferencesRail` deleted (362 lines) — a settled turn carried three sibling
+surfaces describing the same work in three visual languages, above the prose.
+
+**Where the spec did not survive contact, and why.** §4.2 says `EntityCard`
+absorbs `sparkline`/`gauge`/`stat`/`bars`. Taken mechanically that fails:
+`EntityCard`'s anatomy is a SYMBOL's — logo, price, session move, indicator
+votes — and a regime gauge has none of those, so rendering one through it means
+inventing every field that makes the card worth reading. The collapse is
+therefore by what a payload carries: `entity` → EntityCard, `strategy` → the
+existing renderer, everything else → `DataStub`. §4.4's NIFTY card arrives by
+the backend emitting a real `entity` artifact for the index — a better fix than
+a frontend coercion.
+
+**Two things this phase caught in its own work:**
+
+1. **A raw tool name reached the browser.** A live turn rendered a chip reading
+   `get_verdict`. The transform lived at the CALL SITES and one of three
+   wirings — mine, an hour old — passed `tools` straight through. The old
+   frontend map also matched almost nothing: it stripped everything after the
+   first `_`, which turns every `get_*` tool into `get`, so all of them fell
+   through to title-casing the raw name. `TurnDisclosure` now labels them
+   itself and an unknown tool reads "Market data", never a prettified raw name.
+2. **The ratchet caught me twice, and was right both times.** A spinner for a
+   running step (fixed by unifying on the product's one "active" dot), and two
+   new pulses (paid for by deleting two streaming carets — one of which was
+   `bg-white`, invisible in light mode). The ratchets also counted class names
+   inside COMMENTS; that false positive is now fixed, third occurrence.
 
 ### Phase 4 — the atomic cut · 15–20d, one branch
 55 routes → 9. **Gate: a non-admin free account completes J1+J2+J3 without a 402.**

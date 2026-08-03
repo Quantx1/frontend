@@ -575,7 +575,7 @@ Not mechanical. 658 sub-11px sites; `text-[9px]` → `micro` vs `text-[10px]` �
 | ✅ 2.5 **Metering redesign** | **SHIPPED** `6db3a2a` — eng done; the pricing call remains the owner's | Separate deterministic renders from `chat`. Free must complete J1+J2+J3 without a 402. |
 | 2.6 Monitors (table + NL compiler + evaluator + scheduler + CRUD + `create_alert` action) | 8–12d | §R5. A **feature**, not a merge. `saved_scans` also needs `source_prompt` and `next_run_at` columns before a Tasks row can render 3 of its 5 fields. A real APScheduler exists, so the pattern is proven. |
 
-### Phase 3 — The thread · **10–12d**
+### Phase 3 — The thread · ✅ **SHIPPED** `8c5a904` `59831fb`
 
 Composer re-skin · collapse home+thread into one surface · `EntityCard`/`RulesCard`/`DataStub` · the `● Thinking 4s ›` state and the one collapsed disclosure · delete `ReferencesRail` + `CONSULTED` + `ThinkingPulse`. **Gated on 2.1 + 2.2.**
 
