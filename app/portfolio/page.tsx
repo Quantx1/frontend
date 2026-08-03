@@ -26,7 +26,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { TrendingUp, Wallet, Briefcase, BarChart3, Inbox, Sparkles } from '@/lib/icons'
+import { TrendingUp, Briefcase, BarChart3, Inbox, Sparkles } from '@/lib/icons'
 import Link from 'next/link'
 
 import {
@@ -48,6 +48,7 @@ import { TradeTicketButton } from '@/components/trade/TradeTicketButton'
 import { BrokerPositionsPanel } from '@/components/broker/BrokerPositionsPanel'
 import { SymbolLogo } from '@/components/ui/BrandLogo'
 import { AppShell } from '@/components/shell/AppShell'
+import { RenderedSurface } from '@/components/copilot/RenderedSurface'
 import { api } from '@/lib/api'
 import { stockHref } from '@/lib/stock-href'
 import { MONO } from '@/lib/tokens'
@@ -215,34 +216,6 @@ export default function PortfolioPage() {
     },
   ]
 
-  // KPI strip data (derived from existing state — no new fetches)
-  const KPIS = [
-    {
-      label: 'Portfolio Value',
-      value: loading ? '—' : formatInr(totalValue),
-      tooltip: 'Current market value of all open positions',
-      icon: <Wallet className="h-3.5 w-3.5 text-primary" />,
-    },
-    {
-      label: 'Total P&L',
-      value: loading ? '—' : `${totalPnL >= 0 ? '+' : ''}${formatInr(totalPnL)}`,
-      valueClass: loading ? '' : totalPnL >= 0 ? 'text-up' : 'text-down',
-      tooltip: 'Unrealized P&L across open positions',
-      icon: <TrendingUp className="h-3.5 w-3.5 text-primary" />,
-    },
-    {
-      label: 'Open Positions',
-      value: loading ? '—' : positions.length.toString(),
-      icon: <Briefcase className="h-3.5 w-3.5 text-primary" />,
-    },
-    {
-      label: 'Total Invested',
-      value: loading ? '—' : formatInr(totalInvested),
-      tooltip: 'Sum of (qty × avg entry) across positions',
-      icon: <BarChart3 className="h-3.5 w-3.5 text-primary" />,
-    },
-  ]
-
   return (
     <AppShell>
       <div className="w-full space-y-5 p-4 md:p-6 xl:px-8">
@@ -277,32 +250,18 @@ export default function PortfolioPage() {
           </div>
         </Reveal>
 
-        {/* ─── KPI strip ─── */}
-        <div className="grid grid-cols-2 gap-2 rounded-lg border border-line bg-wrap p-2 lg:grid-cols-4">
-          {KPIS.map((k, i) => (
-            <Reveal key={k.label} delay={0.03 * i} className="h-full">
-              <div className="tile-tint h-full p-4">
-                <div className="flex items-center gap-1.5 text-[11px] text-d-text-secondary">
-                  {k.icon}
-                  {k.label}
-                </div>
-                <div
-                  className={`mt-1 text-[22px] font-semibold leading-none ${MONO} ${
-                    (k as any).valueClass ?? 'text-d-text-primary'
-                  }`}
-                >
-                  {k.value}
-                </div>
-                {/* P&L pct sub-line */}
-                {k.label === 'Total P&L' && !loading && (
-                  <div className="mt-1">
-                    <ChangeBadge value={overallPnLPct} kind="percent" size="xs" hideArrow />
-                  </div>
-                )}
-              </div>
-            </Reveal>
-          ))}
-        </div>
+        {/* ── The answer (§4.5) — one sentence replaces four KPI tiles ──
+             "One BigNumber replaces 20 KPI tiles across five routes." The
+             tiles said Portfolio Value / Total P&L / Open Positions / Total
+             Invested as four numbers with four labels; the sentence says the
+             same things, plus the concentration fact none of them carried —
+             how much of the book is one bet.
+
+             Rendered by the template renderer: deterministic, and **zero chat
+             credits**. It also refuses to conflate an empty book with a failed
+             positions query, which the tiles did — a timeout rendered as
+             "₹0 · 0 positions", confidently wrong about the user's own money. ── */}
+        <RenderedSurface template="my_book" />
 
         {/* ─── Performance chart ─── */}
         <Reveal delay={0.06}>

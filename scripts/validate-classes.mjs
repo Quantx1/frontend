@@ -78,7 +78,7 @@ const RAW_COLOUR = /\b(?:text|bg|border)-(?:green|red|emerald|rose)-\d{2,3}\b/
  * you clear sites; the guard fails if you raise one.
  */
 const RATCHET = [
-  { label: 'animate-pulse outside Skeleton.tsx', max: 7,
+  { label: 'animate-pulse outside Skeleton.tsx', max: 6,
     test: (src, rel) => rel !== 'components/foundation/Skeleton.tsx' && /\banimate-pulse\b/.test(src),
     count: (src, rel) => rel === 'components/foundation/Skeleton.tsx' ? 0 : (src.match(/\banimate-pulse\b/g) || []).length },
   // animate-spin is REVIEWED AND CLOSED, not debt. 102 of the 107 are gated on
