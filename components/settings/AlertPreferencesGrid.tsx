@@ -73,7 +73,7 @@ export function AlertPreferencesGrid() {
   return (
     <div className="rounded-lg border border-d-border bg-d-bg-card p-4">
       <div className="mb-3">
-        <h3 className="font-medium text-white">Event-level preferences</h3>
+        <h3 className="font-medium text-d-text-primary">Event-level preferences</h3>
         <p className="mt-1 text-xs text-d-text-muted">
           Choose channels per event. Defaults pre-selected for high-urgency events
           (e.g. unprotected position, drawdown alerts).
@@ -107,7 +107,7 @@ export function AlertPreferencesGrid() {
               return (
                 <tr key={ev.key}>
                   <td className="py-2 pr-2">
-                    <div className="font-medium text-white">{ev.label}</div>
+                    <div className="font-medium text-d-text-primary">{ev.label}</div>
                     <div className="text-[10px] text-d-text-muted">{ev.description}</div>
                   </td>
                   {CHANNELS.map((ch) => {
@@ -121,12 +121,14 @@ export function AlertPreferencesGrid() {
                           onClick={() => onToggle(ev.key, ch, on)}
                           disabled={busy}
                           className={`mx-auto flex h-5 w-9 items-center rounded-full transition-colors duration-200 ${
-                            on ? 'bg-primary' : 'bg-white/[0.04]'
+                            on ? 'bg-primary' : 'bg-surface-2 border border-line'
                           } ${busy ? 'opacity-50' : ''}`}
                           aria-label={`${ev.label} on ${ch}`}
                         >
                           {busy ? (
-                            <Loader2 className="mx-auto h-3 w-3 animate-spin text-white" />
+                            <Loader2
+                              className={`mx-auto h-3 w-3 animate-spin ${on ? 'text-white' : 'text-d-text-muted'}`}
+                            />
                           ) : (
                             <div
                               className={`h-4 w-4 rounded-full bg-white transition-transform duration-200 ${
