@@ -30,6 +30,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useRef, useState } from 'react'
 import useSWR, { useSWRConfig } from 'swr'
+import { StickToBottom } from 'use-stick-to-bottom'
 
 import { Badge, Button, DisclaimerFooter, EyebrowMono, Reveal, Skeleton, Sparkline } from '@/components/foundation'
 import { dispatchCopilotQuotaExhausted } from '@/components/CopilotQuotaModal'
@@ -379,7 +380,6 @@ function CopilotHub() {
   const [view, setView] = useState<'home' | 'thread'>('home')
   // MODES is an ARRAY — look the active lens up by key (never MODES[mode]).
   const activeMode = MODES.find((m) => m.key === mode) ?? MODES[0]
-  const endRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   // True while a live token stream is in flight — disables the client-side
   // typewriter (which is only used for the non-streaming fallback path).
@@ -402,9 +402,10 @@ function CopilotHub() {
     { revalidateOnFocus: false },
   )
 
-  useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
-  }, [turns, pending, streamN])
+  // Scrolling is owned by <StickToBottom>. The effect that lived here called
+  // scrollIntoView on [turns, pending, streamN] — and streamN is the typewriter
+  // counter, which ticks every 14ms — so the view was dragged to the bottom
+  // ~70x a second while a reply revealed, making it impossible to read back.
 
   // Typewriter reveal (fallback path only): when a fresh assistant turn lands
   // via the non-streaming call, type it out. Live token streams set
@@ -917,8 +918,16 @@ function CopilotHub() {
               <Plus className="h-3.5 w-3.5" /> New chat
             </Button>
           </div>
-          <div className="flex-1 overflow-y-auto py-2" role="log" aria-live="polite" aria-relevant="additions" aria-label="Conversation">
-            <div className="flex flex-col space-y-5">
+          <StickToBottom
+            className="relative min-h-0 flex-1 overflow-y-auto"
+            resize="smooth"
+            initial="instant"
+            role="log"
+            aria-live="polite"
+            aria-relevant="additions"
+            aria-label="Conversation"
+          >
+            <StickToBottom.Content className="flex flex-col space-y-5 py-2">
               {loadingThread ? (
                 <div className="flex items-center justify-center py-10"><Loader2 className="h-5 w-5 animate-spin text-d-text-muted" /></div>
               ) : (
@@ -1001,9 +1010,8 @@ function CopilotHub() {
                   )
                 })
               )}
-              <div ref={endRef} />
-            </div>
-          </div>
+            </StickToBottom.Content>
+          </StickToBottom>
           {error && <p role="alert" className="px-1 py-1 text-[12px] text-down">{error}</p>}
           <div className="border-t border-line pb-4 pt-3">
             {composer(false)}
