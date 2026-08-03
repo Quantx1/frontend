@@ -22,8 +22,14 @@ violations · `validate-theme` ALL PASS · 13 format checks · **1,200 Python te
 · `verify-copilot-protocol` 15–16/16 chunks valid against the AI SDK's own
 `uiMessageChunkSchema`.
 
-**Phase 0 CLOSED · Phase 2.1 / 2.2 / 2.3 / 2.5 SHIPPED · 2.4 engine shipped
-with rates withheld.** Open: 2.6 monitors, Phase 1 (typography), Phases 3–6.
+**Phase 0 CLOSED · Phase 2 COMPLETE (2.4 engine only) · Phase 3 SHIPPED ·
+§4.4 `/markets` SHIPPED.** Open: 2.6 monitors, Phase 1 (typography), the rest
+of Phase 4 (the 55→9 route cut), Phases 5–6.
+
+**`/markets` is the proof the whole Phase 2 investment was for.** 18 card
+surfaces and 19 requests became a paragraph, one card and four chips, answered
+in **192ms** for **zero chat credits**. `RenderedSurface` is reusable — `/book`
+and the signals surface are the same component with a different template key.
 
 **81 new tests across Phase 2, and 21 mutations confirming they bite.** Every
 guard in this phase was mutation-tested — the two that matter most are "the
@@ -57,6 +63,8 @@ translated into a buy/sell call", and both fail loudly when reverted.
 | `638256d` | `llmCaps` / `capFor` / `isLockedFeature` — lock a zero, don't 402 on it (2.5) |
 | `8c5a904` | **Phase 3** — one card, one disclosure, one honest thinking line |
 | `59831fb` | A raw tool name reached the UI — the firewall closed properly |
+| `43e5591` | `votesNoun` — an index counts constituents, a stock counts indicators |
+| `793d384` | **§4.4** — `/markets` answers, then stops. 802 lines cut, 192ms |
 | `441cee3` `+1` | Plan updated: Phase 2 record, the riskiest step closed, 2.4 status |
 
 **`backend` → `feat/ai-sdk-protocol-and-autonomy`**
