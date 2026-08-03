@@ -95,7 +95,7 @@ const RATCHET = [
   // `micro` only. The audit measured 658 of these and called that single number
   // "the user's 'congested, not designed properly' verdict, quantified".
   // The sweep onto the v6 roles is Phase 1; until then the count may not grow.
-  { label: 'type below the 11px floor', max: 532,
+  { label: 'type below the 11px floor', max: 528,
     count: (src) => (src.match(/text-\[(?:8|8\.5|9|9\.5|10|10\.5)px\]/g) || []).length },
 ]
 

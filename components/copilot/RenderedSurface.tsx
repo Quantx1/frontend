@@ -49,8 +49,10 @@ import { TurnDisclosure } from './TurnDisclosure'
 export interface RenderedSurfaceProps {
   template: CopilotTemplate
   params?: Record<string, unknown>
-  /** A chip tap. Wired to the thread in Phase 4; inert rather than faked until then. */
+  /** A chip tap — the caller renders the next turn. */
   onFollowUp?: (question: string) => void
+  /** The card's [Details]. Opens the context panel; omitted leaves it inert. */
+  onOpenDetails?: () => void
   className?: string
 }
 
@@ -58,6 +60,7 @@ export function RenderedSurface({
   template,
   params,
   onFollowUp,
+  onOpenDetails,
   className,
 }: RenderedSurfaceProps) {
   // Read at send time rather than closed over, so a param change is picked up
@@ -103,7 +106,12 @@ export function RenderedSurface({
         </div>
       )}
 
-      {!thinking && <TurnCard artifacts={last ? msgData(last, 'artifacts') : undefined} />}
+      {!thinking && (
+        <TurnCard
+          artifacts={last ? msgData(last, 'artifacts') : undefined}
+          onOpen={onOpenDetails ? () => onOpenDetails() : undefined}
+        />
+      )}
 
       {!thinking && followups.length > 0 && (
         <div className="flex flex-wrap gap-1.5">

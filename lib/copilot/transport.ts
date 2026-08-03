@@ -99,7 +99,12 @@ export function createCopilotTransport(getContext: () => CopilotSendContext) {
 
 /** The deterministic surfaces. Keys must match `TEMPLATES` in the backend's
  *  `ai/agents/templates.py` — a mismatch is a 404, not a silent fallback. */
-export type CopilotTemplate = 'market_brief' | 'stock_read' | 'my_book' | 'signals_today'
+export type CopilotTemplate =
+  | 'market_brief'
+  | 'market_detail'
+  | 'stock_read'
+  | 'my_book'
+  | 'signals_today'
 
 export interface CopilotRenderContext {
   template: CopilotTemplate
