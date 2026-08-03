@@ -181,11 +181,12 @@ export function StrategyActionRow({
   }, [draft?.id, btResult])
 
   const isOptions = dsl?.instrument_segment === 'OPTIONS'
-  const legs = dsl?.legs ?? []
-  const payoffAvailable = Boolean(isOptions && legs.length > 0)
+  const payoffAvailable = Boolean(isOptions && (dsl?.legs?.length ?? 0) > 0)
+  // Depend on `dsl?.legs`, not on a `?? []` const — that expression is a new
+  // array identity every render, which defeated the memo entirely.
   const payoffLegs = useMemo(
-    () => (payoffAvailable ? toPayoffLegs(legs) : []),
-    [payoffAvailable, legs],
+    () => (payoffAvailable ? toPayoffLegs(dsl?.legs ?? []) : []),
+    [payoffAvailable, dsl?.legs],
   )
   const margin = dsl ? estimateMargin(dsl, capital) : null
 

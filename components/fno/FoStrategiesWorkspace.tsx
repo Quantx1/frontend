@@ -1394,8 +1394,11 @@ function OptionChainPanel() {
   }
 
   // Pair CE + PE at the same strike so the table reads horizontally.
-  const rows = data?.rows ?? []
+  // The `?? []` lives INSIDE the memo: as a separate `const` it minted a fresh
+  // array on every render, so `[rows]` never matched and the whole chain was
+  // re-grouped each time — on the widest table in the app.
   const grouped = useMemo(() => {
+    const rows = data?.rows ?? []
     const byStrike = new Map<number, { ce?: any; pe?: any }>()
     for (const r of rows) {
       const cur = byStrike.get(r.strike) ?? {}
@@ -1406,7 +1409,7 @@ function OptionChainPanel() {
     return Array.from(byStrike.entries())
       .sort((a, b) => a[0] - b[0])
       .map(([strike, pair]) => ({ strike, ...pair }))
-  }, [rows])
+  }, [data?.rows])
 
   if (data?.source === 'unavailable') {
     return (
