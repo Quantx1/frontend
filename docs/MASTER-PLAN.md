@@ -58,10 +58,12 @@ violations · `validate-theme` ALL PASS · 13 format + 22 Python tests.
   (AA needs 4.5). Residual nit: the toggle's off-state track (`bg-surface-2`) sits at
   **1.08** against the card, so it reads only via its `border-line` edge — acceptable,
   but it is carrying the whole affordance.
-- **`/alerts` redirects to `/copilot`** despite `middleware.ts` carrying an explicit
-  comment not to redirect it ("'/alerts' is a LIVE page again (WP-ALERTS-CALC) … Do NOT
-  re-add a redirect here"). Something else is sending it there. Worth tracing — the
-  Alerts Studio is currently unreachable.
+- ~~`/alerts` redirects to `/copilot`~~ **RETRACTED — this was not a bug.** `/alerts`
+  serves HTTP 200 with an empty redirect location, and `middleware.ts` passes it through
+  untouched. The bounce came from the test browser's own degraded Supabase session:
+  `/alerts` → client auth check fails → `/login?redirect=…` → `login/page.tsx:50`
+  `router.push('/copilot')`. A stale browser session, not a routing defect. Recorded
+  because it was committed as a finding for one commit before being checked.
 - **16 `pr/*` branches unpushed** — bulk branch creation was blocked. Convenience only;
   every commit is on the remote via the working branch.
 - **Phase 0 remainder** — 28 `animate-pulse` (content-wrapping, need per-site judgement),
