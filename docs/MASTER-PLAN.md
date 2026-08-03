@@ -50,8 +50,18 @@ violations · `validate-theme` ALL PASS · 13 format + 22 Python tests.
 
 ### Still open
 
-- **`AlertPreferencesGrid` light-mode fix is unverified** — `/alerts` would not render its
-  content during the session that made it. Needs an eyeball before merge.
+- ~~`AlertPreferencesGrid` light-mode fix is unverified~~ **VERIFIED.** The reason it
+  never rendered is that **`/alerts` redirects to `/copilot`** — a routing fact, not a
+  failure. Measured instead by rendering the component's exact markup in the live light
+  theme: card background is pure `rgb(255,255,255)`, the old `text-white` scores **1.00**
+  contrast (invisible, as suspected) and the new `text-d-text-primary` scores **16.86**
+  (AA needs 4.5). Residual nit: the toggle's off-state track (`bg-surface-2`) sits at
+  **1.08** against the card, so it reads only via its `border-line` edge — acceptable,
+  but it is carrying the whole affordance.
+- **`/alerts` redirects to `/copilot`** despite `middleware.ts` carrying an explicit
+  comment not to redirect it ("'/alerts' is a LIVE page again (WP-ALERTS-CALC) … Do NOT
+  re-add a redirect here"). Something else is sending it there. Worth tracing — the
+  Alerts Studio is currently unreachable.
 - **16 `pr/*` branches unpushed** — bulk branch creation was blocked. Convenience only;
   every commit is on the remote via the working branch.
 - **Phase 0 remainder** — 28 `animate-pulse` (content-wrapping, need per-site judgement),
