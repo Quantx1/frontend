@@ -76,9 +76,19 @@ const RAW_COLOUR = /\b(?:text|bg|border)-(?:green|red|emerald|rose)-\d{2,3}\b/
  * So instead of a ban that would fail the build today, or a rule that lets the
  * debt grow quietly, these counts may only ever go DOWN. Lower a baseline when
  * you clear sites; the guard fails if you raise one.
+ *
+ * ── One deliberate exception, and why it is not a raise ────────────────────
+ * 793d384 and 3e437f2 rewrote /markets and deleted four cards with it, then
+ * lowered three baselines to match the smaller tree (7→6, 106→104, 560→528).
+ * That rewrite is REVERTED — BigDealsCard, DailyBriefingCard, BreadthCard and
+ * MarketExplainerCard are back, and their sites came back with them.
+ *
+ * So these are restored to 7/106/560: the exact values from 43e5591, measured
+ * while these same four cards were in the tree. Not new debt and not headroom
+ * — the same code, counted again. The ratchet still bites on anything new.
  */
 const RATCHET = [
-  { label: 'animate-pulse outside Skeleton.tsx', max: 6,
+  { label: 'animate-pulse outside Skeleton.tsx', max: 7,
     test: (src, rel) => rel !== 'components/foundation/Skeleton.tsx' && /\banimate-pulse\b/.test(src),
     count: (src, rel) => rel === 'components/foundation/Skeleton.tsx' ? 0 : (src.match(/\banimate-pulse\b/g) || []).length },
   // animate-spin is REVIEWED AND CLOSED, not debt. 102 of the 107 are gated on
@@ -89,13 +99,13 @@ const RATCHET = [
   // Converting them would trade a working gated loading state for a visual
   // change that fixes nothing. The baseline exists to stop UNGATED spinners
   // creeping in, not to demand this number reach zero.
-  { label: 'animate-spin', max: 104,
+  { label: 'animate-spin', max: 106,
     count: (src) => (src.match(/\banimate-spin\b/g) || []).length },
   // Sub-11px type. REDESIGN-VISUAL.md §2.2 sets the floor at 11px, and 11px is
   // `micro` only. The audit measured 658 of these and called that single number
   // "the user's 'congested, not designed properly' verdict, quantified".
   // The sweep onto the v6 roles is Phase 1; until then the count may not grow.
-  { label: 'type below the 11px floor', max: 528,
+  { label: 'type below the 11px floor', max: 560,
     count: (src) => (src.match(/text-\[(?:8|8\.5|9|9\.5|10|10\.5)px\]/g) || []).length },
 ]
 
