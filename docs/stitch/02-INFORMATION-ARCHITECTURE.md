@@ -247,7 +247,7 @@ These are not routes but behave like screens and must be designed.
 |---|---|---|
 | **Command Palette** | `shell/CommandPalette.tsx` | ⌘K, floating (blurred, elev-3), the app's operating system |
 | **Mobile Drawer** | `shell/MobileDrawer.tsx` | slide-in left, `< lg`, mirrors sidebar IA |
-| **Context Panel / Right Rail faces** | `shell/ContextPanel.tsx`, `RightRail.tsx` | 72px icon rail → expandable contextual panel |
+| **Right Rail faces** | `shell/RightRail.tsx` | 72px icon rail → expandable contextual panel. (`shell/ContextPanel.tsx`, the tabbed right slide-over, was deleted with the `/markets` revert — no slide-over exists now.) |
 | **Autopilot Sticky Stop** | `shell/AutopilotStickyStop.tsx` | persistent kill switch when the bot is live |
 | **Connect-broker banner** | `broker/ConnectBrokerBanner.tsx` | top of main pane, until a broker is linked |
 | **Offline banner** | `system/OfflineBanner.tsx` | connectivity loss |

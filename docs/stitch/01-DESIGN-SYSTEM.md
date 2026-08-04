@@ -59,7 +59,7 @@ This is legally required and must survive any redesign.
 | Toasts | sonner |
 | State/data | swr 2 + zustand 4 |
 | Theming | next-themes, `defaultTheme="system"`, `enableSystem` |
-| Fonts | **Geist Sans** (all text + display) · **Geist Mono** (numerics only), via `geist/font` |
+| Fonts | **Plus Jakarta Sans** inside the app shell · **Geist Sans** outside it · **Geist Mono** for all numerics — see §4.0 |
 | AI | Vercel AI SDK (`ai` 7, `@ai-sdk/react`) streaming into the copilot thread |
 | Auth | Supabase |
 
@@ -182,10 +182,31 @@ P&L semantics**. Warning is a fourth only when something is genuinely at risk.
 
 ## 4. TYPOGRAPHY — 11 roles, floor 11px
 
-One family, **Geist Sans**, for everything including display headings. **Geist Mono**
-for numerics only — functional alignment, not decoration.
+### 4.0 The font split (as-built — this surprises people)
 
-### 4.1 Prose roles (7)
+There are **two prose families**, chosen by whether the screen is inside the app shell.
+
+| Scope | Prose family | Mechanism |
+|---|---|---|
+| **Inside `AppShell`** — the authenticated product, i.e. almost every screen | **Plus Jakarta Sans** (400/500/600/700/800) | `components/shell/appFont.ts` sets `--font-app-sans`; `AppShell`'s root div applies it inline, overriding the body font |
+| **Outside `AppShell`** — public landing, login/signup, onboarding, callbacks, 404, global error | **Geist Sans** | `app/layout.tsx` sets `--font-sans` on `<html>` via `geist/font` |
+| **All numerics, everywhere** | **Geist Mono** + `tabular-nums` | `--font-mono` |
+| Display headings (`.heading-display`) | aliased to `--font-geist-sans` | weight 600, `-0.02em`, `text-wrap: balance` |
+
+Two dead ends worth knowing: `--font-app-mono` (JetBrains Mono) is loaded but nothing
+consumes it, and `app/global-error.tsx` hardcodes a plain `Inter / -apple-system /
+Segoe UI / Roboto` stack because the font variables no longer exist at that point.
+
+**If you are redesigning to one family, pick Plus Jakarta Sans** — it governs the
+product surfaces. Keep Geist Mono for numerics regardless; the tabular figures are
+what keep price columns aligned.
+
+### 4.1 The roles
+
+The role scale below is family-independent — it applies to whichever prose face is
+in scope. **Geist Mono** carries every numeric role.
+
+#### Prose roles (7)
 
 | Role | Size / line-height | Tracking | Weight | Use |
 |---|---|---|---|---|
@@ -197,7 +218,7 @@ for numerics only — functional alignment, not decoration.
 | `meta` | 12 / 16 | — | 400 | timestamps, secondary annotations |
 | `micro` | 11 / 14 | +0.06em | 500 | **eyebrows, table column headers, provenance** — uppercase |
 
-### 4.2 Numeric roles (4) — always `font-mono tabular-nums`
+#### Numeric roles (4) — always `font-mono tabular-nums`
 
 | Role | Size / line-height | Use |
 |---|---|---|
@@ -446,8 +467,8 @@ VISUAL SYSTEM — follow exactly:
 • Depth comes from a surface step plus a 1px hairline border — cards are OPAQUE.
   Only floating dismissible surfaces (command palette, sheets, dropdowns) use
   a 20px backdrop blur. No glassmorphism on cards. No mesh gradients. No neon.
-• Typography: Geist Sans for everything, Geist Mono with tabular figures for all
-  numbers. Roles: display 34/40 w600 · title 24/32 w600 · heading 17/24 w600
+• Typography: Plus Jakarta Sans for all prose and UI text; Geist Mono with tabular
+  figures for every number. Roles: display 34/40 w600 · title 24/32 w600 · heading 17/24 w600
   (card headers) · body 15/24 · label 13/18 w500 · meta 12/16 · micro 11/14
   uppercase +0.06em w500 (eyebrows, table column headers). Numbers: hero 40/44,
   large 22/28, standard 14/20, small 13/18. Never go below 11px.
