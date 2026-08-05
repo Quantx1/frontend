@@ -977,6 +977,14 @@ export const api = {
       request<{ success: boolean; message: string }>(`/api/trades/${tradeId}/approve`, {
         method: 'POST',
       }),
+    /** The other arm of the semi-auto veto. Terminal: only a pending trade can
+     *  be rejected, and the backend 400s (naming the real state) rather than
+     *  silently no-opping, so a double-click cannot un-execute a live order. */
+    reject: (tradeId: string) =>
+      request<{ success: boolean; status: 'rejected'; trade_id: string }>(
+        `/api/trades/${tradeId}/reject`,
+        { method: 'POST' },
+      ),
     killSwitch: () => request<KillSwitchResult>('/api/trades/kill-switch', { method: 'POST' }),
   },
 

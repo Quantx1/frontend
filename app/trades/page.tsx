@@ -212,26 +212,32 @@ export default function TradesPage() {
    * HTTP 400 "Trade not found or not open" for anything pending — i.e. for
    * every trade this button is rendered on.
    *
-   * The old body swallowed the 400 into `console.error` and told the user
-   * nothing, so pressing Reject on the human-in-the-loop veto for a real order
-   * appeared to do nothing at all — no row change, no message, no error. The
-   * only change here is that the failure is now surfaced.
+   * It could not, until now. There was no reject endpoint, so this called
+   * `POST /trades/{id}/close`, whose handler selects on `status = 'open'` and
+   * raises 400 "Trade not found or not open" for anything pending — i.e. for
+   * every trade this button is rendered on — and the old body swallowed that
+   * into `console.error`, so the veto appeared to do nothing at all.
    *
-   * The `setPendingTrades` filter below is NOT optimistic and never was: it
-   * sits after the `await`, so it does not run when close() rejects. It is
-   * correct as written and becomes live the day the endpoint exists — leave
-   * it. Until the backend ships `POST /api/trades/{id}/reject` the row stays,
-   * which is honest: the trade really is still pending.
+   * `POST /api/trades/{id}/reject` now exists and is what this calls. It is
+   * terminal and guarded: the update re-asserts `status = 'pending'`, so a
+   * trade approved between our read and our write cannot be flipped to
+   * rejected after it has already executed, and a non-pending trade is a 400
+   * naming its real state rather than a silent no-op.
+   *
+   * The row is dropped only after the call succeeds — never optimistically.
+   * On a surface that vetoes real orders, a fabricated success is the most
+   * dangerous shape this can take.
    */
   const handleReject = async (tradeId: string) => {
     setApprovingId(tradeId)
     try {
-      await api.trades.close(tradeId)
+      await api.trades.reject(tradeId)
       setPendingTrades((prev) => prev.filter((t) => t.id !== tradeId))
+      toast.success('Trade rejected — it will not be placed')
     } catch (error) {
       console.error('Failed to reject trade:', error)
       toast.error('Reject failed — this trade is still pending', {
-        description: `${handleApiError(error)} Rejecting a pending trade needs a backend endpoint that does not exist yet. Use your broker to cancel, or leave it to expire.`,
+        description: handleApiError(error),
       })
     } finally {
       setApprovingId(null)
