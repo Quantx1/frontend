@@ -6,6 +6,7 @@ import { mutate } from 'swr'
 import { Bot, FlaskConical, Loader2, Pause, Play } from '@/lib/icons'
 import { Card, CardBody, CardHeader } from '@/components/foundation'
 import { api } from '@/lib/api'
+import { PRICING_URL } from '@/lib/marketing-url'
 import type { ManagedOverview } from '@/lib/api'
 
 /**
@@ -69,13 +70,13 @@ export default function AutopilotCard({ autopilot }: { autopilot: ManagedOvervie
                   Go live
                 </Link>
               ) : (
-                <Link
-                  href="/pricing"
+                <a
+                  href={PRICING_URL}
                   className="inline-flex items-center gap-1.5 rounded-full glass-control px-3 py-1.5 text-xs font-semibold text-d-text-primary transition-colors"
                 >
                   <Bot className="h-3.5 w-3.5" />
                   Go live with Pro
-                </Link>
+                </a>
               )}
             </div>
           </div>
@@ -134,9 +135,9 @@ export default function AutopilotCard({ autopilot }: { autopilot: ManagedOvervie
                     Ready for real money? Go live
                   </Link>
                 ) : (
-                  <Link href="/pricing" className="text-d-text-secondary hover:text-d-text-primary hover:underline">
+                  <a href={PRICING_URL} className="text-d-text-secondary hover:text-d-text-primary hover:underline">
                     Go live with Pro (up to ₹2L)
-                  </Link>
+                  </a>
                 )
               )}
               {paper && (

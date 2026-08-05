@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { api } from '@/lib/api'
+import { api, handleApiError } from '@/lib/api'
 import Link from 'next/link'
 import {
   ArrowLeft,
@@ -30,6 +30,7 @@ import {
   Reveal,
   StatCard,
   Skeleton,
+  toast,
 } from '@/components/foundation'
 import { dispatchCopilotOpen } from '@/components/copilot/CopilotProvider'
 import { AppShell } from '@/components/shell/AppShell'
@@ -196,11 +197,31 @@ export default function TradesPage() {
       setPendingTrades((prev) => prev.filter((t) => t.id !== tradeId))
     } catch (error) {
       console.error('Failed to approve trade:', error)
+      toast.error('Could not approve this trade', { description: handleApiError(error) })
     } finally {
       setApprovingId(null)
     }
   }
 
+  /**
+   * Reject — the human-in-the-loop veto on a real order. It CANNOT currently
+   * succeed.
+   *
+   * There is no reject endpoint. This calls `POST /trades/{id}/close`, whose
+   * handler (`close_trade_record`) selects on `status = 'open'` and raises
+   * HTTP 400 "Trade not found or not open" for anything pending — i.e. for
+   * every trade this button is rendered on.
+   *
+   * The old body swallowed that into `console.error` and then optimistically
+   * dropped the row from `pendingTrades`, so the veto LOOKED like it worked
+   * while the trade stayed pending server-side and the next approval window
+   * could still act on it. On a surface that gates real orders, a silent
+   * false-success is the most dangerous shape this bug can take.
+   *
+   * Until the backend ships `POST /api/trades/{id}/reject`, the failure is
+   * surfaced and the row STAYS — an honest "still pending" beats a fabricated
+   * rejection. Do not re-add the optimistic filter here.
+   */
   const handleReject = async (tradeId: string) => {
     setApprovingId(tradeId)
     try {
@@ -208,6 +229,9 @@ export default function TradesPage() {
       setPendingTrades((prev) => prev.filter((t) => t.id !== tradeId))
     } catch (error) {
       console.error('Failed to reject trade:', error)
+      toast.error('Reject failed — this trade is still pending', {
+        description: `${handleApiError(error)} Rejecting a pending trade needs a backend endpoint that does not exist yet. Use your broker to cancel, or leave it to expire.`,
+      })
     } finally {
       setApprovingId(null)
     }

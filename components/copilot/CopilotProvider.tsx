@@ -77,10 +77,24 @@ function derivePageContext(pathname: string): PageContext {
 }
 
 // ---------------------------------------------------------------- open API
-/** Open the dock from anywhere (back-compat with old call sites). */
-export function dispatchCopilotOpen(prefill?: string, mode?: CopilotMode) {
+/**
+ * Open the dock from anywhere (back-compat with old call sites).
+ *
+ * `submit: true` sends the prefill immediately instead of parking it in the
+ * input. That is what a suggestion CHIP means — a chip that fills a box and
+ * waits for Enter is a suggestion the user has to re-issue. Typed-by-hand
+ * call sites (the ~17 "Ask Copilot" buttons) keep the default: they seed a
+ * question the user is expected to edit.
+ */
+export function dispatchCopilotOpen(
+  prefill?: string,
+  mode?: CopilotMode,
+  options?: { submit?: boolean },
+) {
   if (typeof window === 'undefined') return
-  window.dispatchEvent(new CustomEvent('copilot:open', { detail: { prefill, mode } }))
+  window.dispatchEvent(
+    new CustomEvent('copilot:open', { detail: { prefill, mode, submit: options?.submit === true } }),
+  )
 }
 
 // ---------------------------------------------------------------- messages
@@ -126,6 +140,11 @@ export default function CopilotProvider() {
   const [open, setOpen] = useState(false)
   const [mode, setMode] = useState<CopilotMode>('ask')
   const [input, setInput] = useState('')
+  // A question handed over by `dispatchCopilotOpen(q, mode, { submit: true })`
+  // — the follow-up chips. Held in state rather than sent from the event
+  // listener because that listener is registered once and cannot see the
+  // current `send` closure.
+  const [pendingSend, setPendingSend] = useState<string | null>(null)
   // Server-side thread id — set from the stream's `data-conversation` part so
   // maximize can hand the FULL conversation to the Main Chat.
   const [conversationId, setConversationId] = useState<string | null>(null)
@@ -255,7 +274,13 @@ export default function CopilotProvider() {
     const onOpen = (e: Event) => {
       const detail = (e as CustomEvent).detail || {}
       if (detail.mode) setMode(detail.mode as CopilotMode)
-      if (typeof detail.prefill === 'string') setInput(detail.prefill)
+      if (typeof detail.prefill === 'string') {
+        setInput(detail.prefill)
+        // `send` is not in this effect's deps (it is registered once, on
+        // mount), so the auto-send is handed to state and fired by the effect
+        // below — where the current `send` closure is in scope.
+        if (detail.submit) setPendingSend(detail.prefill)
+      }
       setOpen(true)
     }
     const onClose = () => setOpen(false)
@@ -330,6 +355,16 @@ export default function CopilotProvider() {
     },
     [input, streaming, ctx, activeMode, messages, conversationId, sendMessage, clearError],
   )
+
+  // Fire a question handed over with `{ submit: true }`. Cleared BEFORE the
+  // send so a re-render mid-turn cannot double-fire it, and skipped while a
+  // turn is already streaming (`send` would drop it anyway — this keeps the
+  // text in the input so the tap is not silently lost).
+  useEffect(() => {
+    if (pendingSend == null || streaming) return
+    setPendingSend(null)
+    void send(pendingSend)
+  }, [pendingSend, streaming, send])
 
   const maximize = useCallback(() => {
     // Whole-thread carryover: the dock persists its conversation, so Main Chat

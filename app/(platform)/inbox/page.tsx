@@ -30,6 +30,7 @@ import {
 } from '@/components/foundation'
 import { dispatchCopilotOpen } from '@/components/copilot/CopilotProvider'
 import { api } from '@/lib/api'
+import { PRICING_URL } from '@/lib/marketing-url'
 import type { Notification, NotificationType } from '@/types'
 
 type FilterTab = 'all' | 'signals' | 'positions' | 'agent'
@@ -237,6 +238,15 @@ function NotificationCard({
   )
 
   if (linkTo) {
+    // A marketing-origin target cannot go through next/link — the App Router
+    // client cannot navigate off this deployment.
+    if (/^https?:\/\//.test(linkTo)) {
+      return (
+        <a href={linkTo} onClick={onMarkRead}>
+          {Body}
+        </a>
+      )
+    }
     return (
       <Link href={linkTo} onClick={onMarkRead}>
         {Body}
@@ -281,6 +291,7 @@ function inferLinkTarget(n: Notification): string | null {
     return '/portfolio'
   }
   if (n.type === 'broker_disconnected') return '/settings'
-  if (n.type === 'subscription_expiring') return '/pricing'
+  // Cross-origin: /pricing lives on the marketing deployment, not here.
+  if (n.type === 'subscription_expiring') return PRICING_URL
   return null
 }

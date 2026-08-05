@@ -13,6 +13,7 @@ import { QuantXMark } from '@/components/brand/QuantXMark'
 import { cn } from '@/lib/utils'
 import { MONO } from '@/lib/tokens'
 import { api } from '@/lib/api'
+import { PRICING_URL } from '@/lib/marketing-url'
 
 type Conv = { id: string; title: string | null; created_at: string; updated_at: string }
 
@@ -220,8 +221,10 @@ export const Sidebar = ({ pathname, collapsed, onToggle, animate, onSearch }: Pr
       <div className="mt-auto shrink-0">
         {/* Upgrade pill — glossy blue FintechX CTA (gradient + gloss bevel) */}
         <div className="border-t border-line p-2">
-          <Link
-            href="/pricing"
+          {/* /pricing lives on the marketing deployment — a plain <a>, because
+              the App Router client cannot navigate to another origin. */}
+          <a
+            href={PRICING_URL}
             title="Upgrade"
             className={cn(
               'cta-gloss flex items-center gap-2 rounded-full bg-gradient-cta font-semibold text-primary-foreground transition-opacity hover:opacity-90',
@@ -230,7 +233,7 @@ export const Sidebar = ({ pathname, collapsed, onToggle, animate, onSearch }: Pr
           >
             <Sparkles className={collapsed ? 'h-[18px] w-[18px]' : 'h-4 w-4'} aria-hidden="true" />
             {!collapsed && 'Upgrade'}
-          </Link>
+          </a>
         </div>
 
         {/* collapse / expand toggle — bottom */}

@@ -153,6 +153,15 @@ export const CATEGORIES: Record<CategoryId, SignalCategory> = {
   },
 }
 
+/**
+ * The books whose rows come through `getToday()` / `getHistory()`.
+ *
+ * Momentum-30 is deliberately ABSENT. It is served only by its own endpoint
+ * and is not bridged into the signals table, so listing it in the /signals
+ * overview's horizon filter and "By horizon" distro would add a row that can
+ * only ever read 0 and a filter that can only ever return nothing. It has its
+ * own hub tab (SignalsHub TABS) fed by `api.signals.getMomentum30`.
+ */
 export const CATEGORY_LIST: SignalCategory[] = [
   CATEGORIES.swing,
   CATEGORIES.momentum,
@@ -188,9 +197,14 @@ function numOrUndef(v: unknown): number | undefined {
  * does NOT go through this helper — this function maps intraday/swing/positional
  * only. Signals with signal_type "momentum" still fold into swing here so that
  * any legacy momentum signals from getToday() continue to appear on the swing page.
+ *
+ * `momentum30` is matched FIRST. It contains the substring "momentum", so the
+ * looser test below would have claimed it for the weekly Momentum Picks book —
+ * two different constructions, silently merged.
  */
 export const categoryOf = (s: DisplaySignal): CategoryId => {
   const t = (s.signal_type || '').toLowerCase()
+  if (t.includes('momentum30')) return 'momentum30'
   return t.includes('momentum') ? 'momentum' : 'swing'
 }
 

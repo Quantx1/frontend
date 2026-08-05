@@ -4,6 +4,7 @@ import Link from 'next/link'
 import useSWR from 'swr'
 import { ArrowRight, ShieldAlert, ShieldCheck } from '@/lib/icons'
 import { api } from '@/lib/api'
+import { marketingUrl } from '@/lib/marketing-url'
 import {
   Card,
   CardBody,
@@ -235,9 +236,9 @@ export default function RiskCenterPage() {
           <Link href="/trades" className="inline-flex items-center gap-1 font-medium text-primary hover:underline">
             Trade journal &amp; behaviour insights <ArrowRight className="h-3 w-3" />
           </Link>
-          <Link href="/proof?tab=track-record" className="inline-flex items-center gap-1 font-medium text-primary hover:underline">
+          <a href={marketingUrl('/proof?tab=track-record')} className="inline-flex items-center gap-1 font-medium text-primary hover:underline">
             Signal track record <ArrowRight className="h-3 w-3" />
-          </Link>
+          </a>
         </div>
       </section>
       </Reveal>

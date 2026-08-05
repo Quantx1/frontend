@@ -44,6 +44,7 @@ import { TurnCard } from '@/components/copilot/TurnCard'
 import { TurnDisclosure } from '@/components/copilot/TurnDisclosure'
 import { BlurFade } from '@/components/ui/blur-fade'
 import { api, handleApiError, ApiError, type CopilotArtifact, type CopilotStep, type CopilotReference } from '@/lib/api'
+import { marketingUrl } from '@/lib/marketing-url'
 import { useTier } from '@/lib/hooks/useTier'
 import { MONO } from '@/lib/tokens'
 import { MODES, MODE_PROMPTS, pickGrid, type CopilotMode } from '@/lib/copilot-modes'
@@ -1168,7 +1169,7 @@ function CopilotHub() {
                     <p className="py-6 text-center text-[12px] text-d-text-secondary">The live curve builds as trades resolve.</p>
                   )}
                 </div>
-                <Link href="/proof?tab=track-record" className="mt-2 inline-flex items-center gap-1 text-[12px] text-d-text-primary underline underline-offset-2 hover:text-d-text-secondary">See the full record <ArrowRight className="h-3.5 w-3.5" /></Link>
+                <a href={marketingUrl('/proof?tab=track-record')} className="mt-2 inline-flex items-center gap-1 text-[12px] text-d-text-primary underline underline-offset-2 hover:text-d-text-secondary">See the full record <ArrowRight className="h-3.5 w-3.5" /></a>
               </div>
             </div>
             <p className="mt-3 text-[11px] text-d-text-secondary">Live, outcome-tracked signal performance over the last 90 days. Past performance does not guarantee future results.</p>
@@ -1179,9 +1180,9 @@ function CopilotHub() {
               Every signal we publish gets tracked to its outcome: win, loss or expiry. Audited, unedited, no cherry-picking. The live record builds right here as trades resolve.
               {(stats?.n ?? 0) > 0 && <span className="font-normal text-d-text-primary"> {stats!.n} signals tracked so far.</span>}
             </p>
-            <Link href="/proof?tab=track-record" className="inline-flex shrink-0 items-center gap-1 text-[13px] text-d-text-primary underline underline-offset-2 hover:text-d-text-secondary">
+            <a href={marketingUrl('/proof?tab=track-record')} className="inline-flex shrink-0 items-center gap-1 text-[13px] text-d-text-primary underline underline-offset-2 hover:text-d-text-secondary">
               See the methodology <ArrowRight className="h-4 w-4" />
-            </Link>
+            </a>
           </div>
         )}
       </section>

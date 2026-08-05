@@ -416,6 +416,34 @@ export type StyleSignalsResponse = {
   style: string
 }
 
+/**
+ * Nifty200-Momentum-30 book entry (`/api/signals/momentum30`).
+ *
+ * A CROSS-SECTIONAL ranker, not a per-symbol forecaster, so it carries no
+ * `expected_return` / `top_decile_prob` — it publishes the relative score and
+ * the two volatility-normalised legs behind it instead. The type says so
+ * rather than borrowing `StyleSignalRaw` and letting those two read 0.
+ */
+export interface Momentum30SignalRaw
+  extends Omit<StyleSignalRaw, 'expected_return' | 'top_decile_prob'> {
+  /** Blended z-score across the universe. Relative, so not a percentage. */
+  score: number
+  ret_12m: number
+  ret_6m: number
+  /** Annualised volatility, as a 0..1 fraction. */
+  volatility: number
+}
+
+/** Momentum-30's envelope. `disclosure` travels WITH the payload so no surface
+ *  can present the book as "currently winning" — the edge is flat 2023-26. */
+export type Momentum30SignalsResponse = {
+  signals: Momentum30SignalRaw[]
+  count: number
+  status: string
+  style: string
+  disclosure?: string
+}
+
 /** One style engine's live-vs-expected stats inside the paper evaluation
  *  window (`/api/signals/style/paper-window`). Rates/returns arrive as
  *  0..1 FRACTIONS — multiply by 100 at display time. `live` fields are
@@ -891,6 +919,10 @@ export const api = {
     // ranked book, fractions for percentile/expected_return/top_decile_prob.
     getSwing: (topN = 50) =>
       request<StyleSignalsResponse>('/api/signals/swing', { query: { top_n: topN } }),
+    // Cross-sectional Nifty-200 momentum book (monthly rebalance). Its own
+    // envelope: no expected_return, plus the `disclosure` string.
+    getMomentum30: (topN = 30) =>
+      request<Momentum30SignalsResponse>('/api/signals/momentum30', { query: { top_n: topN } }),
     // Paper evaluation window — live Momentum/Swing stats vs backtest
     // expectations (the pre-real-money gate).
     getPaperWindow: () =>

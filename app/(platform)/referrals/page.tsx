@@ -23,6 +23,7 @@ import {
 } from '@/lib/icons'
 
 import { api, handleApiError } from '@/lib/api'
+import { PRICING_URL } from '@/lib/marketing-url'
 import { Reveal, PageLoader } from '@/components/foundation'
 import { MONO } from '@/lib/tokens'
 
@@ -219,12 +220,12 @@ export default function ReferralsPage() {
               {' '}We extend your subscription by {stats.credit_months * 30} days without charge.
             </p>
           </div>
-          <Link
-            href="/pricing"
+          <a
+            href={PRICING_URL}
             className="text-[11px] font-semibold text-highlight hover:underline whitespace-nowrap"
           >
             Renew →
-          </Link>
+          </a>
         </section>
         </Reveal>
       )}
@@ -257,7 +258,7 @@ export default function ReferralsPage() {
 
       <p className="text-[10px] text-d-text-muted text-center">
         Rewards apply automatically on your friend&rsquo;s first paid upgrade.
-        Self-referral not permitted. Refer to the <Link href="/pricing" className="text-primary hover:underline">Pricing</Link> page for tier details.
+        Self-referral not permitted. Refer to the <a href={PRICING_URL} className="text-primary hover:underline">Pricing</a> page for tier details.
       </p>
     </div>
   )

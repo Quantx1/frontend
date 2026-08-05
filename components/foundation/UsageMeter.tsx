@@ -15,9 +15,9 @@
  * Color crosses from muted → warning → down as usage approaches cap.
  */
 
-import Link from 'next/link'
 import { ArrowRight } from '@/lib/icons'
 
+import { PRICING_URL } from '@/lib/marketing-url'
 import { cn } from '@/lib/utils'
 
 type Tone = 'muted' | 'warning' | 'down'
@@ -27,7 +27,9 @@ export interface UsageMeterProps {
   cap: number
   /** Suffix label (e.g. "symbols", "signals today"). */
   label: string
-  /** Path the Upgrade link routes to. Default ``/pricing``. */
+  /** Where the Upgrade link routes. Defaults to the marketing site's
+   *  /pricing — that route does NOT exist in this app (monorepo split), so
+   *  the default must be an absolute, cross-origin URL. */
   upgradeHref?: string
   /** Show the Upgrade link. Default true if used >= 80% of cap. */
   showUpgrade?: boolean
@@ -40,7 +42,7 @@ export function UsageMeter({
   used,
   cap,
   label,
-  upgradeHref = '/pricing',
+  upgradeHref = PRICING_URL,
   showUpgrade,
   compact = true,
   className,
@@ -86,13 +88,13 @@ export function UsageMeter({
       </span>
       <span className="text-d-text-muted">{label}</span>
       {upgradeVisible && (
-        <Link
+        <a
           href={upgradeHref}
           className="ml-1 inline-flex items-center gap-0.5 text-d-text-primary hover:underline"
         >
           Upgrade
           <ArrowRight className="h-3 w-3" aria-hidden="true" />
-        </Link>
+        </a>
       )}
     </span>
   )

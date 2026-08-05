@@ -21,6 +21,7 @@ import PaperWindowCard from '@/components/paper/PaperWindowCard'
 import EquityCurveWithBenchmark from '@/components/paper/EquityCurveWithBenchmark'
 import { EyebrowMono, Reveal } from '@/components/foundation'
 import { api } from '@/lib/api'
+import { PRICING_URL } from '@/lib/marketing-url'
 import { MONO } from '@/lib/tokens'
 
 import { num } from '@/lib/format'
@@ -262,13 +263,13 @@ export default function PaperTradingPage() {
                 <Zap className="w-3.5 h-3.5" />
                 Connect broker
               </Link>
-              <Link
-                href="/pricing"
+              <a
+                href={PRICING_URL}
                 className="glass-control inline-flex items-center gap-1.5 px-4 py-2 text-[12px] font-normal text-d-text-primary rounded-full transition-colors"
               >
                 Upgrade to Elite
                 <ArrowUpRight className="w-3 h-3" />
-              </Link>
+              </a>
             </div>
           </Reveal>
         )}

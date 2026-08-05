@@ -33,6 +33,7 @@ import {
 } from '@/lib/icons'
 
 import { api, handleApiError } from '@/lib/api'
+import { PRICING_URL } from '@/lib/marketing-url'
 import ModelBadge from '@/components/ModelBadge'
 import type { VisionAnalysisData } from '@/types/strategies'
 
@@ -127,12 +128,12 @@ export default function ChartVisionCard({ symbol, anywhere = false }: Props) {
             <div className="flex-1 min-w-0">
               <p className="text-[12px] text-down">{error}</p>
               {error.toLowerCase().includes('restricted') && (
-                <Link
-                  href="/pricing"
+                <a
+                  href={PRICING_URL}
                   className="inline-block mt-1 text-[11px] text-primary hover:underline"
                 >
                   Upgrade to Elite for chart vision on any symbol →
-                </Link>
+                </a>
               )}
             </div>
           </div>

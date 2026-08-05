@@ -42,6 +42,7 @@ import ExplanationMarkdown from '@/components/signals/ExplanationMarkdown'
 import DebateTranscript, { type DebatePayload } from '@/components/signals/DebateTranscript'
 import QuickTrade from '@/components/dashboard/QuickTrade'
 import CalculatorModal from '@/components/CalculatorModal'
+import { PRICING_URL } from '@/lib/marketing-url'
 
 // PR 33 + PR 35 — consolidated per-stock engine output, injected on the signal page too.
 const ChartVisionCard = dynamic(() => import('@/components/stock/ChartVisionCard'), { ssr: false })
@@ -379,8 +380,8 @@ export default function SignalDetailPage() {
               {isEliteUser ? (
                 <DebateTranscript data={debate} loading={debateLoading} onRun={runDebate} />
               ) : (
-                <Link
-                  href="/pricing"
+                <a
+                  href={PRICING_URL}
                   className="trading-surface flex items-center justify-between gap-4 hover:border-d-border-hover transition-colors"
                 >
                   <div>
@@ -392,7 +393,7 @@ export default function SignalDetailPage() {
                     </p>
                   </div>
                   <span className="shrink-0 text-[11px] text-primary hover:underline">Upgrade →</span>
-                </Link>
+                </a>
               )}
             </div>
 

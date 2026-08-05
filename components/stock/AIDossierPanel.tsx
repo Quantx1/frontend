@@ -31,6 +31,7 @@ import {
 } from '@/lib/icons'
 
 import { api, handleApiError, type DossierEngineBlock } from '@/lib/api'
+import { PRICING_URL } from '@/lib/marketing-url'
 import ModelBadge from '@/components/ModelBadge'
 
 type Dossier = Awaited<ReturnType<typeof api.dossier.get>>
@@ -129,9 +130,9 @@ export default function AIDossierPanel({ symbol }: { symbol: string }) {
             <Lock className="h-3 w-3 text-highlight" />
             Upgrade to <span className="font-semibold text-highlight">Pro</span> to see the meters, scores, and probabilities.
           </p>
-          <Link href="/pricing" className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline">
+          <a href={PRICING_URL} className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline">
             See plans <ExternalLink className="h-3 w-3" />
-          </Link>
+          </a>
         </div>
       )}
 

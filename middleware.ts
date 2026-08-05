@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
+import { MARKETING_URL, marketingUrl } from './lib/marketing-url'
+
 /**
  * Retired routes from PR-A cleanup (2026-05-19). Each maps a deprecated URL
  * to its v2 equivalent. We 301-redirect so existing notification deep-links,
@@ -47,21 +49,41 @@ const RETIRED_ROUTE_REDIRECTS: Record<string, string> = {
   // land on /signals (the product). The /engines/<slug> prefix is handled in
   // the middleware body below since this map is exact-match only.
   '/engines': '/signals',
-  // WP-CONSOLIDATE 3d — the three public trust pages folded into one tabbed
-  // /proof surface. Bare-route bookmarks 301 to the matching tab; the
-  // /models/<slug> and /track-record/<id> detail routes are re-homed under
-  // /proof and handled by the path-preserving prefix rules in the middleware
-  // body below (this map is exact-match only, and those must keep their
-  // slug/id segment + any query like regime's ?highlight).
-  '/models': '/proof?tab=models',
-  '/track-record': '/proof?tab=track-record',
-  '/regime': '/proof?tab=regime',
   // WP-SIMPLEVIEW 2026-07-02 — the managed /home + /activity shell folded into a
   // per-user Simple view band on /copilot. Old bookmarks (and the retired
   // MANAGED_NAV) 301 to the single home; the Simple view defaults ON there for
   // managed users and carries the folded 7-day activity log.
   '/home': '/copilot',
   '/activity': '/copilot',
+}
+
+/**
+ * Routes that live on the MARKETING deployment, not in this app.
+ *
+ * WP-CONSOLIDATE 3d folded the three public trust pages into one tabbed
+ * /proof surface — then the monorepo split moved /proof itself (along with
+ * /pricing, /privacy and /terms) to the landing repo. These redirects were
+ * still pointing at in-app paths that no longer resolve, so every one of them
+ * 301'd a visitor straight into a 404.
+ *
+ * Values are marketing-relative; `marketingUrl()` absolutises them. When
+ * NEXT_PUBLIC_MARKETING_URL is unset (single-origin local dev) it returns the
+ * path unchanged — which is why /pricing, /privacy, /terms and /proof are only
+ * registered when an origin EXISTS. Without one, the target would equal the
+ * incoming path and the redirect would loop forever.
+ */
+const MARKETING_ROUTE_REDIRECTS: Record<string, string> = {
+  '/models': '/proof?tab=models',
+  '/track-record': '/proof?tab=track-record',
+  '/regime': '/proof?tab=regime',
+  ...(MARKETING_URL
+    ? {
+        '/proof': '/proof',
+        '/pricing': '/pricing',
+        '/privacy': '/privacy',
+        '/terms': '/terms',
+      }
+    : {}),
 }
 
 const publicPaths = new Set([
@@ -242,6 +264,16 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url, 301)
   }
 
+  // Same 301 contract, but the destination is the marketing deployment.
+  const marketingTarget = MARKETING_ROUTE_REDIRECTS[pathname]
+  if (marketingTarget) {
+    const url = new URL(marketingUrl(marketingTarget), request.url)
+    request.nextUrl.searchParams.forEach((value, key) => {
+      if (!url.searchParams.has(key)) url.searchParams.set(key, value)
+    })
+    return NextResponse.redirect(url, 301)
+  }
+
   // Retired in-app engine detail pages (/engines/<slug>) → /signals. The
   // exact-match map above only catches the bare /engines; per-engine slugs
   // need this prefix check.
@@ -255,7 +287,15 @@ export function middleware(request: NextRequest) {
   // /models,/track-record,/regime routes; these prefix rules preserve the
   // trailing slug/id segment (and any query string) into the new /proof path.
   if (pathname.startsWith('/models/') || pathname.startsWith('/track-record/')) {
-    const url = new URL(`/proof${pathname}${request.nextUrl.search}`, request.url)
+    const url = new URL(marketingUrl(`/proof${pathname}${request.nextUrl.search}`), request.url)
+    return NextResponse.redirect(url, 301)
+  }
+
+  // /proof/<anything> — the consolidated surface moved wholesale to the
+  // marketing deployment, so its sub-paths follow it. Guarded on
+  // MARKETING_URL: unset, this path resolves to itself and would loop.
+  if (MARKETING_URL && pathname.startsWith('/proof/')) {
+    const url = new URL(marketingUrl(`${pathname}${request.nextUrl.search}`), request.url)
     return NextResponse.redirect(url, 301)
   }
 

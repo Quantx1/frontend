@@ -35,6 +35,7 @@ import {
   Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList,
 } from '@/components/ui/command'
 import { api } from '@/lib/api'
+import { PRICING_URL, marketingUrl } from '@/lib/marketing-url'
 import { useThemeMode } from '@/contexts/ThemeModeContext'
 import { useTier } from '@/lib/hooks/useTier'
 import { stockHref } from '@/lib/stock-href'
@@ -43,7 +44,15 @@ import { cn } from '@/lib/utils'
 
 /** Every route in the app, including ones with no sidebar item — the palette
  *  is the guarantee that no surface is unreachable. */
-const ROUTES: { href: string; label: string; hint?: string; tier?: 'pro' | 'elite' }[] = [
+const ROUTES: {
+  href: string
+  label: string
+  hint?: string
+  tier?: 'pro' | 'elite'
+  /** Set when the row's icon can't be derived from an in-app route prefix —
+   *  i.e. the marketing-origin rows, whose href is an absolute URL. */
+  icon?: React.ElementType
+}[] = [
   { href: '/copilot', label: 'Copilot', hint: 'Ask anything' },
   { href: '/markets', label: 'Markets', hint: 'The daily read' },
   { href: '/stocks', label: 'Stocks', hint: 'Browse the universe' },
@@ -70,8 +79,10 @@ const ROUTES: { href: string; label: string; hint?: string; tier?: 'pro' | 'elit
   { href: '/inbox', label: 'Inbox' },
   { href: '/referrals', label: 'Referrals' },
   { href: '/settings', label: 'Settings' },
-  { href: '/proof', label: 'Proof', hint: 'Track record · accuracy · regime' },
-  { href: '/pricing', label: 'Pricing' },
+  // Marketing deployment — neither route exists in this app. `go` sends these
+  // through a full-page navigation instead of the App Router client.
+  { href: marketingUrl('/proof'), label: 'Proof', hint: 'Track record · accuracy · regime', icon: Award },
+  { href: PRICING_URL, label: 'Pricing', icon: CreditCard },
 ]
 
 // One glyph per route FAMILY — an icon that appears next to everything
@@ -83,7 +94,6 @@ const ROUTE_ICONS: [string, React.ElementType][] = [
   ['/portfolio', Briefcase], ['/paper-trading', FlaskConical], ['/trades', ScrollText],
   ['/risk', ShieldAlert], ['/watchlist', Eye], ['/alerts', Bell],
   ['/inbox', Inbox], ['/referrals', Gift], ['/settings', Settings],
-  ['/proof', Award], ['/pricing', CreditCard],
 ]
 
 const ROUTE_ICON = (href: string): React.ElementType =>
@@ -198,7 +208,10 @@ export const CommandPalette = ({ open, onClose }: Props) => {
   const go = useCallback(
     (href: string, recent?: Recent) => {
       if (recent) pushRecent(recent)
-      router.push(href)
+      // Marketing-origin rows (/pricing, /proof) live on another deployment;
+      // router.push would try to resolve them against this app and 404.
+      if (/^https?:\/\//.test(href)) window.location.assign(href)
+      else router.push(href)
       onClose()
     },
     [router, onClose],
@@ -245,7 +258,7 @@ export const CommandPalette = ({ open, onClose }: Props) => {
       },
       ...(tier && tier !== 'free'
         ? []
-        : [{ label: 'Upgrade plan', hint: 'Pro · Elite', run: () => go('/pricing') }]),
+        : [{ label: 'Upgrade plan', hint: 'Pro · Elite', run: () => go(PRICING_URL) }]),
     ]
     return all.filter((a) => !q || score(a.label, lower) >= 0)
   }, [q, lower, tier, resolvedMode, setMode, go, onClose])
@@ -391,7 +404,7 @@ export const CommandPalette = ({ open, onClose }: Props) => {
           {routes.length > 0 && (
             <CommandGroup heading="Go to">
               {routes.map((r) => {
-                const Icon = ROUTE_ICON(r.href)
+                const Icon = r.icon ?? ROUTE_ICON(r.href)
                 return (
                   <CommandItem
                     key={r.href}

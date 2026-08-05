@@ -97,8 +97,17 @@ export interface EntityCardProps {
    * provenance half is the part that changes per card and needs reading.
    */
   provenance?: string
+  /**
+   * Opens the full breakdown. Omit it and the row does not render.
+   *
+   * There is deliberately no `onBuy`. The card used to carry a primary **Buy**
+   * button, which is a call to action on a specific instrument from a product
+   * that is NOT a SEBI-registered Research Analyst — the same reason
+   * `EntityVerdict` is sentiment words and never `Buy | Sell`. A card that
+   * reads "bullish · analysis, not advice" and then offers a Buy button
+   * contradicts its own footnote.
+   */
   onDetails?: () => void
-  onBuy?: () => void
   className?: string
 }
 
@@ -116,7 +125,6 @@ export function EntityCard({
   series,
   provenance,
   onDetails,
-  onBuy,
   className,
 }: EntityCardProps) {
   const total = votes ? votes.bull + votes.neutral + votes.bear : 0
@@ -202,23 +210,20 @@ export function EntityCard({
 
       <div className="my-4 border-t border-line" />
 
-      {/* ── row 6 — at most two actions, and only the ones that DO something.
-          Both used to render unconditionally, which put a **Buy** button on
-          the NIFTY 50 card. You cannot buy an index, and an inert button is
-          worse than no button — it teaches the user their tap did nothing.
-          The caller decides by passing a handler or not. ── */}
-      {(onDetails || onBuy) && (
+      {/* ── row 6 — ONE action, and only when it does something.
+          This row used to render two buttons unconditionally, which put a
+          **Buy** button on the NIFTY 50 card. Guarding it on the handler was
+          not enough: `TurnCard` passed `() => onOpen?.(…)`, an arrow function
+          that is always defined, so the buttons rendered on every mount while
+          every production caller omitted `onOpen`. An inert button is worse
+          than no button — it teaches the user their tap did nothing.
+          Buy is gone entirely (see `onDetails` above); Details renders only
+          when the caller hands over a real destination. ── */}
+      {onDetails && (
         <div className="flex items-center justify-between gap-2">
-          {onDetails && (
-            <Button variant="secondary" size="md" onClick={onDetails}>
-              Details
-            </Button>
-          )}
-          {onBuy && (
-            <Button variant="primary" size="md" onClick={onBuy}>
-              Buy
-            </Button>
-          )}
+          <Button variant="secondary" size="md" onClick={onDetails}>
+            Details
+          </Button>
         </div>
       )}
 

@@ -9,7 +9,8 @@ import { z } from 'zod'
 import { toast } from 'sonner'
 import { useAuth } from '../../contexts/AuthContext'
 import { supabase } from '@/lib/supabase'
-import { api } from '@/lib/api'
+import { api, ApiError } from '@/lib/api'
+import { marketingUrl } from '@/lib/marketing-url'
 import AuthLayout from '@/components/auth/AuthLayout'
 import {
   Mail,
@@ -41,6 +42,16 @@ const accountSchema = z.object({
 })
 
 type AccountFormData = z.infer<typeof accountSchema>
+
+type PlanId = 'free' | 'pro' | 'elite'
+
+/**
+ * Where a paid signup lands. Backend `create_user_profile` seeds tier 'free'
+ * unconditionally and there is no charge in this flow, so the account IS free
+ * on arrival — the picked plan is an INTENT, and Settings → Tier + billing is
+ * the surface that owns acting on it.
+ */
+const UPGRADE_SURFACE = '/settings?tab=tier'
 
 const plans = [
   {
@@ -118,7 +129,7 @@ function SignupContent() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
-  const [selectedPlan, setSelectedPlan] = useState('pro')
+  const [selectedPlan, setSelectedPlan] = useState<PlanId>('pro')
   const [formData, setFormData] = useState<AccountFormData | null>(null)
   const [refCode, setRefCode] = useState<string | null>(null)
   const [refValid, setRefValid] = useState<boolean | null>(null)
@@ -159,6 +170,41 @@ function SignupContent() {
     setStep(2)
   }
 
+  /**
+   * The picked plan, acted on — not dropped on the floor.
+   *
+   * Signup itself never charges: the backend seeds every new profile at tier
+   * 'free'. So this asks the payments service whether checkout is even open
+   * before promising the user anything. `/api/payments/create-order` raises
+   * its 503 in `get_razorpay_client()`, BEFORE it touches Razorpay or writes a
+   * payment row, so while checkout is dark this costs nothing and creates
+   * nothing.
+   *
+   * Returns the route to land on. Never throws — a signup that succeeded must
+   * not look like it failed because the upgrade path is closed.
+   */
+  const startUpgrade = async (plan: PlanId): Promise<string> => {
+    const planName = plans.find((p) => p.id === plan)?.name ?? plan
+    try {
+      await api.payments.createOrder(plan, 'monthly')
+      // Checkout is live. The Razorpay handoff is not built in this app, so
+      // the billing surface — which owns it — takes it from here.
+      toast.success(`Account created. Let's finish your ${planName} upgrade.`)
+      return UPGRADE_SURFACE
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 503) {
+        toast.info("Payments aren't live yet", {
+          description: `Your account is active on Free. ${planName} opens the moment checkout does — nothing was charged.`,
+        })
+      } else {
+        toast.info(`Your account is active on Free — ${planName} isn't checked out yet`, {
+          description: err instanceof Error ? err.message : 'Upgrade from Settings when you are ready.',
+        })
+      }
+      return UPGRADE_SURFACE
+    }
+  }
+
   const handleFinalSignup = async () => {
     if (!formData) return
     setIsLoading(true)
@@ -188,8 +234,21 @@ function SignupContent() {
         }
       }
       if (needsConfirmation) {
-        toast.success('Account created! Please check your email to verify.')
+        // The email round-trip goes out through Supabase and comes back via
+        // /auth/callback, so there is nowhere to hand the plan off to. Say
+        // where the account actually stands instead of implying a purchase.
+        toast.success('Account created! Please check your email to verify.', {
+          description:
+            selectedPlan === 'free'
+              ? undefined
+              : 'Your account starts on Free — upgrade from Settings → Tier + billing once you are in.',
+        })
         router.push(`/verify-email?email=${encodeURIComponent(formData.email)}`)
+      } else if (selectedPlan !== 'free') {
+        // Email auto-confirmed and a paid plan was picked. The account is on
+        // Free until a charge clears, so say so and land on the surface that
+        // can actually change that — never on /copilot as if it were done.
+        router.push(await startUpgrade(selectedPlan))
       } else {
         // Email auto-confirmed (Supabase project setting). Drop the
         // user straight into the product.
@@ -252,7 +311,7 @@ function SignupContent() {
                   return (
                     <button
                       key={plan.id}
-                      onClick={() => setSelectedPlan(plan.id)}
+                      onClick={() => setSelectedPlan(plan.id as PlanId)}
                       className={`relative rounded-md border-2 p-5 text-left transition-all hover:shadow-glass-hover ${
                         selectedPlan === plan.id
                           ? 'border-primary bg-primary/5'
@@ -316,20 +375,32 @@ function SignupContent() {
                 Create your account and put the five engines to work.
               </p>
 
+              {/* NOT a purchase summary — this step takes no payment. It used
+                  to read "Price: ₹999/month" above a button that only created
+                  a free account, which is a price quoted for a transaction
+                  that never happens. The price line is gone; what is left is
+                  the plan we will take you to upgrade to, and what your
+                  account is on until you do. */}
               <div className="mx-auto mt-8 max-w-sm rounded-md border border-line bg-hover p-5">
                 <div className="mb-3 flex items-center justify-between">
-                  <span className="text-sm text-d-text-secondary">Selected Plan:</span>
-                  <span className="font-semibold text-d-text-primary">
-                    {plans.find((p) => p.id === selectedPlan)?.name}
-                  </span>
+                  <span className="text-sm text-d-text-secondary">Your account starts on:</span>
+                  <span className="font-semibold text-d-text-primary">Free</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-d-text-secondary">Price:</span>
-                  <span className="font-semibold text-d-text-primary">
-                    &#8377;{plans.find((p) => p.id === selectedPlan)?.price}/month
-                  </span>
-                </div>
+                {selectedPlan !== 'free' && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-d-text-secondary">Upgrading to:</span>
+                    <span className="font-semibold text-d-text-primary">
+                      {plans.find((p) => p.id === selectedPlan)?.name}
+                    </span>
+                  </div>
+                )}
               </div>
+              {selectedPlan !== 'free' && (
+                <p className="mx-auto mt-3 max-w-sm text-xs text-d-text-muted">
+                  No card is charged here. We take you to billing right after your account is
+                  created.
+                </p>
+              )}
 
               <div className="mt-8 flex gap-4">
                 <button
@@ -478,9 +549,12 @@ function SignupContent() {
               />
               <span className="text-sm text-d-text-secondary">
                 I agree to the{' '}
-                <Link href="/terms" className="font-medium text-primary hover:underline">Terms of Service</Link>
+                {/* Both documents live on the marketing deployment — as bare
+                    relative paths the consent links 404'd, which is not a
+                    consent you can call informed. */}
+                <a href={marketingUrl('/terms')} className="font-medium text-primary hover:underline">Terms of Service</a>
                 {' '}and{' '}
-                <Link href="/privacy" className="font-medium text-primary hover:underline">Privacy Policy</Link>
+                <a href={marketingUrl('/privacy')} className="font-medium text-primary hover:underline">Privacy Policy</a>
               </span>
             </label>
             {errors.terms && <p className="mt-1 text-xs text-down">{errors.terms.message}</p>}

@@ -16,8 +16,22 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Twitter, Send, Instagram, Linkedin, Youtube } from '@/lib/icons'
 import { QuantXMark } from '@/components/brand/QuantXMark'
+import { PRICING_URL, marketingUrl } from '@/lib/marketing-url'
 
 type Links = [string, string][]
+
+/**
+ * One footer link. `/pricing`, `/proof` and every `/legal/*` route live on the
+ * MARKETING deployment, not in this app — as relative paths they 404'd. Those
+ * arrive here as absolute URLs and must not go through next/link, which cannot
+ * route off this origin.
+ */
+function FooterLink({ href, className, children }: { href: string; className: string; children: React.ReactNode }) {
+  if (/^https?:\/\//.test(href) || href.startsWith('#')) {
+    return <a href={href} className={className}>{children}</a>
+  }
+  return <Link href={href} className={className}>{children}</Link>
+}
 
 const SOCIALS = [
   { icon: Twitter, label: 'X / Twitter', href: '#' },
@@ -30,8 +44,8 @@ const SOCIALS = [
 const COLUMNS: { title: string; links: Links }[] = [
   { title: 'Product', links: [['Markets', '/markets'], ['Signals', '/signals'], ['AI Screener', '/scanner'], ['Chart Patterns', '/patterns'], ['F&O Desk', '/fno']] },
   { title: 'AI Tools', links: [['Copilot', '/copilot'], ['AI Algos', '/strategies'], ['AutoPilot', '/autopilot'], ['News Intelligence', '/markets']] },
-  { title: 'Company', links: [['Pricing', '/pricing'], ['Track record', '/proof'], ['About', '#'], ['Contact', '#']] },
-  { title: 'Legal', links: [['Terms', '/legal/terms'], ['Privacy', '/legal/privacy'], ['Disclaimer', '/legal/disclaimer'], ['Risk Disclosure', '/legal/risk'], ['Refund Policy', '/legal/refund']] },
+  { title: 'Company', links: [['Pricing', PRICING_URL], ['Track record', marketingUrl('/proof')], ['About', '#'], ['Contact', '#']] },
+  { title: 'Legal', links: [['Terms', marketingUrl('/legal/terms')], ['Privacy', marketingUrl('/legal/privacy')], ['Disclaimer', marketingUrl('/legal/disclaimer')], ['Risk Disclosure', marketingUrl('/legal/risk')], ['Refund Policy', marketingUrl('/legal/refund')]] },
 ]
 
 // "Explore Quant X" — SEO accordion groups (DhanHQ's "Explore APIs" pattern).
@@ -42,8 +56,8 @@ const EXPLORE: { title: string; links: Links }[] = [
   { title: 'F&O & Options', links: [['Option chain', '/fno'], ['Vol cone', '/fno'], ['Term structure', '/fno'], ['Greeks', '/fno'], ['OI analysis', '/fno']] },
   { title: 'AI Tools', links: [['Copilot', '/copilot'], ['AutoPilot', '/autopilot'], ['Chart Patterns', '/patterns'], ['Backtesting', '/strategies']] },
   { title: 'Markets', links: [['Indices', '/markets'], ['Sectors', '/markets'], ['FII / DII', '/markets'], ['Global cues', '/markets'], ['Movers', '/markets']] },
-  { title: 'Learn', links: [['Getting started', '#'], ['Paper trading', '#'], ['Connect broker', '#'], ['Pricing', '/pricing'], ['FAQ', '#']] },
-  { title: 'Company', links: [['About', '#'], ['Track record', '/proof'], ['Careers', '#'], ['Contact', '#'], ['Blog', '#']] },
+  { title: 'Learn', links: [['Getting started', '#'], ['Paper trading', '#'], ['Connect broker', '#'], ['Pricing', PRICING_URL], ['FAQ', '#']] },
+  { title: 'Company', links: [['About', '#'], ['Track record', marketingUrl('/proof')], ['Careers', '#'], ['Contact', '#'], ['Blog', '#']] },
 ]
 
 const IMPORTANT_LINKS: Links = [
@@ -55,11 +69,11 @@ const IMPORTANT_LINKS: Links = [
 ]
 
 const LEGAL_LINKS: Links = [
-  ['Terms of Usage', '/legal/terms'],
-  ['Privacy Policy', '/legal/privacy'],
-  ['Disclaimer', '/legal/disclaimer'],
-  ['Risk Disclosure', '/legal/risk'],
-  ['Refund Policy', '/legal/refund'],
+  ['Terms of Usage', marketingUrl('/legal/terms')],
+  ['Privacy Policy', marketingUrl('/legal/privacy')],
+  ['Disclaimer', marketingUrl('/legal/disclaimer')],
+  ['Risk Disclosure', marketingUrl('/legal/risk')],
+  ['Refund Policy', marketingUrl('/legal/refund')],
 ]
 
 function Chevron({ open }: { open: boolean }) {
@@ -88,7 +102,7 @@ function FooterAccordion({ title, links }: { title: string; links: Links }) {
           <ul className="space-y-2 px-4 pb-3.5">
             {links.map(([label, href]) => (
               <li key={label}>
-                <Link href={href} className="text-[12.5px] text-d-text-muted transition-colors hover:text-primary">{label}</Link>
+                <FooterLink href={href} className="text-[12.5px] text-d-text-muted transition-colors hover:text-primary">{label}</FooterLink>
               </li>
             ))}
           </ul>
@@ -135,7 +149,7 @@ export function HomeFooter() {
             <ul className="space-y-2.5">
               {col.links.map(([label, href]) => (
                 <li key={label}>
-                  <Link href={href} className="text-[13px] text-d-text-secondary transition-colors hover:text-primary">{label}</Link>
+                  <FooterLink href={href} className="text-[13px] text-d-text-secondary transition-colors hover:text-primary">{label}</FooterLink>
                 </li>
               ))}
             </ul>

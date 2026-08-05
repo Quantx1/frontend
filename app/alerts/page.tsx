@@ -35,6 +35,7 @@ import {
 
 import { useAuth } from '@/contexts/AuthContext'
 import { api, handleApiError } from '@/lib/api'
+import { PRICING_URL } from '@/lib/marketing-url'
 import { AppShell } from '@/components/shell/AppShell'
 import {
   Button,
@@ -131,7 +132,7 @@ export default function AlertsStudioPage() {
                 </>
               }
               action={
-                <a href="/pricing">
+                <a href={PRICING_URL}>
                   <Button variant="ai">
                     <Sparkles className="h-4 w-4" />
                     Upgrade to Pro

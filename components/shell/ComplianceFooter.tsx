@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { marketingUrl } from '@/lib/marketing-url'
 
 /**
  * ComplianceFooter — the statutory block, on EVERY authenticated surface.
@@ -29,11 +29,14 @@ const IMPORTANT_LINKS: [string, string][] = [
   ['BSE', 'https://www.bseindia.com'],
 ]
 
+// The legal pages live on the MARKETING deployment, not in this app — as bare
+// relative paths all four 404'd, which is the worst possible failure for the
+// one block that has to be reachable. Absolute, cross-origin, plain <a>.
 const LEGAL_LINKS: [string, string][] = [
-  ['Terms of Usage', '/legal/terms'],
-  ['Privacy Policy', '/legal/privacy'],
-  ['Disclaimer', '/legal/disclaimer'],
-  ['Risk Disclosure', '/legal/risk'],
+  ['Terms of Usage', marketingUrl('/legal/terms')],
+  ['Privacy Policy', marketingUrl('/legal/privacy')],
+  ['Disclaimer', marketingUrl('/legal/disclaimer')],
+  ['Risk Disclosure', marketingUrl('/legal/risk')],
 ]
 
 export function ComplianceFooter({ className = '' }: { className?: string }) {
@@ -82,13 +85,13 @@ export function ComplianceFooter({ className = '' }: { className?: string }) {
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <span className="font-semibold text-d-text-secondary">Important Information:</span>
           {LEGAL_LINKS.map(([label, href]) => (
-            <Link
+            <a
               key={label}
               href={href}
               className="text-primary transition-colors hover:opacity-80"
             >
               {label}
-            </Link>
+            </a>
           ))}
         </div>
       </div>

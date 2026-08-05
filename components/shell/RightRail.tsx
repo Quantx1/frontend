@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { dispatchCopilotOpen } from '@/components/copilot/CopilotProvider'
 import { CopilotBot } from '@/components/copilot/CopilotBot'
 import { AnimatedThemeToggle } from '@/components/theme/AnimatedThemeToggle'
+import { PRICING_URL } from '@/lib/marketing-url'
 import { cn } from '@/lib/utils'
 
 interface Props {
@@ -53,7 +54,8 @@ export function RightRail({ onSearch }: Props) {
       {/* pinned bottom: settings · help · account · theme */}
       <div className="mt-auto flex flex-col items-center gap-2">
         <RailLink href="/settings" label="Settings" icon={Settings} />
-        <RailLink href="/pricing" label="Help & plans" icon={HelpCircle} />
+        {/* Cross-origin: /pricing lives on the marketing deployment. */}
+        <RailLink href={PRICING_URL} label="Help & plans" icon={HelpCircle} external />
         <RailProfile />
         <RailThemeToggle />
       </div>
@@ -66,10 +68,29 @@ const railBtn =
   'hover:bg-wrap-hover hover:text-d-text-primary focus-visible:outline-none ' +
   'focus-visible:ring-2 focus-visible:ring-accent/40'
 
-function RailLink({ href, label, icon: Icon }: { href: string; label: string; icon: React.ElementType }) {
+function RailLink({
+  href,
+  label,
+  icon: Icon,
+  external,
+}: {
+  href: string
+  label: string
+  icon: React.ElementType
+  /** Another origin (the marketing site) — next/link cannot route there. */
+  external?: boolean
+}) {
+  const content = <Icon className="h-5 w-5" aria-hidden="true" />
+  if (external) {
+    return (
+      <a href={href} aria-label={label} title={label} className={railBtn}>
+        {content}
+      </a>
+    )
+  }
   return (
     <Link href={href} aria-label={label} title={label} className={railBtn}>
-      <Icon className="h-5 w-5" aria-hidden="true" />
+      {content}
     </Link>
   )
 }

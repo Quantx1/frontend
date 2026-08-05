@@ -29,6 +29,7 @@ import {
 } from '@/lib/icons'
 
 import { api, handleApiError } from '@/lib/api'
+import { PRICING_URL } from '@/lib/marketing-url'
 import { useUiMode, type UiMode } from '@/contexts/UiModeContext'
 
 
@@ -339,12 +340,12 @@ function ResultScreen({ result, onDone }: { result: QuizResult; onDone: () => vo
                 {tierCopy?.label || result.recommended_tier}
               </p>
             </div>
-            <Link
-              href="/pricing"
+            <a
+              href={PRICING_URL}
               className="glass-control inline-flex items-center gap-1.5 px-4 py-2 text-[12px] text-d-text-primary rounded-full"
             >
               See plans
-            </Link>
+            </a>
           </div>
         </section>
 

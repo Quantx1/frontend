@@ -41,6 +41,7 @@ import { msgData } from '@/lib/copilot/selectors'
 import type { CopilotUIMessage } from '@/lib/copilot/ui-message'
 import { cn } from '@/lib/utils'
 
+import { dispatchCopilotOpen } from './CopilotProvider'
 import { MarkdownMessage } from './MarkdownMessage'
 import { ThinkingLine } from './ThinkingLine'
 import { TurnCard } from './TurnCard'
@@ -49,7 +50,15 @@ import { TurnDisclosure } from './TurnDisclosure'
 export interface RenderedSurfaceProps {
   template: CopilotTemplate
   params?: Record<string, unknown>
-  /** A chip tap — the caller renders the next turn. */
+  /**
+   * A chip tap. Override to render the next turn in the caller's own thread.
+   *
+   * Defaults to asking the global Copilot dock, which is the only thread
+   * either mount site (/portfolio, /signals) has. This used to default to
+   * nothing: the backend emits three follow-ups per template, they rendered as
+   * buttons, and `onFollowUp?.(f)` on an undefined prop made every one of them
+   * a no-op.
+   */
   onFollowUp?: (question: string) => void
   /** The card's [Details]. Opens the context panel; omitted leaves it inert. */
   onOpenDetails?: () => void
@@ -96,6 +105,11 @@ export function RenderedSurface({
 
   const followups = last ? (msgData(last, 'followups') ?? []) : []
 
+  // A chip asks the question — it does not park it in a box for the user to
+  // re-issue. The dock is global (GlobalCopilot in the root providers), so it
+  // is reachable from every surface this component renders on.
+  const ask = onFollowUp ?? ((question: string) => dispatchCopilotOpen(question, undefined, { submit: true }))
+
   return (
     <div className={cn('flex flex-col gap-4', className)}>
       {thinking && <ThinkingLine />}
@@ -119,7 +133,7 @@ export function RenderedSurface({
             <button
               key={f}
               type="button"
-              onClick={() => onFollowUp?.(f)}
+              onClick={() => ask(f)}
               className="rounded-full border border-line px-3 py-1 text-meta text-d-text-secondary transition-colors hover:text-d-text-primary"
             >
               {f}

@@ -5,6 +5,7 @@ import { CheckCircle, ChevronDown, Loader2, Sparkles } from '@/lib/icons'
 import { api } from '@/lib/api'
 import { EyebrowMono } from '@/components/foundation'
 import { MONO } from '@/lib/tokens'
+import { PRICING_URL } from '@/lib/marketing-url'
 import {
   type DeltaVariant,
   type RiskProfile as TierRiskProfile,
@@ -110,7 +111,7 @@ export default function TierPanel({
         'Watchlist (5 symbols) + Telegram digest',
       ],
       cta: 'Upgrade to Pro',
-      href: '/pricing',
+      href: PRICING_URL,
     },
     pro: {
       name: 'Pro',
@@ -123,7 +124,7 @@ export default function TierPanel({
         'AI weekly portfolio review',
       ],
       cta: 'Upgrade to Elite',
-      href: '/pricing',
+      href: PRICING_URL,
     },
     elite: {
       name: 'Elite',
@@ -135,7 +136,7 @@ export default function TierPanel({
         'Copilot unlimited',
       ],
       cta: 'Manage billing',
-      href: '/pricing',
+      href: PRICING_URL,
     },
   }
   const current = tierMeta[tierInfo.tier] ?? tierMeta.free
@@ -277,7 +278,7 @@ export default function TierPanel({
             </a>
           )}
           <a
-            href="/pricing"
+            href={PRICING_URL}
             className="inline-flex items-center justify-center gap-1.5 px-4 py-2 text-[12px] glass-control text-d-text-primary rounded-full transition-colors"
           >
             Compare plans

@@ -2,8 +2,8 @@
 
 /**
  * SignalsHub — the single /signals surface. Collapses the master blotter +
- * the two book pages into ONE AppShell with tabs:
- *   Overview · Alpha Picks · Momentum Picks
+ * the book pages into ONE AppShell with tabs:
+ *   Overview · Alpha Picks · Momentum Picks · Index Momentum 30
  *
  * The per-book routes still exist and 200-render (NO redirect): each
  * passes `initialHorizon` so the URL is preserved as a shareable deep-link
@@ -27,13 +27,17 @@ import { CategorySignalsPage } from './CategorySignalsPage'
 
 type Horizon = 'all' | CategoryId
 
+// One entry per CategoryId, plus Overview. `momentum30` was missing from both
+// lists while /signals/index-momentum-30 passed `initialHorizon="momentum30"`,
+// so no tab ever activated and the page could not render its book at all.
 const TABS: { value: Horizon; label: string }[] = [
   { value: 'all', label: 'Overview' },
   { value: 'swing', label: CATEGORIES.swing.label },
   { value: 'momentum', label: CATEGORIES.momentum.label },
+  { value: 'momentum30', label: CATEGORIES.momentum30.label },
 ]
 
-const HORIZONS: Horizon[] = ['all', 'swing', 'momentum']
+const HORIZONS: Horizon[] = ['all', 'swing', 'momentum', 'momentum30']
 const isHorizon = (v: string | null): v is Horizon => v != null && (HORIZONS as string[]).includes(v)
 
 /** Presentational shell — sticky tab strip + the active panel. Reads NO search

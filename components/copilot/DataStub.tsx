@@ -30,6 +30,9 @@ import { cn } from '@/lib/utils'
 export interface DataStubProps {
   summary: string
   action: string
+  /** Opens the panel. Omitted, the chip does not render — a chip labelled
+   *  "Open table" that opens nothing is a worse failure than the summary
+   *  standing on its own. */
   onOpen?: () => void
   /** Where the numbers came from and how stale they are. Card-specific. */
   provenance?: string
@@ -41,14 +44,16 @@ export function DataStub({ summary, action, onOpen, provenance, className }: Dat
     <div className={cn('rounded-md border border-line bg-wrap px-4 py-3', className)}>
       <div className="flex items-start justify-between gap-3">
         <p className="min-w-0 flex-1 text-body text-d-text-primary">{summary}</p>
-        <button
-          type="button"
-          onClick={onOpen}
-          className="inline-flex shrink-0 items-center gap-1 rounded-full border border-line px-2.5 py-1 text-meta text-d-text-secondary transition-colors hover:text-d-text-primary"
-        >
-          {action}
-          <ArrowRight size={11} aria-hidden />
-        </button>
+        {onOpen && (
+          <button
+            type="button"
+            onClick={onOpen}
+            className="inline-flex shrink-0 items-center gap-1 rounded-full border border-line px-2.5 py-1 text-meta text-d-text-secondary transition-colors hover:text-d-text-primary"
+          >
+            {action}
+            <ArrowRight size={11} aria-hidden />
+          </button>
+        )}
       </div>
       {provenance && <p className="mt-2.5 text-micro text-d-text-muted">{provenance}</p>}
       <p className="mt-1 text-micro text-d-text-muted">{ADVICE_FOOTNOTE}</p>

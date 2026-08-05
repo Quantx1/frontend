@@ -18,8 +18,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Link from 'next/link'
 import { Sparkles } from '@/lib/icons'
+import { PRICING_URL } from '@/lib/marketing-url'
 import type { AssistantUsage } from '../types'
 
 const EVENT_NAME = 'copilot:quota_exhausted'
@@ -58,19 +58,19 @@ export default function CopilotQuotaModal() {
       title: "You've used today's Copilot credits",
       body: `Free tier is capped at ${usage.credits_limit} messages per day. Pro unlocks 150 messages/day plus Scanner Lab and unlimited swing signals.`,
       cta: 'Upgrade to Pro — \u20B9999/mo',
-      ctaHref: '/pricing',
+      ctaHref: PRICING_URL,
     },
     pro: {
       title: "You've hit today's Pro Copilot limit",
       body: `Pro is capped at ${usage.credits_limit} messages per day. Elite removes the cap and adds AutoPilot, F&O strategies, and Bull/Bear debate.`,
       cta: 'Upgrade to Elite — \u20B91,999/mo',
-      ctaHref: '/pricing',
+      ctaHref: PRICING_URL,
     },
     elite: {
       title: 'High Copilot usage today',
       body: `You're at ${usage.credits_used} of ${usage.credits_limit} messages. Credits reset at ${resetTime}. If you need higher limits, contact support.`,
       cta: 'View pricing',
-      ctaHref: '/pricing',
+      ctaHref: PRICING_URL,
     },
   }
   const copy = upgradeCopy[tier] ?? upgradeCopy.free
@@ -118,7 +118,7 @@ export default function CopilotQuotaModal() {
           >
             Maybe later
           </button>
-          <Link
+          <a
             href={copy.ctaHref}
             onClick={() => {
               // PR 100 — credit the quota modal as the source. Only fire
@@ -135,7 +135,7 @@ export default function CopilotQuotaModal() {
             className="flex-1 py-2 text-[13px] font-medium bg-primary text-primary-foreground rounded-xs hover:bg-primary-hover transition-colors text-center"
           >
             {copy.cta}
-          </Link>
+          </a>
         </div>
       </div>
     </div>

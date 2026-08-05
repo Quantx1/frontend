@@ -50,6 +50,7 @@ import { AutomationPanel } from '@/components/signals/AutomationPanel'
 import { RenderedSurface } from '@/components/copilot/RenderedSurface'
 import { expectedMovePct, type DisplaySignal } from '@/components/signals/SignalCard'
 import { api } from '@/lib/api'
+import { marketingUrl } from '@/lib/marketing-url'
 import { DataBadge } from '@/components/common/DataBadge'
 import { MONO } from '@/lib/tokens'
 import { inr as fmtInr } from '@/lib/format'
@@ -342,9 +343,9 @@ export function SignalsOverview() {
 
       <div className="flex flex-wrap items-center justify-between gap-2 text-[11.5px] text-d-text-muted">
         <span>Open signals only · entry, stop and target on every row · tap a row for the full breakdown.</span>
-        <Link href="/proof?tab=track-record" className="inline-flex items-center gap-1 font-semibold text-d-text-primary hover:underline underline-offset-4">
+        <a href={marketingUrl('/proof?tab=track-record')} className="inline-flex items-center gap-1 font-semibold text-d-text-primary hover:underline underline-offset-4">
           Public track record <ArrowRight className="h-3.5 w-3.5" />
-        </Link>
+        </a>
       </div>
 
       <DisclaimerFooter />

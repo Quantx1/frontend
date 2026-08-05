@@ -52,6 +52,7 @@ import { AppShell } from '@/components/shell/AppShell'
 import { stockHref } from '@/lib/stock-href'
 import { useBrokerStatus } from '@/lib/hooks/useBrokerStatus'
 import { api, handleApiError, ApiError } from '@/lib/api'
+import { PRICING_URL } from '@/lib/marketing-url'
 import { MONO } from '@/lib/tokens'
 
 import WatchCard from './_components/WatchCard'
@@ -153,7 +154,7 @@ export default function WatchlistPage() {
           action: {
             label: 'Upgrade',
             onClick: () => {
-              window.location.href = '/pricing'
+              window.location.href = PRICING_URL
             },
           },
         })
@@ -374,13 +375,13 @@ export default function WatchlistPage() {
                 The engines are watching the first {data.cap} of your {data.count} symbols. Upgrade to Pro to
                 put every name under watch + unlock regime alerts.
               </p>
-              <Link
-                href="/pricing"
+              <a
+                href={PRICING_URL}
                 className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-[11px] font-semibold text-highlight hover:underline"
               >
                 Upgrade
                 <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
-              </Link>
+              </a>
             </section>
           )}
 

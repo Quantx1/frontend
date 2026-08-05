@@ -18,6 +18,7 @@ import {
   ScanLine, Radar, Layers, Zap,
 } from '@/lib/icons'
 import { api } from '@/lib/api'
+import { PRICING_URL } from '@/lib/marketing-url'
 import { timeAgo as sharedTimeAgo } from '@/lib/format'
 import { Skeleton } from '@/components/foundation'
 
@@ -246,12 +247,12 @@ export function HomeCtaBand() {
               </li>
             ))}
           </ul>
-          <Link
-            href="/pricing"
+          <a
+            href={PRICING_URL}
             className="bg-gradient-cta cta-gloss mt-3.5 inline-flex w-full items-center justify-center gap-1.5 rounded-full px-3 py-2 text-[12px] font-semibold text-primary-foreground transition-opacity hover:opacity-90"
           >
             Explore Pro <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
+          </a>
         </div>
       </div>
 

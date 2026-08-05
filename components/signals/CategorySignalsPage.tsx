@@ -47,6 +47,7 @@ import { CATEGORIES, type CategoryId, normalize, categoryOf, isOpen, isClosed, c
 import { dispatchCopilotOpen } from '@/components/copilot/CopilotProvider'
 import { AppShell } from '@/components/shell/AppShell'
 import { api, type PaperWindowResponse } from '@/lib/api'
+import { marketingUrl } from '@/lib/marketing-url'
 import { MONO, AI } from '@/lib/tokens'
 
 const PERIOD_DAYS = 90
@@ -57,13 +58,17 @@ export interface CategoryDemo {
   series?: (s: DisplaySignal) => number[]
 }
 
-/** Extra ranked-book fields (momentum + ML-served swing) keyed by signal id,
- *  rendered inline above each card. percentile/expected_return are 0..1
- *  fractions from the API — ×100 at display time. */
+/** Extra ranked-book fields (momentum + ML-served swing + momentum30) keyed by
+ *  signal id, rendered inline above each card. percentile/expected_return are
+ *  0..1 fractions from the API — ×100 at display time.
+ *
+ *  `expected_return` is OPTIONAL: momentum30 is a cross-sectional ranker and
+ *  publishes no forward-return estimate. The meta bar drops that cell rather
+ *  than printing a 0.00% the engine never produced. */
 interface StyleMeta {
   rank: number
   percentile: number
-  expected_return: number
+  expected_return?: number
 }
 
 export function CategorySignalsPage({
@@ -81,6 +86,7 @@ export function CategorySignalsPage({
   const Icon = cat.icon
   const isMomentum = category === 'momentum'
   const isSwing = category === 'swing'
+  const isMomentum30 = category === 'momentum30'
   const [tab, setTab] = useState<'opening' | 'closed'>('opening')
   // Min-confidence filter — defaults from the user's onboarding preset
   // (user_profiles.signal_filter_defaults.min_confidence, set by the risk
@@ -123,6 +129,14 @@ export function CategorySignalsPage({
     () => api.signals.getSwing(50),
     { revalidateOnFocus: false, refreshInterval: 30_000, dedupingInterval: 10_000, errorRetryCount: 3, errorRetryInterval: 5_000 },
   )
+  // Momentum-30 — the cross-sectional Nifty-200 book, its own endpoint and its
+  // own envelope (no expected_return, plus a `disclosure` string we surface
+  // below the grid so the flat-since-2023 caveat travels with the cards).
+  const momentum30SWR = useSWR(
+    demo || !isMomentum30 ? null : 'signals:momentum30',
+    () => api.signals.getMomentum30(30),
+    { revalidateOnFocus: false, refreshInterval: 60_000, dedupingInterval: 30_000, errorRetryCount: 3, errorRetryInterval: 5_000 },
+  )
   const swingML = isSwing && swingSWR.data?.status === 'ok'
   // Paper evaluation window — live vs frozen-backtest expectancy per engine.
   // Feeds the Model Book panel + the quant Key Reads (real numbers only).
@@ -142,6 +156,41 @@ export function CategorySignalsPage({
       .map(normalize)
       .filter((s) => categoryOf(s) === category && isClosed(s))
       .sort((a, b) => new Date(b.generated_at).getTime() - new Date(a.generated_at).getTime())
+
+    // Momentum-30 — served entirely by its own endpoint. Unlike momentum and
+    // swing it is NOT bridged into the signals table, so there is no row id to
+    // join to and no closed history to inherit: the ids are book-local and the
+    // Closed tab is honestly empty until a bridge exists.
+    if (isMomentum30) {
+      const metaMap = new Map<string, StyleMeta>()
+      const openList = (momentum30SWR.data?.signals ?? [])
+        .filter((sig) => (sig.confidence ?? 0) >= minConf)
+        .map((sig) => {
+          const id = `mom30-${sig.symbol}`
+          const ds: DisplaySignal = {
+            id,
+            symbol: sig.symbol,
+            // The published construction is long-only.
+            direction: 'LONG',
+            entry_price: sig.entry_price,
+            target_price: sig.target,
+            stop_loss: sig.stop_loss,
+            confidence: sig.confidence,
+            risk_reward: sig.risk_reward,
+            // No bridged row, so the book's own as-of is all there is. The
+            // endpoint is SWR-cached daily-ish; `today.data?.date` is the same
+            // settled session the rest of the surface is quoting.
+            generated_at: today.data?.date ?? new Date().toISOString(),
+            status: 'active',
+            signal_type: 'momentum30',
+          }
+          // No expected_return: this engine ranks relatively and publishes no
+          // forward-return estimate. Left undefined, never zero.
+          metaMap.set(id, { rank: sig.rank, percentile: sig.percentile })
+          return ds
+        })
+      return { open: openList, closed: closedList, styleMeta: metaMap }
+    }
 
     // Ranked ML book — momentum always; swing while its feed reports 'ok'.
     if (isMomentum || swingML) {
@@ -194,7 +243,7 @@ export function CategorySignalsPage({
       .filter((s) => categoryOf(s) === category && isOpen(s) && s.confidence >= minConf)
       .sort((a, b) => b.confidence - a.confidence)
     return { open: openList, closed: closedList, styleMeta: new Map<string, StyleMeta>() }
-  }, [demo, isMomentum, swingML, momentumSWR.data, swingSWR.data, today.data, history.data, category, minConf])
+  }, [demo, isMomentum, isMomentum30, swingML, momentumSWR.data, momentum30SWR.data, swingSWR.data, today.data, history.data, category, minConf])
 
   const stats = useMemo(() => computeStats(open, closed, cat), [open, closed, cat])
   // Loading — swing waits on BOTH feeds (the ML probe decides which path
@@ -203,7 +252,9 @@ export function CategorySignalsPage({
     !demo &&
     (isMomentum
       ? momentumSWR.isLoading && !momentumSWR.data
-      : (today.isLoading && !today.data) || (isSwing && swingSWR.isLoading && !swingSWR.data))
+      : isMomentum30
+        ? momentum30SWR.isLoading && !momentum30SWR.data
+        : (today.isLoading && !today.data) || (isSwing && swingSWR.isLoading && !swingSWR.data))
 
   const list = tab === 'opening' ? open : closed
   const seriesFor = (s: DisplaySignal) => demo?.series?.(s)
@@ -309,12 +360,12 @@ export function CategorySignalsPage({
         <section className="mt-14">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <h2 className="heading-display text-[22px] font-bold text-d-text-primary">Key reads</h2>
-            <Link
-              href="/proof?tab=track-record"
+            <a
+              href={marketingUrl('/proof?tab=track-record')}
               className="inline-flex items-center gap-1 text-[12.5px] font-medium text-primary transition-opacity hover:opacity-80"
             >
               Win rate &amp; full track record <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
+            </a>
           </div>
           <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
             {KEY_READS.map((k, i) => (
@@ -383,9 +434,14 @@ export function CategorySignalsPage({
                 title={tab === 'opening' ? `No open ${cat.label.toLowerCase()} signals` : `No closed ${cat.label.toLowerCase()} signals yet`}
                 description={
                   <span>
-                    {tab === 'opening'
-                      ? 'Fresh setups publish here as the scans run. Ask Copilot what’s likely to fire next.'
-                      : 'Closed signals with their outcome will appear here as positions resolve.'}
+                    {tab === 'closed' && isMomentum30
+                      // This book is not bridged into the signals table, so it
+                      // has no closed history to show. Say that instead of
+                      // implying the outcomes are merely still pending.
+                      ? 'This book is not yet journalled, so closed outcomes are not recorded here. The long-run record is in the FAQ below.'
+                      : tab === 'opening'
+                        ? 'Fresh setups publish here as the scans run. Ask Copilot what’s likely to fire next.'
+                        : 'Closed signals with their outcome will appear here as positions resolve.'}
                   </span>
                 }
                 action={
@@ -425,6 +481,15 @@ export function CategorySignalsPage({
               </div>
             )}
           </div>
+
+          {/* The backend ships this caveat WITH the payload precisely so no
+              surface can present the book as currently winning. Rendered
+              verbatim, next to the cards it qualifies. */}
+          {isMomentum30 && momentum30SWR.data?.disclosure && (
+            <p className="mt-5 max-w-3xl text-[11px] leading-relaxed text-d-text-muted">
+              {momentum30SWR.data.disclosure}
+            </p>
+          )}
         </section>
 
         {/* ── how it works — the AI explainer (anchor target for CTAs) ── */}
@@ -467,9 +532,9 @@ export function CategorySignalsPage({
           card above to open its full breakdown at{' '}
           <span className="font-mono">/signals/&lt;id&gt;</span>.
           {' '}
-          <Link href="/proof?tab=track-record" className="inline-flex items-center gap-0.5 text-primary hover:opacity-80">
+          <a href={marketingUrl('/proof?tab=track-record')} className="inline-flex items-center gap-0.5 text-primary hover:opacity-80">
             See the verified track record <ArrowUpRight className="h-3 w-3" />
-          </Link>
+          </a>
         </p>
       </div>
   )
@@ -578,9 +643,11 @@ function ModelBookPanel({
   )
 }
 
-/** Momentum-only info bar rendered above each SignalCard on the /signals/momentum page. */
-function MomentumMetaBar({ meta }: { meta: { rank: number; percentile: number; expected_return: number } }) {
-  const pctSign = meta.expected_return >= 0 ? '+' : ''
+/** Ranked-book info bar rendered above each SignalCard on the ranked horizons.
+ *  `Exp` is omitted when the engine publishes no forward-return estimate
+ *  (momentum30 ranks cross-sectionally) — an absent cell, never a 0.00%. */
+function MomentumMetaBar({ meta }: { meta: StyleMeta }) {
+  const exp = meta.expected_return
   return (
     <div className="flex items-center justify-between rounded-full border border-line bg-main px-3.5 py-1.5 text-[11px]">
       <span className="text-d-text-muted">
@@ -589,11 +656,13 @@ function MomentumMetaBar({ meta }: { meta: { rank: number; percentile: number; e
       <span className="text-d-text-muted">
         Pct <span className={`font-semibold text-d-text-primary ${MONO}`}>{(meta.percentile * 100).toFixed(1)}%</span>
       </span>
-      <span className="text-d-text-muted">
-        Exp <span className={`font-semibold ${meta.expected_return >= 0 ? 'text-up' : 'text-down'} ${MONO}`}>
-          {pctSign}{(meta.expected_return * 100).toFixed(2)}%
+      {exp != null && (
+        <span className="text-d-text-muted">
+          Exp <span className={`font-semibold ${exp >= 0 ? 'text-up' : 'text-down'} ${MONO}`}>
+            {exp >= 0 ? '+' : ''}{(exp * 100).toFixed(2)}%
+          </span>
         </span>
-      </span>
+      )}
     </div>
   )
 }
