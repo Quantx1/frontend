@@ -49,11 +49,18 @@ if ! has_match "result\\.status\\s*===\\s*'pending'" "${DETAIL_PAGE}"; then
   echo "Missing pending status branch in ${DETAIL_PAGE}"
   exit 1
 fi
-if ! has_match "router\\.push\\('/trades'\\)" "${DETAIL_PAGE}"; then
+# Match the DESTINATION inside a router.push, not one exact call shape. The
+# page expresses both arms as a single ternary —
+#   router.push(result.status === 'pending' ? '/trades' : '/portfolio')
+# — which the old literal patterns router.push\('/trades'\) could never match.
+# The gate has therefore failed on correct code since it arrived, taking the
+# whole frontend `test` job down with it at its first step, which is also why
+# nothing after it (lint, tsc, build, e2e) has run.
+if ! has_match "router\\.push\\([^)]*'/trades'" "${DETAIL_PAGE}"; then
   echo "Missing /trades route for pending execution in ${DETAIL_PAGE}"
   exit 1
 fi
-if ! has_match "router\\.push\\('/portfolio'\\)" "${DETAIL_PAGE}"; then
+if ! has_match "router\\.push\\([^)]*'/portfolio'" "${DETAIL_PAGE}"; then
   echo "Missing /portfolio route for open execution in ${DETAIL_PAGE}"
   exit 1
 fi

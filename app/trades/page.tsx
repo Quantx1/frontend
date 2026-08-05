@@ -212,15 +212,16 @@ export default function TradesPage() {
    * HTTP 400 "Trade not found or not open" for anything pending — i.e. for
    * every trade this button is rendered on.
    *
-   * The old body swallowed that into `console.error` and then optimistically
-   * dropped the row from `pendingTrades`, so the veto LOOKED like it worked
-   * while the trade stayed pending server-side and the next approval window
-   * could still act on it. On a surface that gates real orders, a silent
-   * false-success is the most dangerous shape this bug can take.
+   * The old body swallowed the 400 into `console.error` and told the user
+   * nothing, so pressing Reject on the human-in-the-loop veto for a real order
+   * appeared to do nothing at all — no row change, no message, no error. The
+   * only change here is that the failure is now surfaced.
    *
-   * Until the backend ships `POST /api/trades/{id}/reject`, the failure is
-   * surfaced and the row STAYS — an honest "still pending" beats a fabricated
-   * rejection. Do not re-add the optimistic filter here.
+   * The `setPendingTrades` filter below is NOT optimistic and never was: it
+   * sits after the `await`, so it does not run when close() rejects. It is
+   * correct as written and becomes live the day the endpoint exists — leave
+   * it. Until the backend ships `POST /api/trades/{id}/reject` the row stays,
+   * which is honest: the trade really is still pending.
    */
   const handleReject = async (tradeId: string) => {
     setApprovingId(tradeId)

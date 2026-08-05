@@ -27,6 +27,26 @@ const RAW = process.env.NEXT_PUBLIC_MARKETING_URL ?? ''
 export const MARKETING_URL = RAW.replace(/\/+$/, '')
 
 /**
+ * Unset in a production build means every link this module produces stays
+ * relative and 404s on the product origin — i.e. the whole upgrade funnel is
+ * broken again, silently and identically to before it was fixed.
+ *
+ * NEXT_PUBLIC_* is inlined by `next build`, not read at runtime, so this is
+ * decided when the image is built and cannot be corrected by setting the
+ * variable on the running host. Say so loudly rather than shipping a fix that
+ * is inert. Deliberately not thrown: a hard failure here would take down an
+ * otherwise working app over a link defect.
+ */
+if (!MARKETING_URL && process.env.NODE_ENV === 'production') {
+  console.error(
+    '[marketing-url] NEXT_PUBLIC_MARKETING_URL is not set in a production ' +
+      'build. Every marketing and legal link (/pricing, /proof, /legal/*) ' +
+      'will resolve against the product origin and 404 — this is the entire ' +
+      'upgrade funnel and the compliance footer. Set it at BUILD time.',
+  )
+}
+
+/**
  * Absolute URL for a marketing-site route.
  *
  * `marketingUrl('/pricing')` → `https://quantx.app/pricing`, or `/pricing`
