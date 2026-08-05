@@ -170,9 +170,17 @@ smoke_*.json
 .playwright-mcp/
 .superpowers/
 
-# Playwright test artifacts (root + frontend)
+# Playwright test artifacts.
+#
+# The frontend/-prefixed forms below are monorepo-era paths: since the split
+# this repo's root IS the old frontend/ directory, so they match nothing. That
+# left tests/e2e/.auth/ — which holds a real signed-in Supabase session, not a
+# fixture — unignored and one `git add -A` away from being committed. Kept
+# alongside the unprefixed forms rather than deleted, because the same
+# .gitignore is still used from the monorepo root.
 test-results/
 playwright-report/
+tests/e2e/.auth/
 frontend/test-results/
 frontend/playwright-report/
 frontend/tests/e2e/.auth/
