@@ -64,6 +64,11 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           NEXT_PUBLIC_API_URL: https://api.quantx.app
+          # Inlined by `next build`, not read at runtime. Unset means every
+          # /pricing, /proof and /legal/* link resolves against the product
+          # origin and 404s — the whole upgrade funnel. lib/marketing-url.ts
+          # logs an error when this is empty in a production build.
+          NEXT_PUBLIC_MARKETING_URL: ${{ secrets.NEXT_PUBLIC_MARKETING_URL }}
           NEXT_PUBLIC_RAZORPAY_KEY_ID: ${{ secrets.RAZORPAY_KEY_ID }}
 
   # ===========================================================================
@@ -114,6 +119,11 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           NEXT_PUBLIC_API_URL: https://api.quantx.app
+          # Inlined by `next build`, not read at runtime. Unset means every
+          # /pricing, /proof and /legal/* link resolves against the product
+          # origin and 404s — the whole upgrade funnel. lib/marketing-url.ts
+          # logs an error when this is empty in a production build.
+          NEXT_PUBLIC_MARKETING_URL: ${{ secrets.NEXT_PUBLIC_MARKETING_URL }}
           NEXT_PUBLIC_RAZORPAY_KEY_ID: ${{ secrets.RAZORPAY_KEY_ID }}
 
       - name: Start production server
@@ -133,6 +143,11 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           NEXT_PUBLIC_API_URL: https://api.quantx.app
+          # Inlined by `next build`, not read at runtime. Unset means every
+          # /pricing, /proof and /legal/* link resolves against the product
+          # origin and 404s — the whole upgrade funnel. lib/marketing-url.ts
+          # logs an error when this is empty in a production build.
+          NEXT_PUBLIC_MARKETING_URL: ${{ secrets.NEXT_PUBLIC_MARKETING_URL }}
 
       # E2E_MODE=prod also tells playwright.config.ts not to spawn its own
       # `npm run dev` webServer. SUPABASE_SERVICE_KEY is what auth.setup.ts
