@@ -36,9 +36,21 @@ setup('authenticate test user', async ({ page, context }) => {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   const serviceKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!supabaseUrl) throw new Error('NEXT_PUBLIC_SUPABASE_URL not set')
-  if (!anonKey) throw new Error('NEXT_PUBLIC_SUPABASE_ANON_KEY not set')
-  if (!serviceKey) throw new Error('SUPABASE_SERVICE_KEY not set — needed to seed test user')
+  // Name the file we expected these to come from. Reporting only the missing
+  // key sent people hunting through Supabase settings when the actual cause
+  // was playwright.config.ts pointing at the pre-split monorepo root.
+  const searchPath = process.env.E2E_ENV_SEARCH_PATH || '(playwright.config.ts did not run)'
+  const missing = (key: string, from: string) =>
+    new Error(
+      `${key} is not set — required to seed the E2E test user.\n` +
+        `  Expected it from ${from}.\n` +
+        `  Backend .env candidates searched: ${searchPath}\n` +
+        `  Set E2E_BACKEND_ENV to that file's path, or export ${key} directly.`,
+    )
+
+  if (!supabaseUrl) throw missing('NEXT_PUBLIC_SUPABASE_URL', 'frontend/.env.local')
+  if (!anonKey) throw missing('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'frontend/.env.local')
+  if (!serviceKey) throw missing('SUPABASE_SERVICE_KEY', "the backend repo's .env")
 
   const admin = createClient(supabaseUrl, serviceKey, {
     auth: { persistSession: false, autoRefreshToken: false },

@@ -2,11 +2,20 @@ import { defineConfig, devices } from '@playwright/test'
 import path from 'node:path'
 import fs from 'node:fs'
 
-// Load env from root .env (backend secrets, incl. SUPABASE_SERVICE_KEY)
-// and frontend/.env.local (NEXT_PUBLIC_* used by both dev server and test
-// setup script). Playwright runs from frontend/, so resolve both paths.
+// Load env from the backend repo's .env (backend secrets, incl.
+// SUPABASE_SERVICE_KEY) and frontend/.env.local (NEXT_PUBLIC_* used by both
+// dev server and test setup script). Playwright runs from frontend/, so
+// resolve both paths.
+//
+// Pre-split this was `<frontend>/../.env` — the monorepo root. The four-way
+// split moved the backend secrets to `<frontend>/../backend/.env` and nothing
+// updated this, so every authenticated spec (~60 of the 89) died in the
+// `setup` project with a bare "SUPABASE_SERVICE_KEY not set" and no hint that
+// the cause was a stale path. Candidates are tried in order; the first that
+// exists wins, and E2E_BACKEND_ENV overrides for non-standard layouts (CI
+// checks the two repos out side by side under different names).
 function loadEnv(p: string) {
-  if (!fs.existsSync(p)) return
+  if (!fs.existsSync(p)) return false
   for (const line of fs.readFileSync(p, 'utf8').split('\n')) {
     const m = line.match(/^([A-Z0-9_]+)=(.*)$/)
     if (!m) continue
@@ -14,9 +23,46 @@ function loadEnv(p: string) {
     if (process.env[k]) continue
     process.env[k] = raw.trim().replace(/^["']|["']$/g, '')
   }
+  return true
 }
-loadEnv(path.resolve(__dirname, '..', '.env'))
+
+const BACKEND_ENV_CANDIDATES = [
+  process.env.E2E_BACKEND_ENV,
+  path.resolve(__dirname, '..', 'backend', '.env'),
+  // Pre-split monorepo root. Kept last so an old checkout still works.
+  path.resolve(__dirname, '..', '.env'),
+].filter((p): p is string => Boolean(p))
+
+const loadedBackendEnv = BACKEND_ENV_CANDIDATES.find(loadEnv)
 loadEnv(path.resolve(__dirname, '.env.local'))
+
+// Record where we looked so auth.setup.ts can name the paths in its failure
+// instead of just reporting the symptom ("SUPABASE_SERVICE_KEY not set").
+process.env.E2E_ENV_SEARCH_PATH = BACKEND_ENV_CANDIDATES.join(', ')
+
+// Warn at config time — 40 seconds before the setup project would have hit it.
+// Secrets can legitimately arrive as real environment variables (that is how
+// CI supplies them), so a missing FILE only matters if the key it was supposed
+// to carry is still absent. Anonymous specs don't need it at all, which is why
+// this warns rather than throws: it must not block `--project=chromium-anon`.
+if (!loadedBackendEnv && !process.env.SUPABASE_SERVICE_KEY && !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  console.warn(
+    [
+      '',
+      '  [playwright] No backend .env found, and SUPABASE_SERVICE_KEY is not in the',
+      '  environment. The `setup` project seeds the E2E user through the Supabase',
+      '  Admin API and cannot run without it, so every authenticated spec will fail.',
+      '',
+      '  Looked in:',
+      ...BACKEND_ENV_CANDIDATES.map((p) => `    - ${p}`),
+      '',
+      '  Fix: clone the backend repo next to this one, or point E2E_BACKEND_ENV at',
+      '  its .env, or export SUPABASE_SERVICE_KEY directly. Anonymous specs run',
+      '  without it: npm run test:e2e -- --project=chromium-anon',
+      '',
+    ].join('\n'),
+  )
+}
 
 const E2E_MODE = process.env.E2E_MODE === 'prod' ? 'prod' : 'dev'
 const STORAGE_STATE = path.resolve(__dirname, 'tests/e2e/.auth/user.json')
