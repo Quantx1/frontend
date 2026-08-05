@@ -15,10 +15,15 @@ entire UI in Stitch without losing anything the product currently does.
 |---|---|---|---|
 | **01** | [`01-DESIGN-SYSTEM.md`](01-DESIGN-SYSTEM.md) | Colour, surfaces, type, radius, spacing, elevation, motion, primitives, the don'ts | **Read first.** §12 is the Stitch system prompt |
 | **02** | [`02-INFORMATION-ARCHITECTURE.md`](02-INFORMATION-ARCHITECTURE.md) | The four layout shells, sidebar IA, every route, access gates, redirect map, the five journeys | Read second — it's the skeleton |
-| **03** | [`03-SCREEN-INVENTORY.md`](03-SCREEN-INVENTORY.md) | Index of every surface → per-family detail files in [`screens/`](screens/) | Look up a screen's exact anatomy |
-| **04** | [`04-STITCH-PROMPTS.md`](04-STITCH-PROMPTS.md) | One paste-ready Stitch prompt per screen | The working file during generation |
-| **05** | [`05-COMPONENT-CATALOGUE.md`](05-COMPONENT-CATALOGUE.md) | Every primitive's variants, sizes, slots and states with resolved pixel values | Build the component library first |
-| **06** | [`06-DEFECTS-AND-NOTES.md`](06-DEFECTS-AND-NOTES.md) | Inconsistencies and dead ends found during extraction | Decide what to fix vs. keep |
+| **03** | [`03-SCREEN-INVENTORY.md`](03-SCREEN-INVENTORY.md) | Index of all **189 surfaces** → 20 per-family detail files in [`screens/`](screens/) | Look up a screen's exact anatomy |
+| **04** | [`04-STITCH-PROMPTS.md`](04-STITCH-PROMPTS.md) | **189 paste-ready Stitch prompts**, one per surface | The working file during generation |
+| **05** | [`05-COMPONENT-CATALOGUE.md`](05-COMPONENT-CATALOGUE.md) | **24 primitive families** — variants, sizes, slots and states with resolved pixel values | Build the component library first |
+| **06** | [`06-DEFECTS-AND-NOTES.md`](06-DEFECTS-AND-NOTES.md) | Inconsistencies, broken redirects and 33 dead files found during extraction | Decide what to fix vs. keep |
+
+**Coverage:** every `page.tsx`, `layout.tsx`, `loading.tsx` and `error.tsx` in the app,
+plus overlays, paywall states, the 17 stock-dossier AI cards, all 24 Settings sections,
+all 6 F&O tabs and the 8 F&O Lab sub-surfaces. Each entry carries its own Stitch prompt
+inline as well as in file 04.
 
 ---
 
@@ -45,12 +50,17 @@ Re-paste the §12 system prompt before the next screen. Drift shows up first as
 off-palette accents, then as extra corner radii.
 
 **Suggested order** (highest leverage first):
-1. App shell + sidebar + command palette → [`screens/shell-chrome.md`](screens/shell-chrome.md)
-2. Copilot home → [`screens/home-copilot.md`](screens/home-copilot.md)
+
+1. App shell, sidebar, command palette → [`screens/shell-chrome.md`](screens/shell-chrome.md)
+2. Copilot home — the product's centre of gravity → [`screens/home-copilot.md`](screens/home-copilot.md)
 3. Signals hub + signal detail → [`screens/signals.md`](screens/signals.md)
-4. Stock dossier → [`screens/markets-stocks.md`](screens/markets-stocks.md)
-5. Portfolio / trades → [`screens/portfolio-trades.md`](screens/portfolio-trades.md)
-6. Everything else
+4. Stock dossier: header/tabs → [`screens/stock-tabs.md`](screens/stock-tabs.md), then the
+   17 AI cards → [`screens/stock-cards.md`](screens/stock-cards.md)
+5. Portfolio, trades, paper → [`screens/portfolio-trades.md`](screens/portfolio-trades.md)
+6. Markets & stock universe → [`screens/markets-stocks.md`](screens/markets-stocks.md)
+7. Screener, strategies, AutoPilot, F&O
+8. Settings (24 sections), overlays, paywalls, route states
+9. Admin console — last, or not at all
 
 ---
 

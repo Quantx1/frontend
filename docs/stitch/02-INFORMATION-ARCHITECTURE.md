@@ -225,6 +225,20 @@ and bookmarks survive. **A redesign must keep these targets reachable.**
 
 Unauthenticated access to a gated route redirects to `/login?redirect=<pathname>`.
 
+### 4.1 ⚠ Redirects that are currently broken (verified against source)
+
+Do **not** design destinations for these until they are fixed — they are dead ends today.
+
+| Redirect | Verified reality |
+|---|---|
+| `/models`, `/track-record`, `/regime`, `/engines`, `/engines/*`, `/ai-intelligence` → `/proof?tab=…` | **`app/proof/` does not exist.** All of these land on the global 404 |
+| `/pricing`, `/privacy`, `/terms` (whitelisted as public) | **No pages exist** in this app — they live in the separate `landing/` app |
+| `/settings/security` → `?tab=security`, `/settings/whatsapp` → `?tab=channels`, `/login/mfa` → `?tab=security` | `VALID_TABS` is `['profile','trading','broker','notifications','appearance','tier','kill_switch','data']` — **neither `security` nor `channels` is valid**, so all three silently land on Profile |
+| `/home`, `/activity` → `/copilot` "Simple view band" | `components/managed/SimpleView.tsx` has **zero importers** (only a stale comment in `nav.ts` mentions it). The promised surface no longer renders |
+| `/quantai-alpha-pick`, `/momentum` → `/strategies?filter=momentum` | `/strategies` **never reads the `filter` param** — the redirect lands on the unfiltered hub |
+
+See [`06-DEFECTS-AND-NOTES.md`](06-DEFECTS-AND-NOTES.md) for the full defect list.
+
 ---
 
 ## 5. ACCESS GATES
@@ -247,7 +261,7 @@ These are not routes but behave like screens and must be designed.
 |---|---|---|
 | **Command Palette** | `shell/CommandPalette.tsx` | ⌘K, floating (blurred, elev-3), the app's operating system |
 | **Mobile Drawer** | `shell/MobileDrawer.tsx` | slide-in left, `< lg`, mirrors sidebar IA |
-| **Right Rail faces** | `shell/RightRail.tsx` | 72px icon rail → expandable contextual panel. (`shell/ContextPanel.tsx`, the tabbed right slide-over, was deleted with the `/markets` revert — no slide-over exists now.) |
+| **Right utility rail** | `shell/RightRail.tsx` | Fixed 72px icon rail, desktop only. **It does not expand into a panel.** It opens exactly three things: its own 224px account dropdown, the global Copilot dock, and the ⌘K palette. (`shell/ContextPanel.tsx` — a tabbed right slide-over — and `markets/MarketPanel.tsx` were both deleted by the 2026-08-05 markets revert `40c2ede`; nothing replaced them.) |
 | **Autopilot Sticky Stop** | `shell/AutopilotStickyStop.tsx` | persistent kill switch when the bot is live |
 | **Connect-broker banner** | `broker/ConnectBrokerBanner.tsx` | top of main pane, until a broker is linked |
 | **Offline banner** | `system/OfflineBanner.tsx` | connectivity loss |
