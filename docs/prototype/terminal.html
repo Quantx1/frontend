@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quant X — Terminal</title>
+<style>
+:root[data-theme="light"]{--page:#fff;--rail:#F9F9F9;--hover:#ECECEC;--line:#E5E5E5;--line-2:#D6D6D6;
+  --ink:#0D0D0D;--ink-2:#5D5D5D;--ink-3:#8F8F8F;--accent:#406AE4;--accent-ink:#2E4FB8;
+  --accent-soft:rgba(64,106,228,.09);--up:#0A6B50;--down:#B81C22;--warn:#8A5A06}
+:root[data-theme="dark"]{--page:#131316;--rail:#0D0D0F;--hover:#232327;--line:#26262A;--line-2:#37373D;
+  --ink:#ECECEC;--ink-2:#B4B4B4;--ink-3:#8F8F8F;--accent:#406AE4;--accent-ink:#8FB0FF;
+  --accent-soft:rgba(64,106,228,.18);--up:#10B981;--down:#F5808C;--warn:#E0AC5B}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--page);color:var(--ink);height:100vh;overflow:hidden;display:flex;flex-direction:column;
+  font:13px/1.5 ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-variant-numeric:tabular-nums}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+[hidden]{display:none !important}
+
+.obar{height:56px;flex-shrink:0;border-bottom:1px solid var(--line);display:flex;align-items:center;
+  gap:16px;padding:0 14px;background:var(--rail)}
+.logo{width:24px;height:24px;border-radius:6px;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:11px;font-weight:700}
+.symsel{display:flex;align-items:center;gap:8px;border:1px solid var(--line-2);border-radius:9px;padding:5px 11px;font-weight:600}
+.symsel .n{background:var(--hover);border-radius:5px;padding:1px 6px;font-size:10.5px;color:var(--ink-2)}
+.ltp{font-size:23px;font-weight:600;letter-spacing:-.02em}
+.chg{color:var(--up);font-size:13.5px;font-weight:500}
+.hl{display:flex;gap:20px;padding-left:16px;border-left:1px solid var(--line)}
+.hl div span{display:block;font-size:9.5px;letter-spacing:.09em;color:var(--ink-3)}
+.hl div b{font-weight:500;font-size:13px}
+.oact{margin-left:auto;display:flex;align-items:center;gap:9px}
+.qty{display:flex;align-items:center;border:1px solid var(--line-2);border-radius:9px;overflow:hidden}
+.qty button{padding:6px 11px;color:var(--ink-2)}
+.qty button:hover{background:var(--hover)}
+.qty input{width:44px;text-align:center;border:0;outline:0;background:none;color:var(--ink);font-size:13.5px;font-weight:600}
+.buy,.sell{padding:8px 22px;border-radius:9px;color:#fff;font-weight:600;font-size:13.5px}
+.buy{background:var(--accent)} .sell{background:#C0392B}
+.modesw{display:flex;background:var(--hover);border-radius:9px;padding:2px;margin-right:4px}
+.msel{font-size:12px;padding:5px 13px;border-radius:7px;color:var(--ink-2)}
+.msel.on{background:var(--page);color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.msel.lock{opacity:.42;cursor:not-allowed}
+
+.wrap{flex:1;display:flex;overflow:hidden}
+.tools{width:46px;flex-shrink:0;border-right:1px solid var(--line);background:var(--rail);
+  display:flex;flex-direction:column;align-items:center;padding:8px 0;gap:3px;color:var(--ink-2)}
+.tools button{width:32px;height:32px;border-radius:7px;display:grid;place-items:center;font-size:15px}
+.tools button:hover{background:var(--hover);color:var(--ink)}
+.tools button.on{background:var(--accent-soft);color:var(--accent-ink)}
+.tools .sep{width:22px;height:1px;background:var(--line);margin:5px 0}
+
+.chartcol{flex:1;display:flex;flex-direction:column;min-width:0}
+.ctop{height:40px;flex-shrink:0;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:6px;padding:0 12px;color:var(--ink-2)}
+.ctop button{padding:5px 10px;border-radius:7px;font-size:12.5px}
+.ctop button:hover{background:var(--hover);color:var(--ink)}
+.ctop button.on{background:var(--hover);color:var(--ink);font-weight:600}
+.ctop .sp{margin-left:auto}
+.ohlc{padding:8px 14px;font-size:12px;display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.ohlc .sym{font-weight:600;font-size:13px}
+.chart{flex:1;position:relative;min-height:0}
+.cbot{height:34px;flex-shrink:0;border-top:1px solid var(--line);display:flex;align-items:center;gap:5px;padding:0 12px;color:var(--ink-3);font-size:12px}
+.cbot button{padding:4px 10px;border-radius:6px}
+.cbot button:hover{background:var(--hover);color:var(--ink)}
+.cbot button.on{background:var(--hover);color:var(--ink);font-weight:600}
+.cbot .sp{margin-left:auto}
+
+.rpanel{width:296px;flex-shrink:0;border-left:1px solid var(--line);display:flex;flex-direction:column;background:var(--page)}
+.rhead{height:40px;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 14px;font-weight:600;font-size:13.5px}
+.rhead .x{margin-left:auto;color:var(--ink-3)}
+.rbody{flex:1;overflow-y:auto;padding:14px}
+.tabs{width:62px;flex-shrink:0;border-left:1px solid var(--line);background:var(--rail);
+  display:flex;flex-direction:column;align-items:center;padding:8px 0;gap:4px}
+.tab{width:52px;padding:9px 0;border-radius:8px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--ink-3)}
+.tab:hover{background:var(--hover);color:var(--ink-2)}
+.tab.on{background:var(--accent-soft);color:var(--accent-ink)}
+.tab i{font-size:15px;font-style:normal}
+
+.pos{border:1px solid var(--line);border-radius:9px;padding:11px 12px;margin-bottom:9px}
+.pos .r1{display:flex;justify-content:space-between;align-items:baseline}
+.pill{display:inline-block;padding:1px 7px;border-radius:4px;font-size:10px;font-weight:600}
+.paper{background:rgba(138,90,6,.13);color:var(--warn)}
+.msg{font-size:12.5px;margin-bottom:11px}
+.msg.a{color:var(--ink-2)}
+.ask{border:1px solid var(--line-2);border-radius:11px;padding:9px 12px;display:flex;gap:8px;align-items:center}
+.ask input{flex:1;border:0;outline:0;background:none;color:var(--ink);font-size:13px}
+.lv{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line);font-size:12.5px}
+.note{border-left:2px solid var(--warn);padding:8px 11px;font-size:11.5px;color:var(--ink-2);background:var(--rail);border-radius:6px;margin-top:12px}
+</style>
+</head>
+<body>
+
+<div class="obar">
+  <div class="logo">Q</div>
+  <div class="symsel"><span class="n">50</span> NIFTY <span style="color:var(--ink-3);font-size:10px">▾</span></div>
+  <div class="ltp mono">₹24,624.65</div>
+  <div class="chg mono">▲ +9.75 (+0.04%)</div>
+  <div class="hl">
+    <div><span>DAY LOW</span><b class="mono">₹24,498.25</b></div>
+    <div><span>DAY HIGH</span><b class="mono">₹24,669.20</b></div>
+  </div>
+  <div class="oact">
+    <span class="modesw"><button class="msel on">Paper</button><button class="msel lock" title="Automated live orders need NSE algo empanelment">Live 🔒</button></span>
+    <button class="buy">Buy</button>
+    <span class="qty"><button>−</button><input value="1" class="mono"><button>+</button></span>
+    <button class="sell">Sell</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="tools">
+    <button class="on" title="Cross">✛</button><button title="Trend line">╱</button>
+    <button title="Horizontal">═</button><button title="Fib">⋔</button><button title="Pitchfork">⋚</button>
+    <div class="sep"></div>
+    <button title="Brush">✎</button><button title="Text">T</button><button title="Emoji">☺</button>
+    <div class="sep"></div>
+    <button title="Measure">⟺</button><button title="Zoom">⊕</button><button title="Magnet">⊓</button>
+    <div class="sep"></div>
+    <button title="Lock">⊘</button><button title="Hide">◉</button><button title="Delete">⌫</button>
+  </div>
+
+  <div class="chartcol">
+    <div class="ctop">
+      <button class="on">1m</button><button>5m</button><button>15m</button><button>1D</button>
+      <button title="Candles">▮</button><button>ƒx Indicators</button><button title="Layouts">⊞</button>
+      <button title="Undo">↶</button><button title="Redo">↷</button>
+      <span class="sp"></span>
+      <button>Save ▾</button><button title="Alert">⚡</button><button title="Settings">⚙</button>
+      <button title="Fullscreen">⛶</button><button title="Snapshot">⎙</button>
+    </div>
+    <div class="ohlc mono">
+      <span class="sym">NIFTY · 1 · NSE</span>
+      <span style="color:var(--up)">●</span>
+      <span>O <b style="color:var(--up)">24,612.10</b></span>
+      <span>H <b style="color:var(--up)">24,628.40</b></span>
+      <span>L <b style="color:var(--down)">24,608.55</b></span>
+      <span>C <b style="color:var(--up)">24,624.65</b></span>
+      <span style="color:var(--up)">+12.55 (+0.05%)</span>
+    </div>
+    <div class="chart"><canvas id="cv"></canvas></div>
+    <div class="cbot">
+      <button>1D</button><button class="on">1W</button><button>1M</button><button>3M</button><button>1Y</button>
+      <button title="Go to date">▤</button>
+      <span class="sp"></span>
+      <span class="mono">15:29:58 UTC+5:30</span>
+      <button>%</button><button>log</button><button class="on">auto</button>
+    </div>
+  </div>
+
+  <div class="rpanel">
+    <div class="rhead"><span id="rtitle">Positions</span> <span class="x">✕</span></div>
+    <div class="rbody">
+
+      <div id="p-positions">
+        <div class="pos">
+          <div class="r1"><b>WIPRO</b> <span class="mono" style="color:var(--up)">+₹72</span></div>
+          <div style="color:var(--ink-3);font-size:11.5px;margin-top:2px">40 @ 186.30 · Momentum Quant <span class="pill paper">PAPER</span></div>
+          <div class="mono" style="font-size:11.5px;margin-top:6px;color:var(--ink-2)">stop 178.85 · target 201.00</div>
+        </div>
+        <div class="pos">
+          <div class="r1"><b>TATASTEEL</b> <span class="mono" style="color:var(--up)">+₹660</span></div>
+          <div style="color:var(--ink-3);font-size:11.5px;margin-top:2px">120 @ 214.00 · Momentum Quant <span class="pill paper">PAPER</span></div>
+          <div class="mono" style="font-size:11.5px;margin-top:6px;color:var(--ink-2)">stop 219.50 ↑ trailed</div>
+        </div>
+        <div class="note">Live order entry is disabled. Automated live orders need NSE algo empanelment; manual live orders need a connected broker with verified margin.</div>
+      </div>
+
+      <div id="p-chat" hidden>
+        <div class="msg" style="color:var(--ink-3)">Agent sees NIFTY · 1m</div>
+        <div class="msg a">Regime is sideways and your book is 52% IT. I would not add here — if you want exposure, the liquidity read prefers BANKNIFTY over another IT name.</div>
+        <div class="msg" style="color:var(--ink-3)">consulted regime · risk · liquidity ▸</div>
+        <div class="ask"><input placeholder="Ask about NIFTY…"><span style="color:var(--ink-3)">↑</span></div>
+        <div class="note">The agent always sees the symbol and timeframe you are on. Asking here is the same as asking in a thread.</div>
+      </div>
+
+      <div id="p-levels" hidden>
+        <div class="lv"><span>Day high</span><b class="mono">24,669.20</b></div>
+        <div class="lv"><span>VWAP</span><b class="mono">24,591.40</b></div>
+        <div class="lv"><span>Prev close</span><b class="mono">24,614.90</b></div>
+        <div class="lv"><span>Day low</span><b class="mono">24,498.25</b></div>
+        <div class="lv"><span>Pivot</span><b class="mono">24,594.12</b></div>
+        <div class="note">Levels are computed from settled bars. Intraday values are provisional until the close.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on" data-p="positions"><i>▦</i>Positions</button>
+    <button class="tab" data-p="chat"><i>◇</i>Chat</button>
+    <button class="tab" data-p="levels"><i>◔</i>Levels</button>
+  </div>
+</div>
+
+<script>
+const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+const bars=[];
+(function seed(){let p=24500;for(let i=0;i<150;i++){const o=p,c=o+(Math.sin(i/7)*9+(i%11-5)*3.1);
+  bars.push({o,h:Math.max(o,c)+Math.abs((i%5)-2)*2.2,l:Math.min(o,c)-Math.abs((i%4)-2)*2.4,c});p=c;}})();
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+function draw(){
+  const r=cv.parentElement.getBoundingClientRect(), dpr=devicePixelRatio||1;
+  cv.width=r.width*dpr; cv.height=r.height*dpr; cv.style.width=r.width+'px'; cv.style.height=r.height+'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,r.width,r.height);
+  const padR=74, W=r.width-padR, H=r.height;
+  const lo=Math.min(...bars.map(b=>b.l)), hi=Math.max(...bars.map(b=>b.h)), sp=hi-lo||1;
+  const y=v=>H-14-((v-lo)/sp)*(H-30);
+  ctx.strokeStyle=css('--line'); ctx.lineWidth=1;
+  ctx.font='10px ui-monospace,monospace'; ctx.textAlign='left';
+  for(let i=0;i<=5;i++){const yy=Math.round(14+i*(H-30)/5)+.5;
+    ctx.beginPath();ctx.moveTo(0,yy);ctx.lineTo(W,yy);ctx.stroke();
+    ctx.fillStyle=css('--ink-3'); ctx.fillText((hi-(i*sp/5)).toFixed(2),W+8,yy+3);}
+  const bw=W/bars.length, up=css('--up'), dn=css('--down');
+  bars.forEach((b,i)=>{const x=i*bw+bw/2, g=b.c>=b.o;
+    ctx.strokeStyle=g?up:dn; ctx.fillStyle=g?up:dn;
+    ctx.beginPath();ctx.moveTo(x,y(b.h));ctx.lineTo(x,y(b.l));ctx.stroke();
+    const t=y(Math.max(b.o,b.c)), h=Math.max(1,Math.abs(y(b.o)-y(b.c)));
+    ctx.fillRect(x-bw*0.32,t,Math.max(1,bw*0.64),h);});
+  const last=bars[bars.length-1].c;
+  ctx.strokeStyle=up; ctx.setLineDash([3,3]); ctx.beginPath();
+  ctx.moveTo(0,y(last)); ctx.lineTo(W,y(last)); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle=up; ctx.fillRect(W,y(last)-9,padR,18);
+  ctx.fillStyle='#fff'; ctx.font='600 10px ui-monospace,monospace';
+  ctx.fillText(last.toFixed(2),W+8,y(last)+3);
+}
+addEventListener('resize',draw); draw();
+
+const TITLES={positions:'Positions',chat:'Chat',levels:'Levels'};
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
+  const k=t.dataset.p;
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===t));
+  Object.keys(TITLES).forEach(n=>{document.getElementById('p-'+n).hidden = (n!==k);});
+  document.getElementById('rtitle').textContent=TITLES[k];
+}));
+</script>
+</body>
+</html>
